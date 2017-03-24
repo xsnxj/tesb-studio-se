@@ -41,11 +41,11 @@
 	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 	Vector v = (Vector) codeGenArgument.getArgument();
 	IProcess process = (IProcess) v.get(0);
-	
+
 	String version = (String) v.get(1);
 
 	boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
-	
+
 	List<? extends INode> graphicalNodes = process.getGraphicalNodes();
 	//boolean stats = codeGenArgument.isStatistics();
 	//boolean trace = codeGenArgument.isTrace();
@@ -71,7 +71,7 @@ if (service instanceof AbstractBrandingService) {
     }
 	routeFolderName = routeFolderName + JavaResourcesHelper.getJobFolderName(process.getName(), process.getVersion());
 	String packageName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + routeFolderName;
-	
+
 %>
 package <%= packageName %>;
 
@@ -131,15 +131,15 @@ package <%= packageName %>;
 				}
 			}
 		}
-		
+
 	}
-	
+
 	if(isTestContainer){
 		importsSet.add("import org.apache.camel.builder.RouteBuilder");
 		importsSet.add("import org.junit.Test");
 		importsSet.add("import org.apache.camel.component.mock.MockEndpoint");
 	}
-	
+
 	for(String s: importsSet){
 %>
 		<%=s%> ;
@@ -160,10 +160,10 @@ package <%= packageName %>;
         if(process.getClass().getName().endsWith("MicroServiceProcess")){
             exportTypeSpringBoot = true;
         }
-        
+
         if(exportTypeSpringBoot){
  %>
- 
+
 /**
  * Applies configuration properties to a HTTPConduit
  */
@@ -481,11 +481,11 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
 %>
 
 	private boolean inOSGi;
-	
-	
+
+
 
 	public void setArguments(Map<String, String> arguments) {
-	    inOSGi = true;
+		inOSGi = true;
 		final String newContext = arguments.remove("context");
 		if (null != newContext) {
 			contextStr = newContext;
@@ -499,16 +499,16 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
     boolean hasCorrelationID = false;
     boolean hasCXFRSProvider = false;
     boolean hasCXFRSServiceLocator = false;
-	for (INode node : graphicalNodes) {
-		if ("cCXF".equals(node.getComponent().getName())) {
+    for (INode node : graphicalNodes) {
+        if ("cCXF".equals(node.getComponent().getName())) {
             boolean useRegistry = false;
             String dataFormat = ElementParameterParser.getValue(node, "__DATAFORMAT__");
             if (isStudioEEVersion && !"RAW".equals(dataFormat) && !"CXF_MESSAGE".equals(dataFormat)) {
                 useRegistry = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_REGISTRY__"));
             }
-		    if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_SAM__"))
-				&& !"RAW".equals(dataFormat) && !useRegistry) {
-				hasSam = true;
+            if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_SAM__"))
+                    && !"RAW".equals(dataFormat) && !useRegistry) {
+                hasSam = true;
             }
             if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__")) || useRegistry) {
                 hasCorrelationID = true;
@@ -517,7 +517,7 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
     private final CorrelationIDCallbackHandler correlationIDCallbackHandler_<%=cid%> = new CorrelationIDCallbackHandler();
 <%
             } // CorrelationID
-		} else if ("cCXFRS".equals(node.getComponent().getName())) {
+        } else if ("cCXFRS".equals(node.getComponent().getName())) {
             if(!hasCXFRSServiceLocator){
                 hasCXFRSServiceLocator = Boolean.parseBoolean(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
             }
@@ -998,11 +998,11 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
                 String contentClass = null;
                  if ("XML".equals(consumes) || "JSON".equals(consumes) || "XML-JSON".equals(consumes))
                  {
-                 	contentClass = beanClass == null || beanClass.isEmpty() ? "org.w3c.dom.Document" : beanClass;
+                     contentClass = beanClass == null || beanClass.isEmpty() ? "org.w3c.dom.Document" : beanClass;
                  }
                  else
                  {
-                 	contentClass = "ANY".equals(consumes) ? "String" : "org.w3c.dom.Document";
+                     contentClass = "ANY".equals(consumes) ? "String" : "org.w3c.dom.Document";
                  }
 %>
                 <%=contentClass%> payload
@@ -1026,8 +1026,8 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
 <%
             } // CorrelationID
 
-		} // "cCXFRS"
-	} // for
+        } // "cCXFRS"
+    } // for
 
     if (hasSam) {
 %>
@@ -1108,7 +1108,7 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
         } catch (javax.xml.stream.XMLStreamException ex) {
             throw new javax.ws.rs.InternalServerErrorException(ex);
         }
-        
+
     }
 }
 <%
@@ -1268,7 +1268,7 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
             }
             @org.springframework.context.annotation.Bean(name = "cxf")
             public org.apache.cxf.bus.spring.SpringBus springBus() {
-                
+
                 <% 
                 if(hasCXFServiceLocator || hasCXFRSServiceLocator){
                 %>
@@ -1278,15 +1278,15 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
                 %>
                     return new org.apache.cxf.bus.spring.SpringBus();
                 <%}%>
-                
+
             }
 <%
             } if(hasCXFComponent){
 %>
-            
+
             private org.apache.camel.component.cxf.CxfEndpoint getCxfEndpoint(String uri, boolean isProvider, boolean useAuthorization, boolean usePropagateSamlAP, String... token){
                 final org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint = (org.apache.camel.component.cxf.CxfEndpoint) endpoint(uri);
-                
+
                 <%if(exportTypeSpringBoot){%>
                     cxfEndpoint.setCxfEndpointConfigurer(new org.apache.camel.component.cxf.CxfEndpointConfigurer() {
                         public void configure(org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory factory) {
@@ -1294,7 +1294,7 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
                         public void configureClient(org.apache.cxf.endpoint.Client client) {
                             String configName = "org.apache.cxf.http.conduits-" + cxfEndpoint.getPortName().getLocalPart() + ".cfg";
                             java.util.Dictionary<String, String> dic = loadHttpConduitProperties(configName);
-            
+
                             org.apache.cxf.transport.http.HTTPConduit conduit = (org.apache.cxf.transport.http.HTTPConduit) client.getConduit();
                             HttpConduitConfigApplier configApplier = new HttpConduitConfigApplier();
                             configApplier.apply(dic, conduit, cxfEndpoint.getAddress());
@@ -1330,11 +1330,11 @@ if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenCons
                     if(hasCXFHTTPAuthProvider){
 %>
                         if (isProvider && token!=null && org.apache.cxf.transport.http.auth.HttpAuthHeader.AUTH_TYPE_BASIC.equals(token[0])) {
-                            
+
                         <%if(!exportTypeSpringBoot){%>
                             addHttpAuthProvider(cxfEndpoint);
                         <%}%>
-                            
+
                         }
 <%
                     }
@@ -1394,46 +1394,46 @@ if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenCons
            <%
             if(exportTypeSpringBoot){
            %>
-           
+
             class PropertyFileValidator implements org.apache.wss4j.dom.validate.Validator {
-        
+
                 private final static String USERSFILENAME = "users.properties";
-        
+
                 @Override
                 public org.apache.wss4j.dom.validate.Credential validate(org.apache.wss4j.dom.validate.Credential credential, org.apache.wss4j.dom.handler.RequestData data) throws org.apache.wss4j.common.ext.WSSecurityException {
                     if (credential == null || credential.getUsernametoken() == null) {
                         throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILURE, "noCredential");
                     }
-        
+
                     String user = null;
                     String password = null;
-        
+
                     org.apache.wss4j.dom.message.token.UsernameToken usernameToken = credential.getUsernametoken();
-        
+
                     user = usernameToken.getName();
                     String pwType = usernameToken.getPasswordType();
                     if (log.isDebugEnabled()) {
                         log.debug("UsernameToken user " + usernameToken.getName());
                         log.debug("UsernameToken password type " + pwType);
                     }
-        
+
                     if (usernameToken.isHashed()) {
                         log.warn("Authentication failed as hashed username token not supported");
                         throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
                     }
-        
+
                     password = usernameToken.getPassword();
-        
+
                     if (!org.apache.wss4j.dom.WSConstants.PASSWORD_TEXT.equals(pwType)) {
                         log.warn("Password type " + pwType + " not supported");
                         throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
                     }
-        
+
                     if (!(user != null && user.length() > 0 && password != null && password.length() > 0)) {
                         log.warn("User or password empty");
                         throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
                     }
-        
+
                     java.io.InputStream stream = getConfigLocation(USERSFILENAME);
                     try {
                         Properties properties = new Properties();
@@ -1450,18 +1450,18 @@ if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenCons
                         try {
                             stream.close();
                         } catch (java.io.IOException e) {
-        
+
                         }
                     }
-        
+
                     return credential;
                 }
-        
+
             }
-           
+
             private void addUsernameTokenProvider(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint) {
             PropertyFileValidator validator = new PropertyFileValidator();
-    
+
             cxfEndpoint
                     .setProperties(java.util.Collections
                             .<String, Object> singletonMap(
@@ -1474,7 +1474,7 @@ if(hasCXFUsernameTokenProvider || hasCXFSamlTokenProvider || hasCXFSamlTokenCons
             } catch (Exception e) {
                 throw new RuntimeException("Cannot load policy", e);
             }
-             
+
             cxfEndpoint.getFeatures().add(
                     new org.apache.cxf.ws.policy.WSPolicyFeature(policy));
             }
@@ -1540,7 +1540,7 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
         if(usePropagateSamlAP && (token[4] == null)){
             usePropagateSamlAP = false ;
         }
-        
+
         <% if(exportTypeSpringBoot) {%>
             Properties stsProperties = new Properties();
             java.io.InputStream stsCfg= getConfigLocation("org.talend.esb.job.client.sts.cfg");
@@ -1550,7 +1550,7 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
             } catch (Exception e) {
                 throw new RuntimeException("Cannot load client properties", e);
             }
-            
+
             Map<String, String> stsProps = new HashMap<String, String>();
             for (Map.Entry<Object, Object> entry : stsProperties.entrySet()) {
                     stsProps.put((String)entry.getKey(), (String)entry.getValue());
@@ -1576,14 +1576,14 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
         clientProps.put(
                 org.apache.cxf.ws.security.SecurityConstants.STS_CLIENT,
                 stsClient);
-                
+
         <% if(exportTypeSpringBoot){ %>
             Properties clientPropertiesTmp = new Properties();
             java.io.InputStream clientCfg= getConfigLocation("org.talend.esb.job.client.cfg");
-            
+
             try {
                     clientPropertiesTmp.load(clientCfg);
-                    
+
                     clientProperties = new HashMap<String, String>();
                     for (String key : clientPropertiesTmp.stringPropertyNames()) {
                         clientProperties.put(key, clientPropertiesTmp.getProperty(key));
@@ -1630,11 +1630,11 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
                 factory.setAddress(null);
             }
             public void configureClient(org.apache.cxf.endpoint.Client client) {
-            
+
                 <%if(exportTypeSpringBoot){%>
                     String configName = "org.apache.cxf.http.conduits-" + cxfEndpointTrans.getPortName().getLocalPart() + ".cfg";
                     java.util.Dictionary<String, String> dic = loadHttpConduitProperties(configName);
-    
+
                     org.apache.cxf.transport.http.HTTPConduit conduit = (org.apache.cxf.transport.http.HTTPConduit) client.getConduit();
                     HttpConduitConfigApplier configApplier = new HttpConduitConfigApplier();
                     configApplier.apply(dic, conduit, cxfEndpointTrans.getAddress());
@@ -1675,46 +1675,46 @@ if(hasCXFRegistryProvider){
 
         // set endpoint properties
         <% if(exportTypeSpringBoot) {%>
-            
+
             class PropertyFileValidator implements org.apache.wss4j.dom.validate.Validator {
-        
+
                 private final static String USERSFILENAME = "users.properties";
-        
+
                 @Override
                 public org.apache.wss4j.dom.validate.Credential validate(org.apache.wss4j.dom.validate.Credential credential, org.apache.wss4j.dom.handler.RequestData data) throws org.apache.wss4j.common.ext.WSSecurityException {
                     if (credential == null || credential.getUsernametoken() == null) {
                         throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILURE, "noCredential");
                     }
-        
+
                     String user = null;
                     String password = null;
-        
+
                     org.apache.wss4j.dom.message.token.UsernameToken usernameToken = credential.getUsernametoken();
-        
+
                     user = usernameToken.getName();
                     String pwType = usernameToken.getPasswordType();
                     if (log.isDebugEnabled()) {
                         log.debug("UsernameToken user " + usernameToken.getName());
                         log.debug("UsernameToken password type " + pwType);
                     }
-        
+
                     if (usernameToken.isHashed()) {
                         log.warn("Authentication failed as hashed username token not supported");
                         throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
                     }
-        
+
                     password = usernameToken.getPassword();
-        
+
                     if (!org.apache.wss4j.dom.WSConstants.PASSWORD_TEXT.equals(pwType)) {
                         log.warn("Password type " + pwType + " not supported");
                         throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
                     }
-        
+
                     if (!(user != null && user.length() > 0 && password != null && password.length() > 0)) {
                         log.warn("User or password empty");
                         throw new org.apache.wss4j.common.ext.WSSecurityException(org.apache.wss4j.common.ext.WSSecurityException.ErrorCode.FAILED_AUTHENTICATION);
                     }
-        
+
                     java.io.InputStream stream = getConfigLocation(USERSFILENAME);
                     try {
                         Properties properties = new Properties();
@@ -1731,20 +1731,20 @@ if(hasCXFRegistryProvider){
                         try {
                             stream.close();
                         } catch (java.io.IOException e) {
-        
+
                         }
                     }
-        
+
                     return credential;
                 }
-        
+
             }
-            
+
             PropertyFileValidator jaasUTValidator = new PropertyFileValidator();
-        
+
         Properties serviceProps = new Properties();
         java.io.InputStream serviceCfg= getConfigLocation("org.talend.esb.job.service.cfg");
-        
+
         try {
                 serviceProps.load(serviceCfg);
             securityProps = new HashMap<String, Object>();
@@ -1754,12 +1754,12 @@ if(hasCXFRegistryProvider){
         } catch (Exception e) {
             throw new RuntimeException("Cannot load service properties", e);
         }
-        
+
         <%} else {%>
             org.apache.wss4j.dom.validate.JAASUsernameTokenValidator jaasUTValidator = new org.apache.wss4j.dom.validate.JAASUsernameTokenValidator();
             jaasUTValidator.setContextName("karaf");
         <%}%>
-        
+
         final String userName = (String) securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME);
         final Map<String, Object> endpointProps = new HashMap<String, Object>();
         endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME, userName);
@@ -1778,7 +1778,7 @@ if(hasCXFRegistryProvider){
             }
             endpointProps.put(org.talend.esb.authorization.xacml.rt.pep.AuthorizationConstants.PDP_ADDRESS_PROPERTY, pepProps.get("tesb.pdp.address"));
         <%}%>
-        
+
         cxfEndpoint.setProperties(endpointProps);
     }
 <%}%>
@@ -1827,7 +1827,7 @@ private void addSAMLToken(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint
 if(hasCXFSamlTokenConsumer){
 %>
     if (!isProvider) {
-    
+
         <% if(exportTypeSpringBoot) {%>
             Properties stsProperties = new Properties();
             java.io.InputStream stsCfg = getConfigLocation("org.talend.esb.job.client.sts.cfg");
@@ -1837,14 +1837,14 @@ if(hasCXFSamlTokenConsumer){
             } catch (Exception e) {
                 throw new RuntimeException("Cannot load client properties", e);
             }
-            
+
             Map<String, String> stsProps = new HashMap<String, String>();
             for (Map.Entry<Object, Object> entry : stsProperties.entrySet()) {
                     stsProps.put((String)entry.getKey(), (String)entry.getValue());
             }
             new org.talend.esb.security.saml.STSClientUtils(stsProps);
         <%}%>
-        
+
         final org.apache.cxf.ws.security.trust.STSClient stsClient;
         if (usePropagateSamlAP) {
             stsClient = org.talend.esb.security.saml.STSClientUtils.createSTSX509Client(bus, token[4]);
@@ -1860,14 +1860,14 @@ if(hasCXFSamlTokenConsumer){
         clientProps.put(
                 org.apache.cxf.ws.security.SecurityConstants.STS_CLIENT,
                 stsClient);
-                
+
         <% if(exportTypeSpringBoot){ %>
             Properties clientPropertiesTmp = new Properties();
             java.io.InputStream clientCfg = getConfigLocation("org.talend.esb.job.client.cfg");
-            
+
             try {
                     clientPropertiesTmp.load(clientCfg);
-                    
+
                     clientProperties = new HashMap<String, String>();
                     for (String key : clientPropertiesTmp.stringPropertyNames()) {
                         clientProperties.put(key, clientPropertiesTmp.getProperty(key));
@@ -1904,22 +1904,22 @@ if(hasCXFSamlTokenConsumer){
 }
 if(hasCXFSamlTokenProvider){
 %>
-        
+
 if (isProvider) {
         // set endpoint properties
         <%if(exportTypeSpringBoot){%>
-        
+
         Properties serviceProps = new Properties();
         java.io.InputStream serviceCfg = getConfigLocation("org.talend.esb.job.service.cfg");
-        
+
         try {
             serviceProps.load(serviceCfg);
-            
+
             securityProps = new HashMap<String, Object>();
             for (String key : serviceProps.stringPropertyNames()) {
                 securityProps.put(key, serviceProps.getProperty(key));
             }
-            
+
         } catch (Exception e) {
             throw new RuntimeException("Cannot load service properties", e);
         }
@@ -1929,7 +1929,7 @@ if (isProvider) {
         endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_USERNAME, userName);
         endpointProps.put(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES, securityProps.get(org.apache.cxf.ws.security.SecurityConstants.SIGNATURE_PROPERTIES));
         endpointProps.put(org.apache.cxf.rt.security.SecurityConstants.CALLBACK_HANDLER, new org.talend.esb.security.saml.WSPasswordCallbackHandler(userName, (String) securityProps.get("security.signature.password")));
-        
+
         <%if(exportTypeSpringBoot){%>
         if(useAuthorization){
             Properties pepProps = new Properties();
@@ -1954,7 +1954,7 @@ if (isProvider) {
 %>
         // add policy
         org.apache.neethi.Policy policy;
-        
+
         <%if(exportTypeSpringBoot){%>
             java.io.InputStream policyInput = null;
             if (useAuthorization) {
@@ -1962,8 +1962,8 @@ if (isProvider) {
             } else {
                 policyInput = getConfigLocation("org.talend.esb.job.saml.policy");
             }
-    
-            
+
+
             try {
                 policy = cxfEndpoint.getBus().getExtension(org.apache.cxf.ws.policy.PolicyBuilder.class).getPolicy(policyInput);
             } catch (Exception e) {
@@ -1976,7 +1976,7 @@ if (isProvider) {
                 policy = policyProvider.getSAMLPolicy(bus);
             }
         <%}%>
-        
+
         cxfEndpoint.getFeatures().add(new org.apache.cxf.ws.policy.WSPolicyFeature(policy));
 }<%
 }//end if(hasCXFSamlTokenConsumer || hasCXFSamlTokenProvider)
@@ -2010,7 +2010,7 @@ if (isProvider) {
                 compositeRegistry.addRegistry(registry);
                 ((org.apache.camel.impl.DefaultCamelContext) camelContext).setRegistry(compositeRegistry);
 
-                
+
                 <%if(exportTypeSpringBoot){%>
 
                 <%}else{%>
@@ -2045,17 +2045,17 @@ if (isProvider) {
                         hasCXFConsumer = true;
                     }else{
                         String dataformat = ElementParameterParser.getValue(n, "__DATAFORMAT__");
-                        
+
                         String useServiceRegistry = ElementParameterParser.getValue(n, "__ENABLE_REGISTRY__");
                         if(!isStudioEEVersion || "RAW".equals(dataformat) || "CXF_MESSAGE".equals(dataformat)){
                             useServiceRegistry = "false";
                         }
-                        
+
                         String useSecurity = ElementParameterParser.getValue(n, "__ENABLE_SECURITY__");
                         if("true".equals(useServiceRegistry) || "RAW".equals(dataformat) || "CXF_MESSAGE".equals(dataformat)){
                             useSecurity = "false";
                         }
-                        
+
                         if("true".equals(useServiceRegistry) || ("true".equals(useSecurity) && "SAML".equals(ElementParameterParser.getValue(n, "__SECURITY_TYPE__")))){
                             hasCXFSAMLProvider = true;
                         }
@@ -2105,10 +2105,10 @@ if (isProvider) {
 %>
 
                             <%if(exportTypeSpringBoot){%>
-                            
+
                             Properties pepProps = new Properties();
                             java.io.InputStream pepCfg = getConfigLocation("org.talend.esb.authorization.pep.cfg");
-                    
+
                             try {
                                 pepProps.load(pepCfg);
                                 <%
@@ -2118,15 +2118,15 @@ if (isProvider) {
                                         new org.talend.esb.authorization.xacml.rt.pep.CXFXACMLAuthorizingInterceptor();
                                 _authorizationInterceptor.setPdpAddress(pepProps.getProperty("tesb.pdp.address"));
                                 authorizationInterceptor = (org.apache.cxf.interceptor.Interceptor) _authorizationInterceptor;
-                                
+
                                 <%}%>
                             } catch (Exception e) {
                                 throw new RuntimeException("Cannot load pep properties", e);
                             }
-                            
+
                             Properties serviceProps = new Properties();
                             java.io.InputStream serviceCfg = getConfigLocation("org.talend.esb.job.service.cfg");
-                            
+
                             try {
                                     serviceProps.load(serviceCfg);
                                 securityProps = new HashMap<String, Object>();
@@ -2137,7 +2137,7 @@ if (isProvider) {
                                 throw new RuntimeException("Cannot load service properties", e);
                             }
                             <%}%>
-                            
+
                             if (null != securityProps) {
                                 org.talend.esb.security.saml.SAMLRESTUtils.configureServer(sf_<%=cid%>, securityProps);
                                 <% if ("true".equals(ElementParameterParser.getValue(node, "__USE_AUTHORIZATION__"))) { %>
@@ -2156,7 +2156,7 @@ if (isProvider) {
                                 super.setBus(bus);
                             }
                         };
-                        
+
                         <%if(exportTypeSpringBoot){%>
                             public org.apache.cxf.jaxrs.client.WebClient createWebClient(){
                                 org.apache.cxf.jaxrs.client.WebClient ws = super.createWebClient();
@@ -2164,9 +2164,9 @@ if (isProvider) {
                                         .getConfig(ws);
                                 org.apache.cxf.transport.http.HTTPConduit conduit = (org.apache.cxf.transport.http.HTTPConduit) config
                                         .getConduit();
-                
+
                                 String urlString = "<%=node.getUniqueName()%>";
-                                
+
                                 String configName = "org.apache.cxf.http.conduits-" + urlString + ".cfg";
                                 java.util.Dictionary<String, String> dic = loadHttpConduitProperties(configName);
                                 HttpConduitConfigApplier configApplier = new HttpConduitConfigApplier();
@@ -2198,18 +2198,18 @@ if (isProvider) {
                             <%if(exportTypeSpringBoot){%>
                                 Properties stsProperties = new Properties();
                                 java.io.InputStream stsCfg = getConfigLocation("org.talend.esb.job.client.sts.cfg");
-                        
+
                                 try {
                                     stsProperties.load(stsCfg);
                                 } catch (Exception e) {
                                     throw new RuntimeException("Cannot load client properties", e);
                                 }
-                        
+
                                 Map<String, String> stsProps = new HashMap<String, String>();
                                 for (Map.Entry<Object, Object> entry : stsProperties.entrySet()) {
                                     stsProps.put((String)entry.getKey(), (String)entry.getValue());
                                 }
-                                
+
                                 new org.talend.esb.security.saml.STSClientUtils(stsProps);
                             <%}else{%>
                                 if (!inOSGi) {
@@ -2231,7 +2231,7 @@ if (isProvider) {
 <% 
                 if (isProvider) {
 %>
-                
+
                 <%if(exportTypeSpringBoot){%>
                     factory_<%=cid%>.setAddress(<%=ElementParameterParser.getValue(node, "__URL__")%>);
                 <%}else{%>
@@ -2308,7 +2308,7 @@ if (isProvider) {
                     }
 <%
 					if(exportTypeSpringBoot){
-%>					
+%>
 						else {
 							factory_<%=cid%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
 						}
@@ -2341,9 +2341,9 @@ if (isProvider) {
                 String classQualifiedName = ElementParameterParser.getValue(node, "__CLASS_QUALIFIED_NAME__");
                 String hasArguments = ElementParameterParser.getValue(node, "__SPECIFY_ARGUMENTS__");
                 List<Map<String, String>> arguments = (List<Map<String, String>>) ElementParameterParser.getObjectValue(node, "__ARGUMENTS__");
-                
+
                 String code = ElementParameterParser.getValue(node, "__CODE__");
-                
+
                 if("true".equals(isSimple)){
                     StringBuilder sb = new StringBuilder();
                     if("true".equals(hasArguments)){
@@ -2372,7 +2372,7 @@ if (isProvider) {
                 }
             }
             }
-            
+
             //after, process cDataset 
             List<? extends INode> datasetNodes = process.getNodesOfType("cDataset");
             for(INode n: datasetNodes){
@@ -2411,7 +2411,7 @@ if (isProvider) {
                 //Component Name
                 String name = cid.replace("_", "");
                 name = "\"" + name + "\"";
-            
+
                 //ActiveMQ
                 String mqType = ElementParameterParser.getValue(node, "__MQ_TYPE__");
                 String amqUseRetroactiveConsumer = ElementParameterParser.getValue(node, "__AMQ_USE_RETROACTIVE_CONSUMER__").trim();
@@ -2446,13 +2446,13 @@ if (isProvider) {
 <%
                     }
                     String amqPool = ElementParameterParser.getValue(node, "__AMQ_POOL__").trim();
-                    
+
                     if("true".equals(amqPool)){
                          String amq_pool_max_connections = ElementParameterParser.getValue(node, "__AMQ_POOL_MAX_CONNECTIONS__").trim();
                          String amq_pool_max_active = ElementParameterParser.getValue(node, "__AMQ_POOL_MAX_ACTIVE__").trim();
                          String amq_pool_idle_timeout = ElementParameterParser.getValue(node, "__AMQ_POOL_IDLE_TIMEOUT__").trim();
                          String amq_pool_expiry_timeout = ElementParameterParser.getValue(node, "__AMQ_POOL_EXPIRY_TIMEOUT__").trim();
-    
+
                          if(amq_pool_max_connections.startsWith("\"")){
                             amq_pool_max_connections = amq_pool_max_connections.substring(1);
                         }
@@ -2500,11 +2500,11 @@ if (isProvider) {
                     String wmqTransportType = ElementParameterParser.getValue(node, "__WMQ_TRANSPORT_TYPE__");
                     String wmqUM = ElementParameterParser.getValue(node, "__WMQ_QUEUE_MANAGER__");
                     String wmqChannel = ElementParameterParser.getValue(node, "__WMQ_CHANNEL__");
-                    
+
                     //Username and password, http://jira.talendforge.org/browse/TESB-4073
                     String username = ElementParameterParser.getValue(node, "__WMQ_USERNAME__");
                     String useAuth = ElementParameterParser.getValue(node, "__WMQ_AUTH__");
-                    
+
                     if(wmqPort.startsWith("\"")){
                         wmqPort = wmqPort.substring(1);
                     }
@@ -2517,7 +2517,7 @@ if (isProvider) {
                     if(wmqTransportType.endsWith("\"")){
                         wmqTransportType = wmqTransportType.substring(0, wmqTransportType.length() - 1);
                     }
-                    
+
 %>
                     {
                     javax.jms.ConnectionFactory jmsConnectionFactory = new com.ibm.mq.jms.MQQueueConnectionFactory();
@@ -2541,26 +2541,26 @@ if (isProvider) {
 %>
                     camelContext.addComponent(<%=name%>,
                         org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory));
-<%                  
+<%
                     }else{
 %>
                     org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter connectionFactoryAdapter<%=cid%> 
                             = new org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter();
                     connectionFactoryAdapter<%=cid%>.setUsername(<%=username%>);
-                    
+
                     <%
                     String passwordFieldName = "__WMQ_PASSWORD__";
                     %>
-                    
+
                     <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
-                                        
+
                     connectionFactoryAdapter<%=cid%>.setPassword(decryptedPassword_<%=cid%>);
                     connectionFactoryAdapter<%=cid%>.setTargetConnectionFactory(jmsConnectionFactory);
-       
+
                     camelContext.addComponent(<%=name%>,
                         org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(connectionFactoryAdapter<%=cid%>));
-<%                      
-                    }                   
+<%
+                    }
 %>
                     }
 <%
@@ -2568,7 +2568,7 @@ if (isProvider) {
                     String host = helper.getStringParam("__AMQP_BROKER_URI__");
                     boolean useSSL = helper.getBoolParam("__AMQP_SSL__");
                     boolean useAuth = helper.getBoolParam("__AMQP_USE_AUTH__");
-                    
+
                     StringBuilder ep = new StringBuilder();
                     ep.append("\"");
                     ep.append(useSSL?"amqps":"amqp");
@@ -2579,7 +2579,7 @@ if (isProvider) {
                         String passwordFieldName = "__AMQP_PASSWORD__";
 
                         %><%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%><%
-                        
+
                         ep.append("decryptedPassword_");
                         ep.append(cid);
                         ep.append("+ \"@\" +");
@@ -2590,7 +2590,7 @@ if (isProvider) {
                         ep.append("+ \":\" + ");
                         ep.append(port);
                     }
-%>              
+%>
                     camelContext.addComponent(<%=name%>,
                             new org.apache.camel.component.amqp.AMQPComponent(org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl.createFromURL(<%=ep.toString()%>)));
                     //((org.apache.camel.component.amqp.AMQPComponent) camelContext.getComponent(<%=name%>)).getConfiguration().setClientId("<%=process.getName().toLowerCase()%>" + java.util.UUID.randomUUID().toString());
@@ -2612,11 +2612,11 @@ if (isProvider) {
                 if ("true".equals(useActiveMQTTAuth)){
                     String username = ElementParameterParser.getValue(node, "__MQTT_USERNAME__");
                     String passwordFieldName = "__MQTT_PASSWORD__";
-%>              
+%>
                     <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
                     config.setUserName(<%=username%>);
                     config.setPassword(decryptedPassword_<%=cid%>);
-<%              
+<%
                 }
 %>
                             config.setHost(<%=brokerUri%>);
@@ -2631,7 +2631,7 @@ if (isProvider) {
                                 javax.net.ssl.TrustManagerFactory tmf = javax.net.ssl.TrustManagerFactory
                                 .getInstance(javax.net.ssl.TrustManagerFactory
                                         .getDefaultAlgorithm());
-    
+
                                 java.io.FileInputStream fis = new java.io.FileInputStream(
                                         <%=helper.getStringParam("__MQTT_SSL_TRUST_STORE__")%>);
                                 java.security.KeyStore ks = java.security.KeyStore
@@ -2641,17 +2641,17 @@ if (isProvider) {
                                 ks.load(fis, decryptedPassword_<%=cid%>.toCharArray());
                                 fis.close();
                                 tmf.init(ks);
-                                
+
                                 javax.net.ssl.KeyManagerFactory kmf = javax.net.ssl.KeyManagerFactory
                                 .getInstance(javax.net.ssl.KeyManagerFactory
                                         .getDefaultAlgorithm());
-                                        
+
                                 java.io.FileInputStream kfis = new java.io.FileInputStream(
                                         <%=helper.getStringParam("__MQTT_SSL_KEY_STORE__")%>);
                                 java.security.KeyStore kks = java.security.KeyStore
                                         .getInstance(java.security.KeyStore.getDefaultType());
                                 <%passwordFieldName = "__MQTT_SSL_KEY_STORE_PASSWORD__";%>
-                                
+
                                 <% if (ElementParameterParser.canEncrypt(node, passwordFieldName)) {%> 
                                     String kDecryptedPassword_<%=cid%> = routines.system.PasswordEncryptUtil.decryptPassword(<%=ElementParameterParser.getEncryptedValue(node, passwordFieldName)%>);
                                 <%} else {%>
@@ -2660,7 +2660,7 @@ if (isProvider) {
                                 kks.load(kfis, kDecryptedPassword_<%=cid%>.toCharArray());
                                 kfis.close();
                                 kmf.init(kks, kDecryptedPassword_<%=cid%>.toCharArray());
-                                
+
                                 javax.net.ssl.SSLContext sslContext = javax.net.ssl.SSLContext.getInstance("SSL");
                                 sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new java.security.SecureRandom());
                                 config.setSslContext(sslContext);
@@ -2680,9 +2680,9 @@ if (isProvider) {
                     }
 <%
                 }
-            
+
             }
-            
+
     List< ? extends INode> processNodes = (List< ? extends INode>)process.getGraphicalNodes();
     for (INode node : processNodes) {
             if (!node.isActivate()) {
@@ -2765,7 +2765,7 @@ if (isProvider) {
                     roleName = "\"\"";
                 }
             }
-            
+
             if((useSecurity || useRegistry) && !isProvider) {
                 String passwordFieldName = "__PASSWORD__";
 %>
@@ -2832,7 +2832,7 @@ if (isProvider) {
                         <%=endpointVar%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
                     }
                 <%}%>
-                
+
 
                 <% if (!customProperties.isEmpty()) { %>
                     java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
@@ -2863,7 +2863,7 @@ if (isProvider) {
 					} 
                     endpointProps_<%=cid%>.put(org.talend.esb.servicelocator.cxf.LocatorFeature.LOCATOR_PROPERTIES, slCustomProps_<%=cid%>);					
                     <%=endpointVar%>.setProperties(endpointProps_<%=cid%>);					
-<%			
+<%
 					}
 			}
 %>
@@ -2890,7 +2890,7 @@ if (isProvider) {
             String passwordFieldName = "__PASSWORD__";
 %>
             <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
-            
+
 <%
 
     }else if("cMail".equals(nodeComponentName)){
@@ -2898,7 +2898,7 @@ if (isProvider) {
             String passwordFieldName = "__PASSWORD__";
 %>
             <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
-            
+
 <%  }else if("cAggregate".equals(nodeComponentName)){
                 boolean usePersistence = "true".equals(ElementParameterParser.getValue(node, "__USE_PERSISTENCE__"));
                 String repository = ElementParameterParser.getValue(node, "__REPOSITORY__");
@@ -3037,7 +3037,7 @@ if (isProvider) {
                 }
                 String cid = param.getUniqueName();
                 List<Map<String, String>> namespaceValues = (List<Map<String,String>>)ElementParameterParser.getObjectValue(param, "__NAMESPACES__");
-%>          
+%>
                 Map<String, String> <%=cid%>NSMap = new HashMap<String, String>();
                 {
 <%
@@ -3054,7 +3054,7 @@ if (isProvider) {
             }
         }
     } else if("cRecipientList".equals(nodeComponentName)||"cSplitter".equals(nodeComponentName) 
-    			|| "cSetBody".equals(nodeComponentName) || "cMessageFilter".equals(nodeComponentName)) {
+                || "cSetBody".equals(nodeComponentName) || "cMessageFilter".equals(nodeComponentName)) {
         String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
         if(!"xpath".equals(language)){
             continue;
@@ -3145,6 +3145,7 @@ if (isProvider) {
 %>
 <%  } else if("cTalendJob".equals(nodeComponentName)){
     if (!node.getIncomingConnections().isEmpty()) {
+        String ownerName = process.getName();
         String cid = node.getUniqueName();
         List<Map<String, String>> contextParams = null;
         String useJar = ElementParameterParser.getValue(node, "__FROM_EXTERNAL_JAR__");
@@ -3157,7 +3158,7 @@ if (isProvider) {
             contextParams = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node, "__EXTERNAL_JAR_CONTEXTPARAMS__");
 %>
         org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
-            (org.talend.camel.TalendEndpoint) endpoint("talend:"+ <%=typeName%>+ "?context=" + <%=context%>+"&propagateHeader=<%=propagateHeader%>");
+            (org.talend.camel.TalendEndpoint) endpoint("talend:" + <%=typeName%> + "?context=" + <%=context%> + "&propagateHeader=<%=propagateHeader%>");
 <%
         }else{
             String typeName = "";
@@ -3172,7 +3173,7 @@ if (isProvider) {
                     // TESB-13614
                     // we can't define context during codegeneration in this case, because
                     // context will provided to the job before execution
-                    context = "NOT_DEFINED";                    
+                    context = "NOT_DEFINED";
 
                 }else if("true".equals(useJobContext)){
                     context = ElementParameterParser.getProcessSelectedContext(id);
@@ -3182,7 +3183,7 @@ if (isProvider) {
 //              String jobName = (String) node.getElementParameter("SELECTED_JOB_NAME").getValue();
                 String jobVersion = ElementParameterParser.getStringElementParameterValue(node.getElementParameter("PROCESS_TYPE_VERSION"));
                 String jobFolderName = JavaResourcesHelper.getJobFolderName(jobName, jobVersion);
-                
+
                 try{
                     String selectedId = (String) node.getElementParameter("PROCESS_TYPE_PROCESS").getValue();
                     String selectedContext = (String) node.getElementParameter("PROCESS_TYPE_CONTEXT").getValue();
@@ -3193,17 +3194,17 @@ if (isProvider) {
                     typeName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + jobFolderName + "." + jobName;
                 }
             }
-            
+
             if("NOT_DEFINED".equals(context)){
                 String executionContextVariable = "contextStr";
 %>
             org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
-                (org.talend.camel.TalendEndpoint) endpoint("talend:"+"<%=typeName%>"+"?context="+<%=executionContextVariable%>+"&propagateHeader=<%=propagateHeader%>");
+                (org.talend.camel.TalendEndpoint) endpoint("talend:<%=ownerName%>/<%=typeName%>?context=" + <%=executionContextVariable%> + "&propagateHeader=<%=propagateHeader%>");
 <%
             } else {
 %>
             org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
-                (org.talend.camel.TalendEndpoint) endpoint("talend:"+"<%=typeName%>"+"?context="+"<%=context%>&propagateHeader=<%=propagateHeader%>");
+                (org.talend.camel.TalendEndpoint) endpoint("talend:<%=ownerName%>/<%=typeName%>?context=<%=context%>&propagateHeader=<%=propagateHeader%>");
 <%
             }
         }
