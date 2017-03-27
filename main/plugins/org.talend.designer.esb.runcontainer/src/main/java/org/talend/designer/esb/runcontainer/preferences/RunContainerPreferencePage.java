@@ -13,6 +13,8 @@
 package org.talend.designer.esb.runcontainer.preferences;
 
 import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -36,6 +38,7 @@ import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeAction;
+import org.talend.designer.esb.runcontainer.ui.dialog.RunClientDialog;
 import org.talend.designer.esb.runcontainer.ui.wizard.AddRuntimeWizard;
 import org.talend.designer.esb.runcontainer.util.FileUtil;
 
@@ -177,24 +180,30 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
             public void widgetSelected(SelectionEvent e) {
                 try {
                     new StartRuntimeAction().run();
+
                     if (RuntimeServerController.getInstance().isRunning()) {
-                        Process startAll = RuntimeServerController.getInstance().startClient(locationEditor.getStringValue(),
-                                hostFieldEditor.getStringValue(), userFieldEditor.getStringValue(),
-                                passwordFieldEditor.getStringValue(), "tesb:start-all"); //$NON-NLS-1$
-                        startAll.waitFor();
-                        Process amq = RuntimeServerController.getInstance().startClient(locationEditor.getStringValue(),
-                                hostFieldEditor.getStringValue(), userFieldEditor.getStringValue(),
-                                passwordFieldEditor.getStringValue(), "feature:install activemq-broker"); //$NON-NLS-1$
-                        amq.waitFor();
-                        MessageDialog.openInformation(getShell(),
-                                RunContainerMessages.getString("RunContainerPreferencePage.InitalizeMessage"), //$NON-NLS-1$
-                                RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog1")); //$NON-NLS-1$
+                        File launcher;
+                        String os = System.getProperty("os.name");
+                        if (os != null && os.toLowerCase().contains("windows")) {
+                            launcher = new File(locationEditor.getStringValue() + "/bin/client.bat");
+                        } else {
+                            launcher = new File(locationEditor.getStringValue() + "/bin/client");
+                        }
+                        InputStream stream = RunContainerPreferencePage.class.getResourceAsStream("/resources/commands");
+                        File initFile = new File(locationEditor.getStringValue() + "/bin/initlocal");
+                        if (!initFile.exists()) {
+                            Files.copy(stream, initFile.toPath());
+                        }
+                        String command = launcher.getAbsolutePath() + " -h " + hostFieldEditor.getStringValue() + " -u "
+                                + userFieldEditor.getStringValue() + " -l 2 -f \"" + initFile.getAbsolutePath() + "\"";
+                        RunClientDialog.runClientWithCommandConsole(getShell(), command);
                     } else {
                         MessageDialog.openError(
                                 getShell(),
                                 RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog2"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog3")); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 } catch (Exception e1) {
+                    e1.printStackTrace();
                     MessageDialog.openError(
                             getShell(),
                             RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog4"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog5") + e1); //$NON-NLS-1$ //$NON-NLS-2$
@@ -208,10 +217,10 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         groupEnd.setBounds(0, 0, 70, 82);
         groupEnd.setLayout(new GridLayout(1, false));
 
-        //Composite compScript = new Composite(groupEnd, SWT.NONE);
-        //addField(new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_MAVEN_SCRIPT,
-          //      RunContainerMessages.getString("RunContainerPreferencePage.MavenScript"), //$NON-NLS-1$
-            //    BooleanFieldEditor.DEFAULT, compScript));
+        // Composite compScript = new Composite(groupEnd, SWT.NONE);
+        // addField(new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_MAVEN_SCRIPT,
+        //      RunContainerMessages.getString("RunContainerPreferencePage.MavenScript"), //$NON-NLS-1$
+        // BooleanFieldEditor.DEFAULT, compScript));
 
         Composite compCache = new Composite(groupEnd, SWT.NONE);
         GridLayout gl_compCache = new GridLayout(2, false);
@@ -264,6 +273,7 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         addField(new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_SYS_LOG,
                 RunContainerMessages.getString("RunContainerPreferencePage.FilterLogs"), //$NON-NLS-1$
                 BooleanFieldEditor.DEFAULT, compFilter));
+
         return container;
     }
 
