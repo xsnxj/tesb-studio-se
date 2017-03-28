@@ -30,6 +30,19 @@
 			}
 			((ESBProviderCallbackTalendJobInner) globalMap.get("esbHandler")).sendFaultByDefault(e_<%=cid%>);
 		} finally {
+			// close DB connections
+			try {
+				java.util.Map<String, routines.system.TalendDataSource> talendDataSources = 
+					(java.util.Map<String, routines.system.TalendDataSource>) globalMap.get(KEY_DB_DATASOURCES);
+				if (null != talendDataSources) {
+					for (routines.system.TalendDataSource talendDataSource : talendDataSources.values()) {
+						talendDataSource.close();
+					}
+				}
+			} catch (Throwable e_<%=cid%>) {
+			    e_<%=cid%>.printStackTrace(System.err);
+			}
+
 			// Exit from this loop is made by the configuring "Keep listening"
 			// parameter to false. Then we will have a break before.
 			if ("false".equals("<%=keepListening%>")) {
