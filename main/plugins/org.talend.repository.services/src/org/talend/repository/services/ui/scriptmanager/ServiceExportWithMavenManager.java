@@ -135,9 +135,11 @@ public class ServiceExportWithMavenManager extends JavaScriptForESBWithMavenMana
                 + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME);
 
         try {
+            final Map<String, Object> templateParameters = PomUtil.getTemplateParameters(item.getProperty());
+            
             String mavenScript = MavenTemplateManager.getTemplateContent(templatePomFile,
                     IProjectSettingPreferenceConstants.TEMPLATE_SERVICES_KARAF_POM, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
-                    IProjectSettingTemplateConstants.PATH_SERVICES + '/' + TalendMavenConstants.POM_FILE_NAME);
+                    IProjectSettingTemplateConstants.PATH_SERVICES + '/' + TalendMavenConstants.POM_FILE_NAME,templateParameters);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFile, mavenPropertiesMap, false, true);
@@ -147,7 +149,7 @@ public class ServiceExportWithMavenManager extends JavaScriptForESBWithMavenMana
             mavenScript = MavenTemplateManager.getTemplateContent(templateBundleFile,
                     IProjectSettingPreferenceConstants.TEMPLATE_SERVICES_KARAF_BUNDLE, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
                     IProjectSettingTemplateConstants.PATH_SERVICES + '/'
-                            + IProjectSettingTemplateConstants.MAVEN_CONTROL_BUILD_BUNDLE_FILE_NAME);
+                            + IProjectSettingTemplateConstants.MAVEN_CONTROL_BUILD_BUNDLE_FILE_NAME,templateParameters);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildBundleFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildBundleFile, mavenPropertiesMap, true, false);
@@ -157,7 +159,7 @@ public class ServiceExportWithMavenManager extends JavaScriptForESBWithMavenMana
             mavenScript = MavenTemplateManager.getTemplateContent(templateFeatureFile,
                     IProjectSettingPreferenceConstants.TEMPLATE_SERVICES_KARAF_FEATURE, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
                     IProjectSettingTemplateConstants.PATH_SERVICES + '/'
-                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_FEATURE_FILE_NAME);
+                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_FEATURE_FILE_NAME,templateParameters);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFeatureFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFeatureFile, mavenPropertiesMap);
@@ -167,7 +169,7 @@ public class ServiceExportWithMavenManager extends JavaScriptForESBWithMavenMana
             mavenScript = MavenTemplateManager.getTemplateContent(templateParentFile,
                     IProjectSettingPreferenceConstants.TEMPLATE_SERVICES_KARAF_PARENT, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
                     IProjectSettingTemplateConstants.PATH_SERVICES + '/'
-                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME);
+                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME,templateParameters);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildParentFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildParentFile, mavenPropertiesMap);
