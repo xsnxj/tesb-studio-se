@@ -55,7 +55,7 @@
 	//params=process.getContextManager().getDefaultContext().getContextParameterList();
 	boolean isTestContainer = ProcessUtils.isTestContainer(process);
 	String className = isTestContainer ? process.getName() + "Test" : process.getName();
-	String extendsClassName = isTestContainer ? "org.apache.camel.test.junit4.CamelTestSupport" : "org.apache.camel.builder.RouteBuilder"; 
+	String extendsClassName = isTestContainer ? "org.apache.camel.test.junit4.CamelTestSupport" : "org.apache.camel.builder.RouteBuilder";
 %>
 <%
 IBrandingService service = (IBrandingService) GlobalServiceRegister.getDefault().getService(IBrandingService.class);
@@ -546,6 +546,12 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
         put("HTML", "{ \"text/html\" }");
         put("ANY", "{ \"*/*\" }");
     }};
+
+	if ("true".equals(ElementParameterParser.getValue(node, "__EXPOSE_SWAGGER_SPEC__"))) {
+	%>
+	@javax.ws.rs.Path("/")
+	@io.swagger.annotations.Api(value = "/", description = "<%=className%> <%=cid%> JAX-RS service")<%
+	}
 %>
     public interface Service_<%=cid%> {
 <% 
@@ -562,19 +568,34 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
         @javax.ws.rs.Path(<%=uriPattern%>)
         @javax.ws.rs.<%=httpVerb%>()
 <%
+            String consumesContentTypes = null;
             if (contentTypes.containsKey(consumes)) {
-                String consumesContentTypes = contentTypes.get(consumes);
+                consumesContentTypes = contentTypes.get(consumes);
 %>
         @javax.ws.rs.Consumes(<%=consumesContentTypes%>)
 <%
             }
 
              //if (null != produces) {
+            String producesContentTypes = null;
             if (contentTypes.containsKey(produces)) {
-                String producesContentTypes = contentTypes.get(produces);
+                producesContentTypes = contentTypes.get(produces);
 %>
         @javax.ws.rs.Produces(<%=producesContentTypes%>)
 <%
+            }
+            if ("true".equals(ElementParameterParser.getValue(node, "__EXPOSE_SWAGGER_SPEC__"))) {
+                String opName = "Operation " + outputConn;
+                String notes = "";
+                if (producesContentTypes != null) {
+                    notes += "Produces: " + producesContentTypes + " ";
+                }
+                if (consumesContentTypes != null) {
+                    notes += "Consumes: " + consumesContentTypes;
+                }
+                notes = notes.replaceAll("\"", "");
+            %>
+        @io.swagger.annotations.ApiOperation(value = "<%=opName%>", notes = "<%=notes%>")<%
             }
 %>
         Object <%=outputConn%>(
@@ -2195,6 +2216,20 @@ if (isProvider) {
                                 });
                             <%
                         }
+                    }
+                    if ("true".equals(ElementParameterParser.getValue(node, "__EXPOSE_SWAGGER_SPEC__"))) {
+                    %>
+                    org.apache.cxf.jaxrs.swagger.Swagger2Feature swagger2Feature_<%=cid%> = new org.apache.cxf.jaxrs.swagger.Swagger2Feature();
+                    swagger2Feature_<%=cid%>.setScan(false);
+                    <%
+                        String epForSwagger = ElementParameterParser.getValue(node, "__URL__");
+                        epForSwagger = epForSwagger.substring(1);
+                        epForSwagger = "\"/services" + epForSwagger;
+                    %>
+                    swagger2Feature_<%=cid%>.setBasePath(<%=epForSwagger%>);
+                    swagger2Feature_<%=cid%>.setRunAsFilter(true);
+                    sf_<%=cid%>.getFeatures().add(swagger2Feature_<%=cid%>);
+                    <%
                     }
                 } else {
 %>
