@@ -2225,9 +2225,16 @@ if (isProvider) {
                         String epForSwagger = ElementParameterParser.getValue(node, "__URL__");
                         epForSwagger = epForSwagger.substring(1);
                         epForSwagger = "\"/services" + epForSwagger;
+
+                        String swaggerTitle = className + " REST Application";
                     %>
                     swagger2Feature_<%=cid%>.setBasePath(<%=epForSwagger%>);
                     swagger2Feature_<%=cid%>.setRunAsFilter(true);
+                    swagger2Feature_<%=cid%>.setTitle("<%=swaggerTitle%>");
+                    swagger2Feature_<%=cid%>.setDescription("<%=cid%>");
+                    swagger2Feature_<%=cid%>.setContact(null);
+                    swagger2Feature_<%=cid%>.setLicense(null);
+                    swagger2Feature_<%=cid%>.setLicenseUrl(null);
                     sf_<%=cid%>.getFeatures().add(swagger2Feature_<%=cid%>);
                     <%
                     }
