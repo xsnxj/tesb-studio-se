@@ -54,6 +54,7 @@
         <asm-version>5.0.3</asm-version>
         <!-- swagger dependencies -->
         <swagger.version>1.5.12</swagger.version>
+        <swagger.ui.version>2.1.8-M1</swagger.ui.version>
         <commons-lang3.version>3.2.1</commons-lang3.version>
         <slf4j-api.version>1.6.3</slf4j-api.version>
         <reflections.version>0.9.10</reflections.version>
@@ -483,6 +484,14 @@
             <artifactId>lz4</artifactId>
             <version>${lz4-version}</version>
         </dependency>
+
+        <!-- Swagger UI -->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>swagger-ui</artifactId>
+            <version>${swagger.ui.version}</version>
+        </dependency>
+
         <!-- Test Container -->
         <dependency>
             <groupId>org.apache.camel</groupId>
