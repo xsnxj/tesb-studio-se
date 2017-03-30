@@ -43,7 +43,7 @@ public class ESBRuntimeConsolePageParticipant implements IConsolePageParticipant
     @Override
     public void init(IPageBookViewPage page, IConsole console) {
 
-        startRuntimeAction = new StartRuntimeAction();
+        startRuntimeAction = new StartRuntimeAction(true);
         haltRuntimeAction = new HaltRuntimeAction();
         openRuntimeInfoAction = new OpenRuntimeInfoAction();
         serverListener = new RuntimeStatusChangeListener() {
@@ -56,19 +56,20 @@ public class ESBRuntimeConsolePageParticipant implements IConsolePageParticipant
                     public void run() {
                         startRuntimeAction.setEnabled(true);
                         haltRuntimeAction.setEnabled(false);
+                        openRuntimeInfoAction.setEnabled(false);
                     }
                 });
             }
 
             @Override
             public void startRunning() {
-                // TODO Auto-generated method stub
                 Display.getDefault().asyncExec(new Runnable() {
 
                     @Override
                     public void run() {
                         startRuntimeAction.setEnabled(false);
                         haltRuntimeAction.setEnabled(true);
+                        openRuntimeInfoAction.setEnabled(true);
                     }
                 });
             }

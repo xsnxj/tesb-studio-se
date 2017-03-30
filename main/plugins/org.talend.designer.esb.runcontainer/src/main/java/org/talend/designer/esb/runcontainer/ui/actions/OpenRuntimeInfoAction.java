@@ -44,7 +44,7 @@ public class OpenRuntimeInfoAction extends Action {
     @Override
     public void run() {
 
-        MBeanServerConnection mbsc = JMXUtil.connectToRuntime();
+        MBeanServerConnection mbsc = JMXUtil.createJMXconnection();
 
         List<Map<String, String>> list = new ArrayList<Map<String, String>>();
         try {

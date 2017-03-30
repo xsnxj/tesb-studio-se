@@ -80,7 +80,7 @@ public class RuntimeServerController {
             }
 
             if (launcher.exists()) {
-                runtimeProcess = Runtime.getRuntime().exec(launcher.getAbsolutePath()); // rtPb.start();
+                runtimeProcess = Runtime.getRuntime().exec(launcher.getAbsolutePath(), null, launcher.getParentFile());
             } else {
                 throw new IOException("Cannot find launcher file in " + launcher.getPath());
             }
@@ -119,7 +119,7 @@ public class RuntimeServerController {
         if (runtimeProcess != null && runtimeProcess.isAlive()) {
             return true;
         }
-        return JMXUtil.testConnection();
+        return JMXUtil.isConnected();
     }
 
     /**
@@ -141,7 +141,7 @@ public class RuntimeServerController {
         private boolean status = false;
 
         public RuntimeServerStatusMonitor() {
-            serverJMX = JMXUtil.connectToRuntime();
+            serverJMX = isRunning() ? JMXUtil.createJMXconnection() : null;
             if (serverJMX != null) {
                 status = true;
                 try {
@@ -206,7 +206,7 @@ public class RuntimeServerController {
                             listener.stopRunning();
                         }
                     }
-                    TimeUnit.SECONDS.sleep(2);
+                    TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

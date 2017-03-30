@@ -55,7 +55,7 @@
 	//params=process.getContextManager().getDefaultContext().getContextParameterList();
 	boolean isTestContainer = ProcessUtils.isTestContainer(process);
 	String className = isTestContainer ? process.getName() + "Test" : process.getName();
-	String extendsClassName = isTestContainer ? "org.apache.camel.test.junit4.CamelTestSupport" : "org.apache.camel.builder.RouteBuilder"; 
+	String extendsClassName = isTestContainer ? "org.apache.camel.test.junit4.CamelTestSupport" : "org.apache.camel.builder.RouteBuilder";
 %>
 <%
 IBrandingService service = (IBrandingService) GlobalServiceRegister.getDefault().getService(IBrandingService.class);
@@ -70,82 +70,82 @@ if (service instanceof AbstractBrandingService) {
     if (baseProcess != null) {
         routeFolderName = JavaResourcesHelper.getJobFolderName(baseProcess.getName(), baseProcess.getVersion()) + ".";
     }
-	routeFolderName = routeFolderName + JavaResourcesHelper.getJobFolderName(process.getName(), process.getVersion());
-	String packageName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + routeFolderName;
+    routeFolderName = routeFolderName + JavaResourcesHelper.getJobFolderName(process.getName(), process.getVersion());
+    String packageName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + routeFolderName;
 
 %>
 package <%= packageName %>;
 
 <%
-	java.util.Set<String> importsSet = new java.util.TreeSet<String>();
-/*	for (String routine : CodeGeneratorRoutine.getRequiredRoutineName(process)) {
-		if (!routine.equals(ITalendSynchronizer.TEMPLATE)) {
-			importsSet.add("import routines."+routine);
-		}
-	}
+    java.util.Set<String> importsSet = new java.util.TreeSet<String>();
+/*  for (String routine : CodeGeneratorRoutine.getRequiredRoutineName(process)) {
+        if (!routine.equals(ITalendSynchronizer.TEMPLATE)) {
+            importsSet.add("import routines."+routine);
+        }
+    }
 */
-	importsSet.add("import java.util.HashMap");
-	importsSet.add("import java.util.Map");
-	importsSet.add("import routines.TalendString");
-	importsSet.add("import routines.system.api.TalendESBRoute");
-	importsSet.add("import routines.*");
-	importsSet.add("import routines.system.*");
-	importsSet.add("import org.apache.camel.CamelContext");
-	importsSet.add("import java.util.Properties");
+    importsSet.add("import java.util.HashMap");
+    importsSet.add("import java.util.Map");
+    importsSet.add("import routines.TalendString");
+    importsSet.add("import routines.system.api.TalendESBRoute");
+    importsSet.add("import routines.*");
+    importsSet.add("import routines.system.*");
+    importsSet.add("import org.apache.camel.CamelContext");
+    importsSet.add("import java.util.Properties");
 
-	String headerImports = ElementParameterParser.getValue(process, "__HEADER_IMPORT__");
-	if(headerImports!=null && !"".equals(headerImports.trim())){
-		String[] imports = headerImports.split(";");
-		for(String s: imports){
-			if(s!=null && !"".equals(s.trim())){
-				importsSet.add(s.trim());
-			}
-		}
-	}
-	String footerImports = ElementParameterParser.getValue(process, "__FOOTER_IMPORT__");
-	if(footerImports!=null && !"".equals(footerImports.trim())){
-		String[] imports = footerImports.split(";");
-		for(String s: imports){
-			if(s!=null && !"".equals(s.trim())){
-				importsSet.add(s.trim());
-			}
-		}
-	}
+    String headerImports = ElementParameterParser.getValue(process, "__HEADER_IMPORT__");
+    if(headerImports!=null && !"".equals(headerImports.trim())){
+        String[] imports = headerImports.split(";");
+        for(String s: imports){
+            if(s!=null && !"".equals(s.trim())){
+                importsSet.add(s.trim());
+            }
+        }
+    }
+    String footerImports = ElementParameterParser.getValue(process, "__FOOTER_IMPORT__");
+    if(footerImports!=null && !"".equals(footerImports.trim())){
+        String[] imports = footerImports.split(";");
+        for(String s: imports){
+            if(s!=null && !"".equals(s.trim())){
+                importsSet.add(s.trim());
+            }
+        }
+    }
 
-	List<? extends INode> generatingNodes = process.getGeneratingNodes();
-	for(INode n: generatingNodes){
-		List<? extends IElementParameter> elementParameters = n.getElementParameters();
-		for(IElementParameter p: elementParameters){
-			if(p.getShowIf() != null && !p.isShow(elementParameters)){
-				continue;
-			}
-			if(EParameterFieldType.MEMO_IMPORT == p.getFieldType()){
-				Object value = p.getValue();
-				if(value == null || !(value instanceof String) || "".equals(((String)value).trim())){
-					continue;
-				}
-				String[] imports = ((String)value).trim().split(";");
-				for(String s: imports){
-					if(s!=null && !"".equals(s.trim())){
-						importsSet.add(s.trim());
-					}
-				}
-			}
-		}
-		
-	}
-	
-	if(isTestContainer){
-		importsSet.add("import org.apache.camel.builder.RouteBuilder");
-		importsSet.add("import org.junit.Test");
-		importsSet.add("import org.apache.camel.component.mock.MockEndpoint");
-	}
-	
-	for(String s: importsSet){
+    List<? extends INode> generatingNodes = process.getGeneratingNodes();
+    for(INode n: generatingNodes){
+        List<? extends IElementParameter> elementParameters = n.getElementParameters();
+        for(IElementParameter p: elementParameters){
+            if(p.getShowIf() != null && !p.isShow(elementParameters)){
+                continue;
+            }
+            if(EParameterFieldType.MEMO_IMPORT == p.getFieldType()){
+                Object value = p.getValue();
+                if(value == null || !(value instanceof String) || "".equals(((String)value).trim())){
+                    continue;
+                }
+                String[] imports = ((String)value).trim().split(";");
+                for(String s: imports){
+                    if(s!=null && !"".equals(s.trim())){
+                        importsSet.add(s.trim());
+                    }
+                }
+            }
+        }
+
+    }
+
+    if(isTestContainer){
+        importsSet.add("import org.apache.camel.builder.RouteBuilder");
+        importsSet.add("import org.junit.Test");
+        importsSet.add("import org.apache.camel.component.mock.MockEndpoint");
+    }
+
+    for(String s: importsSet){
 %>
-		<%=s%> ;
+        <%=s%> ;
 <%
-	}
+    }
 %>
 
 /**
@@ -488,18 +488,18 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
    } 
 %>
 
-	private boolean inOSGi;
-	
-	
+    private boolean inOSGi;
 
-	public void setArguments(Map<String, String> arguments) {
-	    inOSGi = true;
-		final String newContext = arguments.remove("context");
-		if (null != newContext) {
-			contextStr = newContext;
-		}
-		context_param.putAll(arguments);
-	}
+
+
+    public void setArguments(Map<String, String> arguments) {
+        inOSGi = true;
+        final String newContext = arguments.remove("context");
+        if (null != newContext) {
+            contextStr = newContext;
+        }
+        context_param.putAll(arguments);
+    }
 
 <%
 
@@ -507,16 +507,16 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
     boolean hasCorrelationID = false;
     boolean hasCXFRSProvider = false;
     boolean hasCXFRSServiceLocator = false;
-	for (INode node : graphicalNodes) {
-		if ("cSOAP".equals(node.getComponent().getName())) {
+    for (INode node : graphicalNodes) {
+        if ("cSOAP".equals(node.getComponent().getName())) {
             boolean useRegistry = false;
             String dataFormat = ElementParameterParser.getValue(node, "__DATAFORMAT__");
             if (isStudioEEVersion && !"RAW".equals(dataFormat) && !"CXF_MESSAGE".equals(dataFormat)) {
                 useRegistry = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_REGISTRY__"));
             }
-		    if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_SAM__"))
-				&& !"RAW".equals(dataFormat) && !useRegistry) {
-				hasSam = true;
+            if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_SAM__"))
+                    && !"RAW".equals(dataFormat) && !useRegistry) {
+                hasSam = true;
             }
             if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__")) || useRegistry) {
                 hasCorrelationID = true;
@@ -525,7 +525,7 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
     private final CorrelationIDCallbackHandler correlationIDCallbackHandler_<%=cid%> = new CorrelationIDCallbackHandler();
 <%
             } // CorrelationID
-		} else if ("cREST".equals(node.getComponent().getName())) {
+        } else if ("cREST".equals(node.getComponent().getName())) {
             if(!hasCXFRSServiceLocator){
                 hasCXFRSServiceLocator = Boolean.parseBoolean(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"));
             }
@@ -546,6 +546,13 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
         put("HTML", "{ \"text/html\" }");
         put("ANY", "{ \"*/*\" }");
     }};
+
+    if ("true".equals(ElementParameterParser.getValue(node, "__EXPOSE_SWAGGER_SPEC__"))) {
+%>
+    @javax.ws.rs.Path("/")
+    @io.swagger.annotations.Api(value = "/", description = "<%=className%> <%=cid%> JAX-RS service")
+<%
+    }
 %>
     public interface Service_<%=cid%> {
 <% 
@@ -562,19 +569,34 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
         @javax.ws.rs.Path(<%=uriPattern%>)
         @javax.ws.rs.<%=httpVerb%>()
 <%
+            String consumesContentTypes = null;
             if (contentTypes.containsKey(consumes)) {
-                String consumesContentTypes = contentTypes.get(consumes);
+                consumesContentTypes = contentTypes.get(consumes);
 %>
         @javax.ws.rs.Consumes(<%=consumesContentTypes%>)
 <%
             }
 
              //if (null != produces) {
+            String producesContentTypes = null;
             if (contentTypes.containsKey(produces)) {
-                String producesContentTypes = contentTypes.get(produces);
+                producesContentTypes = contentTypes.get(produces);
 %>
         @javax.ws.rs.Produces(<%=producesContentTypes%>)
 <%
+            }
+            if ("true".equals(ElementParameterParser.getValue(node, "__EXPOSE_SWAGGER_SPEC__"))) {
+                String opName = "Operation " + outputConn;
+                String notes = "";
+                if (producesContentTypes != null) {
+                    notes += "Produces: " + producesContentTypes + " ";
+                }
+                if (consumesContentTypes != null) {
+                    notes += "Consumes: " + consumesContentTypes;
+                }
+                notes = notes.replaceAll("\"", "");
+            %>
+        @io.swagger.annotations.ApiOperation(value = "<%=opName%>", notes = "<%=notes%>")<%
             }
 %>
         Object <%=outputConn%>(
@@ -1006,11 +1028,11 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
                 String contentClass = null;
                  if ("XML".equals(consumes) || "JSON".equals(consumes) || "XML-JSON".equals(consumes))
                  {
-                 	contentClass = beanClass == null || beanClass.isEmpty() ? "org.w3c.dom.Document" : beanClass;
+                     contentClass = beanClass == null || beanClass.isEmpty() ? "org.w3c.dom.Document" : beanClass;
                  }
                  else
                  {
-                 	contentClass = "ANY".equals(consumes) ? "String" : "org.w3c.dom.Document";
+                     contentClass = "ANY".equals(consumes) ? "String" : "org.w3c.dom.Document";
                  }
 %>
                 <%=contentClass%> payload
@@ -1034,8 +1056,8 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
 <%
             } // CorrelationID
 
-		} // "cREST"
-	} // for
+        } // "cREST"
+    } // for
 
     if (hasSam) {
 %>
@@ -1064,36 +1086,36 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
     }
 
     if (hasCXFRSProvider) {
-		String defaultUri = (String) System.getProperties().get("restServiceDefaultUri");
-		if (null == defaultUri || defaultUri.trim().isEmpty() || !defaultUri.contains("://")) {
-			defaultUri = "http://127.0.0.1:8090/";
-		} else if (!defaultUri.endsWith("/")) {
-			defaultUri = defaultUri + "/";
-		}
+        String defaultUri = (String) System.getProperties().get("restServiceDefaultUri");
+        if (null == defaultUri || defaultUri.trim().isEmpty() || !defaultUri.contains("://")) {
+            defaultUri = "http://127.0.0.1:8090/";
+        } else if (!defaultUri.endsWith("/")) {
+            defaultUri = defaultUri + "/";
+        }
 %>
-	public String getCXFRSEndpointAddress(String endpointUrl) {
-		if (inOSGi) {
-			if (endpointUrl != null && !endpointUrl.trim().isEmpty() && !endpointUrl.contains("://")) {
-				if (endpointUrl.startsWith("/services")) {
-					endpointUrl = endpointUrl.substring("/services".length());
-				}
-				if (!endpointUrl.startsWith("/")) {
-					endpointUrl = '/' + endpointUrl;
-				}
-			}
-			return endpointUrl;
-		}
-		String defaultEndpointUrl = "<%=defaultUri%>";
-		if (null == endpointUrl || endpointUrl.trim().isEmpty()) {
-				endpointUrl = defaultEndpointUrl;
-		} else if (!endpointUrl.contains("://")) { // relative
-			if (endpointUrl.startsWith("/")) {
-				endpointUrl = endpointUrl.substring(1);
-			}
-			endpointUrl = defaultEndpointUrl + endpointUrl;
-		}
-		return endpointUrl;
-	}
+    public String getCXFRSEndpointAddress(String endpointUrl) {
+        if (inOSGi) {
+            if (endpointUrl != null && !endpointUrl.trim().isEmpty() && !endpointUrl.contains("://")) {
+                if (endpointUrl.startsWith("/services")) {
+                    endpointUrl = endpointUrl.substring("/services".length());
+                }
+                if (!endpointUrl.startsWith("/")) {
+                    endpointUrl = '/' + endpointUrl;
+                }
+            }
+            return endpointUrl;
+        }
+        String defaultEndpointUrl = "<%=defaultUri%>";
+        if (null == endpointUrl || endpointUrl.trim().isEmpty()) {
+            endpointUrl = defaultEndpointUrl;
+        } else if (!endpointUrl.contains("://")) { // relative
+            if (endpointUrl.startsWith("/")) {
+                endpointUrl = endpointUrl.substring(1);
+            }
+            endpointUrl = defaultEndpointUrl + endpointUrl;
+        }
+        return endpointUrl;
+    }
 
 static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org.apache.camel.component.cxf.CxfPayload<javax.xml.transform.Source>> {
     public boolean isWriteable(Class<?> cls, java.lang.reflect.Type type, java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt) {
@@ -1992,25 +2014,25 @@ if (isProvider) {
 %>
 
 <%
-	if(isTestContainer){
+    if(isTestContainer){
 
-		if(hasCXFComponent){
+        if(hasCXFComponent){
 %>
-			private org.apache.camel.Endpoint endpoint(String uri) {
-				return context().getEndpoint(uri);
-			}
+            private org.apache.camel.Endpoint endpoint(String uri) {
+                return context().getEndpoint(uri);
+            }
 <%
-		}// end if cCxf
+        }// end if cCxf
 %>
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
 <%
-	}//end if(isTestContainer)
+    }//end if(isTestContainer)
 %>
             @Override
             public void configure() throws java.lang.Exception {
-				doConfig();
+                doConfig();
             }
 
             public void doConfig() throws java.lang.Exception {
@@ -2196,6 +2218,27 @@ if (isProvider) {
                             <%
                         }
                     }
+                    if ("true".equals(ElementParameterParser.getValue(node, "__EXPOSE_SWAGGER_SPEC__"))) {
+                    %>
+                    org.apache.cxf.jaxrs.swagger.Swagger2Feature swagger2Feature_<%=cid%> = new org.apache.cxf.jaxrs.swagger.Swagger2Feature();
+                    swagger2Feature_<%=cid%>.setScan(false);
+                    <%
+                        String epForSwagger = ElementParameterParser.getValue(node, "__URL__");
+                        epForSwagger = epForSwagger.substring(1);
+                        epForSwagger = "\"/services" + epForSwagger;
+
+                        String swaggerTitle = className + " REST Application";
+                    %>
+                    swagger2Feature_<%=cid%>.setBasePath(<%=epForSwagger%>);
+                    swagger2Feature_<%=cid%>.setRunAsFilter(true);
+                    swagger2Feature_<%=cid%>.setTitle("<%=swaggerTitle%>");
+                    swagger2Feature_<%=cid%>.setDescription("<%=cid%>");
+                    swagger2Feature_<%=cid%>.setContact(null);
+                    swagger2Feature_<%=cid%>.setLicense(null);
+                    swagger2Feature_<%=cid%>.setLicenseUrl(null);
+                    sf_<%=cid%>.getFeatures().add(swagger2Feature_<%=cid%>);
+                    <%
+                    }
                 } else {
 %>
                     org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean cf_<%=cid%> = new org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean() {
@@ -2356,13 +2399,13 @@ if (isProvider) {
                         factory_<%=cid%>.getFeatures().add(eventFeature);
                     }
 <%
-					if(exportTypeSpringBoot){
-%>					
-						else {
-							factory_<%=cid%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
-						}
+                    if(exportTypeSpringBoot){
+%>
+                        else {
+                            factory_<%=cid%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
+                        }
 <%
-					}
+                    }
                 }
 
                 if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__"))) {
@@ -2582,10 +2625,12 @@ if (isProvider) {
                         // ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setCCSID(866);
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setTransportType(<%=wmqTransportType%>);
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setQueueManager(<%=wmqUM%>);    
-<%						if (wmqTransportType.equals("1") && (wmqChannel != null) && !wmqChannel.equals("")){
+<%
+                        if (wmqTransportType.equals("1") && (wmqChannel != null) && !wmqChannel.equals("")){
 %>
-							((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setChannel(<%=wmqChannel%>);    						
-<%						}
+                            ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setChannel(<%=wmqChannel%>);    						
+<%
+                        }
 %>
 
                     } catch (javax.jms.JMSException e) {
@@ -2830,7 +2875,7 @@ if (isProvider) {
                     roleName = "\"\"";
                 }
             }
-            
+
             if((useSecurity || useRegistry) && !isProvider) {
                 String passwordFieldName = "__PASSWORD__";
 %>
@@ -2915,22 +2960,22 @@ if (isProvider) {
 <%
             } else if (useRegistry && !isProvider) {
                 List<Map<String, String>> customProperties = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node, "__SL_META_DATA__");
-				if (!customProperties.isEmpty()) { 
+                if (!customProperties.isEmpty()) { 
 %>
                     java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
                     <% for (Map<String, String> custProp : customProperties) { %>
                         slCustomProps_<%=cid%>.put(<%=custProp.get("NAME")%>, <%=custProp.get("VALUE")%>);
                     <% } %>
 
-                    java.util.Map<String, Object> endpointProps_<%=cid%> = <%=endpointVar%>.getProperties();					
-					if (endpointProps_<%=cid%> == null) {
-						endpointProps_<%=cid%> = new java.util.HashMap<String, Object>();					
-					} 
-                    endpointProps_<%=cid%>.put(org.talend.esb.servicelocator.cxf.LocatorFeature.LOCATOR_PROPERTIES, slCustomProps_<%=cid%>);					
-                    <%=endpointVar%>.setProperties(endpointProps_<%=cid%>);					
-<%			
-					}
-			}
+                    java.util.Map<String, Object> endpointProps_<%=cid%> = <%=endpointVar%>.getProperties();
+                    if (endpointProps_<%=cid%> == null) {
+                        endpointProps_<%=cid%> = new java.util.HashMap<String, Object>();
+                    }
+                    endpointProps_<%=cid%>.put(org.talend.esb.servicelocator.cxf.LocatorFeature.LOCATOR_PROPERTIES, slCustomProps_<%=cid%>);
+                    <%=endpointVar%>.setProperties(endpointProps_<%=cid%>);
+<%
+                }
+            }
 %>
             //http://jira.talendforge.org/browse/TESB-3850
             // !"true".equals(useRegistry) - https://jira.talendforge.org/browse/TESB-10725
@@ -2942,13 +2987,13 @@ if (isProvider) {
                     <%=endpointVar%>.getFeatures().add(eventFeature);
                 }
 <%
-				if(exportTypeSpringBoot){
+                if(exportTypeSpringBoot){
 %>
-					else {
-						<%=endpointVar%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
-					}
+                    else {
+                        <%=endpointVar%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
+                    }
 <%
-				}
+                }
             }
     }else if("cFtp".equals(nodeComponentName)){
             String cid = node.getUniqueName();
@@ -2963,7 +3008,7 @@ if (isProvider) {
             String passwordFieldName = "__PASSWORD__";
 %>
             <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
-            
+
 <%  }else if("cAggregate".equals(nodeComponentName)){
                 boolean usePersistence = "true".equals(ElementParameterParser.getValue(node, "__USE_PERSISTENCE__"));
                 String repository = ElementParameterParser.getValue(node, "__REPOSITORY__");
@@ -3119,7 +3164,7 @@ if (isProvider) {
             }
         }
     } else if("cRecipientList".equals(nodeComponentName)||"cSplitter".equals(nodeComponentName) 
-			|| "cSetBody".equals(nodeComponentName) || "cMessageFilter".equals(nodeComponentName)) {
+            || "cSetBody".equals(nodeComponentName) || "cMessageFilter".equals(nodeComponentName)) {
         String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
         if(!"xpath".equals(language)){
             continue;

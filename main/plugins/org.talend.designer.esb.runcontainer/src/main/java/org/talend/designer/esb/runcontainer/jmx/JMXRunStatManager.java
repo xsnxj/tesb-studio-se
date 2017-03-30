@@ -123,7 +123,7 @@ public class JMXRunStatManager {
         private boolean stopTracing = false;
 
         public JMXRunStat() {
-            this.server = JMXUtil.connectToRuntime();
+            this.server = JMXUtil.createJMXconnection();
         }
 
         @Override

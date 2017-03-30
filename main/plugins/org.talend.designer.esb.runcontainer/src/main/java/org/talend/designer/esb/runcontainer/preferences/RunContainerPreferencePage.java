@@ -13,9 +13,14 @@
 package org.talend.designer.esb.runcontainer.preferences;
 
 import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.window.Window;
@@ -32,12 +37,13 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.talend.commons.ui.swt.preferences.CheckBoxFieldEditor;
 import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeAction;
+import org.talend.designer.esb.runcontainer.ui.dialog.RunClientDialog;
 import org.talend.designer.esb.runcontainer.ui.wizard.AddRuntimeWizard;
-import org.talend.designer.esb.runcontainer.util.FileUtil;
 
 /**
  * ESB Runtime pref page
@@ -46,6 +52,18 @@ import org.talend.designer.esb.runcontainer.util.FileUtil;
 public class RunContainerPreferencePage extends FieldLayoutPreferencePage implements IWorkbenchPreferencePage {
 
     public static final String ID = "org.talend.designer.esb.runcontainer.preferences.ESBRunContainerPreferencePage"; //$NON-NLS-1$
+
+    private Composite compositeServerBody;
+
+    private Composite compositeOptionBody;
+
+    private List<FieldEditor> serverFieldEditors;
+
+    private List<FieldEditor> optionFieldEditors;
+
+    private Button buttonAddServer;
+
+    private Button buttonInitalizeServer;
 
     /**
      * Create the preference page.
@@ -61,94 +79,77 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
      */
     @Override
     public Control createPageContents(Composite parent) {
-        Composite container = new Composite(parent, SWT.NULL);
-        container.setLayout(new GridLayout());
+        serverFieldEditors = new ArrayList<FieldEditor>();
+        optionFieldEditors = new ArrayList<FieldEditor>();
+        GridLayout gridLayoutDefault = new GridLayout(1, false);
 
-        Composite body = new Composite(container, SWT.NONE);
-        body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        body.setLayout(new GridLayout(1, false));
+        Composite body = new Composite(parent, SWT.NONE);
+        body.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        body.setLayout(gridLayoutDefault);
+
+        CheckBoxFieldEditor checkRuntimeEditor = new CheckBoxFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_IN_OSGI,
+                "ESB Studio Runtime - Use Local Talend Runtime (OSGi Container)", body); //$NON-NLS-1$
+        checkRuntimeEditor.getButton().addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                useLocalRuntime(checkRuntimeEditor.getButton().getSelection());
+            }
+        });
+        addField(checkRuntimeEditor);
+        Label lblNote = new Label(body, SWT.NONE);
+        lblNote.setText("    Note: if disable the Studio will use a local JVM Process");
 
         Group groupServer = new Group(body, SWT.NONE);
         groupServer.setText(RunContainerMessages.getString("RunContainerPreferencePage.Group1")); //$NON-NLS-1$
-        groupServer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        groupServer.setBounds(0, 0, 70, 82);
+        groupServer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         groupServer.setLayout(new GridLayout(2, false));
 
-        Composite compSvrBody = new Composite(groupServer, SWT.BORDER);
-        GridLayout gl_compSvrBody = new GridLayout(2, false);
-        gl_compSvrBody.horizontalSpacing = 0;
-        compSvrBody.setLayout(gl_compSvrBody);
-        compSvrBody.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        compositeServerBody = new Composite(groupServer, SWT.BORDER);
+        compositeServerBody.setLayout(gridLayoutDefault);
+        compositeServerBody.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        // Composite compRemote = new Composite(compSvrBody, SWT.NONE);
-        // addField(new BooleanFieldEditor("id", "Remote server", BooleanFieldEditor.DEFAULT, compRemote));
-        // new Label(compSvrBody, SWT.NONE);
-
-        Label lbLocation = new Label(compSvrBody, SWT.NONE);
-        lbLocation.setText(RunContainerMessages.getString("RunContainerPreferencePage.Location")); //$NON-NLS-1$
-
-        Composite compServer = new Composite(compSvrBody, SWT.NONE);
-        compServer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         StringFieldEditor locationEditor = new StringFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION,
-                "", compServer); //$NON-NLS-1$
-        locationEditor.setEnabled(true, compServer);
+                RunContainerMessages.getString("RunContainerPreferencePage.Location"), compositeServerBody); //$NON-NLS-1$
         addField(locationEditor);
-        compServer.setSize(230, 25);
-
-        Label lblHost = new Label(compSvrBody, SWT.NONE);
-        lblHost.setText(RunContainerMessages.getString("RunContainerPreferencePage.Host")); //$NON-NLS-1$
-
-        Composite compHost = new Composite(compSvrBody, SWT.NONE);
-        compHost.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        StringFieldEditor hostFieldEditor = new StringFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_HOST, "", //$NON-NLS-1$
-                -1, StringFieldEditor.VALIDATE_ON_KEY_STROKE, compHost);
+        serverFieldEditors.add(locationEditor);
+        StringFieldEditor hostFieldEditor = new StringFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_HOST,
+                RunContainerMessages.getString("RunContainerPreferencePage.Host"), compositeServerBody);
         addField(hostFieldEditor);
+        // svrFields.add(hostFieldEditor);
+        // only support local runtime server, if need support remote server ,enable this editor
+        hostFieldEditor.setEnabled(false, compositeServerBody);
 
-        Label lblPost = new Label(compSvrBody, SWT.NONE);
-        lblPost.setText(RunContainerMessages.getString("RunContainerPreferencePage.Post")); //$NON-NLS-1$
-
-        Composite compPort = new Composite(compSvrBody, SWT.NONE);
-        compPort.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         IntegerFieldEditor portFieldEditor = new IntegerFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_PORT,
-                "", compPort, -1); //$NON-NLS-1$
+                RunContainerMessages.getString("RunContainerPreferencePage.Port"), compositeServerBody); //$NON-NLS-1$
         addField(portFieldEditor);
-
-        Label lblUsername = new Label(compSvrBody, SWT.NONE);
-        lblUsername.setText(RunContainerMessages.getString("RunContainerPreferencePage.Username")); //$NON-NLS-1$
-
-        Composite compUser = new Composite(compSvrBody, SWT.NONE);
-        compUser.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        serverFieldEditors.add(portFieldEditor);
         StringFieldEditor userFieldEditor = new StringFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_USERNAME,
-                "", -1, StringFieldEditor.VALIDATE_ON_KEY_STROKE, compUser); //$NON-NLS-1$
+                RunContainerMessages.getString("RunContainerPreferencePage.Username"), compositeServerBody); //$NON-NLS-1$
         addField(userFieldEditor);
-
-        Label lblPassword = new Label(compSvrBody, SWT.NONE);
-        lblPassword.setText(RunContainerMessages.getString("RunContainerPreferencePage.Password")); //$NON-NLS-1$
-
-        Composite compPassword = new Composite(compSvrBody, SWT.NONE);
-        compPassword.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        serverFieldEditors.add(userFieldEditor);
         StringFieldEditor passwordFieldEditor = new StringFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_PASSWORD,
-                "", -1, StringFieldEditor.VALIDATE_ON_KEY_STROKE, compPassword); //$NON-NLS-1$
+                RunContainerMessages.getString("RunContainerPreferencePage.Password"), compositeServerBody); //$NON-NLS-1$
         addField(passwordFieldEditor);
-
-        Label lblInstance = new Label(compSvrBody, SWT.NONE);
-        lblInstance.setText(RunContainerMessages.getString("RunContainerPreferencePage.Instance")); //$NON-NLS-1$
-
-        Composite compInstance = new Composite(compSvrBody, SWT.NONE);
-        compInstance.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        serverFieldEditors.add(passwordFieldEditor);
         StringFieldEditor instanceFieldEditor = new StringFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_INSTANCE,
-                "", -1, StringFieldEditor.VALIDATE_ON_KEY_STROKE, compInstance); //$NON-NLS-1$
+                RunContainerMessages.getString("RunContainerPreferencePage.Instance"), compositeServerBody); //$NON-NLS-1$
         addField(instanceFieldEditor);
+        serverFieldEditors.add(instanceFieldEditor);
+
+        StringFieldEditor jmxPortFieldEditor = new StringFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_JMX_PORT,
+                RunContainerMessages.getString("RunContainerPreferencePage.JMXPort"), compositeServerBody); //$NON-NLS-1$
+        addField(jmxPortFieldEditor);
+        serverFieldEditors.add(jmxPortFieldEditor);
 
         Composite compBtn = new Composite(groupServer, SWT.NONE);
-        compBtn.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true, 1, 1));
-        GridLayout gl_compBtn = new GridLayout(1, false);
-        gl_compBtn.marginWidth = 0;
-        gl_compBtn.marginHeight = 0;
-        gl_compBtn.horizontalSpacing = 0;
-        compBtn.setLayout(gl_compBtn);
-        Button btnAddSvr = new Button(compBtn, SWT.NONE);
-        btnAddSvr.addSelectionListener(new SelectionAdapter() {
+        compBtn.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+        GridLayout layoutCompBtn = new GridLayout(1, false);
+        layoutCompBtn.marginWidth = 0;
+        layoutCompBtn.marginHeight = 0;
+        compBtn.setLayout(layoutCompBtn);
+        buttonAddServer = new Button(compBtn, SWT.NONE);
+        buttonAddServer.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -160,41 +161,44 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
                 }
             }
         });
-        btnAddSvr.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        btnAddSvr.setSize(78, 25);
-        btnAddSvr.setText(RunContainerMessages.getString("RunContainerPreferencePage.ServerButton")); //$NON-NLS-1$
+        buttonAddServer.setText(RunContainerMessages.getString("RunContainerPreferencePage.ServerButton")); //$NON-NLS-1$
 
         // Button btnTestConnection = new Button(compBtn, SWT.NONE);
         // btnTestConnection.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         // btnTestConnection.setText("Server Info...");
 
-        Button btnInitalize = new Button(compBtn, SWT.NONE);
-        btnInitalize.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        btnInitalize.setText(RunContainerMessages.getString("RunContainerPreferencePage.InitalizeButton")); //$NON-NLS-1$
-        btnInitalize.addSelectionListener(new SelectionAdapter() {
+        buttonInitalizeServer = new Button(compBtn, SWT.NONE);
+        buttonInitalizeServer.setText(RunContainerMessages.getString("RunContainerPreferencePage.InitalizeButton")); //$NON-NLS-1$
+        buttonInitalizeServer.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    new StartRuntimeAction().run();
+                    new StartRuntimeAction(false).run();
+
                     if (RuntimeServerController.getInstance().isRunning()) {
-                        Process startAll = RuntimeServerController.getInstance().startClient(locationEditor.getStringValue(),
-                                hostFieldEditor.getStringValue(), userFieldEditor.getStringValue(),
-                                passwordFieldEditor.getStringValue(), "tesb:start-all"); //$NON-NLS-1$
-                        startAll.waitFor();
-                        Process amq = RuntimeServerController.getInstance().startClient(locationEditor.getStringValue(),
-                                hostFieldEditor.getStringValue(), userFieldEditor.getStringValue(),
-                                passwordFieldEditor.getStringValue(), "feature:install activemq-broker"); //$NON-NLS-1$
-                        amq.waitFor();
-                        MessageDialog.openInformation(getShell(),
-                                RunContainerMessages.getString("RunContainerPreferencePage.InitalizeMessage"), //$NON-NLS-1$
-                                RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog1")); //$NON-NLS-1$
+                        File launcher;
+                        String os = System.getProperty("os.name");
+                        if (os != null && os.toLowerCase().contains("windows")) {
+                            launcher = new File(locationEditor.getStringValue() + "/bin/client.bat");
+                        } else {
+                            launcher = new File(locationEditor.getStringValue() + "/bin/client");
+                        }
+                        InputStream stream = RunContainerPreferencePage.class.getResourceAsStream("/resources/commands");
+                        File initFile = new File(locationEditor.getStringValue() + "/bin/initlocal");
+                        if (!initFile.exists()) {
+                            Files.copy(stream, initFile.toPath());
+                        }
+                        String command = launcher.getAbsolutePath() + " -h " + hostFieldEditor.getStringValue() + " -u "
+                                + userFieldEditor.getStringValue() + " -l 2 -f \"" + initFile.getAbsolutePath() + "\"";
+                        RunClientDialog.runClientWithCommandConsole(getShell(), command);
                     } else {
                         MessageDialog.openError(
                                 getShell(),
                                 RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog2"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog3")); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 } catch (Exception e1) {
+                    e1.printStackTrace();
                     MessageDialog.openError(
                             getShell(),
                             RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog4"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog5") + e1); //$NON-NLS-1$ //$NON-NLS-2$
@@ -202,69 +206,50 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
             }
         });
 
-        Group groupEnd = new Group(body, SWT.NONE);
-        groupEnd.setText(RunContainerMessages.getString("RunContainerPreferencePage.Group2")); //$NON-NLS-1$
-        groupEnd.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 1, 1));
-        groupEnd.setBounds(0, 0, 70, 82);
-        groupEnd.setLayout(new GridLayout(1, false));
+        Group groupOption = new Group(body, SWT.NONE);
+        groupOption.setLayout(gridLayoutDefault);
+        groupOption.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        groupOption.setText(RunContainerMessages.getString("RunContainerPreferencePage.Group2")); //$NON-NLS-1$
 
-        //Composite compScript = new Composite(groupEnd, SWT.NONE);
-        //addField(new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_MAVEN_SCRIPT,
-          //      RunContainerMessages.getString("RunContainerPreferencePage.MavenScript"), //$NON-NLS-1$
-            //    BooleanFieldEditor.DEFAULT, compScript));
+        compositeOptionBody = new Composite(groupOption, SWT.NONE);
+        compositeOptionBody.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        Composite compCache = new Composite(groupEnd, SWT.NONE);
-        GridLayout gl_compCache = new GridLayout(2, false);
-        gl_compCache.marginWidth = 0;
-        gl_compCache.marginHeight = 0;
-        gl_compCache.verticalSpacing = 0;
-        compCache.setLayout(gl_compCache);
+        BooleanFieldEditor useJmxEditor = new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_JMX,
+                RunContainerMessages.getString("RunContainerPreferencePage.UseJMX"), compositeOptionBody);//$NON-NLS-1$
+        addField(useJmxEditor);
+        optionFieldEditors.add(useJmxEditor);
 
-        Composite compClean = new Composite(compCache, SWT.NONE);
-        addField(new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_CLEAN_CACHE,
-                RunContainerMessages.getString("RunContainerPreferencePage.Clean"), BooleanFieldEditor.DEFAULT, compClean)); //$NON-NLS-1$
+        BooleanFieldEditor filterLogEditor = new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_SYS_LOG,
+                RunContainerMessages.getString("RunContainerPreferencePage.FilterLogs"), compositeOptionBody); //$NON-NLS-1$
+        addField(filterLogEditor);
+        optionFieldEditors.add(filterLogEditor);
 
-        Button btnCleanButton = new Button(compCache, SWT.NONE);
-        btnCleanButton.setText(RunContainerMessages.getString("RunContainerPreferencePage.CleanButton")); //$NON-NLS-1$
-        btnCleanButton.addSelectionListener(new SelectionAdapter() {
+        return body;
+    }
 
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                if (MessageDialog.openConfirm(
-                        getShell(),
-                        RunContainerMessages.getString("RunContainerPreferencePage.CleanCheckbox"), RunContainerMessages.getString("RunContainerPreferencePage.CleanConfirm"))) { //$NON-NLS-1$ //$NON-NLS-2$
-                    if (new File(locationEditor.getStringValue() + "/data").exists()) { //$NON-NLS-1$
+    /**
+     * Set to use loca runtime or default JVM
+     * 
+     * @param useRuntime
+     */
+    protected void useLocalRuntime(boolean useRuntime) {
+        updateFieldEditors(useRuntime);
+        if (useRuntime) {
 
-                        try {
-                            FileUtil.deleteFolder(locationEditor.getStringValue() + "/data"); //$NON-NLS-1$
-                        } catch (Exception x) {
-                            MessageDialog.openError(getShell(),
-                                    RunContainerMessages.getString("RunContainerPreferencePage.CleanFailed1"), //$NON-NLS-1$
-                                    RunContainerMessages.getString("RunContainerPreferencePage.CleanFailed2") + x); //$NON-NLS-1$
-                        }
-                    } else {
-                        MessageDialog.openError(getShell(),
-                                RunContainerMessages.getString("RunContainerPreferencePage.CleanFailed3"), //$NON-NLS-1$
-                                RunContainerMessages.getString("RunContainerPreferencePage.CleanFailed4")); //$NON-NLS-1$
-                    }
-                }
-            }
-        });
+        } else {
 
-        Composite compJmx = new Composite(groupEnd, SWT.NONE);
-        addField(new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_JMX,
-                RunContainerMessages.getString("RunContainerPreferencePage.UseJMX"), //$NON-NLS-1$
-                BooleanFieldEditor.DEFAULT, compJmx));
+        }
+    }
 
-        Composite compJmxPort = new Composite(groupEnd, SWT.NONE);
-        addField(new IntegerFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_JMX_PORT,
-                RunContainerMessages.getString("RunContainerPreferencePage.Port"), compJmxPort)); //$NON-NLS-1$
-
-        Composite compFilter = new Composite(groupEnd, SWT.NONE);
-        addField(new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_SYS_LOG,
-                RunContainerMessages.getString("RunContainerPreferencePage.FilterLogs"), //$NON-NLS-1$
-                BooleanFieldEditor.DEFAULT, compFilter));
-        return container;
+    protected void updateFieldEditors(boolean enable) {
+        // compOption
+        // compSvrBody
+        for (FieldEditor editor : serverFieldEditors) {
+            editor.setEnabled(enable, compositeServerBody);
+        }
+        for (FieldEditor editor : optionFieldEditors) {
+            editor.setEnabled(enable, compositeOptionBody);
+        }
     }
 
     /**

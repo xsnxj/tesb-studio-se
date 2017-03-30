@@ -112,7 +112,7 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
     public Process run(int statisticsPort, int tracePort, String watchParam, String log4jLevel, IProgressMonitor monitor,
             IProcessMessageManager processMessageManager) throws ProcessorException {
 
-        new StartRuntimeAction().run();
+        new StartRuntimeAction(false).run();
 
         RunContainerProcess esbRunContainerProcess = new RunContainerProcess();
         esbRunContainerProcess.startLogging();

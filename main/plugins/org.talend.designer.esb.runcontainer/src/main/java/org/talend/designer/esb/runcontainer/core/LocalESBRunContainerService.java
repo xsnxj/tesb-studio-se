@@ -54,6 +54,12 @@ public class LocalESBRunContainerService implements IESBRunContainerService {
 
     private int index = 0;
 
+    /*
+     * This method is to add a combo box(if do not have) in the <b>target exec</b> run tab view for ESB runtime server
+     * 
+     * @see org.talend.designer.runprocess.IESBRunContainerService#addRuntimeServer(org.talend.designer.runprocess.ui.
+     * TargetExecComposite, org.talend.designer.runprocess.ui.JobJvmComposite)
+     */
     @Override
     public void addRuntimeServer(TargetExecComposite targetExecComposite, JobJvmComposite jobComposite) {
         Combo targetCombo = null;
@@ -125,8 +131,9 @@ public class LocalESBRunContainerService implements IESBRunContainerService {
                                         .getPreferenceManager());
                                 dlg.setSelectedNode(RunContainerPreferencePage.ID);
                                 dlg.open();
-                                ((Combo) e.getSource()).select(index);
                             }
+                            // move to previous selection
+                            ((Combo) e.getSource()).select(index);
                         }
                     } else if (defaultContextManager != null) {
                         RunProcessPlugin.getDefault().setRunProcessContextManager(defaultContextManager);

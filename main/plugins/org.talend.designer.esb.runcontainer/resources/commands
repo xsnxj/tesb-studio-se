@@ -1,0 +1,3 @@
+tesb:start-all
+tesb:switch-sts-jaas
+feature:install activemq-broker
