@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import javax.management.MBeanServerConnection;
@@ -38,26 +39,29 @@ public class JMXUtil {
 
     private static final String CREDENTIALS = "jmx.remote.credentials";
 
-    public static String username = RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_USERNAME;
+    public static String username;
 
-    public static String password = RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_PASSWORD;
+    public static String password;
 
-    public static String host = RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_HOST;
+    public static String host;
 
-    public static String jmxPort = String.valueOf(RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_JMX_PORT);
+    public static String jmxPort;
 
-    public static String karafPort = String.valueOf(RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_PORT);
+    public static String karafPort;
 
-    public static String instanceName = RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_INSTANCE;
+    public static String instanceName;
 
-    public static String serviceUrl = "service:jmx:rmi://" + host + ":" + jmxPort + "/jndi/rmi://" + host + ":" + karafPort
-            + "/karaf-" + instanceName;
+    public static String serviceUrl;
 
     private static MBeanServerConnection mbsc;
 
     private static JMXConnector jmxc;
 
     private static int connectNumber = 0;
+
+    static {
+        reloadPreference();
+    }
 
     /**
      * for Job installation
@@ -70,18 +74,11 @@ public class JMXUtil {
 
         try {
 
-            MBeanServerConnection mbsc = connectToRuntime();
-            // String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=feature,name=trun";
+            // MBeanServerConnection mbsc = createJMXconnection();
             String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
             ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
 
             Set<Object> existsBundles = ((TabularDataSupport) mbsc.getAttribute(objectBundle, "Bundles")).keySet();
-
-            // mbsc.invoke(objectName, "addRepository", new Object[] { "file:E:/tmp/alltest/" + artifactId
-            // + "-feature/repository/local_project/" + artifactId + "/" + artifactId + "-bundle/0.1/" + artifactId
-            // + "-bundle-0.1.jar" }, new String[] { String.class.getName() });
-            // Object info = mbsc.invoke(objectName, "infoFeature", new Object[] { artifactId + "-feature" },
-            // new String[] { String.class.getName() });
 
             Object bundleId = mbsc.invoke(objectBundle, "install", new Object[] { "file:" + bundle.getAbsolutePath() },
                     new String[] { String.class.getName() });
@@ -99,7 +96,7 @@ public class JMXUtil {
 
             return newIds; // bundleId instanceof Long ? (long) bundleId : 0;
         } finally {
-            closeConnection();
+            // closeJMXConnection();
         }
     }
 
@@ -107,15 +104,13 @@ public class JMXUtil {
 
         try {
 
-            MBeanServerConnection mbsc = connectToRuntime();
-            // String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=feature,name=trun";
+            // MBeanServerConnection mbsc = createJMXconnection();
             String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
             ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
-
             Object bundleId = mbsc.invoke(objectBundle, "uninstall", new Object[] { String.valueOf(bundleID) },
                     new String[] { String.class.getName() });
         } finally {
-            closeConnection();
+            // closeJMXConnection();
         }
     }
 
@@ -127,7 +122,7 @@ public class JMXUtil {
      */
     public static String[] installKar(File kar) throws Exception {
 
-        MBeanServerConnection mbsc = connectToRuntime();
+        // MBeanServerConnection mbsc = createJMXconnection();
         String KARAF_KAR_MBEAN = "org.apache.karaf:type=kar,name=trun";
 
         ObjectName objectKar = new ObjectName(KARAF_KAR_MBEAN);
@@ -149,13 +144,26 @@ public class JMXUtil {
 
     public static void uninstallKar(String karID) throws Exception {
 
-        MBeanServerConnection mbsc = connectToRuntime();
+        // MBeanServerConnection mbsc = createJMXconnection();
         String KARAF_KAR_MBEAN = "org.apache.karaf:type=kar,name=trun";
 
         ObjectName objectKar = new ObjectName(KARAF_KAR_MBEAN);
 
         mbsc.invoke(objectKar, "uninstall", new Object[] { karID }, new String[] { String.class.getName() });
 
+    }
+
+    public static String getSystemPropertie(String name) throws Exception {
+
+        // MBeanServerConnection mbsc = createJMXconnection();
+        String COMMAND_MBEAN = "com.sun.management:type=DiagnosticCommand";
+
+        ObjectName objectCommand;
+        objectCommand = new ObjectName(COMMAND_MBEAN);
+        String properties = String.valueOf(mbsc.invoke(objectCommand, "vmSystemProperties", new Object[] {}, new String[] {}));
+        int homeValueBegin = properties.indexOf(name) + name.length() + 1;
+        int homeValueEnd = properties.indexOf('\n', homeValueBegin) - 1;
+        return properties.substring(homeValueBegin, homeValueEnd);
     }
 
     public static long findBundleIDWithKarName(String karName) {
@@ -166,31 +174,34 @@ public class JMXUtil {
     /**
      * if use catched connection
      * 
-     * @return
+     * @return MBeanServerConnection
      */
-    public static MBeanServerConnection connectToRuntime() {
-        if (!testConnection()) {
-            HashMap<String, String[]> env = new HashMap<String, String[]>();
+    public static MBeanServerConnection createJMXconnection() {
+        if (!isConnected()) {
 
-            resetPreferences();
-
-            String[] credentials = new String[] { username, password };
-            env.put(CREDENTIALS, credentials);
+            reloadPreference();
             try {
-                JMXServiceURL url = new JMXServiceURL(serviceUrl);
                 jmxc = null;
-                jmxc = JMXConnectorFactory.connect(url, env);
+                Map<String, String[]> env = new HashMap<String, String[]>();
+                env.put(CREDENTIALS, new String[] { username, password });
+                jmxc = JMXConnectorFactory.connect(new JMXServiceURL(serviceUrl), env);
+
                 mbsc = null;
                 mbsc = jmxc.getMBeanServerConnection();
-            } catch (Exception e) {
-                // e.printStackTrace();
+            } catch (IOException ex) {
+                // ex.printStackTrace();
+                jmxc = null;
+                mbsc = null;
             }
         }
         connectNumber++;
         return mbsc;
     }
 
-    private static void resetPreferences() {
+    /**
+     * Reload perference
+     */
+    private static void reloadPreference() {
         IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
         if (store != null) {
             username = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_USERNAME);
@@ -215,7 +226,7 @@ public class JMXUtil {
      * 
      * @return
      */
-    public static boolean testConnection() {
+    public static boolean isConnected() {
         if (mbsc == null || jmxc == null) {
             return false;
         }
@@ -227,20 +238,21 @@ public class JMXUtil {
         return true;
     }
 
-    public static void closeConnection() {
-        if (jmxc != null && connectNumber < 1) {
-            // try {
-            // jmxc.close();
-            // } catch (IOException e) {
-            // // TODO Auto-generated catch block
-            // e.printStackTrace();
-            // }
+    public static void closeJMXConnection() {
+        if (jmxc != null/* && connectNumber < 1 */) {
+            try {
+                jmxc.close();
+                jmxc = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         connectNumber--;
     }
 
     public static void halt() throws Exception {
-        MBeanServerConnection mbsc = connectToRuntime();
+        // need to re connect
+        MBeanServerConnection mbsc = createJMXconnection();
         String SYS_MBEAN = "org.apache.karaf:type=system,name=trun";
         ObjectName objectKar = new ObjectName(SYS_MBEAN);
         mbsc.invoke(objectKar, "halt", new Object[] {}, new String[] {});
