@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.talend.camel.designer.ui.wizards.export.RouteDedicatedJobManager;
 import org.talend.camel.designer.ui.wizards.export.RouteJavaScriptOSGIForESBManager;
 import org.talend.camel.designer.util.CamelFeatureUtil;
 import org.talend.camel.model.CamelRepositoryNodeType;
@@ -36,7 +37,6 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.model.components.EParameterName;
@@ -54,7 +54,6 @@ import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
-import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.RouteUsedJobManager;
 import org.talend.repository.utils.EmfModelUtils;
 import org.talend.repository.utils.JobContextUtils;
 
@@ -157,13 +156,6 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         return CamelFeatureUtil.getMavenGroupId(routeNode.getObject().getProperty().getItem());
     }
 
-    protected String getJobGroupId(String jobId, String jobName) {
-        String defaultProjectName = JavaResourcesHelper.getProjectFolderName(
-                routeNode.getObject().getProperty().getItem());
-        // return CamelFeatureUtil.getMavenGroupId(jobId, jobName, defaultProjectName);
-        return JavaResourcesHelper.getGroupItemName(defaultProjectName, jobName);
-    }
-
     protected String getArtifactId() {
         return routeNode.getObject().getProperty().getDisplayName();
     }
@@ -264,7 +256,16 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             }
 
             String jobName = referencedJobNode.getObject().getProperty().getDisplayName();
-            String jobArtifactName = routeName + "__" + jobName;
+            String jobBundleName = routeName + "_" + jobName;
+            String jobBundleSymbolicName = jobBundleName;
+            Project project = ProjectManager.getInstance().getCurrentProject();
+            if (project != null) {
+                String projectName = project.getLabel();
+                if (projectName != null && projectName.length() > 0) {
+                    jobBundleSymbolicName =
+                    		projectName.toLowerCase() + '.' + jobBundleSymbolicName;
+                }
+            }
             File jobFile;
             try {
                 jobFile = File.createTempFile("job", FileConstants.JAR_FILE_SUFFIX,
@@ -273,15 +274,13 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 throw new InvocationTargetException(e);
             }
             String jobArtifactVersion = getArtifactVersion();
-            String jobBundleVersion = jobVersion;
-            if (jobArtifactVersion.endsWith("-SNAPSHOT")) {
-                jobBundleVersion += ".0.SNAPSHOT";
-            }
-            BundleModel jobModel = new BundleModel(getGroupId(), jobArtifactName,
+            String jobBundleVersion = bundleVersion;
+            BundleModel jobModel = new BundleModel(getGroupId(), jobBundleName,
                     jobArtifactVersion, jobFile);
             if (featuresModel.addBundle(jobModel)) {
-                exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion, jobName,
-                        jobBundleVersion, getArtifactId(), version, jobContext);
+                exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion,
+                        jobBundleName, jobBundleSymbolicName, jobBundleVersion,
+                        getArtifactId(), version, jobContext);
             }
         }
     }
@@ -395,13 +394,14 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     }
 
     protected void exportRouteUsedJobBundle(IRepositoryNode node, File filePath,
-            String jobVersion, String bundleName, String bundleVersion, String routeName,
-            String routeVersion, String context)
+    		String jobVersion, String bundleName, String bundleSymbolicName,
+    		String bundleVersion, String routeName, String routeVersion, String context)
                     throws InvocationTargetException, InterruptedException {
-        RouteUsedJobManager talendJobManager =
-                new RouteUsedJobManager(getExportChoice(), context);
+        RouteDedicatedJobManager talendJobManager =
+                new RouteDedicatedJobManager(getExportChoice(), context);
         talendJobManager.setJobVersion(jobVersion);
         talendJobManager.setBundleName(bundleName);
+        talendJobManager.setBundleSymbolicName(bundleSymbolicName);
         talendJobManager.setBundleVersion(bundleVersion);
         talendJobManager.setDestinationPath(filePath.getAbsolutePath());
         talendJobManager.setRouteName(routeName);
