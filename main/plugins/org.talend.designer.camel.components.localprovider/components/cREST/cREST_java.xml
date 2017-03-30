@@ -294,6 +294,10 @@
             <IMPORT MODULE="validation-api-${validation-api.version}.jar" MVN="mvn:org.talend.libraries/validation-api/6.0.0" NAME="validation-api-${validation-api.version}"
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/validation-api-${validation-api.version}.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
+
+            <IMPORT MODULE="swagger-ui-${swagger.ui.version}.jar" MVN="mvn:org.talend.libraries/swagger-ui/${swagger.ui.version}" NAME="swagger-ui-${swagger.ui.version}"
+                UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/swagger-ui-${swagger.ui.version}.jar"
+                REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 		</IMPORTS>
 	</CODEGENERATION>
 	<RETURNS />
