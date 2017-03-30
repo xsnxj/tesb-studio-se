@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
-import java.io.OutputStream;
 import java.io.Reader;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -57,6 +56,7 @@ import org.apache.sshd.common.RuntimeSshException;
 import org.apache.sshd.common.channel.PtyMode;
 import org.apache.sshd.common.keyprovider.AbstractFileKeyPairProvider;
 import org.apache.sshd.common.util.SecurityUtils;
+import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.jline.terminal.Attributes;
 import org.jline.terminal.Attributes.ControlChar;
 import org.jline.terminal.Attributes.InputFlag;
@@ -158,7 +158,8 @@ public class RuntimeClient {
         int exitStatus = 0;
         Terminal terminal = TerminalBuilder.terminal();
         Attributes attributes = terminal.enterRawMode();
-        OutputStream outputStream = RuntimeConsoleUtil.getOutputStream();
+        IOConsoleOutputStream outputStream = RuntimeConsoleUtil.getOutputStream();
+
         try {
             ClientChannel channel;
 

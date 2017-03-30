@@ -111,6 +111,7 @@ public class RunClientDialog extends TitleAreaDialog {
                     IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
                     File containerDir = new File(store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION));
                     Process process = Runtime.getRuntime().exec(command, null, containerDir);
+
                     new Thread(new ProcessOutput(process.getInputStream(), false)).start();
                     new Thread(new ProcessOutput(process.getErrorStream(), true)).start();
                     new Thread(new Runnable() {

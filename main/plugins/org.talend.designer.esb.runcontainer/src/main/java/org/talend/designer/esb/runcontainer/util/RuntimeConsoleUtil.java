@@ -14,15 +14,16 @@ package org.talend.designer.esb.runcontainer.util;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.Arrays;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsole;
+import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
 import org.talend.designer.esb.runcontainer.ui.console.RuntimeClient;
@@ -45,8 +46,10 @@ public class RuntimeConsoleUtil {
         return myConsole;
     }
 
-    public static OutputStream getOutputStream() {
-        return findConsole(KARAF_CONSOLE).newOutputStream();
+    public static IOConsoleOutputStream getOutputStream() {
+        IOConsoleOutputStream outputStream = findConsole(KARAF_CONSOLE).newOutputStream();
+        outputStream.setEncoding(System.getProperty("sun.jnu.encoding", "UTF-8"));
+        return outputStream;
     }
 
     public static void clearConsole() {
@@ -85,7 +88,7 @@ public class RuntimeConsoleUtil {
                 byte[] bs = new byte[1024];
                 try {
                     while ((count = is.read(bs)) > 0) {
-                        pos.write(new String(bs, 0, count).getBytes());
+                        pos.write(Arrays.copyOf(bs, count));
                     }
                 } catch (IOException e1) {
                     e1.printStackTrace();

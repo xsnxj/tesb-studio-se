@@ -233,4 +233,8 @@ public abstract class FieldLayoutPreferencePage extends PreferencePage implement
             m_invalidFieldEditor.setFocus();
         }
     }
+
+    public List<FieldEditor> getFieldEditors() {
+        return m_fields;
+    }
 }
