@@ -414,6 +414,16 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
         String version = getSelectedJobVersion();
         String destinationKar = getDestinationValue();
+        JavaCamelJobScriptsExportWSAction action = null;
+        IRunnableWithProgress actionMS = null;
+        Map<ExportChoice, Object> exportChoiceMap = getExportChoiceMap();
+        boolean needMavenScript = exportChoiceMap.containsKey(ExportChoice.needMavenScript)
+                && exportChoiceMap.get(ExportChoice.needMavenScript) == Boolean.TRUE;
+
+        if (needMavenScript && destinationKar.regionMatches(true, destinationKar.length() - 4, ".kar", 0, 4)) {
+        	destinationKar = destinationKar.substring(0, destinationKar.length() - 3) + "zip";
+        }
+
         if (new File(destinationKar).exists()) {
             boolean yes = MessageDialog.openQuestion(getShell(),
                     Messages.getString("JavaCamelJobScriptsExportWSWizardPage.OverwriteKarTitle"),
@@ -423,9 +433,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
             }
         }
 
-        JavaCamelJobScriptsExportWSAction action = null;
-        IRunnableWithProgress actionMS = null;
-        Map<ExportChoice, Object> exportChoiceMap = getExportChoiceMap();
 
         if (exportTypeCombo.getText().equals(EXPORTTYPE_SPRING_BOOT)) {
 
@@ -454,10 +461,10 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                         InstanceScope.INSTANCE.getNode(M2E_CORE).putBoolean(M2_OFFLINE, false);
                     }
 
-                    Class javaCamelJobScriptsExportMicroServiceAction = bundle
+                    Class<?> javaCamelJobScriptsExportMicroServiceAction = bundle
                             .loadClass("org.talend.resources.export.maven.action.JavaCamelJobScriptsExportMicroServiceAction");
 
-                    Constructor constructor = javaCamelJobScriptsExportMicroServiceAction.getConstructor(Map.class, List.class,
+                    Constructor<?> constructor = javaCamelJobScriptsExportMicroServiceAction.getConstructor(Map.class, List.class,
                             String.class, String.class, String.class);
 
                     actionMS = (IRunnableWithProgress) constructor.newInstance(exportChoiceMap, Arrays.asList(getCheckNodes()),
@@ -483,8 +490,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
         } else {
 
-            if (exportChoiceMap.containsKey(ExportChoice.needMavenScript)
-                    && exportChoiceMap.get(ExportChoice.needMavenScript) == Boolean.TRUE) {
+            if (needMavenScript) {
                 action = new JavaCamelJobScriptsExportWithMavenAction(exportChoiceMap, nodes[0], version, destinationKar, false);
             } else {
                 action = new JavaCamelJobScriptsExportWSAction(nodes[0], version, destinationKar, false);
