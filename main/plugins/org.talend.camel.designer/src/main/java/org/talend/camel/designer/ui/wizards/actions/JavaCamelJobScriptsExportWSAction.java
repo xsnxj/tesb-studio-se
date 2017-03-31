@@ -22,9 +22,11 @@ import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.talend.camel.designer.ui.wizards.export.RouteDedicatedJobManager;
 import org.talend.camel.designer.ui.wizards.export.RouteJavaScriptOSGIForESBManager;
 import org.talend.camel.designer.util.CamelFeatureUtil;
 import org.talend.camel.model.CamelRepositoryNodeType;
@@ -35,7 +37,6 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.model.components.EParameterName;
@@ -53,7 +54,6 @@ import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
-import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.RouteUsedJobManager;
 import org.talend.repository.utils.EmfModelUtils;
 import org.talend.repository.utils.JobContextUtils;
 
@@ -75,7 +75,25 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     private final boolean addStatisticsCode;
 
-    public JavaCamelJobScriptsExportWSAction(IRepositoryNode routeNode, String version, String destinationKar,
+    private int statisticPort;
+
+    private int tracePort;
+
+    public JavaCamelJobScriptsExportWSAction(IRepositoryNode routeNode, String version,
+            String destinationKar, boolean addStatisticsCode) {
+        this.routeNode = routeNode;
+        this.version = version;
+        this.bundleVersion = version;
+        this.destinationKar = destinationKar;
+        this.addStatisticsCode = addStatisticsCode;
+
+        manager = new JobJavaScriptOSGIForESBManager(getExportChoice(), null, null,
+                IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+        manager.setBundleVersion(version);
+    }
+
+    public JavaCamelJobScriptsExportWSAction(Map<ExportChoice, Object> exportChoiceMap,
+            IRepositoryNode routeNode, String version, String destinationKar,
             boolean addStatisticsCode) {
         this.routeNode = routeNode;
         this.version = version;
@@ -83,31 +101,45 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         this.destinationKar = destinationKar;
         this.addStatisticsCode = addStatisticsCode;
 
-        manager = new JobJavaScriptOSGIForESBManager(getExportChoice(), null, null, IProcessor.NO_STATISTICS,
-                IProcessor.NO_TRACES);
+        exportChoiceMap.putAll(getExportChoice());
+        manager = new JobJavaScriptOSGIForESBManager(exportChoiceMap, null, null,
+                IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
         manager.setBundleVersion(version);
     }
 
-    public JavaCamelJobScriptsExportWSAction(Map<ExportChoice, Object> exportChoiceMap, IRepositoryNode routeNode,
-            String version, String destinationKar, boolean addStatisticsCode) {
+    public JavaCamelJobScriptsExportWSAction(IRepositoryNode routeNode, String version,
+            String bundleVersion) {
+        this(routeNode, version, null, false);
+        this.bundleVersion = bundleVersion;
+    }
+
+    /**
+     * DOC yyan JavaCamelJobScriptsExportWSAction constructor comment.
+     * 
+     * @param routeNode
+     * @param version
+     * @param destinationKar
+     * @param addStatisticsCode
+     * @param statisticPort
+     * @param tracePort
+     */
+    public JavaCamelJobScriptsExportWSAction(IRepositoryNode routeNode, String version,
+            String destinationKar, boolean addStatisticsCode, int statisticPort, int tracePort) {
         this.routeNode = routeNode;
         this.version = version;
         this.bundleVersion = version;
         this.destinationKar = destinationKar;
         this.addStatisticsCode = addStatisticsCode;
+        this.statisticPort = statisticPort;
+        this.tracePort = tracePort;
 
-        exportChoiceMap.putAll(getExportChoice());
-        manager = new JobJavaScriptOSGIForESBManager(exportChoiceMap, null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
+        manager = new JobJavaScriptOSGIForESBManager(getExportChoice(), null, null,
+                statisticPort, tracePort);
         manager.setBundleVersion(version);
     }
 
-    public JavaCamelJobScriptsExportWSAction(IRepositoryNode routeNode, String version, String bundleVersion) {
-        this(routeNode, version, null, false);
-        this.bundleVersion = bundleVersion;
-    }
-
     private Map<ExportChoice, Object> getExportChoice() {
-        Map<ExportChoice, Object> exportChoiceMap = new EnumMap<ExportChoice, Object>(ExportChoice.class);
+        Map<ExportChoice, Object> exportChoiceMap = new EnumMap<>(ExportChoice.class);
         exportChoiceMap.put(ExportChoice.needJobItem, false);
         exportChoiceMap.put(ExportChoice.needSourceCode, false);
         exportChoiceMap.put(ExportChoice.needMetaInfo, true);
@@ -124,12 +156,6 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         return CamelFeatureUtil.getMavenGroupId(routeNode.getObject().getProperty().getItem());
     }
 
-    protected String getJobGroupId(String jobName) {
-    	String projectName = JavaResourcesHelper.getProjectFolderName(
-    			routeNode.getObject().getProperty().getItem());
-    	return JavaResourcesHelper.getGroupItemName(projectName, jobName);
-    }
-
     protected String getArtifactId() {
         return routeNode.getObject().getProperty().getDisplayName();
     }
@@ -139,43 +165,49 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     }
 
     @Override
-    public final void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+    public final void run(IProgressMonitor monitor) throws InvocationTargetException,
+            InterruptedException {
         this.monitor = monitor;
-
-        featuresModel = new FeaturesModel(getGroupId(), getArtifactId(), getArtifactVersion());
+        String groupId = getGroupId();
+        String routeName = getArtifactId();
+        String routeVersion = getArtifactVersion();
+        featuresModel = new FeaturesModel(groupId, routeName, routeVersion);
         try {
             // generated bundle jar first
-            String routeName = routeNode.getObject().getProperty().getDisplayName();
             File routeFile;
             try {
-                routeFile = File.createTempFile("route", FileConstants.JAR_FILE_SUFFIX, new File(getTempDir())); //$NON-NLS-1$
+                routeFile = File.createTempFile("route", FileConstants.JAR_FILE_SUFFIX,
+                        new File(getTempDir())); //$NON-NLS-1$
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }
 
-            BundleModel routeModel = new BundleModel(getGroupId(), routeName + "-bundle", getArtifactVersion(), routeFile);
+            BundleModel routeModel = new BundleModel(groupId, routeName, routeVersion, routeFile);
             if (featuresModel.addBundle(routeModel)) {
-                final ProcessItem routeProcess = (ProcessItem) routeNode.getObject().getProperty().getItem();
+                final ProcessItem routeProcess =
+                        (ProcessItem) routeNode.getObject().getProperty().getItem();
                 CamelFeatureUtil.addFeatureAndBundles(routeProcess, featuresModel);
                 featuresModel.setConfigName(routeNode.getObject().getLabel());
                 featuresModel.setContexts(JobContextUtils.getContextsMap(routeProcess));
 
-                exportAllReferenceJobs(routeProcess);
-                final Collection<String> routelets = new HashSet<String>();
-                exportAllReferenceRoutelets(routeProcess, routelets);
+                exportAllReferenceJobs(routeName, routeProcess);
+                final Set<String> routelets = new HashSet<>();
+                exportAllReferenceRoutelets(routeName, routeProcess, routelets);
 
-                exportRouteBundle(routeNode, routeFile, version, bundleVersion, routelets, null);
+                exportRouteBundle(routeNode, routeFile, version, null, null, bundleVersion,
+                		null, routelets, null);
             }
 
             processResults(featuresModel, monitor);
 
         } finally {
             // remove generated files
-            FilesUtils.removeFolder(getTempDir(), true);
+            removeTempFiles();
         }
     }
 
-    protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+    protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor)
+            throws InvocationTargetException, InterruptedException {
         // create kar file
         try {
             new ZipModel(featuresModel, new File(destinationKar));
@@ -184,8 +216,10 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         }
     }
 
-    private void exportAllReferenceJobs(ProcessItem routeProcess) throws InvocationTargetException, InterruptedException {
-        for (NodeType cTalendJob : EmfModelUtils.getComponentsByName(routeProcess, "cTalendJob")) { //$NON-NLS-1$
+    private void exportAllReferenceJobs(String routeName, ProcessItem routeProcess)
+            throws InvocationTargetException, InterruptedException {
+        for (NodeType cTalendJob : EmfModelUtils.getComponentsByName(
+                routeProcess, "cTalendJob")) { //$NON-NLS-1$
             String jobId = null;
             String jobVersion = null;
             String jobContext = null;
@@ -202,7 +236,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                     jobId = ept.getValue();
                 } else if ("SELECTED_JOB_NAME:PROCESS_TYPE_VERSION".equals(eptName)) { //$NON-NLS-1$
                     jobVersion = ept.getValue();
-                } else  if ("SELECTED_JOB_NAME:PROCESS_TYPE_CONTEXT".equals(eptName)) { //$NON-NLS-1$
+                } else if ("SELECTED_JOB_NAME:PROCESS_TYPE_CONTEXT".equals(eptName)) { //$NON-NLS-1$
                     jobContext = ept.getValue();
                 }
             }
@@ -216,84 +250,116 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             } catch (PersistenceException e) {
                 throw new InvocationTargetException(e);
             }
+
             if (RelationshipItemBuilder.LATEST_VERSION.equals(jobVersion)) {
                 jobVersion = referencedJobNode.getObject().getVersion();
             }
 
             String jobName = referencedJobNode.getObject().getProperty().getDisplayName();
+            String jobBundleName = routeName + "_" + jobName;
+            String jobBundleSymbolicName = jobBundleName;
+            Project project = ProjectManager.getInstance().getCurrentProject();
+            if (project != null) {
+                String projectName = project.getLabel();
+                if (projectName != null && projectName.length() > 0) {
+                    jobBundleSymbolicName =
+                    		projectName.toLowerCase() + '.' + jobBundleSymbolicName;
+                }
+            }
             File jobFile;
             try {
-                jobFile = File.createTempFile("job", FileConstants.JAR_FILE_SUFFIX, new File(getTempDir())); //$NON-NLS-1$
+                jobFile = File.createTempFile("job", FileConstants.JAR_FILE_SUFFIX,
+                        new File(getTempDir())); //$NON-NLS-1$
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }
-            String jobArtifactVersion = jobVersion;
-            String jobBundleVersion = jobVersion;
-            if (getArtifactVersion().endsWith("-SNAPSHOT")) {
-                jobArtifactVersion += "-SNAPSHOT";
-                jobBundleVersion += ".0.SNAPSHOT";
-            }
-            String routeName = routeNode.getObject().getProperty().getDisplayName();
-            BundleModel jobModel = new BundleModel(getJobGroupId(jobName), jobName + "-bundle", jobArtifactVersion, jobFile);
+            String jobArtifactVersion = getArtifactVersion();
+            String jobBundleVersion = bundleVersion;
+            BundleModel jobModel = new BundleModel(getGroupId(), jobBundleName,
+                    jobArtifactVersion, jobFile);
             if (featuresModel.addBundle(jobModel)) {
-                exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion, jobName, jobBundleVersion, routeNode
-                    .getObject().getProperty().getDisplayName(), version, jobContext);
+                exportRouteUsedJobBundle(referencedJobNode, jobFile, jobVersion,
+                        jobBundleName, jobBundleSymbolicName, jobBundleVersion,
+                        getArtifactId(), version, jobContext);
             }
         }
     }
 
-    protected void exportAllReferenceRoutelets(ProcessItem routeProcess, Collection<String> routelets) throws InvocationTargetException, InterruptedException {
+    @SuppressWarnings("unchecked")
+    protected final void exportAllReferenceRoutelets(String routeName, ProcessItem routeProcess,
+    		Set<String> routelets) throws InvocationTargetException, InterruptedException {
         for (NodeType node : (Collection<NodeType>) routeProcess.getProcess().getNode()) {
             if (!EmfModelUtils.isComponentActive(node)) {
                 continue;
             }
-            final ElementParameterType routeletId =
-                EmfModelUtils.findElementParameterByName(EParameterName.PROCESS_TYPE.getName() + ':' + EParameterName.PROCESS_TYPE_PROCESS.getName(), node);
+            final ElementParameterType routeletId = EmfModelUtils.findElementParameterByName(
+                    EParameterName.PROCESS_TYPE.getName() + ':'
+                            + EParameterName.PROCESS_TYPE_PROCESS.getName(), node);
             if (null != routeletId) {
                 final IRepositoryNode referencedRouteletNode;
                 try {
-                    referencedRouteletNode =
-                        getJobRepositoryNode(routeletId.getValue(), CamelRepositoryNodeType.repositoryRouteletType);//getRouteletRepositoryNode(routeletId);
+                    referencedRouteletNode = getJobRepositoryNode(routeletId.getValue(),
+                            CamelRepositoryNodeType.repositoryRouteletType);
+                            // getRouteletRepositoryNode(routeletId);
                 } catch (PersistenceException e) {
                     throw new InvocationTargetException(e);
                 }
 
-                final ProcessItem routeletProcess = (ProcessItem) referencedRouteletNode.getObject().getProperty().getItem();
-                final String className = RouteJavaScriptOSGIForESBManager.getClassName(routeletProcess);
-                if (!routelets.add(className)) {
+                final ProcessItem routeletProcess =
+                        (ProcessItem) referencedRouteletNode.getObject().getProperty().getItem();
+                final String className =
+                        RouteJavaScriptOSGIForESBManager.getClassName(routeletProcess);
+                String idSuffix = "-" + routeName;
+                if (!routelets.add(className + idSuffix)) {
                     continue;
                 }
 
-                String routeletVersion =
-                    EmfModelUtils.findElementParameterByName(EParameterName.PROCESS_TYPE.getName() + ':' + EParameterName.PROCESS_TYPE_VERSION.getName(), node).getValue();
+                String routeletVersion = EmfModelUtils.findElementParameterByName(
+                        EParameterName.PROCESS_TYPE.getName() + ':'
+                                + EParameterName.PROCESS_TYPE_VERSION.getName(),node).getValue();
                 if (RelationshipItemBuilder.LATEST_VERSION.equals(routeletVersion)) {
                     routeletVersion = referencedRouteletNode.getObject().getVersion();
                 }
 
                 final File routeletFile;
                 try {
-                    routeletFile = File.createTempFile("routelet", FileConstants.JAR_FILE_SUFFIX, new File(getTempDir())); //$NON-NLS-1$
+                    routeletFile = File.createTempFile("routelet", FileConstants.JAR_FILE_SUFFIX,
+                            new File(getTempDir())); //$NON-NLS-1$
                 } catch (IOException e) {
                     throw new InvocationTargetException(e);
                 }
-                String routeletBundleVersion = routeletVersion;
-                if (getArtifactVersion().endsWith("-SNAPSHOT")) {
-                    routeletBundleVersion += ".0.SNAPSHOT";
+                String routeletName = referencedRouteletNode.getObject().getLabel();
+                String routeletBundleName = routeName + "_" + routeletName;
+                String routeletBundleSymbolicName = routeletBundleName;
+                Project project = ProjectManager.getInstance().getCurrentProject();
+                if (project != null) {
+                    String projectName = project.getLabel();
+                    if (projectName != null && projectName.length() > 0) {
+                        routeletBundleSymbolicName =
+                        		projectName.toLowerCase() + '.' + routeletBundleSymbolicName;
+                    }
                 }
-                BundleModel jobModel = new BundleModel(getGroupId(), referencedRouteletNode.getObject().getLabel(), getArtifactVersion(), routeletFile);
-                if (featuresModel.addBundle(jobModel)) {
-                    exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion, routeletBundleVersion, null,
-                        EmfModelUtils.findElementParameterByName(EParameterName.PROCESS_TYPE.getName() + ':' + EParameterName.PROCESS_TYPE_CONTEXT.getName(), node).getValue());
+                BundleModel routeletModel = new BundleModel(getGroupId(), routeletBundleName,
+                        getArtifactVersion(), routeletFile);
+                if (featuresModel.addBundle(routeletModel)) {
+                    exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion,
+                            routeletBundleName, routeletBundleSymbolicName, bundleVersion,
+                            idSuffix, null,
+                            EmfModelUtils.findElementParameterByName(
+                                    EParameterName.PROCESS_TYPE.getName() + ':'
+                                            + EParameterName.PROCESS_TYPE_CONTEXT.getName(),
+                                    node).getValue());
                     CamelFeatureUtil.addFeatureAndBundles(routeletProcess, featuresModel);
 
-                    exportAllReferenceRoutelets(routeletProcess, routelets);
+                    exportAllReferenceRoutelets(routeName, routeletProcess, routelets);
                 }
             }
         }
     }
 
-    private static IRepositoryNode getJobRepositoryNode(String jobId, ERepositoryObjectType type) throws PersistenceException {
-        List<IRepositoryViewObject> list = new ArrayList<IRepositoryViewObject>();
+    private static IRepositoryNode getJobRepositoryNode(String jobId, ERepositoryObjectType type)
+            throws PersistenceException {
+        List<IRepositoryViewObject> list = new ArrayList<>();
         List<Project> projects = ProjectManager.getInstance().getAllReferencedProjects();
         for (Project p : projects) {
             list.addAll(ProxyRepositoryFactory.getInstance().getAll(p, type));
@@ -309,48 +375,48 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         return null;
     }
 
-//    private static IRepositoryNode getRouteletRepositoryNode(String routeletName) throws PersistenceException {
-//        for (IRepositoryViewObject routelet : ProxyRepositoryFactory.getInstance().getAll(
-//            CamelRepositoryNodeType.repositoryRouteletType)) {
-//            if (routelet.getLabel().equals(routeletName)) {
-//                return new RepositoryNode(routelet, null, ENodeType.REPOSITORY_ELEMENT);
-//            }
-//        }
-//        return null;
-//    }
-
-    private void exportRouteBundle(IRepositoryNode node, File filePath, String version, String bundleVersion,
-        Collection<String> routelets, String context) throws InvocationTargetException, InterruptedException {
-        final JobJavaScriptOSGIForESBManager talendJobManager =
-            new RouteJavaScriptOSGIForESBManager(getExportChoice(), context, routelets);
+    private void exportRouteBundle(IRepositoryNode node, File filePath, String version,
+            String bundleName, String bundleSymbolicName, String bundleVersion, String idSuffix,
+            Collection<String> routelets, String context)
+                    throws InvocationTargetException, InterruptedException {
+        final RouteJavaScriptOSGIForESBManager talendJobManager =
+                new RouteJavaScriptOSGIForESBManager(getExportChoice(), context,
+                        routelets, statisticPort, tracePort);
+        talendJobManager.setBundleName(bundleName);
+        talendJobManager.setBundleSymbolicName(bundleSymbolicName);
         talendJobManager.setBundleVersion(bundleVersion);
+        talendJobManager.setOsgiServiceIdSuffix(idSuffix);
         talendJobManager.setMultiNodes(false);
         talendJobManager.setDestinationPath(filePath.getAbsolutePath());
-        JobExportAction action = new JobExportAction(Collections.singletonList(node), version, bundleVersion, talendJobManager,
-                getTempDir(), "Route");
+        JobExportAction action = new JobExportAction(Collections.singletonList(node),
+                version, bundleVersion, talendJobManager, getTempDir(), "Route");
         action.run(monitor);
     }
 
-    protected void exportRouteUsedJobBundle(IRepositoryNode node, File filePath, String jobVersion,
-    		String bundleName, String bundleVersion,
-    		String routeName, String routeVersion, String context) throws InvocationTargetException, InterruptedException {
-    	RouteUsedJobManager talendJobManager = new RouteUsedJobManager(getExportChoice(), context);
+    protected void exportRouteUsedJobBundle(IRepositoryNode node, File filePath,
+    		String jobVersion, String bundleName, String bundleSymbolicName,
+    		String bundleVersion, String routeName, String routeVersion, String context)
+                    throws InvocationTargetException, InterruptedException {
+        RouteDedicatedJobManager talendJobManager =
+                new RouteDedicatedJobManager(getExportChoice(), context);
         talendJobManager.setJobVersion(jobVersion);
         talendJobManager.setBundleName(bundleName);
+        talendJobManager.setBundleSymbolicName(bundleSymbolicName);
         talendJobManager.setBundleVersion(bundleVersion);
         talendJobManager.setDestinationPath(filePath.getAbsolutePath());
-    	talendJobManager.setRouteName(routeName);
-    	talendJobManager.setRouteVersion(routeVersion);
-    	talendJobManager.setGroupId(getGroupId());
-    	talendJobManager.setArtifactId(getArtifactId());
-    	talendJobManager.setArtifactVersion(getArtifactVersion());
-        JobExportAction action = new JobExportAction(Collections.singletonList(node), jobVersion, bundleVersion, talendJobManager,
-                getTempDir(), "Job");
+        talendJobManager.setRouteName(routeName);
+        talendJobManager.setRouteVersion(routeVersion);
+        talendJobManager.setGroupId(getGroupId());
+        talendJobManager.setArtifactId(getArtifactId());
+        talendJobManager.setArtifactVersion(getArtifactVersion());
+        JobExportAction action = new JobExportAction(Collections.singletonList(node),
+                jobVersion, bundleVersion, talendJobManager, getTempDir(), "Job");
         action.run(monitor);
-	}
+    }
 
     protected static String getTempDir() {
-        String path = System.getProperty("java.io.tmpdir") + File.separatorChar + "route" + File.separatorChar; //$NON-NLS-1$
+        String path = System.getProperty("java.io.tmpdir") + File.separatorChar
+                + "route" + File.separatorChar; //$NON-NLS-1$
         File file = new File(path);
         if (!file.exists() || !file.isDirectory()) {
             file.mkdirs();
@@ -358,6 +424,11 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
         return path;
     }
+
     // END of TESB-5328
+
+    protected void removeTempFiles() {
+        FilesUtils.removeFolder(getTempDir(), true);
+    }
 
 }

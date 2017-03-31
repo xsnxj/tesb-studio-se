@@ -12,8 +12,11 @@
 // ============================================================================
 package org.talend.camel.designer.ui.wizards.export;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -46,7 +49,6 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.IRepositoryViewObject;
-import org.talend.core.model.utils.JavaResourcesHelper;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.utils.ItemResourceUtil;
@@ -61,6 +63,7 @@ import org.talend.designer.maven.template.MavenTemplateManager;
 import org.talend.designer.maven.utils.PomUtil;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessorException;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
@@ -87,8 +90,9 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
 
     private Map<String, OSGIJavaScriptForESBWithMavenManager> talendJobOsgiWithMavenManagersMap = new HashMap<String, OSGIJavaScriptForESBWithMavenManager>();
 
-    private String projectName;
-
+    // private String projectName;
+    private String routeName;
+    private String routeVersion;
     private String groupId;
 
     private String type = "Job";
@@ -214,7 +218,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                 for (NodeType node : (List<NodeType>) nodes) {
                     if ("cTalendJob".equals(node.getComponentName())) { //$NON-NLS-1$
                         String talendJobId = null;
-                        String talendJobVesion = null;
+                        String talendJobVersion = null;
                         String talendJobContextGroup = null;
 
                         EList elementParameters = node.getElementParameter();
@@ -222,32 +226,32 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                             if ("SELECTED_JOB_NAME:PROCESS_TYPE_PROCESS".equals(paramType.getName())) { //$NON-NLS-1$
                                 talendJobId = paramType.getValue();
                             } else if ("SELECTED_JOB_NAME:PROCESS_TYPE_VERSION".equals(paramType.getName())) { //$NON-NLS-1$
-                                talendJobVesion = paramType.getValue();
+                                talendJobVersion = paramType.getValue();
                             } else if ("SELECTED_JOB_NAME:PROCESS_TYPE_CONTEXT".equals(paramType.getName())) { //$NON-NLS-1$
                                 talendJobContextGroup = paramType.getValue();
                             }
 
-                            if (talendJobId != null && talendJobVesion != null && talendJobContextGroup != null) {
+                            if (talendJobId != null && talendJobVersion != null && talendJobContextGroup != null) {
                                 break; // found
                             }
                         }
                         if (talendJobId != null) {
-                            if (talendJobVesion == null) {
-                                talendJobVesion = RelationshipItemBuilder.LATEST_VERSION;
+                            if (talendJobVersion == null) {
+                                talendJobVersion = RelationshipItemBuilder.LATEST_VERSION;
                             }
                             if (talendJobContextGroup == null) {
                                 talendJobContextGroup = IContext.DEFAULT;
                             }
                             IRepositoryViewObject foundObject = null;
                             try {
-                                if (RelationshipItemBuilder.LATEST_VERSION.equals(talendJobVesion)) {
+                                if (RelationshipItemBuilder.LATEST_VERSION.equals(talendJobVersion)) {
                                     foundObject = factory.getLastVersion(talendJobId);
                                 } else {
                                     // find out the fixing version
                                     List<IRepositoryViewObject> allVersionObjects = factory.getAllVersion(talendJobId);
                                     if (allVersionObjects != null) {
                                         for (IRepositoryViewObject obj : allVersionObjects) {
-                                            if (obj.getVersion().equals(talendJobVesion)) {
+                                            if (obj.getVersion().equals(talendJobVersion)) {
                                                 foundObject = obj;
                                                 break;
                                             }
@@ -263,7 +267,10 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                                 if (property != null) {
                                     talendJobsMap.put(talendJobId, foundObject);
                                     talendJobContextGroupsMap.put(talendJobId, talendJobContextGroup);
-                                    mavenModules.add(TALEND_JOBS_PATH + property.getLabel());
+                                    // we do not export the referenced jobs literally,
+                                    // but get them for build from the Maven repository.
+                                    // Thus, we must not add module declarations for them.
+                                    // mavenModules.add(TALEND_JOBS_PATH + property.getLabel());
                                 }
                             }
                         }
@@ -283,20 +290,12 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
     @Override
     protected Map<String, String> getMainMavenProperties(Item item) {
         Map<String, String> mavenPropertiesMap = super.getMainMavenProperties(item);
-        this.groupId = CamelFeatureUtil.getMavenGroupId(item);
-        this.projectName = JavaResourcesHelper.getProjectFolderName(item);
-
-        mavenPropertiesMap.put(EMavenBuildScriptProperties.ItemGroupName.getVarScript(), getGroupId());
-
+        // projectName = getCorrespondingProjectName(item);
+        routeName = item.getProperty().getLabel();
+        routeVersion = item.getProperty().getVersion();
+        groupId = CamelFeatureUtil.getMavenGroupId(item);
+        mavenPropertiesMap.put(EMavenBuildScriptProperties.ItemGroupName.getVarScript(), groupId);
         return mavenPropertiesMap;
-    }
-
-    private String getGroupId() {
-        return groupId;
-    }
-
-    private String getJobGroupId(String jobName) {
-    	return JavaResourcesHelper.getGroupItemName(projectName, jobName);
     }
 
     @Override
@@ -344,45 +343,45 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
                 + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME);
 
         try {
-            final Map<String, Object> templateParameters = PomUtil.getTemplateParameters(item.getProperty());
-            
-            String mavenScript = MavenTemplateManager.getTemplateContent(templatePomFile,
+            final Map<String, Object> templateParameters = getTemplateParameters(item.getProperty());
+
+            String mavenScript = getTemplateContent(templatePomFile,
                     IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_POM, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
-                    IProjectSettingTemplateConstants.PATH_ROUTE + '/' + TalendMavenConstants.POM_FILE_NAME,templateParameters);
+                    IProjectSettingTemplateConstants.PATH_ROUTE + '/' + TalendMavenConstants.POM_FILE_NAME, templateParameters);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFile, mavenPropertiesMap, false, true);
-                scriptsUrls.add(mavenBuildFile.toURL());
+                scriptsUrls.add(mavenBuildFile.toURI().toURL());
             }
 
-            mavenScript = MavenTemplateManager.getTemplateContent(templateBundleFile,
+            mavenScript = getTemplateContent(templateBundleFile,
                     IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_BUNDLE, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
                     IProjectSettingTemplateConstants.PATH_ROUTE + '/'
-                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_BUNDLE_FILE_NAME,templateParameters);
+                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_BUNDLE_FILE_NAME, templateParameters);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildBundleFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildBundleFile, mavenPropertiesMap, true, false);
-                scriptsUrls.add(mavenBuildBundleFile.toURL());
+                scriptsUrls.add(mavenBuildBundleFile.toURI().toURL());
             }
 
-            mavenScript = MavenTemplateManager.getTemplateContent(templateFeatureFile,
+            mavenScript = getTemplateContent(templateFeatureFile,
                     IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_FEATURE, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
                     IProjectSettingTemplateConstants.PATH_ROUTE + '/'
-                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_FEATURE_FILE_NAME,templateParameters);
+                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_FEATURE_FILE_NAME, templateParameters);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildFeatureFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildFeatureFile, mavenPropertiesMap);
-                scriptsUrls.add(mavenBuildFeatureFile.toURL());
+                scriptsUrls.add(mavenBuildFeatureFile.toURI().toURL());
             }
 
-            mavenScript = MavenTemplateManager.getTemplateContent(templateParentFile,
+            mavenScript = getTemplateContent(templateParentFile,
                     IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_PARENT, PluginChecker.EXPORT_ROUTE_PLUGIN_ID,
                     IProjectSettingTemplateConstants.PATH_ROUTE + '/'
-                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME,templateParameters);
+                            + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_PARENT_FILE_NAME, templateParameters);
             if (mavenScript != null) {
                 createMavenBuildFileFromTemplate(mavenBuildParentFile, mavenScript);
                 updateMavenBuildFileContent(mavenBuildParentFile, mavenPropertiesMap);
-                scriptsUrls.add(mavenBuildParentFile.toURL());
+                scriptsUrls.add(mavenBuildParentFile.toURI().toURL());
             }
         } catch (Exception e) {
             ExceptionHandler.process(e);
@@ -403,11 +402,11 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
             if (repObject != null) {
                 Element dependencyElement = parentEle.addElement(IMavenProperties.ELE_DEPENDENCY);
                 Element groupIdElement = dependencyElement.addElement(IMavenProperties.ELE_GROUP_ID);
-                groupIdElement.setText(getJobGroupId(repObject.getLabel()));
+                groupIdElement.setText(groupId);
                 Element artifactIdElement = dependencyElement.addElement(IMavenProperties.ELE_ARTIFACT_ID);
-                artifactIdElement.setText(repObject.getLabel() + "-bundle");
+                artifactIdElement.setText(routeName + "_" + repObject.getLabel());
                 Element versionElement = dependencyElement.addElement(IMavenProperties.ELE_VERSION);
-                versionElement.setText(repObject.getVersion());
+                versionElement.setText(routeVersion);
             }
         }
         // add libs.
@@ -482,6 +481,10 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
         }
     }
 
+    private String getGroupId() {
+    	return groupId;
+    }
+
     /**
      * DOC ggu Comment method "getOsgiWithMavenManager".
      *
@@ -544,7 +547,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
             if (karFile.exists()) {
                 ExportFileResource karFileResource = new ExportFileResource(null, ""); //$NON-NLS-1$
                 try {
-                    karFileResource.addResource("", karFile.toURL()); //$NON-NLS-1$
+                    karFileResource.addResource("", karFile.toURI().toURL()); //$NON-NLS-1$
                 } catch (MalformedURLException e) {
                     ExceptionHandler.process(e);
                 }
@@ -635,5 +638,75 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
 
     public void setReferenceRoutelets(Collection<String> routelets) {
         this.referenceRoutelets = routelets;
+    }
+
+    private static Map<String, Object> getTemplateParameters(Property property) {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        if (property != null && property.eResource() != null) {
+            final org.talend.core.model.properties.Project project = ProjectManager.getInstance().getProject(property);
+            if (project != null // from reference projects
+                    && !ProjectManager.getInstance().getCurrentProject().getTechnicalLabel().equals(project.getTechnicalLabel())) {
+                parameters.put("ProjectName", project.getTechnicalLabel());
+            }
+        }
+        return parameters;
+    }
+
+    private static String getTemplateContent(File templateFile, String projectSettingKey, String bundleName,
+            String bundleTemplatePath, Map<String, Object> parameters) throws Exception {
+        return MavenTemplateManager.getContentFromInputStream(getTemplateStream(
+                templateFile, projectSettingKey, bundleName, bundleTemplatePath, parameters));
+    }
+
+    private static InputStream getTemplateStream(File templateFile, String projectSettingKey, String bundleName,
+            String bundleTemplatePath, Map<String, Object> parameters) throws Exception {
+        InputStream stream = null;
+        // 1. from file template directly.
+        if (templateFile != null && templateFile.exists()) {
+            // will close it later.
+            stream = new BufferedInputStream(new FileInputStream(templateFile));
+        }
+        // 2. from project setting
+        if (stream == null && projectSettingKey != null) {
+            stream = getProjectSettingStream(projectSettingKey, parameters);
+        }
+        // 3. from bundle template.
+        if (stream == null && bundleName != null && bundleTemplatePath != null) {
+            stream = MavenTemplateManager.getBundleTemplateStream(bundleName, bundleTemplatePath);
+        }
+        return stream;
+    }
+
+    private static Method mGetProjectSettingStream = null;
+    private static boolean newMethod = false;
+
+    private static InputStream getProjectSettingStream(String key, Map<String, Object> parameters) {
+        if (mGetProjectSettingStream == null) {
+            try {
+                try {
+                    mGetProjectSettingStream = MavenTemplateManager.class.getMethod(
+                            "getProjectSettingStream", String.class, Map.class);
+                    newMethod = true;
+                } catch (NoSuchMethodException ne) {
+                    mGetProjectSettingStream = MavenTemplateManager.class.getMethod(
+                            "getProjectSettingStream", String.class);
+                    newMethod = false;
+                }
+            } catch (RuntimeException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new IllegalStateException("Unexpected method resolution failure. ", e);
+            }
+        }
+    	try {
+            if (newMethod) {
+                return (InputStream) mGetProjectSettingStream.invoke(null, key, parameters);
+            } else {
+                return (InputStream) mGetProjectSettingStream.invoke(null, key);
+            }
+    	} catch (Exception e) {
+    	    // ignore
+    	}
+        return null;
     }
 }
