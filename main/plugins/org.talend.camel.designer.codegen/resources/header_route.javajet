@@ -171,7 +171,7 @@ package <%= packageName %>;
 
         if(exportTypeSpringBoot){
  %>
- 
+
 /**
  * Applies configuration properties to a HTTPConduit
  */
@@ -2008,9 +2008,10 @@ if (isProvider) {
         <%}%>
 
         cxfEndpoint.getFeatures().add(new org.apache.cxf.ws.policy.WSPolicyFeature(policy));
-}<%
+}
+<%
 }//end if(hasCXFSamlTokenConsumer || hasCXFSamlTokenProvider)
-}//end if(hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer||hasCXFRegistryProvider || hasCXFRegistryConsumer)
+}//end if(hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer || hasCXFRegistryProvider || hasCXFRegistryConsumer)
 %>
 
 <%
@@ -2181,7 +2182,7 @@ if (isProvider) {
 <%
                         } else if ("OIDC".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))) {
                             String oidcIntrospectionEndpoint = ElementParameterParser.getValue(node, "__OIDC_INTROSPECTION_ENDPOINT__");
-                            %>
+%>
                                 // OpenID authentication
                                 sf_<%=cid%>.setProvider(new javax.ws.rs.container.ContainerRequestFilter() {
                                     @Override
@@ -2215,20 +2216,20 @@ if (isProvider) {
                                         }
                                     }
                                 });
-                            <%
+<%
                         }
                     }
                     if ("true".equals(ElementParameterParser.getValue(node, "__EXPOSE_SWAGGER_SPEC__"))) {
-                    %>
+%>
                     org.apache.cxf.jaxrs.swagger.Swagger2Feature swagger2Feature_<%=cid%> = new org.apache.cxf.jaxrs.swagger.Swagger2Feature();
                     swagger2Feature_<%=cid%>.setScan(false);
-                    <%
+<%
                         String epForSwagger = ElementParameterParser.getValue(node, "__URL__");
                         epForSwagger = epForSwagger.substring(1);
                         epForSwagger = "\"/services" + epForSwagger;
 
                         String swaggerTitle = className + " REST Application";
-                    %>
+%>
                     swagger2Feature_<%=cid%>.setBasePath(<%=epForSwagger%>);
                     swagger2Feature_<%=cid%>.setRunAsFilter(true);
                     swagger2Feature_<%=cid%>.setTitle("<%=swaggerTitle%>");
@@ -2237,7 +2238,7 @@ if (isProvider) {
                     swagger2Feature_<%=cid%>.setLicense(null);
                     swagger2Feature_<%=cid%>.setLicenseUrl(null);
                     sf_<%=cid%>.getFeatures().add(swagger2Feature_<%=cid%>);
-                    <%
+<%
                     }
                 } else {
 %>
@@ -2624,11 +2625,11 @@ if (isProvider) {
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setPort(<%=wmqPort%>);
                         // ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setCCSID(866);
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setTransportType(<%=wmqTransportType%>);
-                        ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setQueueManager(<%=wmqUM%>);    
+                        ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setQueueManager(<%=wmqUM%>);
 <%
                         if (wmqTransportType.equals("1") && (wmqChannel != null) && !wmqChannel.equals("")){
 %>
-                            ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setChannel(<%=wmqChannel%>);    						
+                            ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setChannel(<%=wmqChannel%>);
 <%
                         }
 %>
