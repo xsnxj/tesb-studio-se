@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.talend.camel.designer.ui.wizards.export.KarafJavaScriptForESBWithMavenManager;
@@ -47,14 +48,15 @@ public class JavaCamelJobScriptsExportWithMavenAction extends JavaCamelJobScript
             destinationKar = getTempDir() + File.separatorChar + getNodeBundleName(routeNode, version)
                     + FileConstants.KAR_FILE_SUFFIX;
         }
-        KarafJavaScriptForESBWithMavenManager sm = new KarafJavaScriptForESBWithMavenManager(exportChoiceMap, destinationKar, null, null,
-                IProcessor.NO_STATISTICS, IProcessor.NO_TRACES, "Route");
+        KarafJavaScriptForESBWithMavenManager sm = new KarafJavaScriptForESBWithMavenManager(exportChoiceMap, destinationKar,
+                null, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES, "Route");
         sm.setReferenceRoutelets(getReferenceRoutlets());
         scriptsManager = sm;
     }
 
     @Override
-    protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+    protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor)
+            throws InvocationTargetException, InterruptedException {
         super.processResults(featuresModel, monitor);
 
         exportMavenResources(monitor);
@@ -63,8 +65,8 @@ public class JavaCamelJobScriptsExportWithMavenAction extends JavaCamelJobScript
     private void exportMavenResources(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         scriptsManager.setMultiNodes(false);
         scriptsManager.setDestinationPath(destinationPath);
-        JobExportAction action = new JobExportAction(Collections.singletonList(routeNode), version, bundleVersion,
-                scriptsManager, getTempDir(), "Route"); //$NON-NLS-1$
+        JobExportAction action = new JobExportAction(Collections.singletonList(routeNode), version, bundleVersion, scriptsManager,
+                getTempDir(), "Route"); //$NON-NLS-1$
         action.run(monitor);
     }
 
@@ -74,11 +76,12 @@ public class JavaCamelJobScriptsExportWithMavenAction extends JavaCamelJobScript
 
     private Collection<String> getReferenceRoutlets() {
         ProcessItem routeProcess = (ProcessItem) routeNode.getObject().getProperty().getItem();
-        Collection<String> routelets = new HashSet<String>();
+        String routeName = routeNode.getObject().getProperty().getDisplayName();
+        Set<String> routelets = new HashSet<>();
         try {
-            exportAllReferenceRoutelets(routeProcess, routelets);
+            exportAllReferenceRoutelets(routeName, routeProcess, routelets);
         } catch (InvocationTargetException e) {
-            return  new HashSet<String>();
+            return new HashSet<>();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
