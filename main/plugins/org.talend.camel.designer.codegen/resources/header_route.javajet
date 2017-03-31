@@ -54,7 +54,7 @@
 	//params=process.getContextManager().getDefaultContext().getContextParameterList();
 	boolean isTestContainer = ProcessUtils.isTestContainer(process);
 	String className = isTestContainer ? process.getName() + "Test" : process.getName();
-	String extendsClassName = isTestContainer ? "org.apache.camel.test.junit4.CamelTestSupport" : "org.apache.camel.builder.RouteBuilder"; 
+	String extendsClassName = isTestContainer ? "org.apache.camel.test.junit4.CamelTestSupport" : "org.apache.camel.builder.RouteBuilder";
 %>
 <%
 IBrandingService service = (IBrandingService) GlobalServiceRegister.getDefault().getService(IBrandingService.class);
@@ -69,19 +69,19 @@ if (service instanceof AbstractBrandingService) {
     if (baseProcess != null) {
         routeFolderName = JavaResourcesHelper.getJobFolderName(baseProcess.getName(), baseProcess.getVersion()) + ".";
     }
-	routeFolderName = routeFolderName + JavaResourcesHelper.getJobFolderName(process.getName(), process.getVersion());
-	String packageName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + routeFolderName;
+    routeFolderName = routeFolderName + JavaResourcesHelper.getJobFolderName(process.getName(), process.getVersion());
+    String packageName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + routeFolderName;
 
 %>
 package <%= packageName %>;
 
 <%
-	java.util.Set<String> importsSet = new java.util.TreeSet<String>();
-/*	for (String routine : CodeGeneratorRoutine.getRequiredRoutineName(process)) {
-		if (!routine.equals(ITalendSynchronizer.TEMPLATE)) {
-			importsSet.add("import routines."+routine);
-		}
-	}
+    java.util.Set<String> importsSet = new java.util.TreeSet<String>();
+/*  for (String routine : CodeGeneratorRoutine.getRequiredRoutineName(process)) {
+        if (!routine.equals(ITalendSynchronizer.TEMPLATE)) {
+            importsSet.add("import routines."+routine);
+        }
+    }
 */
 	importsSet.add("import java.util.HashMap");
 	importsSet.add("import java.util.Map");
@@ -480,18 +480,18 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
    } 
 %>
 
-	private boolean inOSGi;
+    private boolean inOSGi;
 
 
 
-	public void setArguments(Map<String, String> arguments) {
-		inOSGi = true;
-		final String newContext = arguments.remove("context");
-		if (null != newContext) {
-			contextStr = newContext;
-		}
-		context_param.putAll(arguments);
-	}
+    public void setArguments(Map<String, String> arguments) {
+        inOSGi = true;
+        final String newContext = arguments.remove("context");
+        if (null != newContext) {
+            contextStr = newContext;
+        }
+        context_param.putAll(arguments);
+    }
 
 <%
 
@@ -1056,36 +1056,36 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
     }
 
     if (hasCXFRSProvider) {
-		String defaultUri = (String) System.getProperties().get("restServiceDefaultUri");
-		if (null == defaultUri || defaultUri.trim().isEmpty() || !defaultUri.contains("://")) {
-			defaultUri = "http://127.0.0.1:8090/";
-		} else if (!defaultUri.endsWith("/")) {
-			defaultUri = defaultUri + "/";
-		}
+        String defaultUri = (String) System.getProperties().get("restServiceDefaultUri");
+        if (null == defaultUri || defaultUri.trim().isEmpty() || !defaultUri.contains("://")) {
+            defaultUri = "http://127.0.0.1:8090/";
+        } else if (!defaultUri.endsWith("/")) {
+            defaultUri = defaultUri + "/";
+        }
 %>
-	public String getCXFRSEndpointAddress(String endpointUrl) {
-		if (inOSGi) {
-			if (endpointUrl != null && !endpointUrl.trim().isEmpty() && !endpointUrl.contains("://")) {
-				if (endpointUrl.startsWith("/services")) {
-					endpointUrl = endpointUrl.substring("/services".length());
-				}
-				if (!endpointUrl.startsWith("/")) {
-					endpointUrl = '/' + endpointUrl;
-				}
-			}
-			return endpointUrl;
-		}
-		String defaultEndpointUrl = "<%=defaultUri%>";
-		if (null == endpointUrl || endpointUrl.trim().isEmpty()) {
-				endpointUrl = defaultEndpointUrl;
-		} else if (!endpointUrl.contains("://")) { // relative
-			if (endpointUrl.startsWith("/")) {
-				endpointUrl = endpointUrl.substring(1);
-			}
-			endpointUrl = defaultEndpointUrl + endpointUrl;
-		}
-		return endpointUrl;
-	}
+    public String getCXFRSEndpointAddress(String endpointUrl) {
+        if (inOSGi) {
+            if (endpointUrl != null && !endpointUrl.trim().isEmpty() && !endpointUrl.contains("://")) {
+                if (endpointUrl.startsWith("/services")) {
+                    endpointUrl = endpointUrl.substring("/services".length());
+                }
+                if (!endpointUrl.startsWith("/")) {
+                    endpointUrl = '/' + endpointUrl;
+                }
+            }
+            return endpointUrl;
+        }
+        String defaultEndpointUrl = "<%=defaultUri%>";
+        if (null == endpointUrl || endpointUrl.trim().isEmpty()) {
+            endpointUrl = defaultEndpointUrl;
+        } else if (!endpointUrl.contains("://")) { // relative
+            if (endpointUrl.startsWith("/")) {
+                endpointUrl = endpointUrl.substring(1);
+            }
+            endpointUrl = defaultEndpointUrl + endpointUrl;
+        }
+        return endpointUrl;
+    }
 
 static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org.apache.camel.component.cxf.CxfPayload<javax.xml.transform.Source>> {
     public boolean isWriteable(Class<?> cls, java.lang.reflect.Type type, java.lang.annotation.Annotation[] anns, javax.ws.rs.core.MediaType mt) {
@@ -1968,7 +1968,7 @@ if (isProvider) {
                 policy = cxfEndpoint.getBus().getExtension(org.apache.cxf.ws.policy.PolicyBuilder.class).getPolicy(policyInput);
             } catch (Exception e) {
                 throw new RuntimeException("Cannot load policy", e);
-            }        
+            }
         <%} else {%>
             if (useAuthorization) {
                 policy = policyProvider.getSAMLAuthzPolicy(bus);
@@ -1978,27 +1978,28 @@ if (isProvider) {
         <%}%>
 
         cxfEndpoint.getFeatures().add(new org.apache.cxf.ws.policy.WSPolicyFeature(policy));
-}<%
+}
+<%
 }//end if(hasCXFSamlTokenConsumer || hasCXFSamlTokenProvider)
-}//end if(hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer||hasCXFRegistryProvider || hasCXFRegistryConsumer)
+}//end if(hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer || hasCXFRegistryProvider || hasCXFRegistryConsumer)
 %>
 
 <%
-	if(isTestContainer){
+    if(isTestContainer){
 
-		if(hasCXFComponent){
+        if(hasCXFComponent){
 %>
-			private org.apache.camel.Endpoint endpoint(String uri) {
-				return context().getEndpoint(uri);
-			}
+            private org.apache.camel.Endpoint endpoint(String uri) {
+                return context().getEndpoint(uri);
+            }
 <%
-		}// end if cCxf
+        }// end if cCxf
 %>
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
 <%
-	}//end if(isTestContainer)
+    }//end if(isTestContainer)
 %>
             @Override
             public void configure() throws java.lang.Exception {
@@ -2307,13 +2308,13 @@ if (isProvider) {
                         factory_<%=cid%>.getFeatures().add(eventFeature);
                     }
 <%
-					if(exportTypeSpringBoot){
+                    if(exportTypeSpringBoot){
 %>
-						else {
-							factory_<%=cid%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
-						}
+                        else {
+                            factory_<%=cid%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
+                        }
 <%
-					}
+                    }
                 }
 
                 if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__"))) {
@@ -2485,13 +2486,19 @@ if (isProvider) {
                         pooledConnectionFactory_<%=cid%>.setIdleTimeout(<%=amq_pool_idle_timeout%>);
                         pooledConnectionFactory_<%=cid%>.setMaxConnections(<%=amq_pool_max_connections%>);
                         pooledConnectionFactory_<%=cid%>.setMaximumActiveSessionPerConnection(<%=amq_pool_max_active%>);
-                        camelContext.addComponent(<%=name%>,
-                            org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(pooledConnectionFactory_<%=cid%>));    
+
+                        if(camelContext.getComponent(<%=name%>)==null){
+                                                    camelContext.addComponent(<%=name%>,
+                            org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(pooledConnectionFactory_<%=cid%>));   
+                        }
+ 
 <%
                     } else {
 %>
-                        camelContext.addComponent(<%=name%>,
-                            org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory_<%=cid%>));
+                        if(camelContext.getComponent(<%=name%>)==null){
+                            camelContext.addComponent(<%=name%>,
+                                org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory_<%=cid%>));
+                            }
 <%
                     }
                 } else if ("WebSphere MQ Jms".equals(mqType)) {
@@ -2526,11 +2533,13 @@ if (isProvider) {
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setPort(<%=wmqPort%>);
                         // ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setCCSID(866);
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setTransportType(<%=wmqTransportType%>);
-                        ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setQueueManager(<%=wmqUM%>);    
-<%						if (wmqTransportType.equals("1") && (wmqChannel != null) && !wmqChannel.equals("")){
+                        ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setQueueManager(<%=wmqUM%>);
+<%
+                        if (wmqTransportType.equals("1") && (wmqChannel != null) && !wmqChannel.equals("")){
 %>
-							((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setChannel(<%=wmqChannel%>);    						
-<%						}
+                            ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setChannel(<%=wmqChannel%>);
+<%
+                        }
 %>
 
                     } catch (javax.jms.JMSException e) {
@@ -2539,8 +2548,10 @@ if (isProvider) {
 <%
                     if("false".equals(useAuth)){
 %>
-                    camelContext.addComponent(<%=name%>,
-                        org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory));
+                    if(camelContext.getComponent(<%=name%>)==null){
+                        camelContext.addComponent(<%=name%>,
+                            org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory));
+                    }
 <%
                     }else{
 %>
@@ -2557,8 +2568,10 @@ if (isProvider) {
                     connectionFactoryAdapter<%=cid%>.setPassword(decryptedPassword_<%=cid%>);
                     connectionFactoryAdapter<%=cid%>.setTargetConnectionFactory(jmsConnectionFactory);
 
-                    camelContext.addComponent(<%=name%>,
-                        org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(connectionFactoryAdapter<%=cid%>));
+                    if(camelContext.getComponent(<%=name%>)==null){
+                        camelContext.addComponent(<%=name%>,
+                            org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(connectionFactoryAdapter<%=cid%>));
+                    }
 <%
                     }
 %>
@@ -2591,8 +2604,10 @@ if (isProvider) {
                         ep.append(port);
                     }
 %>
-                    camelContext.addComponent(<%=name%>,
-                            new org.apache.camel.component.amqp.AMQPComponent(org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl.createFromURL(<%=ep.toString()%>)));
+                    if(camelContext.getComponent(<%=name%>)==null){
+                        camelContext.addComponent(<%=name%>,
+                                new org.apache.camel.component.amqp.AMQPComponent(org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl.createFromURL(<%=ep.toString()%>)));
+                    }
                     //((org.apache.camel.component.amqp.AMQPComponent) camelContext.getComponent(<%=name%>)).getConfiguration().setClientId("<%=process.getName().toLowerCase()%>" + java.util.UUID.randomUUID().toString());
 <%
                 } else if("MQTT".equals(mqType)) {
@@ -2668,15 +2683,19 @@ if (isProvider) {
                             return endpoint;
                         }
                      };
-                    camelContext.addComponent(<%=name%>, mqttComponent_<%=cid%>);
+                    if(camelContext.getComponent(<%=name%>)==null){
+                        camelContext.addComponent(<%=name%>, mqttComponent_<%=cid%>);
+                    }
 <%
                 } else if ("Other".equals(mqType)) {
 %>
                     {
                         javax.jms.ConnectionFactory jmsConnectionFactory;
                         <%=ElementParameterParser.getValue(node, "__OTHER_CODE__")%>
-                        camelContext.addComponent(<%=name%>,
-                            org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory));
+                        if(camelContext.getComponent(<%=name%>)==null){
+                            camelContext.addComponent(<%=name%>,
+                                org.apache.camel.component.jms.JmsComponent.jmsComponent<%=transactedMethodStr%>(jmsConnectionFactory));
+                        }
                     }
 <%
                 }
@@ -2850,22 +2869,22 @@ if (isProvider) {
 <%
             } else if (useRegistry && !isProvider) {
                 List<Map<String, String>> customProperties = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node, "__SL_META_DATA__");
-				if (!customProperties.isEmpty()) { 
+                if (!customProperties.isEmpty()) { 
 %>
                     java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
                     <% for (Map<String, String> custProp : customProperties) { %>
                         slCustomProps_<%=cid%>.put(<%=custProp.get("NAME")%>, <%=custProp.get("VALUE")%>);
                     <% } %>
 
-                    java.util.Map<String, Object> endpointProps_<%=cid%> = <%=endpointVar%>.getProperties();					
-					if (endpointProps_<%=cid%> == null) {
-						endpointProps_<%=cid%> = new java.util.HashMap<String, Object>();					
-					} 
-                    endpointProps_<%=cid%>.put(org.talend.esb.servicelocator.cxf.LocatorFeature.LOCATOR_PROPERTIES, slCustomProps_<%=cid%>);					
-                    <%=endpointVar%>.setProperties(endpointProps_<%=cid%>);					
+                    java.util.Map<String, Object> endpointProps_<%=cid%> = <%=endpointVar%>.getProperties();
+                    if (endpointProps_<%=cid%> == null) {
+                        endpointProps_<%=cid%> = new java.util.HashMap<String, Object>();
+                    }
+                    endpointProps_<%=cid%>.put(org.talend.esb.servicelocator.cxf.LocatorFeature.LOCATOR_PROPERTIES, slCustomProps_<%=cid%>);
+                    <%=endpointVar%>.setProperties(endpointProps_<%=cid%>);
 <%
-					}
-			}
+                }
+            }
 %>
             //http://jira.talendforge.org/browse/TESB-3850
             // !"true".equals(useRegistry) - https://jira.talendforge.org/browse/TESB-10725
@@ -2877,13 +2896,13 @@ if (isProvider) {
                     <%=endpointVar%>.getFeatures().add(eventFeature);
                 }
 <%
-				if(exportTypeSpringBoot){
+                if(exportTypeSpringBoot){
 %>
-					else {
-						<%=endpointVar%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
-					}
+                    else {
+                        <%=endpointVar%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
+                    }
 <%
-				}
+                }
             }
     }else if("cFtp".equals(nodeComponentName)){
             String cid = node.getUniqueName();
@@ -3054,7 +3073,7 @@ if (isProvider) {
             }
         }
     } else if("cRecipientList".equals(nodeComponentName)||"cSplitter".equals(nodeComponentName) 
-                || "cSetBody".equals(nodeComponentName) || "cMessageFilter".equals(nodeComponentName)) {
+            || "cSetBody".equals(nodeComponentName) || "cMessageFilter".equals(nodeComponentName)) {
         String language = ElementParameterParser.getValue(node, "__LANGUAGES__");
         if(!"xpath".equals(language)){
             continue;
