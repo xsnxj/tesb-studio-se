@@ -775,20 +775,5 @@
               name="${tesb-lz4}"
               uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-lz4}">
         </libraryNeeded>
-        <libraryNeededGroup
-              description="camel-swagger-ui"
-              id="camel-swagger-ui"
-              name="camel-swagger-ui">
-           <library
-               id="camel-swagger-ui">
-           </library>
-        </libraryNeededGroup>
-        <libraryNeeded
-              context="plugin:org.talend.designer.camel.components.localprovider"
-              id="camel-swagger-ui"
-              name="${tesb-camel-swagger-ui}"
-              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-swagger-ui}">
-        </libraryNeeded>
     </extension>
-
 </plugin>
