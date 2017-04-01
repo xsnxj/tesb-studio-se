@@ -13,7 +13,9 @@
 package org.talend.designer.esb.runcontainer.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.FileVisitResult;
@@ -26,7 +28,11 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -37,12 +43,12 @@ public class FileUtil {
     static {
         final List<String> containerFiles = new ArrayList<>();
 
-        containerFiles.add("/bin/trun");
-        containerFiles.add("/bin/setenv");
-        containerFiles.add("/etc");
-        containerFiles.add("/system/org/apache/karaf");
-        containerFiles.add("/system/org/talend/esb");
-        containerFiles.add("/lib/boot");
+        containerFiles.add("bin/trun");
+        containerFiles.add("bin/setenv");
+        containerFiles.add("etc");
+        containerFiles.add("system/org/apache/karaf");
+        containerFiles.add("system/org/talend/esb");
+        containerFiles.add("lib/boot");
         CONTAINER_FILES = Collections.unmodifiableList(containerFiles);
     }
 
@@ -86,7 +92,7 @@ public class FileUtil {
         }
 
         for (String f : CONTAINER_FILES) {
-            File resFile = new File(rtHome + f);
+            File resFile = new File(rtHome, f);
             if (!resFile.exists()) {
                 return false;
             }
@@ -121,6 +127,115 @@ public class FileUtil {
                 deleteDir(bakPath);
             }
             monitor.done();
+        }
+    }
+    
+    public static boolean isContainerArchive(String archive) {
+        try {
+            return getPathPrefixInArchive(archive) != null;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public static void unzipContainer(String from, String to) throws IOException {
+        System.out.println("Unzipping " + from + " into " + to);
+        final String prefix = getPathPrefixInArchive(from);
+        if (prefix == null) {
+            throw new IllegalArgumentException("Not Talend ESB Runtime archive");
+        }
+        
+        final Path toPath = Paths.get(to);
+        Path bakPath = null;
+        
+        if (Files.exists(toPath)) {
+            bakPath = toPath.getParent().resolve(toPath.getFileName().toString() + ".bak");
+            deleteDir(bakPath);
+            Files.move(toPath, bakPath, StandardCopyOption.REPLACE_EXISTING);
+        }
+        
+        try (final ZipInputStream zip = new ZipInputStream(new FileInputStream(from))) {
+            ZipEntry zentry = zip.getNextEntry();
+            
+            while (zentry != null) {
+                final String originalPath = zentry.getName();
+                if (originalPath.startsWith(prefix)) {
+                    final String newPath = originalPath.substring(prefix.length() + 1);
+                    final Path destPath = toPath.resolve(newPath);
+                    if (zentry.isDirectory()) {
+                        Files.createDirectories(destPath);
+                    } else {
+                        Files.createDirectories(destPath.getParent());
+                        Files.copy(zip, destPath);
+                    }
+                }
+                
+                zentry = zip.getNextEntry();
+            }
+        } catch (IOException e) {
+            deleteDir(toPath);
+            if (bakPath != null) {
+                Files.move(bakPath, toPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+            throw e;
+        } finally {
+            if (bakPath != null) {
+                deleteDir(bakPath);
+            }
+        }
+    }
+    
+    public static String getPathPrefixInArchive(String zip) throws IOException {
+        try (ZipInputStream zipStream = new ZipInputStream(new FileInputStream(zip), Charset.forName("UTF-8"))) {
+            ZipEntry zentry = zipStream.getNextEntry();
+            if (zentry == null) {
+                return null;
+            }
+            
+            String name = zentry.getName();
+            
+            Path path = Paths.get(name);
+            
+            String prefix = path.getRoot() == null ? path.toString() : path.getRoot().toString();
+            
+            boolean isRuntime = false;
+            boolean isESB = false;
+            
+            Set<Path> toLookFor = new HashSet<>();
+            for (String contF : CONTAINER_FILES) {
+                toLookFor.add(Paths.get(contF));
+            }
+            
+            while (zentry != null && !toLookFor.isEmpty()) {
+                Path zpath = Paths.get(zentry.getName());
+                
+                if (zpath.getNameCount() < 2) {
+                    zentry = zipStream.getNextEntry();
+                    continue;
+                }
+                
+                if (toLookFor.remove(zpath.subpath(1, zpath.getNameCount()))) {
+                    isRuntime = true;
+                } else if ("container".equals(zpath.getName(1).toString()) && zpath.getNameCount() > 2 
+                        && toLookFor.remove(zpath.subpath(2, zpath.getNameCount()))) {
+                    isESB = true;
+                }
+                
+                zentry = zipStream.getNextEntry();
+            }
+            
+            if (!toLookFor.isEmpty()) {
+                System.out.println("Some elements were not found: " + toLookFor);
+                return null;
+            }
+            
+            if (isESB == isRuntime) {
+                System.out.println("ESB and Runtime is the same: " + isESB);
+                return null;
+            }
+            
+            return isESB ? Paths.get(prefix, "container").toString() : prefix;
         }
     }
 
