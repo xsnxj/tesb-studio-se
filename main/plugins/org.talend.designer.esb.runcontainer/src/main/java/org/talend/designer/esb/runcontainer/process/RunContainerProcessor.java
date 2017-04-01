@@ -52,6 +52,8 @@ import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.process.TalendProcessOptionConstants;
 import org.talend.designer.core.ISyntaxCheckableEditor;
 import org.talend.designer.esb.runcontainer.export.JobJavaScriptOSGIForESBRuntimeManager;
+import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
+import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeAction;
 import org.talend.designer.esb.runcontainer.util.JMXUtil;
 import org.talend.designer.runprocess.IProcessMessageManager;
@@ -66,12 +68,15 @@ import org.talend.repository.services.ui.action.ExportServiceAction;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManagerFactory;
+import org.talend.repository.utils.EmfModelUtils;
 
 public class RunContainerProcessor implements IProcessor, IEclipseProcessor, TalendProcessOptionConstants {
 
     private IProcess process;
 
     private JmxDeployJob esbContainerJob;
+
+    private boolean codeGenerated;
 
     public RunContainerProcessor(IProcess process) {
         this.process = process;
@@ -111,24 +116,35 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
     @Override
     public Process run(int statisticsPort, int tracePort, String watchParam, String log4jLevel, IProgressMonitor monitor,
             IProcessMessageManager processMessageManager) throws ProcessorException {
-
+        // if (codeGenerated) {
         new StartRuntimeAction(false).run();
+        if (RuntimeServerController.getInstance().isRunning()) {
 
-        RunContainerProcess esbRunContainerProcess = new RunContainerProcess();
-        esbRunContainerProcess.startLogging();
-        esbContainerJob = null;
-        esbContainerJob = new JmxDeployJob(processMessageManager, statisticsPort, tracePort);
-        esbContainerJob.install();
+            RunContainerProcess esbRunContainerProcess = new RunContainerProcess();
+            esbRunContainerProcess.startLogging();
+            esbContainerJob = null;
+            esbContainerJob = new JmxDeployJob(processMessageManager, statisticsPort, tracePort);
+            esbContainerJob.install();
+            long timeout = System.currentTimeMillis() + 1000 * 20; // timeout 20 sec
+            do {
+                if (System.currentTimeMillis() > timeout) {
+                    esbContainerJob.cancel();
+                    break;
+                }
+                // The process need to wait jxm job starts to return
+            } while (esbContainerJob.getResult() == null);
 
-        do {
-            // The process need to wait jxm job starts to return
-        } while (esbContainerJob.getResult() == null);
-
-        if (esbContainerJob.getResult() != Status.OK_STATUS) {
-            esbRunContainerProcess.stopLogging();
-            throw new ProcessorException(esbContainerJob.getResult().getException());
+            if (esbContainerJob.getResult() != Status.OK_STATUS) {
+                esbRunContainerProcess.stopLogging();
+                throw new ProcessorException(esbContainerJob.getResult().getException());
+            }
+            return esbRunContainerProcess;
+        } else {
+            throw new ProcessorException(RunContainerMessages.getString("StartRuntimeAction.ErrorStart"));
         }
-        return esbRunContainerProcess;
+        // } else {
+        // throw new ProcessorException("Processor execution failed.");
+        // }
     }
 
     private IRepositoryViewObject findJob(String jobID) throws PersistenceException {
@@ -307,12 +323,12 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
     @Override
     public boolean isCodeGenerated() {
 
-        return false;
+        return codeGenerated;
     }
 
     @Override
     public void setCodeGenerated(boolean codeGenerated) {
-
+        this.codeGenerated = codeGenerated;
     }
 
     @Override
@@ -472,27 +488,32 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
                 RepositoryNode node = new RepositoryNode(viewObject, null, ENodeType.REPOSITORY_ELEMENT);
 
                 if (ComponentCategory.CATEGORY_4_DI.getName().equals(process.getComponentsType())) {
-                    // publish job
+                    // publish service
                     ProcessItem processItem = (ProcessItem) node.getObject().getProperty().getItem();
-                    List<Item> items = new ArrayList<Item>(1);
-                    items.add(processItem);
-                    Collection<IRepositoryViewObject> allDependencies = ProcessUtils.getProcessDependencies(
-                            ERepositoryObjectType.METADATA, items, false);
-                    // check service
-                    if (!allDependencies.isEmpty()) {
-                        target = File.createTempFile("service", FileConstants.KAR_FILE_SUFFIX, null);
-                        for (IRepositoryViewObject object : allDependencies) {
-                            if (object.getProperty().getItem() != null && object.getProperty().getItem() instanceof ServiceItem) {
-                                ServiceItem serviceItem = (ServiceItem) object.getProperty().getItem();
-                                IRunnableWithProgress action = new ExportServiceAction(serviceItem, target.getAbsolutePath(),
-                                        null);
-                                action.run(monitor);
-                                kars = JMXUtil.installKar(target);
-                                writeLog(processMessageManager, new ProcessMessage(MsgType.STD_OUT, "Install kar, return value: "
-                                        + Arrays.toString(kars) + ".\n"));
+                    if (EmfModelUtils.getComponentByName(processItem, "tESBProviderRequest", "tESBConsumer") != null) {
+                        List<Item> items = new ArrayList<Item>(1);
+                        items.add(processItem);
+                        Collection<IRepositoryViewObject> allDependencies = ProcessUtils.getProcessDependencies(
+                                ERepositoryObjectType.METADATA, items, false);
+                        // check service
+                        if (!allDependencies.isEmpty()) {
+                            target = File.createTempFile("service", FileConstants.KAR_FILE_SUFFIX, null);
+                            for (IRepositoryViewObject object : allDependencies) {
+                                if (object.getProperty().getItem() != null
+                                        && object.getProperty().getItem() instanceof ServiceItem) {
+                                    ServiceItem serviceItem = (ServiceItem) object.getProperty().getItem();
+                                    IRunnableWithProgress action = new ExportServiceAction(serviceItem, target.getAbsolutePath(),
+                                            null);
+                                    action.run(monitor);
+                                    kars = JMXUtil.installKar(target);
+                                    writeLog(processMessageManager, new ProcessMessage(MsgType.STD_OUT,
+                                            "Install kar, return value: " + Arrays.toString(kars) + ".\n"));
+                                }
                             }
+
                         }
                     } else {
+                        // publish job
                         target = File.createTempFile("job", FileConstants.JAR_FILE_SUFFIX, null);
                         JobScriptsManager jobScriptsManager = new JobJavaScriptOSGIForESBRuntimeManager(
                                 JobScriptsManagerFactory.getDefaultExportChoiceMap(), processItem.getProcess()
@@ -504,9 +525,11 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
                                 System.getProperty("java.io.tmpdir"));
 
                         jobAction.run(monitor);
-                        bundles = JMXUtil.installBundle(target);
-                        writeLog(processMessageManager, new ProcessMessage(MsgType.STD_OUT, "Install bundle, return value: "
-                                + Arrays.toString(bundles) + ".\n"));
+                        if (jobAction.isBuildSuccessful()) {
+                            bundles = JMXUtil.installBundle(target);
+                            writeLog(processMessageManager, new ProcessMessage(MsgType.STD_OUT, "Install bundle, return value: "
+                                    + Arrays.toString(bundles) + ".\n"));
+                        }
                     }
                 } else if (ComponentCategory.CATEGORY_4_CAMEL.getName().equals(process.getComponentsType())) {
                     // publish route
@@ -531,7 +554,7 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
             } finally {
                 if (target != null) {
                     // TODO delete target file
-                    // target.delete();
+                    target.delete();
                 }
             }
             return Status.OK_STATUS;

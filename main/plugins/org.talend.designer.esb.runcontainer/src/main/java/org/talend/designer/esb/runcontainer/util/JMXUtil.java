@@ -253,7 +253,7 @@ public class JMXUtil {
     public static void halt() throws Exception {
         // need to re connect
         MBeanServerConnection mbsc = createJMXconnection();
-        String SYS_MBEAN = "org.apache.karaf:type=system,name=trun";
+        String SYS_MBEAN = "org.apache.karaf:type=system,name=" + instanceName;
         ObjectName objectKar = new ObjectName(SYS_MBEAN);
         mbsc.invoke(objectKar, "halt", new Object[] {}, new String[] {});
     }

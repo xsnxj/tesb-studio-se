@@ -75,6 +75,7 @@ public class RunContainerProcessContext extends RunProcessContext {
         if (processor instanceof RunContainerProcessor) {
             ((RunContainerProcessor) processor).stop();
         }
+        processor.setCodeGenerated(false);
         return super.kill(returnExitValue);
     }
 
@@ -293,7 +294,7 @@ public class RunContainerProcessContext extends RunProcessContext {
                     }
                     // TODO check if it's not end with '\n', add it.
                     if (!data.endsWith("\n")) {
-                        sb.append(data).append('\n'); 
+                        sb.append(data).append('\n');
                     } else {
                         sb.append(data);
                     }

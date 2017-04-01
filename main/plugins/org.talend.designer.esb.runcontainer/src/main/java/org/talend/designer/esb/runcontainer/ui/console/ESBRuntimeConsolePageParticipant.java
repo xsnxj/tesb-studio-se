@@ -23,6 +23,7 @@ import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 import org.talend.designer.esb.runcontainer.server.RuntimeStatusChangeListener;
 import org.talend.designer.esb.runcontainer.ui.actions.HaltRuntimeAction;
 import org.talend.designer.esb.runcontainer.ui.actions.OpenRuntimeInfoAction;
+import org.talend.designer.esb.runcontainer.ui.actions.OpenRuntimePrefsAction;
 import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeAction;
 
 public class ESBRuntimeConsolePageParticipant implements IConsolePageParticipant {
@@ -32,6 +33,8 @@ public class ESBRuntimeConsolePageParticipant implements IConsolePageParticipant
     private HaltRuntimeAction haltRuntimeAction;
 
     private OpenRuntimeInfoAction openRuntimeInfoAction;
+
+    private OpenRuntimePrefsAction openRuntimePrefsAction;
 
     private RuntimeStatusChangeListener serverListener;
 
@@ -46,6 +49,7 @@ public class ESBRuntimeConsolePageParticipant implements IConsolePageParticipant
         startRuntimeAction = new StartRuntimeAction(true);
         haltRuntimeAction = new HaltRuntimeAction();
         openRuntimeInfoAction = new OpenRuntimeInfoAction();
+        openRuntimePrefsAction = new OpenRuntimePrefsAction();
         serverListener = new RuntimeStatusChangeListener() {
 
             @Override
@@ -94,6 +98,7 @@ public class ESBRuntimeConsolePageParticipant implements IConsolePageParticipant
         mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, startRuntimeAction);
         mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, haltRuntimeAction);
         mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, openRuntimeInfoAction);
+        mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, openRuntimePrefsAction);
     }
 
     @Override

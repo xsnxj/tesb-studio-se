@@ -116,9 +116,6 @@ public class RuntimeServerController {
     }
 
     public boolean isRunning() {
-        if (runtimeProcess != null && runtimeProcess.isAlive()) {
-            return true;
-        }
         return JMXUtil.isConnected();
     }
 

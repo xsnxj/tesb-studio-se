@@ -65,44 +65,32 @@ public class StartRuntimeAction extends Action {
     public void run() {
         if (JMXUtil.isConnected()) {
             // do nothing, just load console if needed
-            if (needConsole) {
-                loadConsole();
-            }
+            loadConsole();
             return;
         }
-
-        if (JMXUtil.createJMXconnection() != null) {
-            try {
+        try {
+            if (JMXUtil.createJMXconnection() != null) {
                 File karafHome = new File(JMXUtil.getSystemPropertie("karaf.home").replaceFirst("\\\\:", ":")); //$NON-NLS-1$ //$NON-NLS-2$
                 IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
                 File runtimeLocation = new File(store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION));
                 // is the same runtime, but it already running
                 if (runtimeLocation.getAbsolutePath().equals(karafHome.getAbsolutePath())) {
-                    if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(), "Connect to Runtime Server",
+                    if (MessageDialog.openConfirm(Display.getDefault().getActiveShell(), "Connect to Runtime Server",
                             "A local runtime server has been running, do you want to connect to it directly?")) {
-                        if (needConsole) {
-                            loadConsole();
-                        }
+                        loadConsole();
                     } else {
                         JMXUtil.closeJMXConnection();
                     }
                 } else {
                     // different runtime is running
                     JMXUtil.closeJMXConnection();
-                    MessageDialog.openError(Display.getCurrent().getActiveShell(), "Start Runtime Server Failed",
-                            "Another runtime server is running, please stop it first.");
+                    throw new InterruptedException("Another runtime server is running, please stop it first.");
                 }
-            } catch (Exception e) {
-                MessageDialog.openError(Display.getCurrent().getActiveShell(), "Start Runtime Server Failed", e.getMessage());
-            }
-        } else {
-            ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
-            try {
+            } else {
+                ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getDefault().getActiveShell());
                 dialog.run(true, true, new IRunnableWithProgress() {
 
                     Process ps = null;
-
-                    String errorMessage = null;
 
                     @Override
                     public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
@@ -120,37 +108,30 @@ public class StartRuntimeAction extends Action {
                                 Thread.sleep(1000);
                             }
                         } catch (IOException e) {
-                            errorMessage = e.getMessage();
                             e.printStackTrace();
+                            throw new InterruptedException(e.getMessage());
                         } finally {
                             monitor.done();
                             if (JMXUtil.isConnected()) {
-                                if (needConsole) {
-                                    loadConsole();
-                                }
+                                loadConsole();
                             } else {
-                                if (ps != null) {
-                                    ps.destroy();
-                                }
-                                MessageDialog
-                                        .openError(
-                                                Display.getCurrent().getActiveShell(),
-                                                "Start Runtime Server Failed",
-                                                "Runtime Server cannot be start, please check your settings.\n" + errorMessage == null ? ""
-                                                        : errorMessage);
+                                throw new InterruptedException("Connect to Runtime server failed.");
                             }
                         }
                     }
                 });
-            } catch (Exception e) {
-                e.printStackTrace();
-                MessageDialog.openError(Display.getCurrent().getActiveShell(),
-                        RunContainerMessages.getString("StartRuntimeAction.ErrorStart"), e.getMessage()); //$NON-NLS-1$
             }
+        } catch (Exception e) {
+            MessageDialog
+                    .openError(
+                            Display.getDefault().getActiveShell(),
+                            RunContainerMessages.getString("StartRuntimeAction.ErrorStart"), "Runtime Server cannot be start, please check your settings,\n" + e.getMessage()); //$NON-NLS-1$
         }
     }
 
     public void loadConsole() {
-        RuntimeConsoleUtil.loadConsole();
+        if (needConsole) {
+            RuntimeConsoleUtil.loadConsole();
+        }
     }
 }

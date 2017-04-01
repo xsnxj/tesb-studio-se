@@ -50,12 +50,14 @@ public class RunContainerProcess extends Process {
 
         logListener = new RuntimeLogHTTPAdapter() {
 
+            private final String info = "INFO";
+
             @Override
             public synchronized void logReceived(FelixLogsModel logsModel) {
                 if (startLogging) {
                     String msg = logsModel.toString();
                     try {
-                        if ("INFO".equals(logsModel.getLevel())) {
+                        if (info.equals(logsModel.getLevel())) {
                             stdOutputStream.write(msg.getBytes());
                             stdOutputStream.write('\n');
                             // stdOutputStream.flush();

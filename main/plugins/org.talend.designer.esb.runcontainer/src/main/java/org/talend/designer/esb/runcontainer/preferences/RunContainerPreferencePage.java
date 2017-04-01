@@ -37,7 +37,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import org.talend.commons.ui.swt.preferences.CheckBoxFieldEditor;
 import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
@@ -65,6 +64,8 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
 
     private Button buttonInitalizeServer;
 
+    private BooleanFieldEditor useOSGiEditor;
+
     /**
      * Create the preference page.
      */
@@ -86,17 +87,10 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         Composite body = new Composite(parent, SWT.NONE);
         body.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         body.setLayout(gridLayoutDefault);
-
-        CheckBoxFieldEditor checkRuntimeEditor = new CheckBoxFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_IN_OSGI,
-                "ESB Studio Runtime - Use Local Talend Runtime (OSGi Container)", body); //$NON-NLS-1$
-        checkRuntimeEditor.getButton().addSelectionListener(new SelectionAdapter() {
-
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                useLocalRuntime(checkRuntimeEditor.getButton().getSelection());
-            }
-        });
-        addField(checkRuntimeEditor);
+        getPreferenceStore().getBoolean(RunContainerPreferenceInitializer.P_ESB_RUNTIME_IN_OSGI);
+        useOSGiEditor = new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_IN_OSGI,
+                "ESB Studio Runtime - Use Local Talend Runtime (OSGi Container)", body);
+        addField(useOSGiEditor);
         Label lblNote = new Label(body, SWT.NONE);
         lblNote.setText("    Note: if disable the Studio will use a local JVM Process");
 
@@ -120,10 +114,6 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         // only support local runtime server, if need support remote server ,enable this editor
         hostFieldEditor.setEnabled(false, compositeServerBody);
 
-        IntegerFieldEditor portFieldEditor = new IntegerFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_PORT,
-                RunContainerMessages.getString("RunContainerPreferencePage.Port"), compositeServerBody); //$NON-NLS-1$
-        addField(portFieldEditor);
-        serverFieldEditors.add(portFieldEditor);
         StringFieldEditor userFieldEditor = new StringFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_USERNAME,
                 RunContainerMessages.getString("RunContainerPreferencePage.Username"), compositeServerBody); //$NON-NLS-1$
         addField(userFieldEditor);
@@ -137,18 +127,27 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         addField(instanceFieldEditor);
         serverFieldEditors.add(instanceFieldEditor);
 
+        IntegerFieldEditor portFieldEditor = new IntegerFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_PORT,
+                RunContainerMessages.getString("RunContainerPreferencePage.Port"), compositeServerBody); //$NON-NLS-1$
+        addField(portFieldEditor);
+        serverFieldEditors.add(portFieldEditor);
+
         StringFieldEditor jmxPortFieldEditor = new StringFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_JMX_PORT,
                 RunContainerMessages.getString("RunContainerPreferencePage.JMXPort"), compositeServerBody); //$NON-NLS-1$
         addField(jmxPortFieldEditor);
         serverFieldEditors.add(jmxPortFieldEditor);
 
         Composite compBtn = new Composite(groupServer, SWT.NONE);
-        compBtn.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1, 1));
+        GridData gridDataBtn = new GridData(SWT.LEFT, SWT.FILL, false, true, 1, 1);
+        gridDataBtn.widthHint = 100;
+        compBtn.setLayoutData(gridDataBtn);
         GridLayout layoutCompBtn = new GridLayout(1, false);
         layoutCompBtn.marginWidth = 0;
         layoutCompBtn.marginHeight = 0;
+
         compBtn.setLayout(layoutCompBtn);
         buttonAddServer = new Button(compBtn, SWT.NONE);
+        buttonAddServer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         buttonAddServer.addSelectionListener(new SelectionAdapter() {
 
             @Override
@@ -168,6 +167,7 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         // btnTestConnection.setText("Server Info...");
 
         buttonInitalizeServer = new Button(compBtn, SWT.NONE);
+        buttonInitalizeServer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         buttonInitalizeServer.setText(RunContainerMessages.getString("RunContainerPreferencePage.InitalizeButton")); //$NON-NLS-1$
         buttonInitalizeServer.addSelectionListener(new SelectionAdapter() {
 
@@ -228,17 +228,13 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
     }
 
     /**
-     * Set to use loca runtime or default JVM
+     * Set to use local runtime or default JVM
      * 
      * @param useRuntime
      */
-    protected void useLocalRuntime(boolean useRuntime) {
+    protected void setUseOSGi(boolean useRuntime) {
+        ESBRunContainerPlugin.getDefault().useOsgiManager(useRuntime);
         updateFieldEditors(useRuntime);
-        if (useRuntime) {
-
-        } else {
-
-        }
     }
 
     protected void updateFieldEditors(boolean enable) {
@@ -250,6 +246,19 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         for (FieldEditor editor : optionFieldEditors) {
             editor.setEnabled(enable, compositeOptionBody);
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.designer.esb.runcontainer.preferences.FieldLayoutPreferencePage#performOk()
+     */
+    @Override
+    public boolean performOk() {
+        // TODO Auto-generated method stub
+        setUseOSGi(useOSGiEditor.getBooleanValue());
+        getPreferenceStore().getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_IN_OSGI);
+        return super.performOk();
     }
 
     /**
