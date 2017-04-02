@@ -298,6 +298,10 @@
             <IMPORT MODULE="swagger-ui-${swagger.ui.version}.jar" MVN="mvn:org.talend.libraries/swagger-ui/${swagger.ui.version}" NAME="swagger-ui-${swagger.ui.version}"
                 UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/swagger-ui-${swagger.ui.version}.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
+
+            <IMPORT MODULE="snakeyaml-${snakeyaml.version}.jar" MVN="mvn:org.talend.libraries/snakeyaml/${snakeyaml.version}" NAME="snakeyaml-${snakeyaml.version}"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/snakeyaml-${snakeyaml.version}.jar"
+                REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 		</IMPORTS>
 	</CODEGENERATION>
 	<RETURNS />
