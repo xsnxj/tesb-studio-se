@@ -1459,6 +1459,11 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 
                 swaggerFeature.setScan(false);
                 swaggerFeature.setBasePath(<%=ElementParameterParser.getValue(node, "__REST_ENDPOINT__")%>);
+                swaggerFeature.setTitle("<%=process.getName()%>" + " REST Application");
+                swaggerFeature.setDescription("<%=cid%>");
+                swaggerFeature.setContact(null);
+                swaggerFeature.setLicense(null);
+                swaggerFeature.setLicenseUrl(null);
                 features.add(swaggerFeature);
 			<% } %>
 
