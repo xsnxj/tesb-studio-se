@@ -74,8 +74,8 @@ public class RunContainerProcessContext extends RunProcessContext {
         }
         if (processor instanceof RunContainerProcessor) {
             ((RunContainerProcessor) processor).stop();
+            processor.setCodeGenerated(false);
         }
-        processor.setCodeGenerated(false);
         return super.kill(returnExitValue);
     }
 

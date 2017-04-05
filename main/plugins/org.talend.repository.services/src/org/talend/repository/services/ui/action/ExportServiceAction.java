@@ -49,7 +49,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     private static final String THMAP_COMPONENT_NAME = "tHMap";
 
-	protected final static String PATH_SEPERATOR = "/"; //$NON-NLS-1$
+    protected final static String PATH_SEPERATOR = "/"; //$NON-NLS-1$
 
     protected final ServiceItem serviceItem;
 
@@ -79,6 +79,14 @@ public class ExportServiceAction implements IRunnableWithProgress {
             throws InvocationTargetException {
         this.serviceItem = serviceItem;
         this.exportChoiceMap = exportChoiceMap;
+        init(targetPath);
+    }
+
+    public ExportServiceAction(ServiceItem serviceItem, String targetPath, Map<ExportChoice, Object> exportChoiceMap,
+            ServiceExportManager manager) throws InvocationTargetException {
+        this.serviceItem = serviceItem;
+        this.exportChoiceMap = exportChoiceMap;
+        this.serviceManager = manager;
         init(targetPath);
     }
 
@@ -112,7 +120,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
                         }
                     }
                     if (jobNode == null) {
-                    	continue;
+                        continue;
                     }
                     String jobName = jobNode.getLabel();
                     operations.put(operationName, jobName);
@@ -123,7 +131,9 @@ public class ExportServiceAction implements IRunnableWithProgress {
             ports.put(port, operations);
         }
 
-        this.serviceManager = new ServiceExportManager(exportChoiceMap);
+        if (this.serviceManager == null) {
+            this.serviceManager = new ServiceExportManager(exportChoiceMap);
+        }
         serviceManager.setDestinationPath(targetPath);
         tempFolder = getTmpFolderPath();
     }
@@ -147,69 +157,68 @@ public class ExportServiceAction implements IRunnableWithProgress {
         feature.setContexts(contextValues);
 
         try {
-        	addRequiredFeatures(feature);
-        	
-        	exportJobsBundle(monitor, feature);
-        	
-        	// control bundle
-        	addControlBundle(feature);
+            addRequiredFeatures(feature);
 
-        	processFeature(feature);
+            exportJobsBundle(monitor, feature);
 
-        	processFinalResult(destinationPath);
+            // control bundle
+            addControlBundle(feature);
+
+            processFeature(feature);
+
+            processFinalResult(destinationPath);
         } catch (InvocationTargetException e) {
             throw e;
         } catch (InterruptedException e) {
             throw e;
         } catch (Exception e) {
-        	throw new InvocationTargetException(e);
+            throw new InvocationTargetException(e);
         } finally {
-        	clean();
+            clean();
         }
     }
 
-	private void addControlBundle(FeaturesModel feature) throws IOException,
-			CoreException {
-		final String artifactName = getServiceName() + "-control-bundle"; //$NON-NLS-1$
-		feature.addBundle(new BundleModel(getGroupId(), artifactName, getServiceVersion(), 
-		        generateControlBundle(getGroupId(), artifactName)));
-	}
+    private void addControlBundle(FeaturesModel feature) throws IOException, CoreException {
+        final String artifactName = getServiceName() + "-control-bundle"; //$NON-NLS-1$
+        feature.addBundle(new BundleModel(getGroupId(), artifactName, getServiceVersion(), generateControlBundle(getGroupId(),
+                artifactName)));
+    }
 
-	private void exportJobsBundle(IProgressMonitor monitor,
-			FeaturesModel feature) throws InvocationTargetException,
-			InterruptedException {
-		String directoryName = serviceManager.getRootFolderName(tempFolder);
-		for (IRepositoryViewObject node : nodes) {
-			JobScriptsManager manager = serviceManager.getJobManager(exportChoiceMap, tempFolder, node, getGroupId(),
-					getServiceVersion());
-			JobExportAction job = new JobExportAction(Collections.singletonList(new RepositoryNode(node, null, ENodeType.REPOSITORY_ELEMENT)),
-			        node.getVersion(), getBundleVersion(), manager, directoryName, "Service"); //$NON-NLS-1$
-			job.run(monitor);
-			feature.addBundle(new BundleModel(getGroupId(), serviceManager.getNodeLabel(node), getServiceVersion(), new File(manager.getDestinationPath())));
-		}
-	}
+    private void exportJobsBundle(IProgressMonitor monitor, FeaturesModel feature) throws InvocationTargetException,
+            InterruptedException {
+        String directoryName = serviceManager.getRootFolderName(tempFolder);
+        for (IRepositoryViewObject node : nodes) {
+            JobScriptsManager manager = serviceManager.getJobManager(exportChoiceMap, tempFolder, node, getGroupId(),
+                    getServiceVersion());
+            JobExportAction job = new JobExportAction(Collections.singletonList(new RepositoryNode(node, null,
+                    ENodeType.REPOSITORY_ELEMENT)), node.getVersion(), getBundleVersion(), manager, directoryName, "Service"); //$NON-NLS-1$
+            job.run(monitor);
+            feature.addBundle(new BundleModel(getGroupId(), serviceManager.getNodeLabel(node), getServiceVersion(), new File(
+                    manager.getDestinationPath())));
+        }
+    }
 
-	private void addRequiredFeatures(FeaturesModel features) {
-		//add correlation feature
-		ServiceConnection connection = (ServiceConnection) serviceItem.getConnection();
+    private void addRequiredFeatures(FeaturesModel features) {
+        // add correlation feature
+        ServiceConnection connection = (ServiceConnection) serviceItem.getConnection();
         String useRegistry = connection.getAdditionalInfo().get(ServiceMetadataDialog.USE_SERVICE_REGISTRY);
-        if(!"true".equals(useRegistry)) {
-	        String useCorrelation = connection.getAdditionalInfo().get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION);
-	        if("true".equals(useCorrelation)) {
-	        	features.addFeature(new FeatureModel(FeaturesModel.CORRELATION_FEATURE_NAME));
-	        }
+        if (!"true".equals(useRegistry)) {
+            String useCorrelation = connection.getAdditionalInfo().get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION);
+            if ("true".equals(useCorrelation)) {
+                features.addFeature(new FeatureModel(FeaturesModel.CORRELATION_FEATURE_NAME));
+            }
         }
-        
-        //add talend-data-mapper feature
-        for(IRepositoryViewObject node : nodes){
-        	ProcessItem processItem = (ProcessItem) node.getProperty().getItem();
-        	if (null != EmfModelUtils.getComponentByName(processItem, THMAP_COMPONENT_NAME)) {
-        		features.addFeature(new FeatureModel(FeaturesModel.TALEND_DATA_MAPPER_FEATURE_NAME));
-        		break;
-        	}
+
+        // add talend-data-mapper feature
+        for (IRepositoryViewObject node : nodes) {
+            ProcessItem processItem = (ProcessItem) node.getProperty().getItem();
+            if (null != EmfModelUtils.getComponentByName(processItem, THMAP_COMPONENT_NAME)) {
+                features.addFeature(new FeatureModel(FeaturesModel.TALEND_DATA_MAPPER_FEATURE_NAME));
+                break;
+            }
         }
-        
-	}
+
+    }
 
     private File generateControlBundle(String groupId, String artefactName) throws IOException, CoreException {
         File tempWsdl = new File(tempFolder, "control-bundle"); //$NON-NLS-1$
@@ -223,17 +232,16 @@ public class ExportServiceAction implements IRunnableWithProgress {
         // wsdl:import
         String serviceWsdlPrefix = serviceName + '_' + serviceVersion + '.';
         for (IResource resource : serviceWsdl.getParent().members()) {
-            if (IResource.FILE == resource.getType()
-                && resource.getName().startsWith(serviceWsdlPrefix)
-                && "wsdl".equals(resource.getFileExtension())) {
+            if (IResource.FILE == resource.getType() && resource.getName().startsWith(serviceWsdlPrefix)
+                    && "wsdl".equals(resource.getFileExtension())) {
                 FilesUtils.copyFile(((IFile) resource).getContents(), new File(tempWsdl, resource.getName()));
             }
         }
         // blueprint
         File blueprint = new File(tempWsdl, FileConstants.BLUEPRINT_FOLDER_NAME);
         blueprint.mkdirs();
-        serviceManager.createBlueprint(new File(blueprint, "blueprint.xml"), ports, additionalInfo, serviceWsdl,
-                getServiceName());
+        serviceManager
+                .createBlueprint(new File(blueprint, "blueprint.xml"), ports, additionalInfo, serviceWsdl, getServiceName());
         String jarName = artefactName + '-' + getServiceVersion() + FileConstants.JAR_FILE_SUFFIX;
         File jar = new File(serviceManager.getFilePath(tempFolder, groupId, artefactName, getServiceVersion()), jarName);
         FilesUtils.jar(serviceManager.getManifest(artefactName, getBundleVersion(), additionalInfo), tempWsdl, jar);
@@ -269,8 +277,8 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     protected File getFeatureFile() {
         final String artifactName = getServiceName() + FeaturesModel.NAME_SUFFIX;
-        return new File(serviceManager.getFilePath(tempFolder, getGroupId(), artifactName, getServiceVersion()),
-            artifactName + '-' + getServiceVersion() + ".xml"); //$NON-NLS-1$
+        return new File(serviceManager.getFilePath(tempFolder, getGroupId(), artifactName, getServiceVersion()), artifactName
+                + '-' + getServiceVersion() + ".xml"); //$NON-NLS-1$
     }
 
     public String getServiceVersion() {
@@ -284,8 +292,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
     public String getGroupId() {
         if (null == groupId) {
             try {
-                groupId = getGroupId(WSDLUtils.getDefinition(serviceWsdl).getTargetNamespace(),
-                        getServiceName());
+                groupId = getGroupId(WSDLUtils.getDefinition(serviceWsdl).getTargetNamespace(), getServiceName());
             } catch (CoreException e) {
                 throw new RuntimeException(e);
             }
@@ -308,16 +315,16 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     public String getTmpFolderPath() {
         try {
-        	File tmpExportFolder = File.createTempFile("service", null); //$NON-NLS-1$
+            File tmpExportFolder = File.createTempFile("service", null); //$NON-NLS-1$
             if (tmpExportFolder.exists() && tmpExportFolder.isFile()) {
                 tmpExportFolder.delete();
                 tmpExportFolder.mkdirs();
             }
             tmpExportFolder.deleteOnExit();
-    		return tmpExportFolder.getAbsolutePath();
+            return tmpExportFolder.getAbsolutePath();
         } catch (IOException e) {
-        	ExceptionHandler.process(e);
-        	return null;
+            ExceptionHandler.process(e);
+            return null;
         }
     }
 

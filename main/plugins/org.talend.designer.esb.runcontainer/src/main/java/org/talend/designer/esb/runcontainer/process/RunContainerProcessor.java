@@ -28,9 +28,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.components.ComponentCategory;
@@ -52,6 +50,7 @@ import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.process.TalendProcessOptionConstants;
 import org.talend.designer.core.ISyntaxCheckableEditor;
 import org.talend.designer.esb.runcontainer.export.JobJavaScriptOSGIForESBRuntimeManager;
+import org.talend.designer.esb.runcontainer.export.ServiceExportForESBRuntimeManager;
 import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeAction;
@@ -122,29 +121,20 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
 
             RunContainerProcess esbRunContainerProcess = new RunContainerProcess();
             esbRunContainerProcess.startLogging();
+
             esbContainerJob = null;
-            esbContainerJob = new JmxDeployJob(processMessageManager, statisticsPort, tracePort);
+            esbContainerJob = new JmxDeployJob(processMessageManager, statisticsPort, tracePort, monitor);
             esbContainerJob.install();
-            long timeout = System.currentTimeMillis() + 1000 * 20; // timeout 20 sec
-            do {
-                if (System.currentTimeMillis() > timeout) {
-                    esbContainerJob.cancel();
-                    break;
-                }
-                // The process need to wait jxm job starts to return
-            } while (esbContainerJob.getResult() == null);
 
             if (esbContainerJob.getResult() != Status.OK_STATUS) {
                 esbRunContainerProcess.stopLogging();
-                throw new ProcessorException(esbContainerJob.getResult().getException());
+                throw new ProcessorException("Cannot deply this process into runtime server", esbContainerJob.getResult()
+                        .getException());
             }
             return esbRunContainerProcess;
         } else {
             throw new ProcessorException(RunContainerMessages.getString("StartRuntimeAction.ErrorStart"));
         }
-        // } else {
-        // throw new ProcessorException("Processor execution failed.");
-        // }
     }
 
     private IRepositoryViewObject findJob(String jobID) throws PersistenceException {
@@ -408,7 +398,7 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
 
     }
 
-    private final class JmxDeployJob extends Job {
+    private final class JmxDeployJob {
 
         private IProcessMessageManager processMessageManager;
 
@@ -422,32 +412,42 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
 
         private boolean isInstall;
 
+        private IProgressMonitor monitor;
+
+        private IStatus result;
+
         /**
          * DOC yyan JmxDeployJob constructor comment.
          * 
          * @param processMessageManager
          * @param statisticsPort
          * @param tracePort
+         * @param monitor
          */
-        private JmxDeployJob(IProcessMessageManager processMessageManager, int statisticsPort, int tracePort) {
-            super("ESB Container with JMX");
+        private JmxDeployJob(IProcessMessageManager processMessageManager, int statisticsPort, int tracePort,
+                IProgressMonitor monitor) {
+            // super("ESB Container with JMX");
             this.processMessageManager = processMessageManager;
             this.statisticsPort = statisticsPort;
             this.tracePort = tracePort;
+            this.monitor = monitor;
+        }
+
+        public IStatus getResult() {
+            return result;
         }
 
         public void install() {
             isInstall = true;
-            schedule();
+            result = run();
         }
 
         public void unInstall() {
             isInstall = false;
-            schedule();
+            result = run();
         }
 
-        @Override
-        protected IStatus run(IProgressMonitor monitor) {
+        protected IStatus run() {
             IStatus status = null;
             if (process != null) {
                 if (isInstall) {
@@ -502,8 +502,8 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
                                 if (object.getProperty().getItem() != null
                                         && object.getProperty().getItem() instanceof ServiceItem) {
                                     ServiceItem serviceItem = (ServiceItem) object.getProperty().getItem();
-                                    IRunnableWithProgress action = new ExportServiceAction(serviceItem, target.getAbsolutePath(),
-                                            null);
+                                    ExportServiceAction action = new ExportServiceAction(serviceItem, target.getAbsolutePath(),
+                                            null, new ServiceExportForESBRuntimeManager(null, statisticsPort, tracePort));
                                     action.run(monitor);
                                     kars = JMXUtil.installKar(target);
                                     writeLog(processMessageManager, new ProcessMessage(MsgType.STD_OUT,
@@ -529,6 +529,9 @@ public class RunContainerProcessor implements IProcessor, IEclipseProcessor, Tal
                             bundles = JMXUtil.installBundle(target);
                             writeLog(processMessageManager, new ProcessMessage(MsgType.STD_OUT, "Install bundle, return value: "
                                     + Arrays.toString(bundles) + ".\n"));
+                        } else {
+                            return new Status(IStatus.ERROR, "org.talend.designer.esb.runcontainer",
+                                    "Build bundle into runtime server failed.");
                         }
                     }
                 } else if (ComponentCategory.CATEGORY_4_CAMEL.getName().equals(process.getComponentsType())) {

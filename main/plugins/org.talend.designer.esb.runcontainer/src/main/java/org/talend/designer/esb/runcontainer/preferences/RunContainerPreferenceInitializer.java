@@ -82,7 +82,7 @@ public class RunContainerPreferenceInitializer extends AbstractPreferenceInitial
     //
     public static final String P_ESB_RUNTIME_IN_OSGI = "ESB_RUNTIME_IN_OSGI";
 
-    public static final boolean P_DEFAULT_ESB_IN_OSGI = true;
+    public static final boolean P_DEFAULT_ESB_IN_OSGI = false;
 
     /*
      * (non-Javadoc)

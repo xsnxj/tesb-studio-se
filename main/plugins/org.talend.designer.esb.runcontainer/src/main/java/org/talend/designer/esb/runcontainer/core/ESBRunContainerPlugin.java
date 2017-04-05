@@ -14,6 +14,9 @@ package org.talend.designer.esb.runcontainer.core;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
+import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
 import org.talend.designer.esb.runcontainer.process.RunContainerProcessContextManager;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 import org.talend.designer.runprocess.RunProcessContextManager;
@@ -36,20 +39,21 @@ public class ESBRunContainerPlugin extends AbstractUIPlugin {
         super.start(context);
         plugin = this;
 
-        // boolean inOSGi = getPreferenceStore().getBoolean(RunContainerPreferenceInitializer.P_ESB_RUNTIME_IN_OSGI);
-        // if (inOSGi) {
-        // BundleListener bundleListener = new BundleListener() {
-        //
-        // @Override
-        // public void bundleChanged(BundleEvent event) {
-        // if (event.getBundle().getSymbolicName().equals(RunProcessPlugin.PLUGIN_ID)) {
-        // useOsgiManager(true);
-        // context.removeBundleListener(this);
-        // }
-        // }
-        // };
-        // context.addBundleListener(bundleListener);
-        // }
+        boolean inOSGi = getPreferenceStore().getBoolean(RunContainerPreferenceInitializer.P_ESB_RUNTIME_IN_OSGI);
+        if (inOSGi) {
+            BundleListener bundleListener = new BundleListener() {
+
+                @Override
+                public void bundleChanged(BundleEvent event) {
+                    if (event.getBundle().getSymbolicName().equals(RunProcessPlugin.PLUGIN_ID)) {
+                        defaultManager = RunProcessPlugin.getDefault().getRunProcessContextManager();
+                        useOsgiManager(true);
+                        context.removeBundleListener(this);
+                    }
+                }
+            };
+            context.addBundleListener(bundleListener);
+        }
     }
 
     @Override
@@ -71,11 +75,13 @@ public class ESBRunContainerPlugin extends AbstractUIPlugin {
             RunProcessContextManager manager = RunProcessPlugin.getDefault().getRunProcessContextManager();
             if (manager != null && manager.getClass() != RunContainerProcessContextManager.class) {
                 defaultManager = manager;
-                osgiManager = new RunContainerProcessContextManager();
+                osgiManager = osgiManager == null ? new RunContainerProcessContextManager() : osgiManager;
                 RunProcessPlugin.getDefault().setRunProcessContextManager(osgiManager);
             }
         } else {
-            RunProcessPlugin.getDefault().setRunProcessContextManager(defaultManager);
+            if (defaultManager != null) {
+                RunProcessPlugin.getDefault().setRunProcessContextManager(defaultManager);
+            }
         }
     }
 }
