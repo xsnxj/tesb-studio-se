@@ -1366,7 +1366,7 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 		this.job = job;
 		this.endpointUrl = endpointUrl;
 	}
-
+	
 	public void run() {
 		try {
 			RestServiceProviderImpl4TalendJob provider = new RestServiceProviderImpl4TalendJob(job);
@@ -1376,6 +1376,9 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 			java.util.List<Object> providers = new java.util.ArrayList<Object>();
 			providers.add(new ExceptionMapper4TalendJobRestService(provider));
 			providers.add(new StreamingDOM4JProvider());
+			<%if (Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTH__")) && "OPENID_PASSWORD_GRANT".equals(ElementParameterParser.getValue(node,"__AUTH_TYPE__"))) {%>
+			providers.add(new org.talend.esb.security.openid.OpenIDAccessTokenValidator());  
+			<%}%>
 			org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider =
 					new org.apache.cxf.jaxrs.provider.json.JSONProvider();
 			jsonProvider.setIgnoreNamespaces(true);

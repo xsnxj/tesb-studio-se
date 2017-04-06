@@ -115,6 +115,7 @@
 			<ITEMS DEFAULT="SECURITY_BASIC">
 				<ITEM NAME="SECURITY_BASIC" VALUE="BASIC" />
 				<ITEM NAME="SECURITY_SAML" VALUE="SAML" />
+				<ITEM NAME="SECURITY_OPENID_PASSWORD_GRANT" VALUE="OPENID_PASSWORD_GRANT" />
 			</ITEMS>
 		</PARAMETER>
 		<PARAMETER NAME="NEED_AUTHORIZATION" FIELD="CHECK" REQUIRED="true" NUM_ROW="123"
@@ -235,6 +236,8 @@
             <IMPORT MODULE="snakeyaml-${snakeyaml.version}.jar" MVN="mvn:org.talend.libraries/snakeyaml/${snakeyaml.version}" NAME="snakeyaml-${snakeyaml.version}"
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/snakeyaml-${snakeyaml.version}.jar"
                 REQUIRED="true"/>
+                
+            <IMPORT MODULE_GROUP="security-common" REQUIRED="true" />
 
         </IMPORTS>
 	</CODEGENERATION>
