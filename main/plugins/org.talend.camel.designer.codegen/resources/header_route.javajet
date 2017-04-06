@@ -507,6 +507,8 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
     boolean hasCorrelationID = false;
     boolean hasCXFRSProvider = false;
     boolean hasCXFRSServiceLocator = false;
+    boolean hasOidcAuthentication = false;
+    boolean hasOidcClientAuthentication = false;
     for (INode node : graphicalNodes) {
         if ("cSOAP".equals(node.getComponent().getName())) {
             boolean useRegistry = false;
@@ -533,6 +535,18 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
             if ("true".equals(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
                 hasSam = true;
             }
+
+            if (!hasOidcClientAuthentication) {
+                hasOidcClientAuthentication = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_SECURITY__"))
+                                                  && "OIDC".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))
+                                                  && !node.getIncomingConnections().isEmpty();
+            }
+
+            if (!hasOidcAuthentication) {
+                hasOidcAuthentication = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_SECURITY__"))
+                                            && "OIDC".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"));
+            }
+
             if (node.getIncomingConnections().isEmpty()) {
                 hasCXFRSProvider = true;
 
@@ -2029,6 +2043,113 @@ if (isProvider) {
         return new RouteBuilder() {
 <%
     }//end if(isTestContainer)
+
+    if (hasOidcAuthentication) {
+
+    %>
+    java.util.Map<String, String> getOidcSettings() {
+        java.util.Map<String, String> settings = new java.util.HashMap<String, String>();
+
+        String tokenEndpoint = (String) System.getProperty("org.talend.esb.openid.token.endpoint");
+        String validationEndpoint = (String) System.getProperty("org.talend.esb.openid.validation.endpoint");
+        String clientId = (String) System.getProperty("org.talend.esb.openid.public.client.id");
+        String scope = (String) System.getProperty("org.talend.esb.openid.scope");
+
+        if(tokenEndpoint == null){
+            tokenEndpoint = org.talend.esb.security.openid.OpenIDClientUtils.getTokenEndpointLocation();
+        }
+
+        if(validationEndpoint == null){
+            validationEndpoint = org.talend.esb.security.openid.OpenIDClientUtils.getValidationEndpointLocation();
+        }
+
+        if(clientId == null){
+            clientId = org.talend.esb.security.openid.OpenIDClientUtils.getPublicClientID();
+        }
+
+        if(scope == null){
+            scope = org.talend.esb.security.openid.OpenIDClientUtils.getScope();
+        }
+
+        if (tokenEndpoint == null && validationEndpoint == null) {
+
+            String fileName = "org.talend.esb.openid.cfg";
+            java.io.InputStream stream = null;
+
+            String configFile = "config/" + fileName;
+
+            String file = "";
+            // by default from current "config" directory
+            file = System.getProperty("user.dir") + java.io.File.separator + configFile;
+
+            java.io.File usersfile = new java.io.File(file);
+            if (usersfile.exists()) {
+                try{
+                    stream = new java.io.FileInputStream(file);
+                }catch(Exception e){
+                    stream = this.getClass().getClassLoader().getResourceAsStream(configFile);
+                }
+            } else {
+                stream = this.getClass().getClassLoader().getResourceAsStream(configFile);
+            }
+
+            if (stream != null) {
+                Properties oidcProperties = new Properties();
+                try {
+                    oidcProperties.load(stream);
+                } catch (Exception e) {
+                    throw new RuntimeException("Cannot load OpenID Connect properties", e);
+                } finally {
+                    try {
+                        stream.close();
+                    } catch (Exception e) {}
+                }
+
+                tokenEndpoint = oidcProperties.getProperty("org.talend.esb.openid.token.endpoint");
+                validationEndpoint = oidcProperties.getProperty("org.talend.esb.openid.validation.endpoint");
+                clientId = oidcProperties.getProperty("org.talend.esb.openid.public.client.id");
+                scope = oidcProperties.getProperty("org.talend.esb.openid.scope");
+            }
+        }
+
+        settings.put("org.talend.esb.openid.token.endpoint", tokenEndpoint);
+        settings.put("org.talend.esb.openid.validation.endpoint", validationEndpoint);
+        settings.put("org.talend.esb.openid.public.client.id", clientId);
+        settings.put("org.talend.esb.openid.scope", scope);
+
+        return settings;
+    }
+    <%
+    } // end if hasOidcAuthentication
+
+    if (hasOidcClientAuthentication) {
+        %>
+
+    private String oidcClientBearer(String oidcUsername, String oidcPassword) throws java.lang.Exception {
+        Map<String, String> settings = getOidcSettings();
+        String tokenEndpoint = settings.get("org.talend.esb.openid.token.endpoint");
+        String clientId = settings.get("org.talend.esb.openid.public.client.id");
+        String scope = settings.get("org.talend.esb.openid.scope");
+        if (scope == null || scope.isEmpty()) {
+            scope = "openid";
+        }
+
+        org.apache.cxf.jaxrs.client.WebClient oidcWebClient = org.apache.cxf.jaxrs.client.WebClient
+          .create(tokenEndpoint,
+                  java.util.Collections.singletonList(new org.apache.cxf.jaxrs.provider.json.JSONProvider())).type("application/x-www-form-urlencoded");
+                  javax.ws.rs.core.Response response = oidcWebClient.post("grant_type=password&scope=" + scope +"&username=" + oidcUsername + "&password=" + oidcPassword + "&client_id=" + clientId);
+
+        String responseString = response.readEntity(String.class);
+        org.json.simple.parser.JSONParser parser = new org.json.simple.parser.JSONParser();
+        org.json.simple.JSONObject responseJson = (org.json.simple.JSONObject) parser.parse(responseString);
+        if (!"Bearer".equals(responseJson.get("token_type"))) {
+            throw new java.lang.Exception("token_type returned from OpenID token endpoint is not of Bearer type");
+        }
+
+        return "Bearer " + responseJson.get("access_token");
+    }
+<%
+	}
 %>
             @Override
             public void configure() throws java.lang.Exception {
@@ -2180,7 +2301,6 @@ if (isProvider) {
                             }
 <%
                         } else if ("OIDC".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))) {
-                            String oidcIntrospectionEndpoint = ElementParameterParser.getValue(node, "__OIDC_INTROSPECTION_ENDPOINT__");
                             %>
                                 // OpenID authentication
                                 sf_<%=cid%>.setProvider(new javax.ws.rs.container.ContainerRequestFilter() {
@@ -2191,11 +2311,13 @@ if (isProvider) {
                                         if (authzHeader != null && authzHeader.startsWith("Bearer ")) {
                                             String accessToken = authzHeader.substring("Bearer ".length());
                                             if (accessToken != null && !accessToken.isEmpty()) {
+                                                String validationEp = getOidcSettings().get("org.talend.esb.openid.validation.endpoint");
                                                 org.apache.cxf.jaxrs.client.WebClient oidcWebClient =
-                                                    org.apache.cxf.jaxrs.client.WebClient.create(<%=oidcIntrospectionEndpoint%>,
+                                                        org.apache.cxf.jaxrs.client.WebClient.create(validationEp,
                                                         java.util.Collections.singletonList(new org.apache.cxf.jaxrs.provider.json.JSONProvider())).type("application/x-www-form-urlencoded");
                                                 javax.ws.rs.core.Response response = oidcWebClient.post("token=" + java.net.URLEncoder.encode(accessToken, "UTF-8")+ "&token_type_hint=access_token");
                                                 String responseString = response.readEntity(String.class);
+
                                                 org.json.simple.parser.JSONParser parser = new org.json.simple.parser.JSONParser();
                                                 try {
                                                     org.json.simple.JSONObject responseJson = (org.json.simple.JSONObject)parser.parse(responseString);

@@ -16,6 +16,11 @@ imports="
 	String cid = node.getUniqueName();
 
 	NodeParamsHelper paramsHelper = new NodeParamsHelper(node);
+
+    boolean hasOidcClientAuthentication = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_SECURITY__"))
+                                              && "OIDC".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))
+                                              && !node.getIncomingConnections().isEmpty();
+
 	CamelEndpointBuilder builder = CamelEndpointBuilder.getBuilder();
 
 	builder.setComponent("cxfrs://bean");
@@ -47,6 +52,11 @@ imports="
 			})
 <%
 	} else {
+        if (hasOidcClientAuthentication) {
+        %>
+        .setHeader("Authorization", constant(oidcClientBearer(<%=ElementParameterParser.getValue(node, "__USERNAME__")%>, <%=ElementParameterParser.getValue(node, "__PASSWORD__")%>)))<%
+        }
+
 		if ("MANUAL".equals(ElementParameterParser.getValue(node, "__SERVICE_TYPE__"))) {
 			String acceptType = paramsHelper.getVisibleStringParam("__ACCEPT_TYPE__");
 			String responseBean = paramsHelper.getVisibleStringParam("__RESPONSE_BEAN__");
