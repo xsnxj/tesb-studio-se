@@ -366,18 +366,18 @@ try {
 		webClient_<%=cid%>.header("Authorization", "Bearer " + <%=paramsHelper.getStringParam("__AUTH_BEARER_TOKEN__")%>);
 	}
 	
-	if (use_auth_<%=cid%> && "OPENID_PASSWORD_GRANT".equals(<%=authType%>)) {
+	if (use_auth_<%=cid%> && "OIDC_PASSWORD_GRANT".equals(<%=authType%>)) {
 	
-		String tokenEndpoint_<%=cid%> = org.talend.esb.security.openid.OpenIDClientUtils.getTokenEndpointLocation();
-		String client_id_<%=cid%> = org.talend.esb.security.openid.OpenIDClientUtils.getPublicClientID();
-		String scope_<%=cid%> = org.talend.esb.security.openid.OpenIDClientUtils.getScope();		
+		String tokenEndpoint_<%=cid%> = org.talend.esb.security.oidc.OidcClientUtils.getTokenEndpointLocation();
+		String client_id_<%=cid%> = org.talend.esb.security.oidc.OidcClientUtils.getPublicClientID();
+		String scope_<%=cid%> = org.talend.esb.security.oidc.OidcClientUtils.getScope();		
 				
 		if(tokenEndpoint_<%=cid%> == null){
-			throw new IllegalArgumentException("OpenID Token Endpoint is not set");
+			throw new IllegalArgumentException("OIDC Token Endpoint is not set");
 		}
 		
 		if(client_id_<%=cid%> == null){
-			throw new IllegalArgumentException("OpenID Client ID is not set");
+			throw new IllegalArgumentException("OIDC Client ID is not set");
 		}
 		
 		<% passwordFieldName = "__AUTH_PASSWORD__"; %>
@@ -385,27 +385,27 @@ try {
 		
 		String username_<%=cid%> = <%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>;
 		String password_<%=cid%> = decryptedPassword_<%=cid%>;
-		org.apache.cxf.jaxrs.client.WebClient openidWebClient_<%=cid%> = org.apache.cxf.jaxrs.client.WebClient
+		org.apache.cxf.jaxrs.client.WebClient oidcWebClient_<%=cid%> = org.apache.cxf.jaxrs.client.WebClient
 				.create(tokenEndpoint_<%=cid%>)
 				.type("application/x-www-form-urlencoded");
-		String getAccessTokensRequest_<%=cid%> = "grant_type=password&scope=openid&username="
+		String getAccessTokensRequest_<%=cid%> = "grant_type=password&scope="+scope_<%=cid%>+"&username="
 				+ username_<%=cid%>
 				+ "&password="
 				+ password_<%=cid%>
 				+ "&client_id="
 				+ client_id_<%=cid%>;
-		javax.ws.rs.core.Response response_<%=cid%> = openidWebClient_<%=cid%>
+		javax.ws.rs.core.Response response_<%=cid%> = oidcWebClient_<%=cid%>
 				.post(getAccessTokensRequest_<%=cid%>);
 		java.util.Map<String, String> responseMap_<%=cid%> = new java.util.HashMap<String, String>(); 
 		try {
-			responseMap_<%=cid%> = org.talend.esb.security.openid.OpenIDClientUtils.parseJson((java.io.InputStream) response_<%=cid%>.getEntity());
+			responseMap_<%=cid%> = org.talend.esb.security.oidc.OidcClientUtils.parseJson((java.io.InputStream) response_<%=cid%>.getEntity());
 		} catch (Exception ex) {
-			throw new javax.ws.rs.WebApplicationException("Can not parse response from  OpenID Access Token service: ", ex);
+			throw new javax.ws.rs.WebApplicationException("Can not parse response from  OIDC Access Token service: ", ex);
 		}		
       
 		if (response_<%=cid%>.getStatus() != 200) {
 			if(responseMap_<%=cid%>.get("error") != null){
-				throw new javax.ws.rs.WebApplicationException("OpenID Access Token request failed: " + responseMap_<%=cid%>.get("error"), response_<%=cid%>);
+				throw new javax.ws.rs.WebApplicationException("OIDC Access Token request failed: " + responseMap_<%=cid%>.get("error"), response_<%=cid%>);
 			}else{
 				throw new javax.ws.rs.WebApplicationException(response_<%=cid%>);
 			}
@@ -418,12 +418,12 @@ try {
 			}
 		} catch (Exception e) {
 			throw new javax.ws.rs.WebApplicationException(
-					"Can not process response from OpenID Token service "
+					"Can not process response from OIDC Token service "
 							+ e.getMessage());
 		}
 		if (accessToken_<%=cid%> == null) {
 			throw new javax.ws.rs.WebApplicationException(
-					"Can not find Bearer Access Token inside response from OpenID Token service");
+					"Can not find Bearer Access Token inside response from OIDC Token service");
 		}
 		
 				
