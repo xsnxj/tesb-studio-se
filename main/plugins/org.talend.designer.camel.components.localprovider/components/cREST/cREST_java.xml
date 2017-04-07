@@ -230,10 +230,6 @@
             <IMPORT MODULE_GROUP="security-common"
                 REQUIRED_IF="(ENABLE_SECURITY == 'true') AND ((SECURITY_TYPE == 'SAML') OR  (SECURITY_TYPE == 'OIDC'))" />
 
-            <IMPORT NAME="json-simple-1.1" MODULE="json-simple-1.1.jar" MVN="mvn:org.talend.libraries/json-simple-1.1/6.0.0"
-                UrlPath="platform:/plugin/org.talend.libraries.apache.storm/lib/json-simple-1.1.jar"
-                REQUIRED_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'OIDC')" />
-
             <IMPORT MODULE="swagger-annotations-${swagger.version}.jar" MVN="mvn:org.talend.libraries/swagger-annotations/6.0.0" NAME="swagger-annotations-${swagger.version}"
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-annotations-${swagger.version}.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
