@@ -499,6 +499,10 @@
                 <directory>src/main/resources</directory>
                 <filtering>false</filtering>
             </resource>
+            <resource>
+                <directory>src/main/filtered-resources</directory>
+                <filtering>true</filtering>
+            </resource>
         </resources>
         <plugins>
             <plugin>
@@ -550,8 +554,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <target>
-                                <copyfile src="src/main/filtered-resources/NOTICE" dest="NOTICE" forceoverwrite="true" />
-                                <concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
+                                <concat destfile="${project.build.directory}/classes/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
                                     <path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt" />
                                 </concat>
                                 <delete file="${project.build.directory}/classes/THIRD-PARTY.txt" />
