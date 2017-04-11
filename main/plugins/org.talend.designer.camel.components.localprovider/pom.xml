@@ -494,6 +494,12 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -544,6 +550,7 @@
                         <phase>process-resources</phase>
                         <configuration>
                             <target>
+                                <copyfile src="src/main/filtered-resources/NOTICE" dest="NOTICE" forceoverwrite="true" />
                                 <concat destfile="${basedir}/NOTICE" append="yes" ignoreempty="false" fixlastline="yes">
                                     <path path="${project.build.directory}/generated-sources/license/THIRD-PARTY.txt" />
                                 </concat>
