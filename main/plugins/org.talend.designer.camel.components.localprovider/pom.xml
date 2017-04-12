@@ -57,6 +57,7 @@
         <mvn-commons-io>mvn:commons-io/commons-io/2.2</mvn-commons-io>
         <mvn-commons-lang>mvn:commons-lang/commons-lang/2.6</mvn-commons-lang>
         <mvn-commons-pool>mvn:commons-pool/commons-pool/1.6</mvn-commons-pool>
+        <tesb-patch.version>6.3.1.PATCH1</tesb-patch.version>
     </properties>
 
     <dependencies>
@@ -69,7 +70,7 @@
         <dependency>
             <groupId>org.talend.camel</groupId>
             <artifactId>camel-talendjob</artifactId>
-            <version>${tesb.version}</version>
+            <version>${tesb-patch.version}</version>
         </dependency>
 
         <dependency>
