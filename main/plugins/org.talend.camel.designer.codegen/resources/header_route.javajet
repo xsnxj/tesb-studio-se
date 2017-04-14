@@ -2307,40 +2307,8 @@ if (isProvider) {
                         } else if ("OIDC".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))) {
                             %>
                                 // OpenID authentication
-                                sf_<%=cid%>.setProvider(new javax.ws.rs.container.ContainerRequestFilter() {
-                                    @Override
-                                    public void filter(javax.ws.rs.container.ContainerRequestContext requestContext) throws java.io.IOException {
-                                        boolean authFailed = true;
-                                        String authzHeader = requestContext.getHeaders().getFirst("Authorization");
-                                        if (authzHeader != null && authzHeader.startsWith("Bearer ")) {
-                                            String accessToken = authzHeader.substring("Bearer ".length());
-                                            if (accessToken != null && !accessToken.isEmpty()) {
-                                                String validationEp = getOidcSettings().get("org.talend.esb.oidc.validation.endpoint");
-                                                org.apache.cxf.jaxrs.client.WebClient oidcWebClient =
-                                                        org.apache.cxf.jaxrs.client.WebClient.create(validationEp,
-                                                        java.util.Collections.singletonList(new org.apache.cxf.jaxrs.provider.json.JSONProvider())).type("application/x-www-form-urlencoded");
-                                                javax.ws.rs.core.Response response = oidcWebClient.post("token=" + java.net.URLEncoder.encode(accessToken, "UTF-8")+ "&token_type_hint=access_token");
-
-                                                java.util.Map<String, String> responseMap;
-                                                try {
-                                                    responseMap = org.talend.esb.security.oidc.OidcClientUtils.parseJson((java.io.InputStream) response.getEntity());
-                                                    if ("true".equals(responseMap.get("active")) && "Bearer".equals(responseMap.get("token_type"))) {
-                                                        authFailed = false;
-                                                    }
-                                                } catch (Exception ex) {
-                                                    ex.printStackTrace();
-                                                    authFailed = true;
-                                                }
-                                            }
-                                        }
-
-                                        if (authFailed) {
-                                            javax.ws.rs.core.Response.ResponseBuilder builder = javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.UNAUTHORIZED);
-                                            builder.header(javax.ws.rs.core.HttpHeaders.WWW_AUTHENTICATE, "Bearer");
-                                            requestContext.abortWith(builder.build());
-                                        }
-                                    }
-                                });
+                                new org.talend.esb.security.oidc.OidcClientUtils(getOidcSettings()); // get settings to use them by access token validator
+                                sf_<%=cid%>.setProvider(new org.talend.esb.security.oidc.OidcAccessTokenValidator());
                             <%
                         }
                     }
