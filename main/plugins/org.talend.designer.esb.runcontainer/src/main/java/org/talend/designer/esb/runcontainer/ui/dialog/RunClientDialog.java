@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
+import org.talend.designer.esb.runcontainer.util.JMXUtil;
 
 public class RunClientDialog extends TitleAreaDialog {
 
@@ -71,6 +72,7 @@ public class RunClientDialog extends TitleAreaDialog {
 
         logStyledText = new StyledText(container, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY);
         logStyledText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        logStyledText.setText("Checking for all bundles start...");
         return area;
     }
 
@@ -102,11 +104,8 @@ public class RunClientDialog extends TitleAreaDialog {
             @Override
             public void run() {
                 redStyleRanges.clear();
-                try {
-                    // wait half sec to start running commands, thus the empty console will be shown clearly.
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                }
+                // wait half sec to start running commands, thus the empty console will be shown clearly.
+                waitForActive();
                 try {
                     IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
                     File containerDir = new File(store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION));
@@ -179,13 +178,35 @@ public class RunClientDialog extends TitleAreaDialog {
                                 redStyleRanges.add(styleRange);
                             }
                             logStyledText.setStyleRanges(redStyleRanges.toArray(new StyleRange[0]));
-                            logStyledText.setSelection(log.length());
+                            logStyledText.setSelection(log.length() + 1);
                         }
                     });
                 }
             } catch (IOException e) {
             }
         }
+    }
 
+    private void waitForActive() {
+        try {
+            int deactiveCount = 0;
+            do {
+                long[] bundleList = JMXUtil.getBundlesList();
+                deactiveCount = bundleList.length;
+                for (long id : bundleList) {
+                    if ("Active".equals(JMXUtil.getBundleStatus(id))) {
+                        deactiveCount--;
+                    }
+                }
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            } while (deactiveCount < 5);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

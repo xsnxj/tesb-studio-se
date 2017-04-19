@@ -18,10 +18,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -45,7 +42,9 @@ import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 import org.talend.designer.esb.runcontainer.ui.actions.HaltRuntimeAction;
 import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeAction;
+import org.talend.designer.esb.runcontainer.ui.dialog.RunClientDialog;
 import org.talend.designer.esb.runcontainer.ui.wizard.AddRuntimeWizard;
+import org.talend.designer.esb.runcontainer.util.FileUtil;
 
 /**
  * ESB Runtime pref page
@@ -177,55 +176,7 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
 
             @Override
             public void widgetSelected(SelectionEvent e) {
-                try {
-                    if (RuntimeServerController.getInstance().isRunning()) {
-                        new HaltRuntimeAction().run();
-                    }
-                    StartRuntimeAction start = new StartRuntimeAction(false);
-                    start.run();
-
-                    if (RuntimeServerController.getInstance().isRunning()) {
-                        File launcher;
-                        String os = System.getProperty("os.name");
-                        if (os != null && os.toLowerCase().contains("windows")) {
-                            launcher = new File(locationEditor.getStringValue() + "/bin/client.bat");
-                        } else {
-                            launcher = new File(locationEditor.getStringValue() + "/bin/client");
-                        }
-                        InputStream stream = RunContainerPreferencePage.class.getResourceAsStream("/resources/commands");
-                        File initFile = new File(locationEditor.getStringValue() + "/scripts/initlocal.sh");
-                        if (!initFile.exists()) {
-                            Files.copy(stream, initFile.toPath());
-                        }
-                        String command = launcher.getAbsolutePath() + " -h " + hostFieldEditor.getStringValue()
-                                + " -l 1 \"source scripts/initlocal.sh\"";
-
-                        IRunnableWithProgress op = new IRunnableWithProgress() {
-
-                            public void run(IProgressMonitor monitor) {
-                                monitor.beginTask("Starting", 10);
-                                File containerDir = new File(locationEditor.getStringValue());
-                                try {
-                                    Process process = Runtime.getRuntime().exec(command, null, containerDir);
-                                    process.waitFor();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                monitor.done();
-                            }
-                        };
-                        new ProgressMonitorDialog(getShell()).run(false, true, op);
-                    } else {
-                        MessageDialog.openError(
-                                getShell(),
-                                RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog2"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog3") + "\n" + start.getErrorMessage()); //$NON-NLS-1$ //$NON-NLS-2$
-                    }
-                } catch (Exception e1) {
-                    e1.printStackTrace();
-                    MessageDialog.openError(
-                            getShell(),
-                            RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog4"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog5") + e1); //$NON-NLS-1$ //$NON-NLS-2$
-                }
+                initalizeRuntime(locationEditor.getStringValue(), hostFieldEditor.getStringValue());
             }
         });
 
@@ -268,5 +219,63 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
     public void init(IWorkbench workbench) {
         // Initialize the preference page
         setPreferenceStore(ESBRunContainerPlugin.getDefault().getPreferenceStore());
+    }
+
+    private void initalizeRuntime(String location, String host) {
+        try {
+            // 1. try to stop first
+            if (RuntimeServerController.getInstance().isRunning()) {
+                HaltRuntimeAction halt = new HaltRuntimeAction();
+                halt.run();
+                if (halt.getErrorMessage() != null) {
+                    MessageDialog
+                            .openError(
+                                    getShell(),
+                                    RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog2"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog6") + "\n" + halt.getErrorMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+                    return;
+                }
+            }
+            // 2. delete data(cannot use JMX to rebootCleanAll as a DLL delete failed)
+            FileUtil.deleteFolder(location + "/data");
+            if (new File(location + "/data").exists()) {
+                MessageDialog
+                        .openError(
+                                getShell(),
+                                RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog2"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog7")); //$NON-NLS-1$ //$NON-NLS-2$
+                return;
+            }
+            // 3. start (again)
+            StartRuntimeAction start = new StartRuntimeAction(false);
+            start.run();
+
+            if (null == start.getErrorMessage() && RuntimeServerController.getInstance().isRunning()) {
+                File launcher;
+                String os = System.getProperty("os.name");
+                if (os != null && os.toLowerCase().contains("windows")) {
+                    launcher = new File(location + "/bin/client.bat");
+                } else {
+                    launcher = new File(location + "/bin/client");
+                }
+                InputStream stream = RunContainerPreferencePage.class.getResourceAsStream("/resources/commands");
+                File initFile = new File(location + "/scripts/initlocal.sh");
+                if (!initFile.exists()) {
+                    Files.copy(stream, initFile.toPath());
+                }
+                // without username and password is ok
+                String command = launcher.getAbsolutePath() + " -h " + host + " -l 1 \"source scripts/initlocal.sh\"";
+                RunClientDialog.runClientWithCommandConsole(getShell(), command);
+            } else {
+                MessageDialog
+                        .openError(
+                                getShell(),
+                                RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog2"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog3") + "\n" + start.getErrorMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+        } catch (Exception e1) {
+            e1.printStackTrace();
+            MessageDialog
+                    .openError(
+                            getShell(),
+                            RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog4"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog5") + e1); //$NON-NLS-1$ //$NON-NLS-2$
+        }
     }
 }

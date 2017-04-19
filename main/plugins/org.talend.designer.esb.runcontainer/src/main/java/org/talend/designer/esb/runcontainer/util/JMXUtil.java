@@ -274,4 +274,25 @@ public class JMXUtil {
         mbsc.invoke(objectKar, "rebootCleanAll", new Object[] { String.valueOf(0) }, new String[] { String.class.getName() });
     }
 
+    public static long[] getBundlesList() throws Exception {
+        String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
+        ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
+
+        Set<Object> existsBundles = ((TabularDataSupport) mbsc.getAttribute(objectBundle, "Bundles")).keySet();
+        Object[] bundleIds = existsBundles.toArray();
+        long[] bundleIDs = new long[existsBundles.size()];
+        for (int i = 0; i < bundleIds.length; i++) {
+            String id = bundleIds[i].toString();
+            bundleIDs[i] = Long.parseLong(id.substring(1, id.length() - 1));
+        }
+        return bundleIDs;
+    }
+
+    public static String getBundleStatus(long bundleID) throws Exception {
+        String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
+        ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
+
+        return mbsc.invoke(objectBundle, "getStatus", new Object[] { String.valueOf(bundleID) },
+                new String[] { String.class.getName() }).toString();
+    }
 }

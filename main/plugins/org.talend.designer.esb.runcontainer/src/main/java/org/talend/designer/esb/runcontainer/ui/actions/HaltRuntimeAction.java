@@ -12,9 +12,14 @@
 // ============================================================================
 package org.talend.designer.esb.runcontainer.ui.actions;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
@@ -22,24 +27,49 @@ import org.talend.designer.runprocess.ui.ERunprocessImages;
 
 public class HaltRuntimeAction extends Action {
 
+    private String errorMessage;
+
     public HaltRuntimeAction() {
         setToolTipText(RunContainerMessages.getString("HaltRuntimeAction.Stop")); //$NON-NLS-1$
         setImageDescriptor(ImageProvider.getImageDesc(ERunprocessImages.KILL_PROCESS_ACTION));
         setEnabled(RuntimeServerController.getInstance().isRunning());
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.action.Action#run()
-     */
+    public String getErrorMessage() {
+        return this.errorMessage;
+    }
+
     @Override
     public void run() {
         ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getCurrent().getActiveShell());
         try {
-            dialog.run(true, true, new HaltRuntimeProgress());
+            dialog.run(true, true, new IRunnableWithProgress() {
+
+                @Override
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                    monitor.beginTask(RunContainerMessages.getString("HaltRuntimeAction.Stoping"), 10); //$NON-NLS-1$
+                    try {
+                        RuntimeServerController.getInstance().stopRuntimeServer();
+                        int i = 0;
+                        String dot = "."; //$NON-NLS-1$
+                        // JMXUtil.connectToRuntime() != null
+                        while (RuntimeServerController.getInstance().isRunning() && i < 11 && !monitor.isCanceled()) {
+                            monitor.subTask(RunContainerMessages.getString("HaltRuntimeAction.Task") + dot); //$NON-NLS-1$
+                            dot += "."; //$NON-NLS-1$
+                            monitor.worked(1);
+                            Thread.sleep(3000);
+                        }
+                    } catch (Exception e) {
+                        ExceptionHandler.process(e);
+                        e.printStackTrace();
+                        throw new InterruptedException(e.getMessage());
+                    }
+                    monitor.done();
+                }
+            });
         } catch (Exception e) {
-            e.printStackTrace();
+            ExceptionHandler.process(e);
+            errorMessage = e.getMessage();
         }
     }
 }
