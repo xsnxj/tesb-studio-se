@@ -195,7 +195,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 exportAllReferenceRoutelets(routeName, routeProcess, routelets);
 
                 exportRouteBundle(routeNode, routeFile, version, null, null, bundleVersion,
-                		null, routelets, null);
+                        null, routelets, null);
             }
 
             processResults(featuresModel, monitor);
@@ -263,7 +263,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 String projectName = project.getLabel();
                 if (projectName != null && projectName.length() > 0) {
                     jobBundleSymbolicName =
-                    		projectName.toLowerCase() + '.' + jobBundleSymbolicName;
+                            projectName.toLowerCase() + '.' + jobBundleSymbolicName;
                 }
             }
             File jobFile;
@@ -287,7 +287,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     @SuppressWarnings("unchecked")
     protected final void exportAllReferenceRoutelets(String routeName, ProcessItem routeProcess,
-    		Set<String> routelets) throws InvocationTargetException, InterruptedException {
+            Set<String> routelets) throws InvocationTargetException, InterruptedException {
         for (NodeType node : (Collection<NodeType>) routeProcess.getProcess().getNode()) {
             if (!EmfModelUtils.isComponentActive(node)) {
                 continue;
@@ -336,7 +336,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                     String projectName = project.getLabel();
                     if (projectName != null && projectName.length() > 0) {
                         routeletBundleSymbolicName =
-                        		projectName.toLowerCase() + '.' + routeletBundleSymbolicName;
+                                projectName.toLowerCase() + '.' + routeletBundleSymbolicName;
                     }
                 }
                 BundleModel routeletModel = new BundleModel(getGroupId(), routeletBundleName,
@@ -394,8 +394,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     }
 
     protected void exportRouteUsedJobBundle(IRepositoryNode node, File filePath,
-    		String jobVersion, String bundleName, String bundleSymbolicName,
-    		String bundleVersion, String routeName, String routeVersion, String context)
+            String jobVersion, String bundleName, String bundleSymbolicName,
+            String bundleVersion, String routeName, String routeVersion, String context)
                     throws InvocationTargetException, InterruptedException {
         RouteDedicatedJobManager talendJobManager =
                 new RouteDedicatedJobManager(getExportChoice(), context);

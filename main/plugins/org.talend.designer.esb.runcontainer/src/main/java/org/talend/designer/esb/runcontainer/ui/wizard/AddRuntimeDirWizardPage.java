@@ -45,7 +45,11 @@ public class AddRuntimeDirWizardPage extends WizardPage {
     
     private Text txtRuntimeHome;
     
+    private String runtimeHome;
+
     private Text txtRuntimeArchive;
+
+    private String runtimeDir;
 
     //private Label labelVersion;
 
@@ -331,6 +335,7 @@ public class AddRuntimeDirWizardPage extends WizardPage {
     
     private void validateRuntimeArchive() {
         boolean isValid = FileUtil.isContainerArchive(txtRuntimeArchive.getText());
+        runtimeDir = txtRuntimeArchive.getText();
         setPageComplete(isValid);
         setErrorMessage(isValid ? null : "Zip file is not valid Talend ESB or Runtime"); 
     }
@@ -410,11 +415,11 @@ public class AddRuntimeDirWizardPage extends WizardPage {
     }
 
     public String getRuntimeHome() {
-        return txtRuntimeHome.getText();
+        return runtimeHome;
     }
     
     public String getRuntimeArchive() {
-        return txtRuntimeArchive.getText();
+        return runtimeDir;
     }
     
     public boolean shouldInstallNewContainer() {

@@ -19,7 +19,11 @@ Require-Bundle: org.talend.camel.model,
  org.talend.repository,
  org.eclipse.jdt.core,
  org.talend.libraries.apache.http,
- org.talend.repository.services
+ org.talend.repository.services,
+ javax.wsdl,
+ org.talend.designer.core,
+ org.eclipse.jdt.debug,
+ org.eclipse.jface
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin
 Bundle-ClassPath: .,

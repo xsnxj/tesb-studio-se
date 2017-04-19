@@ -25,13 +25,6 @@
       </page>
    </extension>
    <extension
-         point="org.talend.designer.runprocess.runprocess_manager">
-      <runprocess_manager
-            class="org.talend.designer.esb.runcontainer.process.RunContainerProcessContextManager"
-            label="ESBRunContainerProcessContextManager">
-      </runprocess_manager>
-   </extension>
-   <extension
          point="org.eclipse.ui.console.consoleFactories">
       <consoleFactory
             class="org.talend.designer.esb.runcontainer.ui.console.ESBRuntimeConsoleFactory"

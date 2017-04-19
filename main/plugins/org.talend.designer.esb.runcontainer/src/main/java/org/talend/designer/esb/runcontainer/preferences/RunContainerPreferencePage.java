@@ -18,7 +18,10 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -40,8 +43,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
+import org.talend.designer.esb.runcontainer.ui.actions.HaltRuntimeAction;
 import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeAction;
-import org.talend.designer.esb.runcontainer.ui.dialog.RunClientDialog;
 import org.talend.designer.esb.runcontainer.ui.wizard.AddRuntimeWizard;
 
 /**
@@ -87,12 +90,13 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         Composite body = new Composite(parent, SWT.NONE);
         body.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         body.setLayout(gridLayoutDefault);
-        getPreferenceStore().getBoolean(RunContainerPreferenceInitializer.P_ESB_RUNTIME_IN_OSGI);
-        useOSGiEditor = new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_IN_OSGI,
+        getPreferenceStore().getBoolean(RunContainerPreferenceInitializer.P_ESB_IN_OSGI);
+        useOSGiEditor = new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_IN_OSGI,
                 "ESB Studio Runtime - Use Local Talend Runtime (OSGi Container)", body);
         addField(useOSGiEditor);
-        Label lblNote = new Label(body, SWT.NONE);
-        lblNote.setText("    Note: if disable the Studio will use a local JVM Process");
+        Label lblNote = new Label(body, SWT.WRAP);
+        lblNote.setText("Note: It will be only taken into account for an ESB Artifact:\n" + "  · A Route (Any Route)\n"
+                + "  · A DataService (SOAP/REST)\n" + "  · A Job contains tRESTClient or tESBConsumer component");
 
         Group groupServer = new Group(body, SWT.NONE);
         groupServer.setText(RunContainerMessages.getString("RunContainerPreferencePage.Group1")); //$NON-NLS-1$
@@ -174,7 +178,11 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
             @Override
             public void widgetSelected(SelectionEvent e) {
                 try {
-                    new StartRuntimeAction(false).run();
+                    if (RuntimeServerController.getInstance().isRunning()) {
+                        new HaltRuntimeAction().run();
+                    }
+                    StartRuntimeAction start = new StartRuntimeAction(false);
+                    start.run();
 
                     if (RuntimeServerController.getInstance().isRunning()) {
                         File launcher;
@@ -185,17 +193,32 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
                             launcher = new File(locationEditor.getStringValue() + "/bin/client");
                         }
                         InputStream stream = RunContainerPreferencePage.class.getResourceAsStream("/resources/commands");
-                        File initFile = new File(locationEditor.getStringValue() + "/bin/initlocal");
+                        File initFile = new File(locationEditor.getStringValue() + "/scripts/initlocal.sh");
                         if (!initFile.exists()) {
                             Files.copy(stream, initFile.toPath());
                         }
-                        String command = launcher.getAbsolutePath() + " -h " + hostFieldEditor.getStringValue() + " -u "
-                                + userFieldEditor.getStringValue() + " -l 2 -f \"" + initFile.getAbsolutePath() + "\"";
-                        RunClientDialog.runClientWithCommandConsole(getShell(), command);
+                        String command = launcher.getAbsolutePath() + " -h " + hostFieldEditor.getStringValue()
+                                + " -l 1 \"source scripts/initlocal.sh\"";
+
+                        IRunnableWithProgress op = new IRunnableWithProgress() {
+
+                            public void run(IProgressMonitor monitor) {
+                                monitor.beginTask("Starting", 10);
+                                File containerDir = new File(locationEditor.getStringValue());
+                                try {
+                                    Process process = Runtime.getRuntime().exec(command, null, containerDir);
+                                    process.waitFor();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                monitor.done();
+                            }
+                        };
+                        new ProgressMonitorDialog(getShell()).run(false, true, op);
                     } else {
                         MessageDialog.openError(
                                 getShell(),
-                                RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog2"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog3")); //$NON-NLS-1$ //$NON-NLS-2$
+                                RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog2"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog3") + "\n" + start.getErrorMessage()); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                 } catch (Exception e1) {
                     e1.printStackTrace();
@@ -227,16 +250,6 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         return body;
     }
 
-    /**
-     * Set to use local runtime or default JVM
-     * 
-     * @param useRuntime
-     */
-    protected void setUseOSGi(boolean useRuntime) {
-        ESBRunContainerPlugin.getDefault().useOsgiManager(useRuntime);
-        updateFieldEditors(useRuntime);
-    }
-
     protected void updateFieldEditors(boolean enable) {
         // compOption
         // compSvrBody
@@ -246,19 +259,6 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         for (FieldEditor editor : optionFieldEditors) {
             editor.setEnabled(enable, compositeOptionBody);
         }
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.talend.designer.esb.runcontainer.preferences.FieldLayoutPreferencePage#performOk()
-     */
-    @Override
-    public boolean performOk() {
-        // TODO Auto-generated method stub
-        setUseOSGi(useOSGiEditor.getBooleanValue());
-        getPreferenceStore().getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_IN_OSGI);
-        return super.performOk();
     }
 
     /**

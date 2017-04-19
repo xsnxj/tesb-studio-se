@@ -12,12 +12,17 @@
 // ============================================================================
 package org.talend.designer.esb.runcontainer.core;
 
-import org.talend.designer.esb.runcontainer.process.RunContainerProcessContextManager;
+import javax.management.MBeanServerConnection;
+
+import org.talend.core.model.components.ComponentCategory;
+import org.talend.core.model.process.IProcess;
+import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.properties.Property;
+import org.talend.designer.esb.runcontainer.process.RunContainerProcessor;
+import org.talend.designer.esb.runcontainer.util.JMXUtil;
 import org.talend.designer.runprocess.IESBRunContainerService;
-import org.talend.designer.runprocess.RunProcessContext;
-import org.talend.designer.runprocess.RunProcessContextManager;
-import org.talend.designer.runprocess.ui.JobJvmComposite;
-import org.talend.designer.runprocess.ui.TargetExecComposite;
+import org.talend.designer.runprocess.java.JavaProcessor;
+import org.talend.repository.utils.EmfModelUtils;
 
 /**
  * DOC yyan class global comment. Detailled comment <br/>
@@ -25,28 +30,44 @@ import org.talend.designer.runprocess.ui.TargetExecComposite;
  */
 public class LocalESBRunContainerService implements IESBRunContainerService {
 
-    private static final String ESB_RUNTIME_ITEM = "ESB Runtime"; //$NON-NLS-1$
+    private boolean enableRuntime;
 
-    private RunProcessContext esbProcessContext;
-
-    private RunProcessContextManager defaultContextManager;
-
-    private RunContainerProcessContextManager runtimeContextManager;
-
-    private int index = 0;
-
-    /*
-     * This method is to add a combo box(if do not have) in the <b>target exec</b> run tab view for ESB runtime server
-     * 
-     * @see org.talend.designer.runprocess.IESBRunContainerService#addRuntimeServer(org.talend.designer.runprocess.ui.
-     * TargetExecComposite, org.talend.designer.runprocess.ui.JobJvmComposite)
-     */
     @Override
-    public void addRuntimeServer(TargetExecComposite targetExecComposite, JobJvmComposite jobComposite) {
+    public void enableRuntime(boolean inRuntime) {
+        this.enableRuntime = inRuntime;
     }
 
     @Override
-    public boolean isESBProcessContextManager(RunProcessContextManager contextManager) {
-        return contextManager instanceof RunContainerProcessContextManager;
+    public boolean isRuntimeEnable() {
+        return enableRuntime;
+    }
+
+    /**
+     * DOC The local Runtime for ESB will be only taken into account if the user runs an ESB Artifact:
+     * 
+     * A route (Any Route)
+     * 
+     * A DataService (SOAP) A DataService (REST)
+     * 
+     * For tRESTClient or tESBConsumer we use the ESB Runtime
+     */
+    @Override
+    public JavaProcessor createJavaProcessor(IProcess process, Property property, boolean filenameFromLabel) {
+        if (enableRuntime) {
+            if (ComponentCategory.CATEGORY_4_CAMEL.getName().equals(process.getComponentsType())) {
+                return new RunContainerProcessor(process, property, filenameFromLabel);
+            } else if (ComponentCategory.CATEGORY_4_DI.getName().equals(process.getComponentsType())) {
+                if (EmfModelUtils.getComponentByName((ProcessItem) property.getItem(), "tESBProviderRequest", "tESBConsumer",
+                        "tRESTClient") != null) {
+                    return new RunContainerProcessor(process, property, filenameFromLabel);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public MBeanServerConnection getJMXServerConnection() {
+        return JMXUtil.createJMXconnection();
     }
 }

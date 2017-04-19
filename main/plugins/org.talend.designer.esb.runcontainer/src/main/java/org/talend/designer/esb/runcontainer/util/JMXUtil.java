@@ -258,4 +258,20 @@ public class JMXUtil {
         mbsc.invoke(objectKar, "halt", new Object[] {}, new String[] {});
     }
 
+    public static void reboot() throws Exception {
+        // need to re connect
+        MBeanServerConnection mbsc = createJMXconnection();
+        String SYS_MBEAN = "org.apache.karaf:type=system,name=" + instanceName;
+        ObjectName objectKar = new ObjectName(SYS_MBEAN);
+        mbsc.invoke(objectKar, "reboot", new Object[] { String.valueOf(0) }, new String[] { String.class.getName() });
+    }
+
+    public static void rebootCleanAll() throws Exception {
+        // need to re connect
+        MBeanServerConnection mbsc = createJMXconnection();
+        String SYS_MBEAN = "org.apache.karaf:type=system,name=" + instanceName;
+        ObjectName objectKar = new ObjectName(SYS_MBEAN);
+        mbsc.invoke(objectKar, "rebootCleanAll", new Object[] { String.valueOf(0) }, new String[] { String.class.getName() });
+    }
+
 }

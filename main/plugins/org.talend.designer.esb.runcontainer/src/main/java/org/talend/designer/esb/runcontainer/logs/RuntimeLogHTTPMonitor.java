@@ -17,10 +17,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -37,16 +35,10 @@ public class RuntimeLogHTTPMonitor {
 
     private static RuntimeLogHTTPMonitor instance;
 
-    private List<RuntimeLogHTTPAdapter> listeners;
-
-    private HttpLoggingTask httpLoggingTask;
-
     private Map<RuntimeLogHTTPAdapter, Long> listenerMap;
 
     RuntimeLogHTTPMonitor() {
         // init
-        listeners = new ArrayList<RuntimeLogHTTPAdapter>();
-        httpLoggingTask = new HttpLoggingTask();
         listenerMap = new HashMap<RuntimeLogHTTPAdapter, Long>();
     }
 
@@ -59,22 +51,20 @@ public class RuntimeLogHTTPMonitor {
 
     public void addLogLictener(RuntimeLogHTTPAdapter listener) {
         listenerMap.put(listener, System.currentTimeMillis());
-        listeners.add(listener);
+    }
+
+    public void removeLogLictener(RuntimeLogHTTPAdapter listener) {
+        listenerMap.remove(listener);
     }
 
     public boolean startLogging() {
         // httpLogTimer.cancel();
-        if (!httpLoggingTask.isRunning()) {
-            new Thread(httpLoggingTask, "ESB Runtime Logging Monitor").start();
+        if (listenerMap.size() == 0) {
+            new Thread(new HttpLoggingTask(), "ESB Runtime Logging Monitor").start();
         }
         // if (httpLoggingTask.getStatus() == 0) {
         // httpLogTimer.schedule(httpLoggingTask, 0);
         // }
-        return true;
-    }
-
-    public boolean stopLogging() {
-        httpLoggingTask.cancel();
         return true;
     }
 
@@ -92,21 +82,8 @@ public class RuntimeLogHTTPMonitor {
 
     class HttpLoggingTask implements Runnable {
 
-        boolean running = false;
-
-        public boolean isRunning() {
-            return running;
-        }
-
-        public void cancel() {
-            if (listeners.size() == 0) {
-                running = false;
-            }
-        }
-
         @Override
         public void run() {
-            running = true;
             long latestTime = 0;
             long current = System.currentTimeMillis();
             ObjectMapper mapper = new ObjectMapper();
@@ -155,7 +132,8 @@ public class RuntimeLogHTTPMonitor {
                                 if (logs[i].getMessage().indexOf(authorization) == 0) {
                                     continue;
                                 }
-                                for (IRuntimeLogListener listener : listeners) {
+
+                                for (IRuntimeLogListener listener : listenerMap.keySet()) {
                                     if (listenerMap.get(listener) < logs[i].getReceived()) {
                                         listener.logReceived(logs[i]);
                                     }
@@ -172,17 +150,10 @@ public class RuntimeLogHTTPMonitor {
                         } catch (InterruptedException e) {
                         }
                     }
-                } while (running);
+                } while (listenerMap.size() > 0);
             } catch (Exception e1) {
+                e1.printStackTrace();
             }
-        }
-    }
-
-    public void removeLogLictener(RuntimeLogHTTPAdapter listener) {
-        listeners.remove(listener);
-        listenerMap.remove(listener);
-        if (listeners.size() == 0) {
-            stopLogging();
         }
     }
 }

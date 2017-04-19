@@ -129,7 +129,7 @@ public class FileUtil {
             monitor.done();
         }
     }
-    
+
     public static boolean isContainerArchive(String archive) {
         try {
             return getPathPrefixInArchive(archive) != null;
@@ -138,27 +138,29 @@ public class FileUtil {
             return false;
         }
     }
-    
-    public static void unzipContainer(String from, String to) throws IOException {
-        System.out.println("Unzipping " + from + " into " + to);
+
+    public static void unzipContainer(String from, String to, IProgressMonitor monitor) throws IOException {
+        monitor.beginTask("Unzipping " + from + " into " + to, 100);
         final String prefix = getPathPrefixInArchive(from);
         if (prefix == null) {
             throw new IllegalArgumentException("Not Talend ESB Runtime archive");
         }
-        
+
         final Path toPath = Paths.get(to);
         Path bakPath = null;
-        
+
         if (Files.exists(toPath)) {
             bakPath = toPath.getParent().resolve(toPath.getFileName().toString() + ".bak");
             deleteDir(bakPath);
             Files.move(toPath, bakPath, StandardCopyOption.REPLACE_EXISTING);
+        } else {
+            Files.createDirectories(toPath);
         }
-        
+
         try (final ZipInputStream zip = new ZipInputStream(new FileInputStream(from))) {
             ZipEntry zentry = zip.getNextEntry();
-            
-            while (zentry != null) {
+
+            while (zentry != null && !monitor.isCanceled()) {
                 final String originalPath = zentry.getName();
                 if (originalPath.startsWith(prefix)) {
                     final String newPath = originalPath.substring(prefix.length() + 1);
@@ -170,7 +172,9 @@ public class FileUtil {
                         Files.copy(zip, destPath);
                     }
                 }
-                
+                monitor.setTaskName(originalPath);
+                monitor.worked(1);
+
                 zentry = zip.getNextEntry();
             }
         } catch (IOException e) {
@@ -183,59 +187,60 @@ public class FileUtil {
             if (bakPath != null) {
                 deleteDir(bakPath);
             }
+            monitor.done();
         }
     }
-    
+
     public static String getPathPrefixInArchive(String zip) throws IOException {
         try (ZipInputStream zipStream = new ZipInputStream(new FileInputStream(zip), Charset.forName("UTF-8"))) {
             ZipEntry zentry = zipStream.getNextEntry();
             if (zentry == null) {
                 return null;
             }
-            
+
             String name = zentry.getName();
-            
+
             Path path = Paths.get(name);
-            
+
             String prefix = path.getRoot() == null ? path.toString() : path.getRoot().toString();
-            
+
             boolean isRuntime = false;
             boolean isESB = false;
-            
+
             Set<Path> toLookFor = new HashSet<>();
             for (String contF : CONTAINER_FILES) {
                 toLookFor.add(Paths.get(contF));
             }
-            
+
             while (zentry != null && !toLookFor.isEmpty()) {
                 Path zpath = Paths.get(zentry.getName());
-                
+
                 if (zpath.getNameCount() < 2) {
                     zentry = zipStream.getNextEntry();
                     continue;
                 }
-                
+
                 if (toLookFor.remove(zpath.subpath(1, zpath.getNameCount()))) {
                     isRuntime = true;
-                } else if ("container".equals(zpath.getName(1).toString()) && zpath.getNameCount() > 2 
+                } else if ("container".equals(zpath.getName(1).toString()) && zpath.getNameCount() > 2
                         && toLookFor.remove(zpath.subpath(2, zpath.getNameCount()))) {
                     isESB = true;
                 }
-                
+
                 zentry = zipStream.getNextEntry();
             }
-            
+
             if (!toLookFor.isEmpty()) {
                 System.out.println("Some elements were not found: " + toLookFor);
                 return null;
             }
-            
+
             if (isESB == isRuntime) {
                 System.out.println("ESB and Runtime is the same: " + isESB);
                 return null;
             }
-            
-            return isESB ? Paths.get(prefix, "container").toString() : prefix;
+
+            return isESB ? Paths.get(prefix, "container").toString().replace('\\', '/') : prefix;
         }
     }
 

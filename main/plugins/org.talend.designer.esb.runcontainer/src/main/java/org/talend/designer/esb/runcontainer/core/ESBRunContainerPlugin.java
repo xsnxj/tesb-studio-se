@@ -12,15 +12,15 @@
 // ============================================================================
 package org.talend.designer.esb.runcontainer.core;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleEvent;
-import org.osgi.framework.BundleListener;
+import org.talend.core.GlobalServiceRegister;
 import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
-import org.talend.designer.esb.runcontainer.process.RunContainerProcessContextManager;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
-import org.talend.designer.runprocess.RunProcessContextManager;
-import org.talend.designer.runprocess.RunProcessPlugin;
+import org.talend.designer.runprocess.IESBRunContainerService;
 
 public class ESBRunContainerPlugin extends AbstractUIPlugin {
 
@@ -30,30 +30,30 @@ public class ESBRunContainerPlugin extends AbstractUIPlugin {
     // The shared instance
     private static ESBRunContainerPlugin plugin;
 
-    private RunProcessContextManager defaultManager;
-
-    private RunProcessContextManager osgiManager;
-
     @Override
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
+        initRuntimePreference();
+    }
 
-        boolean inOSGi = getPreferenceStore().getBoolean(RunContainerPreferenceInitializer.P_ESB_RUNTIME_IN_OSGI);
-        if (inOSGi) {
-            BundleListener bundleListener = new BundleListener() {
+    private void initRuntimePreference() {
 
-                @Override
-                public void bundleChanged(BundleEvent event) {
-                    if (event.getBundle().getSymbolicName().equals(RunProcessPlugin.PLUGIN_ID)) {
-                        defaultManager = RunProcessPlugin.getDefault().getRunProcessContextManager();
-                        useOsgiManager(true);
-                        context.removeBundleListener(this);
-                    }
+        IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
+        boolean runtimeEnable = store.getBoolean(RunContainerPreferenceInitializer.P_ESB_IN_OSGI);
+
+        IESBRunContainerService esbContainerService = (IESBRunContainerService) GlobalServiceRegister.getDefault().getService(
+                IESBRunContainerService.class);
+        esbContainerService.enableRuntime(runtimeEnable);
+        IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+
+            public void propertyChange(PropertyChangeEvent event) {
+                if (RunContainerPreferenceInitializer.P_ESB_IN_OSGI.equals(event.getProperty())) {
+                    esbContainerService.enableRuntime(Boolean.valueOf(event.getNewValue().toString()));
                 }
-            };
-            context.addBundleListener(bundleListener);
-        }
+            }
+        };
+        store.addPropertyChangeListener(propertyChangeListener);
     }
 
     @Override
@@ -68,20 +68,5 @@ public class ESBRunContainerPlugin extends AbstractUIPlugin {
 
     public static ESBRunContainerPlugin getDefault() {
         return plugin;
-    }
-
-    public void useOsgiManager(boolean isOsgiManager) {
-        if (isOsgiManager) {
-            RunProcessContextManager manager = RunProcessPlugin.getDefault().getRunProcessContextManager();
-            if (manager != null && manager.getClass() != RunContainerProcessContextManager.class) {
-                defaultManager = manager;
-                osgiManager = osgiManager == null ? new RunContainerProcessContextManager() : osgiManager;
-                RunProcessPlugin.getDefault().setRunProcessContextManager(osgiManager);
-            }
-        } else {
-            if (defaultManager != null) {
-                RunProcessPlugin.getDefault().setRunProcessContextManager(defaultManager);
-            }
-        }
     }
 }
