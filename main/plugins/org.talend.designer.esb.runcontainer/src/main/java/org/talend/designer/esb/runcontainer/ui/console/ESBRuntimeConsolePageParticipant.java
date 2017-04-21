@@ -21,16 +21,16 @@ import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 import org.talend.designer.esb.runcontainer.server.RuntimeStatusChangeListener;
-import org.talend.designer.esb.runcontainer.ui.actions.HaltRuntimeAction;
 import org.talend.designer.esb.runcontainer.ui.actions.OpenRuntimeInfoAction;
 import org.talend.designer.esb.runcontainer.ui.actions.OpenRuntimePrefsAction;
 import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeAction;
+import org.talend.designer.esb.runcontainer.ui.actions.StopRuntimeAction;
 
 public class ESBRuntimeConsolePageParticipant implements IConsolePageParticipant {
 
     private StartRuntimeAction startRuntimeAction;
 
-    private HaltRuntimeAction haltRuntimeAction;
+    private StopRuntimeAction haltRuntimeAction;
 
     private OpenRuntimeInfoAction openRuntimeInfoAction;
 
@@ -46,8 +46,8 @@ public class ESBRuntimeConsolePageParticipant implements IConsolePageParticipant
     @Override
     public void init(IPageBookViewPage page, IConsole console) {
 
-        startRuntimeAction = new StartRuntimeAction(true);
-        haltRuntimeAction = new HaltRuntimeAction();
+        startRuntimeAction = new StartRuntimeAction(true, page.getControl().getShell());
+        haltRuntimeAction = new StopRuntimeAction(page.getControl().getShell());
         openRuntimeInfoAction = new OpenRuntimeInfoAction();
         openRuntimePrefsAction = new OpenRuntimePrefsAction();
         serverListener = new RuntimeStatusChangeListener() {

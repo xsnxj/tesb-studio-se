@@ -1,0 +1,55 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
+package org.talend.designer.esb.runcontainer.ui.dialog;
+
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Shell;
+
+public class RuntimeErrorDialog extends ErrorDialog {
+
+    private IStatus initStatus;
+
+    public RuntimeErrorDialog(Shell parentShell, String dialogTitle, String message, IStatus status, int displayMask) {
+        super(parentShell, dialogTitle, message, status, displayMask);
+        this.initStatus = status;
+    }
+
+    public static int openError(Shell parent, String dialogTitle, String message, IStatus status) {
+        return openError(parent, dialogTitle, message, status, IStatus.OK | IStatus.INFO | IStatus.WARNING | IStatus.ERROR);
+    }
+
+    public static int openError(Shell parentShell, String title, String message, IStatus status, int displayMask) {
+        ErrorDialog dialog = new RuntimeErrorDialog(parentShell, title, message, status, displayMask);
+        return dialog.open();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.dialogs.ErrorDialog#createDropDownList(org.eclipse.swt.widgets.Composite)
+     */
+    @Override
+    protected List createDropDownList(Composite parent) {
+        List list = super.createDropDownList(parent);
+        // list.removeAll();
+        for (StackTraceElement st : initStatus.getException().getStackTrace()) {
+            if (!st.getMethodName().isEmpty()) {
+                list.add("    " + st.getMethodName() + "(" + st.getFileName() + ":" + st.getLineNumber() + ")");
+            }
+        }
+        return list;
+    }
+}

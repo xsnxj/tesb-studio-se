@@ -12,24 +12,21 @@
 // ============================================================================
 package org.talend.designer.esb.runcontainer.ui.actions;
 
-import java.io.File;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
-import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
-import org.talend.designer.esb.runcontainer.util.JMXUtil;
+import org.talend.designer.esb.runcontainer.ui.dialog.RuntimeErrorDialog;
 import org.talend.designer.esb.runcontainer.util.RuntimeConsoleUtil;
 import org.talend.designer.runprocess.ui.ERunprocessImages;
 
@@ -46,14 +43,11 @@ public class StartRuntimeAction extends Action {
 
     private String errorMessage;
 
-    public StartRuntimeAction() {
-        setToolTipText(RunContainerMessages.getString("StartRuntimeAction.Start")); //$NON-NLS-1$
-        setImageDescriptor(ImageProvider.getImageDesc(ERunprocessImages.RUN_PROCESS_ACTION));
-        setEnabled(!RuntimeServerController.getInstance().isRunning());
-    }
+    private Shell shell;
 
-    public StartRuntimeAction(boolean needConsole) {
+    public StartRuntimeAction(boolean needConsole, Shell shell) {
         this.needConsole = needConsole;
+        this.shell = shell;
         setToolTipText(RunContainerMessages.getString("StartRuntimeAction.Start")); //$NON-NLS-1$
         setImageDescriptor(ImageProvider.getImageDesc(ERunprocessImages.RUN_PROCESS_ACTION));
         setEnabled(!RuntimeServerController.getInstance().isRunning());
@@ -70,58 +64,25 @@ public class StartRuntimeAction extends Action {
      */
     @Override
     public void run() {
-        if (JMXUtil.isConnected()) {
-            // do nothing, just load console if needed
-            loadConsole();
-            return;
-        }
-        try {
-            IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
-            File runtimeLocation = new File(store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION));
-            if (JMXUtil.createJMXconnection() != null) {
-                File karafHome = new File(JMXUtil.getSystemPropertie("karaf.home").replaceFirst("\\\\:", ":")); //$NON-NLS-1$ //$NON-NLS-2$
-                // is the same runtime, but it is running
-                if (runtimeLocation.getAbsolutePath().equals(karafHome.getAbsolutePath())) {
-                    if (MessageDialog.openConfirm(Display.getDefault().getActiveShell(), "Connect to Runtime Server",
-                            "A local runtime server is running, do you want to connect to it directly?")) {
-                        loadConsole();
-                    } else {
-                        JMXUtil.closeJMXConnection();
-                    }
-                } else {
-                    // different runtime is running
-                    JMXUtil.closeJMXConnection();
-                    throw new InterruptedException("Another runtime server is running, please stop it first.");
-                }
-            } else {
-                ProgressMonitorDialog dialog = new ProgressMonitorDialog(Display.getDefault().getActiveShell());
-                dialog.run(true, true, new IRunnableWithProgress() {
 
-                    @Override
-                    public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                        monitor.beginTask(RunContainerMessages.getString("StartRuntimeAction.Starting"), 10); //$NON-NLS-1$
-                        try {
-                            RuntimeServerController.getInstance().startLocalRuntimeServer(runtimeLocation.getAbsolutePath());
-                            int i = 0;
-                            String dot = "."; //$NON-NLS-1$
-                            while (JMXUtil.createJMXconnection() == null && ++i < 11 && !monitor.isCanceled()) {
-                                monitor.subTask(RunContainerMessages.getString("StartRuntimeAction.Try") + dot); //$NON-NLS-1$
-                                dot += "."; //$NON-NLS-1$
-                                monitor.worked(1);
-                                Thread.sleep(3000);
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            throw new InterruptedException(e.getMessage());
-                        } finally {
-                            monitor.done();
-                        }
-                    }
-                });
-            }
-        } catch (Exception e) {
+        ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
+        try {
+            dialog.run(false, true, new IRunnableWithProgress() {
+
+                @Override
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                    new StartRuntimeProgress(true).run(monitor);
+                }
+            });
+        } catch (Throwable e) {
             ExceptionHandler.process(e);
-            errorMessage = e.getMessage();
+            IStatus status = new Status(IStatus.ERROR, ESBRunContainerPlugin.PLUGIN_ID, e.getMessage(), e);
+            if (e.getCause() != null) {
+                status = new Status(IStatus.ERROR, ESBRunContainerPlugin.PLUGIN_ID, e.getCause().getMessage(), e.getCause());
+            }
+            RuntimeErrorDialog.openError(shell,
+                    RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog3"),
+                    RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog3"), status);
         }
     }
 

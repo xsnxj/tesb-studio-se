@@ -120,6 +120,15 @@ public class RuntimeServerController {
     }
 
     /**
+     * Getter for runtimeProcess.
+     * 
+     * @return the runtimeProcess
+     */
+    public Process getRuntimeProcess() {
+        return runtimeProcess;
+    }
+
+    /**
      * Test rt server every 2 seconds <br/>
      *
      * $Id$
@@ -188,7 +197,7 @@ public class RuntimeServerController {
         @Override
         public void run() {
             while (!stop) {
-                // TODO if is local, should using process
+                // TODO if is local rt, better to use process
                 // System.out.println("isRunning:" + isRunning() + ",status:" + status);
                 try {
                     if (isRunning() && status == false) {

@@ -13,12 +13,20 @@
 package org.talend.designer.esb.runcontainer.preferences;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
@@ -37,12 +45,14 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.talend.commons.exception.ExceptionHandler;
 import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
-import org.talend.designer.esb.runcontainer.ui.actions.HaltRuntimeAction;
-import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeAction;
-import org.talend.designer.esb.runcontainer.ui.dialog.RunClientDialog;
+import org.talend.designer.esb.runcontainer.ui.actions.RuntimeClientProgress;
+import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeProgress;
+import org.talend.designer.esb.runcontainer.ui.actions.StopRuntimeProgress;
+import org.talend.designer.esb.runcontainer.ui.dialog.RuntimeErrorDialog;
 import org.talend.designer.esb.runcontainer.ui.wizard.AddRuntimeWizard;
 import org.talend.designer.esb.runcontainer.util.FileUtil;
 
@@ -110,10 +120,10 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
                 RunContainerMessages.getString("RunContainerPreferencePage.Location"), compositeServerBody); //$NON-NLS-1$
         addField(locationEditor);
         serverFieldEditors.add(locationEditor);
+
         StringFieldEditor hostFieldEditor = new StringFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_HOST,
                 RunContainerMessages.getString("RunContainerPreferencePage.Host"), compositeServerBody);
         addField(hostFieldEditor);
-        // svrFields.add(hostFieldEditor);
         // only support local runtime server, if need support remote server ,enable this editor
         hostFieldEditor.setEnabled(false, compositeServerBody);
 
@@ -188,28 +198,12 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         compositeOptionBody = new Composite(groupOption, SWT.NONE);
         compositeOptionBody.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
-        BooleanFieldEditor useJmxEditor = new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_JMX,
-                RunContainerMessages.getString("RunContainerPreferencePage.UseJMX"), compositeOptionBody);//$NON-NLS-1$
-        addField(useJmxEditor);
-        optionFieldEditors.add(useJmxEditor);
-
         BooleanFieldEditor filterLogEditor = new BooleanFieldEditor(RunContainerPreferenceInitializer.P_ESB_RUNTIME_SYS_LOG,
                 RunContainerMessages.getString("RunContainerPreferencePage.FilterLogs"), compositeOptionBody); //$NON-NLS-1$
         addField(filterLogEditor);
         optionFieldEditors.add(filterLogEditor);
 
         return body;
-    }
-
-    protected void updateFieldEditors(boolean enable) {
-        // compOption
-        // compSvrBody
-        for (FieldEditor editor : serverFieldEditors) {
-            editor.setEnabled(enable, compositeServerBody);
-        }
-        for (FieldEditor editor : optionFieldEditors) {
-            editor.setEnabled(enable, compositeOptionBody);
-        }
     }
 
     /**
@@ -222,60 +216,89 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
     }
 
     private void initalizeRuntime(String location, String host) {
-        try {
-            // 1. try to stop first
-            if (RuntimeServerController.getInstance().isRunning()) {
-                HaltRuntimeAction halt = new HaltRuntimeAction();
-                halt.run();
-                if (halt.getErrorMessage() != null) {
-                    MessageDialog
-                            .openError(
-                                    getShell(),
-                                    RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog2"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog6") + "\n" + halt.getErrorMessage()); //$NON-NLS-1$ //$NON-NLS-2$
-                    return;
-                }
-            }
-            // 2. delete data(cannot use JMX to rebootCleanAll as a DLL delete failed)
-            FileUtil.deleteFolder(location + "/data");
-            if (new File(location + "/data").exists()) {
-                MessageDialog
-                        .openError(
-                                getShell(),
-                                RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog2"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog7")); //$NON-NLS-1$ //$NON-NLS-2$
-                return;
-            }
-            // 3. start (again)
-            StartRuntimeAction start = new StartRuntimeAction(false);
-            start.run();
+        performApply();
 
-            if (null == start.getErrorMessage() && RuntimeServerController.getInstance().isRunning()) {
-                File launcher;
-                String os = System.getProperty("os.name");
-                if (os != null && os.toLowerCase().contains("windows")) {
-                    launcher = new File(location + "/bin/client.bat");
-                } else {
-                    launcher = new File(location + "/bin/client");
+        ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
+        try {
+            dialog.run(true, true, new IRunnableWithProgress() {
+
+                @Override
+                public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                    SubMonitor totalMonitor = SubMonitor.convert(monitor, 10);
+                    totalMonitor.beginTask("Initializing Runtime server", 10);
+                    // 1. try to stop first
+                    totalMonitor.setTaskName("Stoping Runtime server");
+                    new StopRuntimeProgress().run(totalMonitor);
+                    if (RuntimeServerController.getInstance().getRuntimeProcess() != null
+                            && RuntimeServerController.getInstance().getRuntimeProcess().isAlive()) {
+                        RuntimeServerController.getInstance().getRuntimeProcess().waitFor(20, TimeUnit.SECONDS);
+                    }
+                    totalMonitor.worked(2);
+
+                    // 2. delete data(cannot use JMX to rebootCleanAll as a DLL delete failed)
+                    if (monitor.isCanceled()) {
+                        throw new InterruptedException("Initalize is canceled by user");
+                    }
+                    totalMonitor.setTaskName("Deleting /data folder");
+                    try {
+                        FileUtil.deleteFolder(location + "/data");
+                    } catch (IOException e) {
+                        ExceptionHandler.process(e);
+                        throw new InterruptedException(e.getMessage());
+                    }
+                    if (new File(location + "/data").exists()) {
+                        throw new InterruptedException(RunContainerMessages
+                                .getString("RunContainerPreferencePage.InitailzeDialog7"));
+                    }
+                    totalMonitor.worked(1);
+
+                    // 3. start (again)
+                    if (monitor.isCanceled()) {
+                        throw new InterruptedException("Initalize is canceled by user");
+                    }
+
+                    totalMonitor.setTaskName("Starting Runtime server");
+                    new StartRuntimeProgress(false).run(totalMonitor);
+                    totalMonitor.worked(2);
+
+                    // 4. command
+                    if (monitor.isCanceled()) {
+                        throw new InterruptedException("Initalize is canceled by user");
+                    }
+                    File launcher;
+                    String os = System.getProperty("os.name");
+                    if (os != null && os.toLowerCase().contains("windows")) {
+                        launcher = new File(location + "/bin/client.bat");
+                    } else {
+                        launcher = new File(location + "/bin/client");
+                    }
+                    InputStream stream = RunContainerPreferencePage.class.getResourceAsStream("/resources/commands");
+                    File initFile = new File(location + "/scripts/initlocal.sh");
+                    if (!initFile.exists()) {
+                        try {
+                            Files.copy(stream, initFile.toPath());
+                        } catch (IOException e) {
+                            ExceptionHandler.process(e);
+                            throw new InterruptedException(e.getMessage());
+                        }
+                    }
+                    // without username and password is ok
+                    // fixed by KARAF-5019
+                    String command = launcher.getAbsolutePath() + " -h " + host + " -l 1 \"source file:scripts/initlocal.sh\"";
+                    RuntimeClientProgress clientProgress = new RuntimeClientProgress(command);
+                    clientProgress.run(totalMonitor);
+                    totalMonitor.done();
                 }
-                InputStream stream = RunContainerPreferencePage.class.getResourceAsStream("/resources/commands");
-                File initFile = new File(location + "/scripts/initlocal.sh");
-                if (!initFile.exists()) {
-                    Files.copy(stream, initFile.toPath());
-                }
-                // without username and password is ok
-                String command = launcher.getAbsolutePath() + " -h " + host + " -l 1 \"source scripts/initlocal.sh\"";
-                RunClientDialog.runClientWithCommandConsole(getShell(), command);
-            } else {
-                MessageDialog
-                        .openError(
-                                getShell(),
-                                RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog2"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog3") + "\n" + start.getErrorMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            });
+        } catch (Throwable e) {
+            ExceptionHandler.process(e);
+            IStatus status = new Status(IStatus.ERROR, ESBRunContainerPlugin.PLUGIN_ID, e.getMessage(), e);
+            if (e.getCause() != null) {
+                status = new Status(IStatus.ERROR, ESBRunContainerPlugin.PLUGIN_ID, e.getCause().getMessage(), e.getCause());
             }
-        } catch (Exception e1) {
-            e1.printStackTrace();
-            MessageDialog
-                    .openError(
-                            getShell(),
-                            RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog4"), RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog5") + e1); //$NON-NLS-1$ //$NON-NLS-2$
+            RuntimeErrorDialog.openError(getShell(),
+                    RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog2"),
+                    RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog4"), status);
         }
     }
 }

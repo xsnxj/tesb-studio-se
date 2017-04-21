@@ -17,7 +17,7 @@ import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.Property;
 import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
-import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeAction;
+import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeProgress;
 import org.talend.designer.runprocess.IProcessMessageManager;
 import org.talend.designer.runprocess.ProcessorException;
 import org.talend.designer.runprocess.maven.MavenJavaProcessor;
@@ -31,7 +31,11 @@ public class RunContainerProcessor extends MavenJavaProcessor {
     @Override
     public Process run(int statisticsPort, int tracePort, String watchParam, String log4jLevel, IProgressMonitor monitor,
             IProcessMessageManager processMessageManager) throws ProcessorException {
-        new StartRuntimeAction(false).run();
+        try {
+            new StartRuntimeProgress(true).run(monitor);
+        } catch (Exception e) {
+            throw new ProcessorException(RunContainerMessages.getString("StartRuntimeAction.ErrorStart"), e);
+        }
         if (RuntimeServerController.getInstance().isRunning()) {
 
             RunESBRuntimeProcess esbRunContainerProcess = new RunESBRuntimeProcess(process, statisticsPort, tracePort, monitor);
