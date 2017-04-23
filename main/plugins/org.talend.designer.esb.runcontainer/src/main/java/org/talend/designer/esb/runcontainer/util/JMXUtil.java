@@ -162,8 +162,8 @@ public class JMXUtil {
         objectCommand = new ObjectName(COMMAND_MBEAN);
         String properties = String.valueOf(mbsc.invoke(objectCommand, "vmSystemProperties", new Object[] {}, new String[] {}));
         int homeValueBegin = properties.indexOf(name) + name.length() + 1;
-        int homeValueEnd = properties.indexOf('\n', homeValueBegin) - 1;
-        return properties.substring(homeValueBegin, homeValueEnd);
+        int homeValueEnd = properties.indexOf('\n', homeValueBegin);
+        return properties.substring(homeValueBegin, homeValueEnd).trim();
     }
 
     public static long findBundleIDWithKarName(String karName) {
@@ -184,12 +184,13 @@ public class JMXUtil {
                 jmxc = null;
                 Map<String, String[]> env = new HashMap<String, String[]>();
                 env.put(CREDENTIALS, new String[] { username, password });
+                System.out.println("Trying to connect to " + serviceUrl);
                 jmxc = JMXConnectorFactory.connect(new JMXServiceURL(serviceUrl), env);
 
                 mbsc = null;
                 mbsc = jmxc.getMBeanServerConnection();
             } catch (IOException ex) {
-                // ex.printStackTrace();
+                 ex.printStackTrace();
                 jmxc = null;
                 mbsc = null;
             }
@@ -216,7 +217,7 @@ public class JMXUtil {
 
             instanceName = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_INSTANCE);
 
-            serviceUrl = "service:jmx:rmi://" + host + ":" + jmxPort + "/jndi/rmi://" + host + ":" + karafPort + "/karaf-"
+            serviceUrl = "service:jmx:rmi://" + "127.0.0.1" + ":" + jmxPort + "/jndi/rmi://" + "127.0.0.1" + ":" + karafPort + "/karaf-"
                     + instanceName;
         }
     }

@@ -30,17 +30,18 @@ import org.talend.designer.esb.runcontainer.util.JMXUtil;
 
 public class RuntimeClientProgress extends RuntimeProgress {
 
-    private String command;
+    private final String command;
 
-    private List<String> log;
+    private final List<String> log;
 
     public RuntimeClientProgress(String command) {
         this.command = command;
-        this.log = new ArrayList();
+        this.log = new ArrayList<>();
     }
 
     @Override
     public void run(IProgressMonitor parentMonitor) throws InvocationTargetException, InterruptedException {
+        System.out.println("Running command " + command);
         SubMonitor subMonitor = SubMonitor.convert(parentMonitor, 10);
         subMonitor.setTaskName("Running script (" + command + ")"); //$NON-NLS-1$
         if (checkRunning()) {
@@ -60,6 +61,7 @@ public class RuntimeClientProgress extends RuntimeProgress {
 
                 int size = log.size();
                 if (!log.get(size - 1).equals("EOF")) {
+                    System.out.println("initlocal.sh logs: " + getLog());
 
                     StackTraceElement[] stackTrace = new StackTraceElement[size];
                     for (int i = 0; i < size; i++) {
@@ -111,7 +113,7 @@ public class RuntimeClientProgress extends RuntimeProgress {
 
         private static final char LINE = '\n';
 
-        private InputStream input;
+        private final InputStream input;
 
         ProcessOutput(InputStream input, boolean isError) {
             this.input = input;
@@ -124,7 +126,9 @@ public class RuntimeClientProgress extends RuntimeProgress {
                 String input = null;
                 while ((input = inReader.readLine()) != null) {
                     if (!input.isEmpty()) {
-                        log.add(input);
+                        synchronized (log) {
+                            log.add(input);
+                        }
                     }
                 }
             } catch (IOException e) {

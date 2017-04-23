@@ -24,6 +24,7 @@ import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceIn
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 import org.talend.designer.esb.runcontainer.util.JMXUtil;
 import org.talend.designer.esb.runcontainer.util.RuntimeConsoleUtil;
+import org.talend.designer.esb.runcontainer.util.StringUtil;
 
 public class StartRuntimeProgress extends RuntimeProgress {
 
@@ -45,15 +46,20 @@ public class StartRuntimeProgress extends RuntimeProgress {
         } else {
             try {
                 IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
-                RuntimeServerController.getInstance().startLocalRuntimeServer(
+                Process proc = RuntimeServerController.getInstance().startLocalRuntimeServer(
                         store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION));
                 int i = 0;
                 String dot = "."; //$NON-NLS-1$
-                while (JMXUtil.createJMXconnection() == null && ++i < 11 && !subMonitor.isCanceled()) {
+                while (JMXUtil.createJMXconnection() == null && ++i < 11 && !subMonitor.isCanceled() && proc.isAlive()) {
                     subMonitor.subTask(RunContainerMessages.getString("StartRuntimeAction.Try") + dot); //$NON-NLS-1$
                     dot += "."; //$NON-NLS-1$
                     subMonitor.worked(1);
                     Thread.sleep(3000);
+                }
+                if (!proc.isAlive()) {
+                    System.out.println("trun process has finished with exit code " + proc.exitValue());
+                    System.out.println("StdOut: " + StringUtil.toString(proc.getInputStream()));
+                    System.out.println("StdErr: " + StringUtil.toString(proc.getErrorStream()));
                 }
                 if (JMXUtil.createJMXconnection() == null) {
                     throw new InterruptedException(RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog5"));
@@ -70,5 +76,4 @@ public class StartRuntimeProgress extends RuntimeProgress {
             RuntimeConsoleUtil.loadConsole();
         }
     }
-
 }

@@ -24,6 +24,7 @@ import javax.management.Notification;
 import javax.management.NotificationListener;
 import javax.management.ObjectName;
 
+import org.talend.designer.esb.runcontainer.util.FileUtil;
 import org.talend.designer.esb.runcontainer.util.JMXUtil;
 
 /**
@@ -77,6 +78,7 @@ public class RuntimeServerController {
                 launcher = new File(karafHome + "/bin/trun.bat");
             } else {
                 launcher = new File(karafHome + "/bin/trun");
+                FileUtil.setFileExecPerm(launcher.toPath());
             }
 
             if (launcher.exists()) {
@@ -108,6 +110,7 @@ public class RuntimeServerController {
                 launcher = new File(karafHome + "/bin/client.bat");
             } else {
                 launcher = new File(karafHome + "/bin/client");
+                FileUtil.setFileExecPerm(launcher.toPath());
             }
             return Runtime.getRuntime().exec(
                     launcher.getAbsolutePath() + " -h " + host + " -u " + username + " -p " + password + " \"" + cmd + "\"");

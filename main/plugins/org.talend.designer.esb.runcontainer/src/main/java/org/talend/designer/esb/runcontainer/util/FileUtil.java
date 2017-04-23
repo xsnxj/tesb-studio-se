@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.designer.esb.runcontainer.util;
 
+import static java.nio.file.attribute.PosixFilePermission.*;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -40,6 +42,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public class FileUtil {
 
     private static final List<String> CONTAINER_FILES;
+   
 
     static {
         final List<String> containerFiles = new ArrayList<>();
@@ -57,19 +60,23 @@ public class FileUtil {
     }
 
     public static boolean isValidLocation(String rtHome) {
+        return getValidLocation(rtHome) != null;
+    }
+    
+    public static String getValidLocation(String rtHome) {
         if (rtHome == null) {
             throw new IllegalArgumentException("rtHome cannot be null");
         }
         // validate, 1st version, 2nd etc
         rtHome = rtHome.trim();
         if (rtHome.isEmpty()) {
-            return false;
+            return null;
         }
 
         File rtDir = new File(rtHome);
         // find version.txt, 1st in root, second check in container folder
         if (!rtDir.isDirectory()) {
-            return false;
+            return null;
         }
 
         File version = new File(rtHome + "/version.txt");
@@ -81,7 +88,7 @@ public class FileUtil {
                 version = new File(rtHome + "/container/version.txt");
                 if (version.exists()) {
                     ver = Files.readAllLines(version.toPath()).get(0);
-                    rtHome += "/container/";
+                    rtHome += "/container";
                 }
             }
         } catch (IOException e1) {
@@ -89,17 +96,17 @@ public class FileUtil {
         }
 
         if (ver.isEmpty()) {
-            return false;
+            return null;
         }
 
         for (String f : CONTAINER_FILES) {
             File resFile = new File(rtHome, f);
             if (!resFile.exists()) {
-                return false;
+                return null;
             }
         }
 
-        return true;
+        return rtHome;
     }
 
     public static void copyContainer(String from, String to, IProgressMonitor monitor) throws IOException {
@@ -190,6 +197,8 @@ public class FileUtil {
             }
             monitor.done();
         }
+        setFileExecPerm(toPath.resolve("bin/trun"));
+        setFileExecPerm(toPath.resolve("bin/client"));
     }
 
     public static String getPathPrefixInArchive(String zip) throws IOException {
@@ -317,20 +326,29 @@ public class FileUtil {
         return (directory.delete());
     }
 
-    public void setPermission(File file) throws IOException {
-        Set<PosixFilePermission> perms = new HashSet<>();
-        perms.add(PosixFilePermission.OWNER_READ);
-        perms.add(PosixFilePermission.OWNER_WRITE);
-        perms.add(PosixFilePermission.OWNER_EXECUTE);
+    public static void setFileExecPerm(Path file) throws IOException {
+        System.out.println("Setting exec file permissions for " + file);
 
-        perms.add(PosixFilePermission.OTHERS_READ);
-        perms.add(PosixFilePermission.OTHERS_WRITE);
-        perms.add(PosixFilePermission.OWNER_EXECUTE);
-
-        perms.add(PosixFilePermission.GROUP_READ);
-        perms.add(PosixFilePermission.GROUP_WRITE);
-        perms.add(PosixFilePermission.GROUP_EXECUTE);
-
-        Files.setPosixFilePermissions(file.toPath(), perms);
+        try {
+            Set<PosixFilePermission> perms = Files.getPosixFilePermissions(file);
+            
+            perms.add(OWNER_READ);
+            perms.add(OWNER_EXECUTE);
+            
+            if (perms.contains(GROUP_READ)) {
+                perms.add(GROUP_EXECUTE);
+            }
+            
+            if (perms.contains(OTHERS_READ)) {
+                perms.add(OTHERS_EXECUTE);
+            }
+            
+            Files.setPosixFilePermissions(file, perms);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw e;
+        } catch (UnsupportedOperationException e) {
+            System.out.println("File " + file + " is located on FS which doesn't support POSIX attributes.");
+        }
     }
 }

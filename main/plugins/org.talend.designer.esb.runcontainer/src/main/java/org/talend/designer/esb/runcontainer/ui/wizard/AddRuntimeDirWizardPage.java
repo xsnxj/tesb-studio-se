@@ -28,6 +28,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
@@ -37,38 +38,37 @@ import org.talend.designer.esb.runcontainer.util.FileUtil;
 
 public class AddRuntimeDirWizardPage extends WizardPage {
 
-    //private final String target;
-
-    //private String rtHome;
-
-    //private Text rtDirText;
-    
     private Text txtRuntimeHome;
     
     private String runtimeHome;
 
     private Text txtRuntimeArchive;
 
-    private String runtimeDir;
-
-    //private Label labelVersion;
+    private String runtimeArchive;
+    
+    private Text txtTargetDir;
+    
+    private String targetDir;
 
     private List<String> rtFiles = new ArrayList<String>();
 
-    //private Label labelSize;
-
-    //private Button btnCopyToStudio;
-    
     private Button btnUseExistingContainer;
     
     private Button btnInstallNewContainer;
+    
+    private Button btnTargetDefault;
+    
+    private Button btnTargetCustom;
+    
+    private List<Control> ctlsRuntimeHome;
+    
+    private List<Control> ctlsRuntimeArchive;
 
     /**
      * Create the wizard.
      */
     public AddRuntimeDirWizardPage() {
         super(RunContainerMessages.getString("AddRuntimeDirWizardPage.Title")); //$NON-NLS-1$
-        //this.target = target;
         setTitle(RunContainerMessages.getString("AddRuntimeDirWizardPage.Title")); //$NON-NLS-1$
         setDescription(RunContainerMessages.getString("AddRuntimeDirWizardPage.Desc")); //$NON-NLS-1$
         rtFiles.add("/bin/trun"); //$NON-NLS-1$
@@ -96,6 +96,9 @@ public class AddRuntimeDirWizardPage extends WizardPage {
         body.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         body.setLayout(new GridLayout(1, false));
         
+        ctlsRuntimeHome = new ArrayList<>();
+        ctlsRuntimeArchive = new ArrayList<>();
+        
         // Runtime Home Location
         
         {
@@ -103,15 +106,14 @@ public class AddRuntimeDirWizardPage extends WizardPage {
             //compCheck.setLayout(new GridLayout(1, false));
 
             btnUseExistingContainer = new Button(body, SWT.RADIO);
-            btnUseExistingContainer.setText("Use existing Local Talend Runtime (ESB OSGi Container)"); //$NON-NLS-1$
+            btnUseExistingContainer.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.UseExisting"));
             btnUseExistingContainer.setSelection(true);
             btnUseExistingContainer.setEnabled(true);
             btnUseExistingContainer.addSelectionListener(new SelectionAdapter() {
-                /* (non-Javadoc)
-                 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-                 */
                 @Override
                 public void widgetSelected(SelectionEvent e) {
+                    changeControls(ctlsRuntimeArchive, false);
+                    changeControls(ctlsRuntimeHome, true);
                     validateRuntimeHome();
                 }
             });
@@ -152,8 +154,14 @@ public class AddRuntimeDirWizardPage extends WizardPage {
                     }
                 }
             });
-            btnNewButton.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.DirButton")); //$NON-NLS-1$
+            btnNewButton.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.DirButton"));
+
+            ctlsRuntimeHome.add(txtRuntimeHome);
+            ctlsRuntimeHome.add(btnNewButton);
         }
+        
+        Label separator = new Label(body, SWT.HORIZONTAL | SWT.SEPARATOR);
+        separator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
         // Runtime Distribution
 
@@ -162,15 +170,14 @@ public class AddRuntimeDirWizardPage extends WizardPage {
             //compCheck.setLayout(new GridLayout(1, false));
 
             btnInstallNewContainer = new Button(body, SWT.RADIO);
-            btnInstallNewContainer.setText("Install from Talend Runtime (ZIP) or Talend ESB (ZIP)"); //$NON-NLS-1$
+            btnInstallNewContainer.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.InstallNew"));
             btnInstallNewContainer.setSelection(false);
             btnInstallNewContainer.setEnabled(true);
             btnInstallNewContainer.addSelectionListener(new SelectionAdapter() {
-                /* (non-Javadoc)
-                 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-                 */
                 @Override
                 public void widgetSelected(SelectionEvent e) {
+                    changeControls(ctlsRuntimeArchive, true);
+                    changeControls(ctlsRuntimeHome, false);
                     validateRuntimeArchive();
                 }
             });
@@ -189,7 +196,6 @@ public class AddRuntimeDirWizardPage extends WizardPage {
             txtRuntimeArchive = new Text(compLocation, SWT.BORDER);
             txtRuntimeArchive.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
             txtRuntimeArchive.addModifyListener(new ModifyListener() {
-
                 @Override
                 public void modifyText(ModifyEvent e) {
                     // Handle event
@@ -199,10 +205,8 @@ public class AddRuntimeDirWizardPage extends WizardPage {
             });
             Button btnNewButton = new Button(compLocation, SWT.NONE);
             btnNewButton.addSelectionListener(new SelectionAdapter() {
-
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-
                     FileDialog fileDialog = new FileDialog(getShell(), SWT.OPEN | SWT.SHEET);
                     fileDialog.setFilterExtensions(new String[] { "*.zip" });
                     String rtHome = fileDialog.open();
@@ -212,110 +216,83 @@ public class AddRuntimeDirWizardPage extends WizardPage {
                     }
                 }
             });
-            btnNewButton.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.FileButton")); //$NON-NLS-1$
-        }
-        
-        // Old stuff
-
-        /*
-        {
-            Composite compLocation = new Composite(body, SWT.NONE);
-            compLocation.setLayout(new GridLayout(3, false));
-            compLocation.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-            compLocation.setBounds(0, 0, 64, 64);
-
-            Label lblHome = new Label(compLocation, SWT.NONE);
-            GridData gd_lblHome = new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
-            gd_lblHome.widthHint = 116;
-            lblHome.setLayoutData(gd_lblHome);
-            lblHome.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.Home")); //$NON-NLS-1$
-
-            rtDirText = new Text(compLocation, SWT.BORDER);
-            rtDirText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-            rtDirText.addModifyListener(new ModifyListener() {
-
+            btnNewButton.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.FileButton"));
+            
+            Composite compTarget = new Composite(body, SWT.NONE);
+            compTarget.setLayout(new GridLayout(3, false));
+            compTarget.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+            compTarget.setBounds(0, 0, 64, 64);
+            
+            Label lblTarget = new Label(compTarget, SWT.NONE);
+            lblTarget.setText("Install into:");
+            GridData lblTargetGridData = new GridData();
+            lblTargetGridData.horizontalSpan = 3;
+            lblTarget.setLayoutData(lblTargetGridData);
+            
+            btnTargetDefault = new Button(compTarget, SWT.RADIO);
+            btnTargetDefault.setText("default target folder");
+            btnTargetDefault.setSelection(true);
+            btnTargetDefault.setEnabled(true);
+            GridData btnTargetDefaultGridData = new GridData();
+            btnTargetDefaultGridData.horizontalSpan = 3;
+            btnTargetDefault.setLayoutData(btnTargetDefaultGridData);
+            
+            btnTargetCustom = new Button(compTarget, SWT.RADIO);
+            btnTargetCustom.setText("custom target folder");
+            btnTargetCustom.setSelection(false);
+            btnTargetCustom.setEnabled(true);
+            
+            txtTargetDir = new Text(compTarget, SWT.BORDER);
+            txtTargetDir.setEnabled(false);
+            txtTargetDir.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+            txtTargetDir.addModifyListener(new ModifyListener() {
                 @Override
                 public void modifyText(ModifyEvent e) {
-                    // Handle event
-                    validate();
+                    btnInstallNewContainer.setSelection(true);
+                    btnTargetCustom.setSelection(true);
+                    validateRuntimeArchive();
                 }
             });
-            Button btnNewButton = new Button(compLocation, SWT.NONE);
-            btnNewButton.addSelectionListener(new SelectionAdapter() {
-
+            
+            Button btnTargetDir = new Button(compTarget, SWT.NONE);
+            btnTargetDir.setEnabled(false);
+            btnTargetDir.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
-
                     DirectoryDialog fileDialog = new DirectoryDialog(getShell(), SWT.OPEN | SWT.SHEET);
-                    String rtHome = fileDialog.open();
-                    if (rtHome != null) {
-                        rtDirText.setText(rtHome);
+                    String rtTarget = fileDialog.open();
+                    if (rtTarget != null) {
+                        txtTargetDir.setText(rtTarget);
                     }
                 }
             });
-            btnNewButton.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.DirButton")); //$NON-NLS-1$
+            btnTargetDir.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.DirButton"));
+
+            btnTargetDefault.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    btnInstallNewContainer.setSelection(true);
+                    btnTargetDir.setEnabled(false);
+                    txtTargetDir.setEnabled(false);
+                    validateRuntimeArchive();
+                }
+            });
+
+            btnTargetCustom.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    btnInstallNewContainer.setSelection(true);
+                    btnTargetDir.setEnabled(true);
+                    txtTargetDir.setEnabled(true);
+                    validateRuntimeArchive();
+                }
+            });
+            
+            ctlsRuntimeArchive.add(compTarget);
         }
-        
-        // Copy check button
-        
-        {
-            Composite compCheck = new Composite(body, SWT.NONE);
-            compCheck.setLayout(new GridLayout(2, false));
-
-            btnCopyToStudio = new Button(compCheck, SWT.CHECK);
-            btnCopyToStudio.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.IfCopy")); //$NON-NLS-1$
-            btnCopyToStudio.setSelection(true);
-            btnCopyToStudio.setEnabled(true);
-
-            Label blank = new Label(compCheck, SWT.NONE);
-            blank.setText(""); //$NON-NLS-1$
-
-            Label labelStudioPath = new Label(compCheck, SWT.NONE);
-            labelStudioPath.setText(target);
-        }
-        
-        // Info
-        
-        {
-            Composite compInfo = new Composite(body, SWT.NONE);
-            compInfo.setLayout(new GridLayout(2, false));
-            compInfo.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-
-            Label lblSpace = new Label(compInfo, SWT.NONE);
-            lblSpace.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.Space")); //$NON-NLS-1$
-
-            Label labelSpaceSize = new Label(compInfo, SWT.NONE);
-            labelSpaceSize.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-            labelSpaceSize.setText(new File(System.getProperty("user.dir")).getFreeSpace() / 1024 / 1024 + " MB"); //$NON-NLS-1$ //$NON-NLS-2$
-
-            Label lblRuntimeServerVersion = new Label(compInfo, SWT.NONE);
-            lblRuntimeServerVersion.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.Version")); //$NON-NLS-1$
-
-            labelVersion = new Label(compInfo, SWT.NONE);
-            labelVersion.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-            labelVersion.setText(""); //$NON-NLS-1$
-
-            Label lblRtSize = new Label(compInfo, SWT.NONE);
-            lblRtSize.setText(RunContainerMessages.getString("AddRuntimeDirWizardPage.Size")); //$NON-NLS-1$
-
-            labelSize = new Label(compInfo, SWT.NONE);
-            labelSize.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1));
-            labelSize.setText(""); //$NON-NLS-1$
-        }
-        */
 
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.wizard.WizardPage#isPageComplete()
-     */
-    // @Override
-    // public boolean isPageComplete() {
-    // // TODO Auto-generated method stub
-    // return super.isPageComplete();
-    // }
 /*
     private long getFolderSize(File folder) {
         long length = 0;
@@ -334,10 +311,24 @@ public class AddRuntimeDirWizardPage extends WizardPage {
     }*/
     
     private void validateRuntimeArchive() {
-        boolean isValid = FileUtil.isContainerArchive(txtRuntimeArchive.getText());
-        runtimeDir = txtRuntimeArchive.getText();
+        String arch = txtRuntimeArchive.getText();
+        if (arch == null || arch.isEmpty()) {
+            setPageComplete(false);
+            setErrorMessage(null);
+            return;
+        }
+        
+        boolean isValid = arch.equals(runtimeArchive) ? true : FileUtil.isContainerArchive(arch);
         setPageComplete(isValid);
-        setErrorMessage(isValid ? null : "Zip file is not valid Talend ESB or Runtime"); 
+        
+        if (isValid) {
+            runtimeArchive = arch;
+            setErrorMessage(null);
+            
+            validateTargetDir();
+        } else {
+            setErrorMessage(RunContainerMessages.getString("AddRuntimeDirWizardPage.ErrorZip"));
+        }
     }
 
     private void validateRuntimeHome() {
@@ -345,62 +336,99 @@ public class AddRuntimeDirWizardPage extends WizardPage {
         //labelSize.setText(""); //$NON-NLS-1$
         //labelVersion.getParent().layout();
         String rtHome = txtRuntimeHome.getText();
+        
+        if (rtHome == null || rtHome.isEmpty()) {
+            setPageComplete(false);
+            setErrorMessage(null);
+            return;
+        }
         // validate, 1st version, 2nd etc
         boolean validated = true;
         String errorMsg = RunContainerMessages.getString("AddRuntimeDirWizardPage.ErrorFind"); //$NON-NLS-1$
-        if (rtHome != null) {
-            rtHome = rtHome.trim();
-            if (rtHome.length() > 0) {
-                File rtDir = new File(rtHome);
-                // find version.txt, 1st in root, second check in container folder
-                if (rtDir.isDirectory()) {
-                    File version = new File(rtHome + "/version.txt"); //$NON-NLS-1$
-                    String ver = ""; //$NON-NLS-1$
-                    try {
+
+        rtHome = rtHome.trim();
+        if (rtHome.length() > 0) {
+            File rtDir = new File(rtHome);
+            // find version.txt, 1st in root, second check in container folder
+            if (rtDir.isDirectory()) {
+                File version = new File(rtHome + "/version.txt"); //$NON-NLS-1$
+                String ver = ""; //$NON-NLS-1$
+                try {
+                    if (version.exists()) {
+                        ver = Files.readAllLines(version.toPath()).get(0);
+                    } else {
+                        version = new File(rtHome + "/container/version.txt"); //$NON-NLS-1$
                         if (version.exists()) {
                             ver = Files.readAllLines(version.toPath()).get(0);
-                        } else {
-                            version = new File(rtHome + "/container/version.txt"); //$NON-NLS-1$
-                            if (version.exists()) {
-                                ver = Files.readAllLines(version.toPath()).get(0);
-                                rtHome += "/container/"; //$NON-NLS-1$
-                            }
-                        }
-                    } catch (IOException e1) {
-                        e1.printStackTrace();
-                    }
-                    if (ver.isEmpty()) {
-                        validated = false;
-                    } else {
-                        //labelVersion.setText(ver);
-                        //long size = getFolderSize(new File(rtHome)) / 1024 / 1024;
-                        //labelSize.setText(size + " MB"); //$NON-NLS-1$
-                        //labelVersion.getParent().layout();
-
-                        for (String f : rtFiles) {
-                            File resFile = new File(rtHome + f);
-                            if (!resFile.exists()) {
-                                validated = false;
-                                errorMsg = RunContainerMessages.getString("AddRuntimeDirWizardPage.ErrorDir"); //$NON-NLS-1$
-                                break;
-                            }
+                            rtHome += "/container/"; //$NON-NLS-1$
                         }
                     }
-                } else {
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                if (ver.isEmpty()) {
                     validated = false;
+                } else {
+                    //labelVersion.setText(ver);
+                    //long size = getFolderSize(new File(rtHome)) / 1024 / 1024;
+                    //labelSize.setText(size + " MB"); //$NON-NLS-1$
+                    //labelVersion.getParent().layout();
+
+                    for (String f : rtFiles) {
+                        File resFile = new File(rtHome + f);
+                        if (!resFile.exists()) {
+                            validated = false;
+                            errorMsg = RunContainerMessages.getString("AddRuntimeDirWizardPage.ErrorDir"); //$NON-NLS-1$
+                            break;
+                        }
+                    }
                 }
             } else {
                 validated = false;
             }
-
-            if (validated) {
-                setErrorMessage(null);
-                setPageComplete(true);
-            } else {
-                setErrorMessage(errorMsg);
-                setPageComplete(false);
-            }
+        } else {
+            validated = false;
         }
+
+        if (validated) {
+            setErrorMessage(null);
+            setPageComplete(true);
+            runtimeHome = txtRuntimeHome.getText();
+        } else {
+            setErrorMessage(errorMsg);
+            setPageComplete(false);
+        }
+    }
+    
+    private void validateTargetDir() {
+        if (btnTargetDefault.getSelection()) {
+            targetDir = null;
+            return;
+        }
+
+        String target = txtTargetDir.getText();
+        if (target == null || target.isEmpty()) {
+            setPageComplete(false);
+            setErrorMessage(null);
+            return;
+        }
+
+        target = target.trim();
+        File targetFile = new File(target);
+
+        if (!targetFile.isDirectory()) {
+            setPageComplete(false);
+            setErrorMessage("Target doesn't point to a valid folder");
+            return;
+        }
+
+        if (targetFile.list().length > 0) {
+            setPageComplete(false);
+            setErrorMessage("Target folder is not empty");
+            return;
+        }
+
+        targetDir = target;
     }
 
     /*
@@ -415,14 +443,24 @@ public class AddRuntimeDirWizardPage extends WizardPage {
     }
 
     public String getRuntimeHome() {
-        return runtimeHome;
+        return runtimeHome != null ? FileUtil.getValidLocation(runtimeHome) : null;
     }
     
     public String getRuntimeArchive() {
-        return runtimeDir;
+        return runtimeArchive;
+    }
+    
+    public String getTargetDir() {
+        return targetDir;
     }
     
     public boolean shouldInstallNewContainer() {
         return btnInstallNewContainer.getSelection();
+    }
+    
+    private static void changeControls(List<Control> ctls, boolean enable) {
+        //for (Control ctl : ctls) {
+        //    ctl.setEnabled(enable);
+        //}
     }
 }

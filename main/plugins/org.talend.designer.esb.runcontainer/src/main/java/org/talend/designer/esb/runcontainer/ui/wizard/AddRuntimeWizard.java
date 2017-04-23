@@ -44,7 +44,10 @@ public class AddRuntimeWizard extends Wizard {
     @Override
     public boolean performFinish() {
         if (dirPage.shouldInstallNewContainer()) {
-            target = RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_LOCATION;
+            target = dirPage.getTargetDir();
+            if (target == null) {
+                target = RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_LOCATION;
+            }
             try {
                 getContainer().run(true, true, new IRunnableWithProgress() {
 
