@@ -15,6 +15,7 @@ package org.talend.designer.esb.runcontainer.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -190,7 +191,7 @@ public class JMXUtil {
                 mbsc = null;
                 mbsc = jmxc.getMBeanServerConnection();
             } catch (IOException ex) {
-                 ex.printStackTrace();
+                ex.printStackTrace();
                 jmxc = null;
                 mbsc = null;
             }
@@ -217,8 +218,8 @@ public class JMXUtil {
 
             instanceName = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_INSTANCE);
 
-            serviceUrl = "service:jmx:rmi://" + "127.0.0.1" + ":" + jmxPort + "/jndi/rmi://" + "127.0.0.1" + ":" + karafPort + "/karaf-"
-                    + instanceName;
+            serviceUrl = "service:jmx:rmi://" + "127.0.0.1" + ":" + jmxPort + "/jndi/rmi://" + "127.0.0.1" + ":" + karafPort
+                    + "/karaf-" + instanceName;
         }
     }
 
@@ -287,6 +288,19 @@ public class JMXUtil {
             bundleIDs[i] = Long.parseLong(id.substring(1, id.length() - 1));
         }
         return bundleIDs;
+    }
+
+    public static String[] getBundlesName() throws Exception {
+        String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
+        ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
+
+        Collection<Object> values = ((TabularDataSupport) mbsc.getAttribute(objectBundle, "Bundles")).values();
+        Object[] bundles = values.toArray();
+        String[] bundleNames = new String[values.size()];
+        for (int i = 0; i < bundles.length; i++) {
+            bundleNames[i] = String.valueOf(((javax.management.openmbean.CompositeDataSupport) bundles[i]).get("Name"));
+        }
+        return bundleNames;
     }
 
     public static String getBundleStatus(long bundleID) throws Exception {

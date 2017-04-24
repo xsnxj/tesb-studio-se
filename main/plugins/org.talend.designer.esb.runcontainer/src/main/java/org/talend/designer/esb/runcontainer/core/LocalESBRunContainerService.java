@@ -57,8 +57,9 @@ public class LocalESBRunContainerService implements IESBRunContainerService {
             if (ComponentCategory.CATEGORY_4_CAMEL.getName().equals(process.getComponentsType())) {
                 return new RunContainerProcessor(process, property, filenameFromLabel);
             } else if (ComponentCategory.CATEGORY_4_DI.getName().equals(process.getComponentsType())) {
-                if (EmfModelUtils.getComponentByName((ProcessItem) property.getItem(), "tESBProviderRequest", "tESBConsumer",
-                        "tRESTClient") != null) {
+                String[] esbComponents = { "tESBProviderRequest", "tESBConsumer", "tRESTClient", "tRESTRequest", "tRESTResponse",
+                        "tESBConsumer", "tESBProviderFault", "tESBProviderRequest", "tESBProviderResponse" };
+                if (EmfModelUtils.getComponentByName((ProcessItem) property.getItem(), esbComponents) != null) {
                     return new RunContainerProcessor(process, property, filenameFromLabel);
                 }
             }

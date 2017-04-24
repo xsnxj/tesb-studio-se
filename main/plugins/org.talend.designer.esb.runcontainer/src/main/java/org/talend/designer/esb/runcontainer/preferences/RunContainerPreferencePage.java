@@ -25,12 +25,14 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -43,9 +45,16 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.core.GlobalServiceRegister;
+import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
@@ -55,6 +64,9 @@ import org.talend.designer.esb.runcontainer.ui.actions.StopRuntimeProgress;
 import org.talend.designer.esb.runcontainer.ui.dialog.RuntimeErrorDialog;
 import org.talend.designer.esb.runcontainer.ui.wizard.AddRuntimeWizard;
 import org.talend.designer.esb.runcontainer.util.FileUtil;
+import org.talend.designer.esb.runcontainer.util.JMXUtil;
+import org.talend.designer.runprocess.IRunProcessService;
+import org.talend.designer.runprocess.ui.ProcessManager;
 
 /**
  * ESB Runtime pref page
@@ -78,6 +90,10 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
 
     private BooleanFieldEditor useOSGiEditor;
 
+    private boolean runtimeEnable;
+
+    private ProcessManager manager;
+
     /**
      * Create the preference page.
      */
@@ -94,6 +110,7 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
     public Control createPageContents(Composite parent) {
         serverFieldEditors = new ArrayList<FieldEditor>();
         optionFieldEditors = new ArrayList<FieldEditor>();
+        runtimeEnable = getPreferenceStore().getBoolean(RunContainerPreferenceInitializer.P_ESB_IN_OSGI);
         GridLayout gridLayoutDefault = new GridLayout(1, false);
 
         Composite body = new Composite(parent, SWT.NONE);
@@ -186,7 +203,17 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
 
             @Override
             public void widgetSelected(SelectionEvent e) {
-                initalizeRuntime(locationEditor.getStringValue(), hostFieldEditor.getStringValue());
+                if (initalizeRuntime(locationEditor.getStringValue(), hostFieldEditor.getStringValue())) {
+                    try {
+                        ElementListSelectionDialog report = new ElementListSelectionDialog(getShell(), new LabelProvider());
+                        report.setTitle("Initialize Finished");
+                        report.setMessage("Installed bundles:");
+                        report.setElements(JMXUtil.getBundlesName());
+                        report.open();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
             }
         });
 
@@ -203,6 +230,7 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         addField(filterLogEditor);
         optionFieldEditors.add(filterLogEditor);
 
+        manager = ProcessManager.getInstance();
         return body;
     }
 
@@ -215,7 +243,8 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         setPreferenceStore(ESBRunContainerPlugin.getDefault().getPreferenceStore());
     }
 
-    private void initalizeRuntime(String location, String host) {
+    private boolean initalizeRuntime(String location, String host) {
+        boolean finished = true;
         performApply();
 
         ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
@@ -291,6 +320,7 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
                 }
             });
         } catch (Throwable e) {
+            finished = false;
             ExceptionHandler.process(e);
             IStatus status = new Status(IStatus.ERROR, ESBRunContainerPlugin.PLUGIN_ID, e.getMessage(), e);
             if (e.getCause() != null) {
@@ -300,5 +330,41 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
                     RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog2"),
                     RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog4"), status);
         }
+
+        return finished;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.designer.esb.runcontainer.preferences.FieldLayoutPreferencePage#performOk()
+     */
+    @Override
+    public boolean performOk() {
+        boolean performOk = super.performOk();
+        if (runtimeEnable != getPreferenceStore().getBoolean(RunContainerPreferenceInitializer.P_ESB_IN_OSGI)) {
+            IRunProcessService service = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
+                    IRunProcessService.class);
+            if (service != null) {
+                service.refreshView();
+            }
+
+            List<IEditorReference> editorRefs = new ArrayList();
+            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+            IEditorReference[] reference = page.getEditorReferences();
+            for (IEditorReference editorRef : reference) {
+                IEditorPart part = editorRef.getEditor(false);
+                if (part.getEditorInput() instanceof JobEditorInput) {
+                    editorRefs.add(editorRef);
+                }
+            }
+            if (editorRefs.size() > 0
+                    && MessageDialog
+                            .openConfirm(getShell(), "Container Setting is Changed",
+                                    "The runtime container setting needs to close all editors before saving. Do you want to close all editors now?")) {
+                page.closeEditors(editorRefs.toArray(new IEditorReference[editorRefs.size()]), true);
+            }
+        }
+        return performOk;
     }
 }

@@ -46,17 +46,14 @@ public class RuntimeClientProgress extends RuntimeProgress {
         subMonitor.setTaskName("Running script (" + command + ")"); //$NON-NLS-1$
         if (checkRunning()) {
             subMonitor.subTask("Checking runtime bundles...");
-            waitForActive();
+            waitForActive(subMonitor);
             subMonitor.worked(2);
 
             IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
             File containerDir = new File(store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION));
             try {
                 subMonitor.subTask("Script is running to end...");
-                Process process = Runtime.getRuntime().exec(command, null, containerDir);
-                new Thread(new ProcessOutput(process.getInputStream(), false)).start();
-                new Thread(new ProcessOutput(process.getErrorStream(), true)).start();
-                process.waitFor();
+                executeScript(containerDir);
                 subMonitor.worked(8);
 
                 int size = log.size();
@@ -77,27 +74,98 @@ public class RuntimeClientProgress extends RuntimeProgress {
         }
     }
 
-    private void waitForActive() {
-        try {
-            int deactiveCount = 0;
-            do {
-                long[] bundleList = JMXUtil.getBundlesList();
-                deactiveCount = bundleList.length;
-                for (long id : bundleList) {
+    private void executeScript(File containerDir) throws IOException, InterruptedException {
+        Process process = Runtime.getRuntime().exec(command, null, containerDir);
+        new Thread(new ProcessOutput(process.getInputStream(), false)).start();
+        new Thread(new ProcessOutput(process.getErrorStream(), true)).start();
+        process.waitFor();
+    }
+
+    /**
+     * Ensure all bundles must be actived/resolved before running script
+     * 
+     * @param subMonitor
+     */
+    private void waitForActive(SubMonitor subMonitor) {
+        int bundles = 0;
+        int activeCount = 0;
+        do {
+            try {
+                Thread.sleep(1000);
+                subMonitor.subTask(JMXUtil.getBundlesList().length + " bundles have been actived");
+                if (JMXUtil.getBundlesList().length < 80) {
+                    Thread.sleep(1000);
+                    continue;
+                }
+
+                if (bundles != JMXUtil.getBundlesList().length) {
+                    bundles = JMXUtil.getBundlesList().length;
+                    Thread.sleep(1000);
+                    continue;
+                }
+
+                int actived = 0;
+                Thread.sleep(4000);
+                for (long id : JMXUtil.getBundlesList()) {
                     if ("Active".equals(JMXUtil.getBundleStatus(id))) {
-                        deactiveCount--;
+                        actived++;
                     }
                 }
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if (activeCount != actived) {
+                    activeCount = actived;
+                    Thread.sleep(1000);
+                    continue;
+                } else {
+                    break;
                 }
-            } while (deactiveCount < 5);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } while (!subMonitor.isCanceled());
+    }
+
+    /**
+     * Ensure all bundles must be actived/resolved before running script
+     */
+    private void waitForActive() {
+        boolean allActived = false;
+        int bundles = 0;
+        do {
+            try {
+                Thread.sleep(2000);
+                long[] bundleList = JMXUtil.getBundlesList();
+                if (bundleList.length < 80) {
+                    Thread.sleep(1000);
+                    continue;
+                }
+
+                if (bundles != bundleList.length) {
+                    bundles = bundleList.length;
+                    Thread.sleep(2000);
+                    continue;
+                }
+                int activeCount = 0;
+                for (long id : bundleList) {
+                    if ("Active".equals(JMXUtil.getBundleStatus(id))) {
+                        activeCount++;
+                    }
+                }
+                if (bundles - activeCount < 5) {
+                    allActived = true;
+                }
+                Thread.sleep(2000);
+                bundleList = JMXUtil.getBundlesList();
+                if (bundles != bundleList.length) {
+                    bundles = bundleList.length;
+                    allActived = false;
+                    continue;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } while (!allActived);
     }
 
     /**

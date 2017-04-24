@@ -23,7 +23,8 @@ Require-Bundle: org.talend.camel.model,
  javax.wsdl,
  org.talend.designer.core,
  org.eclipse.jdt.debug,
- org.eclipse.jface
+ org.eclipse.jface,
+ org.eclipse.ui.workbench
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin
 Bundle-ClassPath: .,
