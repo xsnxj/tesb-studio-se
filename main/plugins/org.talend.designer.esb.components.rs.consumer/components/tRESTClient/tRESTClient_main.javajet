@@ -367,68 +367,22 @@ try {
 	}
 	
 	if (use_auth_<%=cid%> && "OIDC_PASSWORD_GRANT".equals(<%=authType%>)) {
-	
-		String tokenEndpoint_<%=cid%> = org.talend.esb.security.oidc.OidcClientUtils.getTokenEndpointLocation();
-		String client_id_<%=cid%> = org.talend.esb.security.oidc.OidcClientUtils.getPublicClientID();
-		String scope_<%=cid%> = org.talend.esb.security.oidc.OidcClientUtils.getScope();		
-				
-		if(tokenEndpoint_<%=cid%> == null){
-			throw new IllegalArgumentException("OIDC Token Endpoint is not set");
-		}
-		
-		if(client_id_<%=cid%> == null){
-			throw new IllegalArgumentException("OIDC Client ID is not set");
-		}
-		
-		<% passwordFieldName = "__AUTH_PASSWORD__"; %>
-		<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
-		
-		String username_<%=cid%> = <%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>;
-		String password_<%=cid%> = decryptedPassword_<%=cid%>;
-		org.apache.cxf.jaxrs.client.WebClient oidcWebClient_<%=cid%> = org.apache.cxf.jaxrs.client.WebClient
-				.create(tokenEndpoint_<%=cid%>)
-				.type("application/x-www-form-urlencoded");
-		String getAccessTokensRequest_<%=cid%> = "grant_type=password&scope="+scope_<%=cid%>+"&username="
-				+ username_<%=cid%>
-				+ "&password="
-				+ password_<%=cid%>
-				+ "&client_id="
-				+ client_id_<%=cid%>;
-		javax.ws.rs.core.Response response_<%=cid%> = oidcWebClient_<%=cid%>
-				.post(getAccessTokensRequest_<%=cid%>);
-		java.util.Map<String, String> responseMap_<%=cid%> = new java.util.HashMap<String, String>(); 
-		try {
-			responseMap_<%=cid%> = org.talend.esb.security.oidc.OidcClientUtils.parseJson((java.io.InputStream) response_<%=cid%>.getEntity());
-		} catch (Exception ex) {
-			throw new javax.ws.rs.WebApplicationException("Can not parse response from  OIDC Access Token service: ", ex);
-		}		
-      
-		if (response_<%=cid%>.getStatus() != 200) {
-			if(responseMap_<%=cid%>.get("error") != null){
-				throw new javax.ws.rs.WebApplicationException("OIDC Access Token request failed: " + responseMap_<%=cid%>.get("error"), response_<%=cid%>);
-			}else{
-				throw new javax.ws.rs.WebApplicationException(response_<%=cid%>);
-			}
-		}
-		String accessToken_<%=cid%> = null;
-		try {
-			if (responseMap_<%=cid%>.get("access_token") != null
-					&& "Bearer".equals(responseMap_<%=cid%>.get("token_type"))) {
-				accessToken_<%=cid%> = responseMap_<%=cid%>.get("access_token");
-			}
-		} catch (Exception e) {
-			throw new javax.ws.rs.WebApplicationException(
-					"Can not process response from OIDC Token service "
-							+ e.getMessage());
-		}
-		if (accessToken_<%=cid%> == null) {
-			throw new javax.ws.rs.WebApplicationException(
-					"Can not find Bearer Access Token inside response from OIDC Token service");
-		}
-		
-				
+
+        <% passwordFieldName = "__AUTH_PASSWORD__"; %>
+        <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
+
+        String username_<%=cid%> = <%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>;
+        String password_<%=cid%> = decryptedPassword_<%=cid%>;
+
+        String bearerHeader_<%=cid%> = null;
+
+        try {
+            bearerHeader_<%=cid%> = org.talend.esb.security.oidc.OidcClientUtils.oidcClientBearer(username_<%=cid%>, password_<%=cid%>);
+        } catch (Exception ex) {
+            throw new javax.ws.rs.WebApplicationException("Failed to get OIDC access token: ", ex);
+        }
+
 		webClient_<%=cid%>.header("Authorization", "Bearer " + accessToken_<%=cid%>);
-	
 	}
     
 	// if FORM request then capture query parameters into Form, otherwise set them as queries
