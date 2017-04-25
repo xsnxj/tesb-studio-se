@@ -10,7 +10,7 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.designer.esb.runcontainer.ui.actions;
+package org.talend.designer.esb.runcontainer.ui.progress;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;

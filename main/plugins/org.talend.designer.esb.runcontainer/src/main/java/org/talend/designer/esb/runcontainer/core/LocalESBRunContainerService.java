@@ -18,6 +18,7 @@ import org.talend.core.model.components.ComponentCategory;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
+import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
 import org.talend.designer.esb.runcontainer.process.RunContainerProcessor;
 import org.talend.designer.esb.runcontainer.util.JMXUtil;
 import org.talend.designer.runprocess.IESBRunContainerService;
@@ -39,7 +40,8 @@ public class LocalESBRunContainerService implements IESBRunContainerService {
 
     @Override
     public boolean isRuntimeEnable() {
-        return enableRuntime;
+        return ESBRunContainerPlugin.getDefault().getPreferenceStore()
+                .getBoolean(RunContainerPreferenceInitializer.P_ESB_IN_OSGI);
     }
 
     /**
@@ -53,7 +55,7 @@ public class LocalESBRunContainerService implements IESBRunContainerService {
      */
     @Override
     public JavaProcessor createJavaProcessor(IProcess process, Property property, boolean filenameFromLabel) {
-        if (enableRuntime) {
+        if (ESBRunContainerPlugin.getDefault().getPreferenceStore().getBoolean(RunContainerPreferenceInitializer.P_ESB_IN_OSGI)) {
             if (ComponentCategory.CATEGORY_4_CAMEL.getName().equals(process.getComponentsType())) {
                 return new RunContainerProcessor(process, property, filenameFromLabel);
             } else if (ComponentCategory.CATEGORY_4_DI.getName().equals(process.getComponentsType())) {

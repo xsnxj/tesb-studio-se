@@ -32,7 +32,6 @@ import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.preference.StringFieldEditor;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -51,17 +50,17 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.ui.editor.JobEditorInput;
 import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
-import org.talend.designer.esb.runcontainer.ui.actions.RuntimeClientProgress;
-import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeProgress;
-import org.talend.designer.esb.runcontainer.ui.actions.StopRuntimeProgress;
+import org.talend.designer.esb.runcontainer.ui.dialog.InitFinishMessageDialog;
 import org.talend.designer.esb.runcontainer.ui.dialog.RuntimeErrorDialog;
+import org.talend.designer.esb.runcontainer.ui.progress.RuntimeClientProgress;
+import org.talend.designer.esb.runcontainer.ui.progress.StartRuntimeProgress;
+import org.talend.designer.esb.runcontainer.ui.progress.StopRuntimeProgress;
 import org.talend.designer.esb.runcontainer.ui.wizard.AddRuntimeWizard;
 import org.talend.designer.esb.runcontainer.util.FileUtil;
 import org.talend.designer.esb.runcontainer.util.JMXUtil;
@@ -205,11 +204,7 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
             public void widgetSelected(SelectionEvent e) {
                 if (initalizeRuntime(locationEditor.getStringValue(), hostFieldEditor.getStringValue())) {
                     try {
-                        ElementListSelectionDialog report = new ElementListSelectionDialog(getShell(), new LabelProvider());
-                        report.setTitle("Initialize Finished");
-                        report.setMessage("Installed bundles:");
-                        report.setElements(JMXUtil.getBundlesName());
-                        report.open();
+                        new InitFinishMessageDialog(getShell(), JMXUtil.getBundlesName()).open();
                     } catch (Exception ex) {
                         ex.printStackTrace();
                     }
@@ -359,9 +354,8 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
                 }
             }
             if (editorRefs.size() > 0
-                    && MessageDialog
-                            .openConfirm(getShell(), "Container Setting is Changed",
-                                    "The runtime container setting needs to close all editors before saving. Do you want to close all editors now?")) {
+                    && MessageDialog.openConfirm(getShell(), "Running Container Changed",
+                            "All editors need to be closed to apply the changes, do you want to close all opening editors now?")) {
                 page.closeEditors(editorRefs.toArray(new IEditorReference[editorRefs.size()]), true);
             }
         }

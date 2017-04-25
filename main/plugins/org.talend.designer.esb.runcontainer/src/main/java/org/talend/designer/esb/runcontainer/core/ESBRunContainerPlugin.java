@@ -12,15 +12,9 @@
 // ============================================================================
 package org.talend.designer.esb.runcontainer.core;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
-import org.talend.core.GlobalServiceRegister;
-import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
-import org.talend.designer.runprocess.IESBRunContainerService;
 
 public class ESBRunContainerPlugin extends AbstractUIPlugin {
 
@@ -34,26 +28,6 @@ public class ESBRunContainerPlugin extends AbstractUIPlugin {
     public void start(BundleContext context) throws Exception {
         super.start(context);
         plugin = this;
-        initRuntimePreference();
-    }
-
-    private void initRuntimePreference() {
-
-        IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
-        boolean runtimeEnable = store.getBoolean(RunContainerPreferenceInitializer.P_ESB_IN_OSGI);
-
-        IESBRunContainerService esbContainerService = (IESBRunContainerService) GlobalServiceRegister.getDefault().getService(
-                IESBRunContainerService.class);
-        esbContainerService.enableRuntime(runtimeEnable);
-        IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
-
-            public void propertyChange(PropertyChangeEvent event) {
-                if (RunContainerPreferenceInitializer.P_ESB_IN_OSGI.equals(event.getProperty())) {
-                    esbContainerService.enableRuntime(Boolean.valueOf(event.getNewValue().toString()));
-                }
-            }
-        };
-        store.addPropertyChangeListener(propertyChangeListener);
     }
 
     @Override
