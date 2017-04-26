@@ -382,7 +382,7 @@ try {
             throw new javax.ws.rs.WebApplicationException("Failed to get OIDC access token: ", ex);
         }
 
-		webClient_<%=cid%>.header("Authorization", "Bearer " + accessToken_<%=cid%>);
+		webClient_<%=cid%>.header("Authorization", "Bearer " + bearerHeader_<%=cid%>);
 	}
     
 	// if FORM request then capture query parameters into Form, otherwise set them as queries
