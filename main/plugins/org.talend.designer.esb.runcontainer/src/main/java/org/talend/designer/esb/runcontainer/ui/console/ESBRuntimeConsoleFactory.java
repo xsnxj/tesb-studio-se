@@ -26,5 +26,4 @@ public class ESBRuntimeConsoleFactory implements IConsoleFactory {
             RuntimeConsoleUtil.findConsole(RuntimeConsoleUtil.KARAF_CONSOLE);
         }
     }
-
 }

@@ -18,14 +18,11 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.Arrays;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
-import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
-import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
 import org.talend.designer.esb.runcontainer.ui.console.RuntimeClient;
 
 public class RuntimeConsoleUtil {
@@ -107,12 +104,7 @@ public class RuntimeConsoleUtil {
 
             @Override
             public void run() {
-                IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
-                String etcLocation = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION);
-                String host = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_HOST);
-                System.setProperty("karaf.etc", etcLocation + "/etc");
-                String[] karafArgs = new String[] { "-h", host };
-
+                String[] karafArgs = new String[] { "-h", "localhost" };
                 try {
                     m.connect(karafArgs);
                 } catch (Exception e) {

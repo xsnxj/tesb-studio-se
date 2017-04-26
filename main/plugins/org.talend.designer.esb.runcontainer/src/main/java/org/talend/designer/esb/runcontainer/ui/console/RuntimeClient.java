@@ -281,7 +281,7 @@ public class RuntimeClient {
                 future.await();
                 session = future.getSession();
             } catch (RuntimeSshException ex) {
-                if (++retries < 10) {
+                if (++retries < 30) {
                     TimeUnit.SECONDS.sleep(1);
                 } else {
                     throw ex;
@@ -340,29 +340,10 @@ public class RuntimeClient {
                             return null;
                         }
                     });
-            // Register the signal handler, this code is equivalent to:
-            // Signal.handle(new Signal("CONT"), signalHandler);
             signalClass.getMethod("handle", signalClass, signalHandlerClass).invoke(null,
                     signalClass.getConstructor(String.class).newInstance("WINCH"), signalHandler);
         } catch (Exception e) {
             // Ignore this exception, if the above failed, the signal API is incompatible with what we're expecting
-
-        }
-    }
-
-    private static void unregisterSignalHandler() {
-        try {
-            Class<?> signalClass = Class.forName("sun.misc.Signal");
-            Class<?> signalHandlerClass = Class.forName("sun.misc.SignalHandler");
-
-            Object signalHandler = signalHandlerClass.getField("SIG_DFL").get(null);
-            // Register the signal handler, this code is equivalent to:
-            // Signal.handle(new Signal("CONT"), signalHandler);
-            signalClass.getMethod("handle", signalClass, signalHandlerClass).invoke(null,
-                    signalClass.getConstructor(String.class).newInstance("WINCH"), signalHandler);
-        } catch (Exception e) {
-            // Ignore this exception, if the above failed, the signal API is incompatible with what we're expecting
-
         }
     }
 }

@@ -38,12 +38,7 @@ public class StartRuntimeProgress extends RuntimeProgress {
     public void run(IProgressMonitor parentMonitor) throws InvocationTargetException, InterruptedException {
         SubMonitor subMonitor = SubMonitor.convert(parentMonitor, 10);
         subMonitor.setTaskName(RunContainerMessages.getString("StartRuntimeAction.Starting")); //$NON-NLS-1$
-
-        if (checkRunning()) {
-            // do nothing, just load console if needed
-            loadConsole();
-            return;
-        } else {
+        if (!checkRunning()) {
             try {
                 IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
                 Process proc = RuntimeServerController.getInstance().startLocalRuntimeServer(
@@ -66,9 +61,10 @@ public class StartRuntimeProgress extends RuntimeProgress {
                 }
             } catch (Exception e) {
                 ExceptionHandler.process(e);
-                throw new InvocationTargetException(e);
+                throw new InvocationTargetException(e, e.getMessage());
             }
         }
+        loadConsole();
     }
 
     public void loadConsole() {

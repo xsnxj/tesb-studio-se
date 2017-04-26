@@ -13,18 +13,21 @@
 package org.talend.designer.esb.runcontainer.ui.console;
 
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.part.IPageBookViewPage;
+import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 import org.talend.designer.esb.runcontainer.server.RuntimeStatusChangeListener;
 import org.talend.designer.esb.runcontainer.ui.actions.OpenRuntimeInfoAction;
 import org.talend.designer.esb.runcontainer.ui.actions.OpenRuntimePrefsAction;
 import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeAction;
 import org.talend.designer.esb.runcontainer.ui.actions.StopRuntimeAction;
+import org.talend.designer.esb.runcontainer.ui.console.ansi.AnsiConsoleStyleListener;
 
 public class ESBRuntimeConsolePageParticipant implements IConsolePageParticipant {
 
@@ -45,6 +48,13 @@ public class ESBRuntimeConsolePageParticipant implements IConsolePageParticipant
 
     @Override
     public void init(IPageBookViewPage page, IConsole console) {
+
+        if (page.getControl() instanceof StyledText) {
+            StyledText viewer = (StyledText) page.getControl();
+            AnsiConsoleStyleListener myListener = new AnsiConsoleStyleListener();
+            viewer.addLineStyleListener(myListener);
+            ESBRunContainerPlugin.getDefault().addViewer(viewer, this);
+        }
 
         startRuntimeAction = new StartRuntimeAction(true, page.getControl().getShell());
         haltRuntimeAction = new StopRuntimeAction(page.getControl().getShell());

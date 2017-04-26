@@ -84,7 +84,7 @@ public class RuntimeServerController {
             if (launcher.exists()) {
                 runtimeProcess = Runtime.getRuntime().exec(launcher.getAbsolutePath(), null, launcher.getParentFile());
             } else {
-                throw new IOException("Cannot find launcher file in " + launcher.getPath());
+                throw new IOException("Missing runtime server start script (" + launcher.getPath() + ")");
             }
         } else {
             runtimeProcess = null;
