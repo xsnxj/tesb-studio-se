@@ -64,7 +64,7 @@ public class RenameToCSoapAndCRestMigrationTask extends AbstractRouteItemCompone
 
     /**
      * Rename node cCXF to cSOAP
-     * 
+     *
      * @param node CXFNode node.
      *
      * @return true, if handle rename node
@@ -84,7 +84,7 @@ public class RenameToCSoapAndCRestMigrationTask extends AbstractRouteItemCompone
 
     /**
      * Rename node cCXFRS to cREST
-     * 
+     *
      * @param node CXFRSNode node.
      *
      * @return true, if handle rename node
@@ -105,13 +105,13 @@ public class RenameToCSoapAndCRestMigrationTask extends AbstractRouteItemCompone
     private void renameConnections(ProcessType item, String oldName, String newName) {
         for (Object o : item.getConnection()) {
             ConnectionType currentConnection = (ConnectionType) o;
-            if (currentConnection.getSource().equals(oldName)) {
+            if (oldName.equals(currentConnection.getSource())) {
                 currentConnection.setSource(newName);
             }
-            if (currentConnection.getTarget().equals(oldName)) {
+            if (oldName.equals(currentConnection.getTarget())) {
                 currentConnection.setTarget(newName);
             }
-            if (currentConnection.getMetaname().equals(oldName)) {
+            if (oldName.equals(currentConnection.getMetaname())) {
                 currentConnection.setMetaname(newName);
             }
         }
