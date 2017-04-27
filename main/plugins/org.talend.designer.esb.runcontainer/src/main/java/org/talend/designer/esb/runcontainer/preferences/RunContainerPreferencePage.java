@@ -308,7 +308,7 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
                     }
                     // without username and password is ok
                     // fixed by KARAF-5019
-                    String command = launcher.getAbsolutePath() + " -h " + host + " -l 1 \"source file:scripts/initlocal.sh\"";
+                    String command = launcher.getAbsolutePath() + " -h " + host + " -l 1 source file:scripts/initlocal.sh";
                     RuntimeClientProgress clientProgress = new RuntimeClientProgress(command);
                     clientProgress.run(totalMonitor);
                     totalMonitor.done();

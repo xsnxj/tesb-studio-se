@@ -18,33 +18,37 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.Arrays;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
+import org.talend.commons.exception.ExceptionHandler;
+import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
+import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
 import org.talend.designer.esb.runcontainer.ui.console.RuntimeClient;
 
 public class RuntimeConsoleUtil {
 
     public static final String KARAF_CONSOLE = "ESB Runtime";
 
-    public static IOConsole findConsole(String name) {
+    public static IOConsole findConsole() {
         ConsolePlugin plugin = ConsolePlugin.getDefault();
         IConsoleManager conMan = plugin.getConsoleManager();
         IConsole[] existing = conMan.getConsoles();
         for (int i = 0; i < existing.length; i++) {
-            if (name.equals(existing[i].getName()))
+            if (KARAF_CONSOLE.equals(existing[i].getName()))
                 return (IOConsole) existing[i];
         }
         // no console found, so create a new one
-        IOConsole myConsole = new IOConsole(name, null);
+        IOConsole myConsole = new IOConsole(KARAF_CONSOLE, null);
         conMan.addConsoles(new IConsole[] { myConsole });
         return myConsole;
     }
 
     public static IOConsoleOutputStream getOutputStream() {
-        IOConsoleOutputStream outputStream = findConsole(KARAF_CONSOLE).newOutputStream();
+        IOConsoleOutputStream outputStream = findConsole().newOutputStream();
         outputStream.setEncoding(System.getProperty("sun.jnu.encoding", "UTF-8"));
         return outputStream;
     }
@@ -63,32 +67,35 @@ public class RuntimeConsoleUtil {
 
     public static void loadConsole() {
         clearConsole();
-        RuntimeClient m = new RuntimeClient();
+        RuntimeClient client = new RuntimeClient();
 
         PipedInputStream pis = new PipedInputStream();
         PipedOutputStream pos = new PipedOutputStream();
 
         try {
             pos.connect(pis);
-        } catch (IOException e2) {
-            e2.printStackTrace();
+        } catch (IOException e) {
+            ExceptionHandler.process(e);
         }
-        m.setInputStream(pis);
+        client.setInputStream(pis);
 
         Thread consoleThread = new Thread("Runtime Console Input") {
 
             @Override
             public void run() {
-                InputStream is = findConsole(KARAF_CONSOLE).getInputStream();
+                InputStream is = findConsole().getInputStream();
 
                 int count = 0;
                 byte[] bs = new byte[1024];
                 try {
                     while ((count = is.read(bs)) > 0) {
+                        // remore duplicate \n
+                        for (; bs[count - 1] == 10; count--) {
+                        }
                         pos.write(Arrays.copyOf(bs, count));
                     }
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 } finally {
                     try {
                         pos.close();
@@ -104,11 +111,16 @@ public class RuntimeConsoleUtil {
 
             @Override
             public void run() {
-                String[] karafArgs = new String[] { "-h", "localhost" };
+                IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
+                String etcLocation = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION);
+                String host = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_HOST);
+                System.setProperty("karaf.etc", etcLocation + "/etc");
+                String[] karafArgs = new String[] { "-h", host };
+
                 try {
-                    m.connect(karafArgs);
+                    client.connect(karafArgs);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    ExceptionHandler.process(e);
                 }
             }
         };

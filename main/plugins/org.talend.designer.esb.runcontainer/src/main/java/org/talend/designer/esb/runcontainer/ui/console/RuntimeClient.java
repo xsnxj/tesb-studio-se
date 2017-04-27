@@ -14,23 +14,16 @@ package org.talend.designer.esb.runcontainer.ui.console;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
-import java.io.Closeable;
 import java.io.Console;
 import java.io.FileInputStream;
 import java.io.IOError;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
 import java.io.Reader;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.net.URL;
 import java.nio.charset.Charset;
-import java.nio.file.Paths;
-import java.security.KeyPair;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +32,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.karaf.client.ClientConfig;
-import org.apache.sshd.agent.SshAgent;
-import org.apache.sshd.agent.local.AgentImpl;
-import org.apache.sshd.agent.local.LocalAgentFactory;
 import org.apache.sshd.client.ClientBuilder;
 import org.apache.sshd.client.SshClient;
 import org.apache.sshd.client.auth.keyboard.UserInteraction;
@@ -51,11 +41,8 @@ import org.apache.sshd.client.channel.ClientChannelEvent;
 import org.apache.sshd.client.channel.PtyCapableChannelSession;
 import org.apache.sshd.client.future.ConnectFuture;
 import org.apache.sshd.client.session.ClientSession;
-import org.apache.sshd.common.FactoryManager;
 import org.apache.sshd.common.RuntimeSshException;
 import org.apache.sshd.common.channel.PtyMode;
-import org.apache.sshd.common.keyprovider.AbstractFileKeyPairProvider;
-import org.apache.sshd.common.util.SecurityUtils;
 import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.jline.terminal.Attributes;
 import org.jline.terminal.Attributes.ControlChar;
@@ -96,8 +83,8 @@ public class RuntimeClient {
         }
 
         SshClient client = ClientBuilder.builder().build();
-        setupAgent(config.getUser(), config.getKeyFile(), client);
-        client.getProperties().put(FactoryManager.IDLE_TIMEOUT, String.valueOf(config.getIdleTimeout()));
+        // setupAgent(config.getUser(), config.getKeyFile(), client);
+        // client.getProperties().put(FactoryManager.IDLE_TIMEOUT, String.valueOf(config.getIdleTimeout()));
         final Console console = System.console();
         if (console != null) {
             client.setUserInteraction(new UserInteraction() {
@@ -144,9 +131,6 @@ public class RuntimeClient {
             });
         }
         client.start();
-        if (console != null) {
-            console.printf("Logging in as %s\n", config.getUser());
-        }
 
         ClientSession session = connectWithRetries(client, config);
 
@@ -264,14 +248,6 @@ public class RuntimeClient {
         return attributes.getLocalFlag(flag) ? 1 : 0;
     }
 
-    private static void setupAgent(String user, String keyFile, SshClient client) {
-        SshAgent agent;
-        URL builtInPrivateKey = RuntimeClient.class.getClassLoader().getResource("karaf.key");
-        agent = startAgent(user, builtInPrivateKey, keyFile);
-        client.setAgentFactory(new LocalAgentFactory(agent));
-        client.getProperties().put(SshAgent.SSH_AUTHSOCKET_ENV_NAME, "local");
-    }
-
     private static ClientSession connectWithRetries(SshClient client, ClientConfig config) throws Exception, InterruptedException {
         ClientSession session = null;
         int retries = 0;
@@ -281,48 +257,14 @@ public class RuntimeClient {
                 future.await();
                 session = future.getSession();
             } catch (RuntimeSshException ex) {
-                if (++retries < 30) {
-                    TimeUnit.SECONDS.sleep(1);
+                if (++retries < 10) {
+                    TimeUnit.SECONDS.sleep(2);
                 } else {
                     throw ex;
                 }
             }
         } while (session == null);
         return session;
-    }
-
-    private static SshAgent startAgent(String user, URL privateKeyUrl, String keyFile) {
-        InputStream is = null;
-        try {
-            SshAgent agent = new AgentImpl();
-            is = privateKeyUrl.openStream();
-            ObjectInputStream r = new ObjectInputStream(is);
-            KeyPair keyPair = (KeyPair) r.readObject();
-            is.close();
-            agent.addIdentity(keyPair, user);
-            if (keyFile != null) {
-                AbstractFileKeyPairProvider fileKeyPairProvider = SecurityUtils.createFileKeyPairProvider();
-                fileKeyPairProvider.setPaths(Collections.singleton(Paths.get(keyFile)));
-                for (KeyPair key : fileKeyPairProvider.loadKeys()) {
-                    agent.addIdentity(key, user);
-                }
-            }
-            return agent;
-        } catch (Throwable e) {
-            close(is);
-            System.err.println("Error starting ssh agent for: " + e.getMessage());
-            return null;
-        }
-    }
-
-    private static void close(Closeable is) {
-        if (is != null) {
-            try {
-                is.close();
-            } catch (IOException e1) {
-                // Ignore
-            }
-        }
     }
 
     private static void registerSignalHandler(final Terminal terminal, final PtyCapableChannelSession channel) {
