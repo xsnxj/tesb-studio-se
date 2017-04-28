@@ -12,8 +12,6 @@
 // ============================================================================
 package org.talend.camel.designer.generator;
 
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,6 +21,7 @@ import org.eclipse.swt.widgets.Button;
 import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
+import org.talend.core.utils.TalendQuoteUtils;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.librariesmanager.prefs.LibrariesManagerUtils;
 
@@ -43,7 +42,6 @@ public class CheckNexusButtonController extends ConfigOptionController {
     		List jars = (List) elementParameterFromField.getValue();
     		
     		if(jars.size()>0){
-    			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");//20170411034415
     			
     			IElementParameter needUpdateList = elem.getElementParameter("NEED_UPDATE_LIST");
     			
@@ -61,49 +59,61 @@ public class CheckNexusButtonController extends ConfigOptionController {
     				Map<String,String> jar = (Map)jars.get(i);
     				
     				String currentVersion = jar.get(JAR_VERSION);
-
+    				String currentNexusVersion = TalendQuoteUtils.removeQuotes(jar.get(JAR_NEXUS_VERSION));
+    				String currentNexusPreVersion = jar.get(JAR_NEXUS_PRE_VERSION);
+					String jn = TalendQuoteUtils.removeQuotes(jar.get(JAR_NAME));
+    				String a = jn.replaceFirst("[.][^.]+$", "");
+    				
     				try {
-
-    					String jn = jar.get(JAR_NAME);
-    					
-    		        	Map metadata = service.getMavenMetadata(null, jn.replaceFirst("[.][^.]+$", ""), null);
+    		        	Map metadata = service.getMavenMetadata(null, a , currentNexusVersion);
     		        	String updated = (String) metadata.get("Versioning.LastUpdated");
+    		        	String release = (String) metadata.get("Versioning.Release");
+    		        	
+    		        	if(StringUtils.isNotBlank(updated)){
+        					long current = Long.MAX_VALUE;
+        					
+        					if(StringUtils.isBlank(currentVersion)){
+        						current = 0;
+        					}else{
+        						current = sdf.parse(currentVersion).getTime();
+        					}
+        					
+        					for(ModuleNeeded moduleNeeded:updatedModules){
+        						String mn = moduleNeeded.getModuleName();
+        						
+        						if(mn.equals(jn)){
+        							current = 0;
+        							break;
+        						}
+        					}
+        					
+        					if( !StringUtils.equals(currentNexusVersion, currentNexusPreVersion) ){
+        						needUpdateJars.add(getNeedUpdateJar("✘",jn,currentNexusVersion,currentNexusPreVersion));
+        						continue;
+        					}
+        					
+        					if(sdf.parse(updated).getTime()>current){
+        						if(StringUtils.isNotBlank(release)){
+        							if(StringUtils.equals(currentNexusVersion, release)){
+        								needUpdateJars.add(getNeedUpdateJar("✘",jn,currentNexusVersion,currentNexusPreVersion));
+        							}
+        						}else{
+            						needUpdateJars.add(getNeedUpdateJar("✘",jn,currentNexusVersion,currentNexusPreVersion));
+        						}
+        						continue;
+        					}
+    		        	}
     		            
-    					long current = Long.MAX_VALUE;
-    					
-    					if(StringUtils.isBlank(currentVersion) && StringUtils.isNotBlank(updated)){
-    						current = 0;
-    					}else{
-    						current = sdf.parse(currentVersion).getTime();
-    					}
-    					
-    					for(ModuleNeeded moduleNeeded:updatedModules){
-    						String mn = moduleNeeded.getModuleName();
-    						
-    						if(mn.equals(jn)){
-    							current = 0;
-    							break;
-    						}
-    					}
-    					
-    					if(sdf.parse(updated).getTime()>current){
-    						Map needUpdateJar = new HashMap();
-    						
-    						needUpdateJar.put(JAR_NAME, jar.get(JAR_NAME));
-    						
-    						needUpdateJars.add(needUpdateJar);
-
-    						refresh(needUpdateList, true);
-    					}
     				} catch (Exception ee) {
     					ee.printStackTrace();
     				}
     			}
+    			
+				refresh(needUpdateList, true);
     		}
 
     		return null;
         }
         return null;
     }
-
 }

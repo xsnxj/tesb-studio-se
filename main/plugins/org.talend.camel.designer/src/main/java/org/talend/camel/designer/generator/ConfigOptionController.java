@@ -1,6 +1,9 @@
 package org.talend.camel.designer.generator;
 
 import java.beans.PropertyChangeEvent;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.gef.commands.Command;
 import org.eclipse.swt.SWT;
@@ -26,7 +29,10 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
 
 	protected final String JAR_NAME = "JAR_NAME";
 	protected final String JAR_VERSION = "JAR_VERSION";
+	protected final String JAR_NEXUS_VERSION = "JAR_NEXUS_VERSION";
+	protected final String JAR_NEXUS_PRE_VERSION = "JAR_NEXUS_PRE_VERSION";
 	
+	protected SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmss");//20170411034415
 	
 	protected INexusService service;
 	
@@ -105,5 +111,19 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
         	tableViewerCreator.getTableViewer().refresh();
         }
 	}
+	
+    protected Map getNeedUpdateJar(String flag,String jarName,String nexusVersion,String nexusPreVersion){
+		Map needUpdateJar = new HashMap();
+		
+		needUpdateJar.put("SCHEMA_COLUMN", flag);
+		
+		needUpdateJar.put(JAR_NAME, jarName);
+		
+		needUpdateJar.put(JAR_NEXUS_VERSION, nexusVersion);
+		
+		needUpdateJar.put(JAR_NEXUS_PRE_VERSION, nexusPreVersion);
+		
+		return needUpdateJar;
+    }
 
 }
