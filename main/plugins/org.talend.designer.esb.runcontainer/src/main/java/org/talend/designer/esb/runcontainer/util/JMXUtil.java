@@ -191,7 +191,7 @@ public class JMXUtil {
                 mbsc = null;
                 mbsc = jmxc.getMBeanServerConnection();
             } catch (IOException ex) {
-                ex.printStackTrace();
+                // ex.printStackTrace();
                 jmxc = null;
                 mbsc = null;
             }

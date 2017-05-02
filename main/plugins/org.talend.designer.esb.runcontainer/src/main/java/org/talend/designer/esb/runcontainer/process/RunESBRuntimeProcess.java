@@ -177,13 +177,13 @@ public class RunESBRuntimeProcess extends Process {
 
     @Override
     public void destroy() {
+        stopLogging();
         try {
             artifactManager.unDeploy();
         } catch (Exception e) {
             e.printStackTrace();
             exitValue = 0;
         }
-        stopLogging();
         try {
             stdInputStream.close();
         } catch (IOException e) {

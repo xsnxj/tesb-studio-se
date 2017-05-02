@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ public class RuntimeLogHTTPMonitor {
 
     RuntimeLogHTTPMonitor() {
         // init
-        listenerMap = new HashMap<RuntimeLogHTTPAdapter, Long>();
+        listenerMap = Collections.synchronizedMap(new HashMap<RuntimeLogHTTPAdapter, Long>());
     }
 
     public static RuntimeLogHTTPMonitor createRuntimeLogHTTPMonitor() {
@@ -49,11 +50,11 @@ public class RuntimeLogHTTPMonitor {
         return instance;
     }
 
-    public void addLogLictener(RuntimeLogHTTPAdapter listener) {
+    public synchronized void addLogLictener(RuntimeLogHTTPAdapter listener) {
         listenerMap.put(listener, System.currentTimeMillis());
     }
 
-    public void removeLogLictener(RuntimeLogHTTPAdapter listener) {
+    public synchronized void removeLogLictener(RuntimeLogHTTPAdapter listener) {
         listenerMap.remove(listener);
     }
 
@@ -115,31 +116,34 @@ public class RuntimeLogHTTPMonitor {
                     InputStream content = connection.getInputStream();
                     BufferedReader in = new BufferedReader(new InputStreamReader(content));
                     String line = in.readLine();
-                    if (line != null) {
-                        int dataPos = line.indexOf(json) + 7;
-                        line = line.substring(dataPos, line.length());
-                        FelixLogsModel[] logs = mapper.readValue(line, FelixLogsModel[].class);
-                        if (logs[0].getReceived() >= current) {
-                            for (int i = logs.length - 1; i >= 0; i--) {
-                                if (latestTime >= logs[i].getReceived()) {
-                                    continue;
-                                }
-                                // ignore system logs
-                                if (sysLog && logs[i].getBundleName().startsWith(sysName)) {
-                                    continue;
-                                }
-                                // ignore authorization logs
-                                if (logs[i].getMessage().indexOf(authorization) == 0) {
-                                    continue;
-                                }
 
-                                for (IRuntimeLogListener listener : listenerMap.keySet()) {
-                                    if (listenerMap.get(listener) < logs[i].getReceived()) {
-                                        listener.logReceived(logs[i]);
+                    if (line != null) {
+                        synchronized (listenerMap) {
+                            int dataPos = line.indexOf(json) + 7;
+                            line = line.substring(dataPos, line.length());
+                            FelixLogsModel[] logs = mapper.readValue(line, FelixLogsModel[].class);
+                            if (logs[0].getReceived() >= current) {
+                                for (int i = logs.length - 1; i >= 0; i--) {
+                                    if (latestTime >= logs[i].getReceived()) {
+                                        continue;
+                                    }
+                                    // ignore system logs
+                                    if (sysLog && logs[i].getBundleName().startsWith(sysName)) {
+                                        continue;
+                                    }
+                                    // ignore authorization logs
+                                    if (logs[i].getMessage().indexOf(authorization) == 0) {
+                                        continue;
+                                    }
+
+                                    for (IRuntimeLogListener listener : listenerMap.keySet()) {
+                                        if (listenerMap.get(listener) < logs[i].getReceived()) {
+                                            listener.logReceived(logs[i]);
+                                        }
                                     }
                                 }
+                                latestTime = logs[0].getReceived();
                             }
-                            latestTime = logs[0].getReceived();
                         }
                     }
 
