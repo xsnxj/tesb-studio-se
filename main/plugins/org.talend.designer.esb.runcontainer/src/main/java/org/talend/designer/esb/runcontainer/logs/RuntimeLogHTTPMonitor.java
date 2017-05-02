@@ -18,7 +18,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +39,7 @@ public class RuntimeLogHTTPMonitor {
 
     RuntimeLogHTTPMonitor() {
         // init
-        listenerMap = Collections.synchronizedMap(new HashMap<RuntimeLogHTTPAdapter, Long>());
+        listenerMap = new HashMap<RuntimeLogHTTPAdapter, Long>();
     }
 
     public static RuntimeLogHTTPMonitor createRuntimeLogHTTPMonitor() {
