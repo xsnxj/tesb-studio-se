@@ -147,7 +147,7 @@
 			<ITEMS DEFAULT="BASIC">
 				<ITEM NAME="BASIC" VALUE="BASIC" />
 				<ITEM NAME="SAML" VALUE="SAML" />
-                <ITEM NAME="OIDC" VALUE="OIDC" />
+                <ITEM NAME="OIDC" VALUE="OIDC" SHOW_IF="IS_STUDIO_EE_VERSION == 'true'" />
 			</ITEMS>
 		</PARAMETER>
 		
