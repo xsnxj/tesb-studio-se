@@ -211,7 +211,7 @@ public class RunESBRuntimeProcess extends Process {
             monitor.setTaskName("Deploy articact into Runimte server");
             if (ComponentCategory.CATEGORY_4_DI.getName().equals(process.getComponentsType())) {
                 // publish service
-                if (EmfModelUtils.getComponentByName(processItem, "tESBProviderRequest", "tESBConsumer") != null) {
+                if (EmfModelUtils.getComponentByName(processItem, "tESBProviderRequest") != null) {
                     List<Item> items = new ArrayList<Item>(1);
                     items.add(processItem);
                     Collection<IRepositoryViewObject> allDependencies = ProcessUtils.getProcessDependencies(
@@ -228,7 +228,6 @@ public class RunESBRuntimeProcess extends Process {
                                 kars = JMXUtil.installKar(target);
                             }
                         }
-
                     }
                 } else {
                     // publish job
