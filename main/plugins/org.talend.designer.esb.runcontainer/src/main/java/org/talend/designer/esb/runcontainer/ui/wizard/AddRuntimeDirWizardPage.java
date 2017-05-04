@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.designer.esb.runcontainer.ui.wizard;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -32,6 +33,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Text;
 import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
 import org.talend.designer.esb.runcontainer.util.FileUtil;
@@ -241,9 +243,27 @@ public class AddRuntimeDirWizardPage extends WizardPage {
             btnTargetDefault.setText("default target folder");
             btnTargetDefault.setSelection(true);
             GridData btnTargetDefaultGridData = new GridData();
-            btnTargetDefaultGridData.horizontalSpan = 3;
+            btnTargetDefaultGridData.horizontalSpan = 0;
             btnTargetDefaultGridData.horizontalIndent = 20;
             btnTargetDefault.setLayoutData(btnTargetDefaultGridData);
+
+            Link link = new Link(compTarget, SWT.NONE);
+            link.setText("<a href=\"#\">STUDIO_HOME/esb/container</a>");
+            link.addSelectionListener(new SelectionAdapter() {
+
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    Desktop desktop = Desktop.getDesktop();
+                    String defaultLocal = System.getProperty("user.dir") + File.separator + "esb";
+                    try {
+                        desktop.open(new File(defaultLocal));
+                    } catch (IOException e1) {
+                    }
+                }
+            });
+
+            Label lblBlank = new Label(compTarget, SWT.NONE);
+            lblBlank.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 
             btnTargetCustom = new Button(compTarget, SWT.RADIO);
             btnTargetCustom.setText("custom target folder");
