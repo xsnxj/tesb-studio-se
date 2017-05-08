@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.talend.core.GlobalServiceRegister;
+import org.talend.core.PluginChecker;
 import org.talend.core.model.general.INexusService;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.utils.TalendQuoteUtils;
@@ -16,7 +17,7 @@ public class CheckConfigNodesService implements ICheckNodesService{
 
 	@Override
 	public void checkNode(Node node) {
-		if (!node.getComponent().getName().equals("cConfig")) { //$NON-NLS-1$
+		if (!PluginChecker.isTIS() || !node.getComponent().getName().equals("cConfig")) { //$NON-NLS-1$
 			return;
 		}
 		
