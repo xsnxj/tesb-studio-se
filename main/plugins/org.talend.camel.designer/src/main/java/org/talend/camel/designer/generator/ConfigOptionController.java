@@ -5,6 +5,8 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -16,13 +18,16 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertyConstants;
+import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.ui.swt.tableviewer.TableViewerCreator;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.general.INexusService;
 import org.talend.core.model.process.IElementParameter;
+import org.talend.core.runtime.maven.MavenConstants;
 import org.talend.core.ui.CoreUIPlugin;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
+import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
 
 public class ConfigOptionController extends AbstractElementPropertySectionController {
@@ -124,6 +129,19 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
 		needUpdateJar.put(JAR_NEXUS_PRE_VERSION, nexusPreVersion);
 		
 		return needUpdateJar;
+    }
+    
+    
+    protected String getGroupId(){
+        String groupId = Platform.getPreferencesService().getString("org.talend.designer.publish.di", "publish.artifact.nexus.default.groupid", "org.example", null);;
+        
+        final EMap additionalProperties = ((RouteProcess)((Node)elem).getProcess()).getProperty().getAdditionalProperties();
+        final Object groupIdValue = additionalProperties.get(MavenConstants.NAME_GROUP_ID);
+        if (groupIdValue != null && groupIdValue.toString().length() > 0) {
+            groupId = groupIdValue.toString();
+        }
+        
+        return groupId;
     }
 
 }

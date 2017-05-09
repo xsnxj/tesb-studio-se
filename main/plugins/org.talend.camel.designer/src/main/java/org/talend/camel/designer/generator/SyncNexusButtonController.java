@@ -80,7 +80,7 @@ public class SyncNexusButtonController extends ConfigOptionController {
 								String nexusVersion = TalendQuoteUtils.removeQuotes(jar.get(JAR_NEXUS_VERSION));
 								String nexusPreVersion = jar.get(JAR_NEXUS_PRE_VERSION);
 								
-		    		        	Map metadata = service.getMavenMetadata(null, a, nexusVersion);
+		    		        	Map metadata = service.getMavenMetadata(getGroupId(), a, nexusVersion);
 		    		        	
 		    		        	if(metadata != null){
 			    		        	String updated = (String) metadata.get("Versioning.LastUpdated");
@@ -128,7 +128,7 @@ public class SyncNexusButtonController extends ConfigOptionController {
     				String a = jn.replaceFirst("[.][^.]+$", "");
 
     				try {
-    		        	Map metadata = service.getMavenMetadata(null, a , currentNexusVersion);
+    		        	Map metadata = service.getMavenMetadata(getGroupId(), a , currentNexusVersion);
     		        	String updated = (String) metadata.get("Versioning.LastUpdated");
     		        	String release = (String) metadata.get("Versioning.Release");
     					
@@ -190,7 +190,7 @@ public class SyncNexusButtonController extends ConfigOptionController {
     
     public Map executeUpdate(Map update, String flag,String jarName,String artifact,String version,String nexusVersion,String nexusPreVersion){
     	
-		InputStream is = service.getContentInputStream(null, null, artifact, nexusVersion);
+		InputStream is = service.getContentInputStream(null, getGroupId(), artifact, nexusVersion);
 		
 		if(is != null){
 			update.put(JAR_VERSION,version);

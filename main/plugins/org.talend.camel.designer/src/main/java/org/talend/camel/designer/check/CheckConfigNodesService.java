@@ -5,10 +5,14 @@ import java.net.MalformedURLException;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.emf.common.util.EMap;
+import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.PluginChecker;
 import org.talend.core.model.general.INexusService;
 import org.talend.core.model.process.IElementParameter;
+import org.talend.core.runtime.maven.MavenConstants;
 import org.talend.core.utils.TalendQuoteUtils;
 import org.talend.designer.core.ICheckNodesService;
 import org.talend.designer.core.ui.editor.nodes.Node;
@@ -38,7 +42,16 @@ public class CheckConfigNodesService implements ICheckNodesService{
 			            Map metadata = null;
 						try {
 							String nv = TalendQuoteUtils.removeQuotes(jar.get("JAR_NEXUS_VERSION"));
-							metadata = service.upload(nv,file.toURI().toURL());
+							
+					        String groupId = Platform.getPreferencesService().getString("org.talend.designer.publish.di", "publish.artifact.nexus.default.groupid", "org.example", null);
+					        
+					        final EMap additionalProperties = ((RouteProcess)node.getProcess()).getProperty().getAdditionalProperties();
+					        final Object groupIdValue = additionalProperties.get(MavenConstants.NAME_GROUP_ID);
+					        if (groupIdValue != null && groupIdValue.toString().length() > 0) {
+					            groupId = groupIdValue.toString();
+					        }
+							
+							metadata = service.upload("","","",groupId,"",nv,file.toURI().toURL());
 						} catch (MalformedURLException e) {
 							e.printStackTrace();
 						}
@@ -52,5 +65,4 @@ public class CheckConfigNodesService implements ICheckNodesService{
 			}
 		}
 	}
-
 }
