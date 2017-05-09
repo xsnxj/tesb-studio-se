@@ -25,7 +25,8 @@ Require-Bundle: org.talend.commons.ui,
  org.talend.designer.maven,
  org.talend.metadata.managment.ui,
  biz.aQute.bndlib,
- org.eclipse.m2e.maven.runtime
+ org.eclipse.m2e.maven.runtime,
+ org.talend.librariesmanager.ui
 Bundle-ActivationPolicy: lazy
 Export-Package: org.talend.camel.designer.dialog,
  org.talend.camel.designer.migration,

@@ -365,7 +365,26 @@ try {
 		// set oAuth2 bearer token
 		webClient_<%=cid%>.header("Authorization", "Bearer " + <%=paramsHelper.getStringParam("__AUTH_BEARER_TOKEN__")%>);
 	}
+	
+	if (use_auth_<%=cid%> && "OIDC_PASSWORD_GRANT".equals(<%=authType%>)) {
 
+        <% passwordFieldName = "__AUTH_PASSWORD__"; %>
+        <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
+
+        String username_<%=cid%> = <%=paramsHelper.getStringParam("__AUTH_USERNAME__")%>;
+        String password_<%=cid%> = decryptedPassword_<%=cid%>;
+
+        String bearerHeader_<%=cid%> = null;
+
+        try {
+            bearerHeader_<%=cid%> = org.talend.esb.security.oidc.OidcClientUtils.oidcClientBearer(username_<%=cid%>, password_<%=cid%>);
+        } catch (Exception ex) {
+            throw new javax.ws.rs.WebApplicationException("Failed to get OIDC access token: ", ex);
+        }
+
+		webClient_<%=cid%>.header("Authorization", bearerHeader_<%=cid%>);
+	}
+    
 	// if FORM request then capture query parameters into Form, otherwise set them as queries
 	<% List<Map<String, String>> queries = paramsHelper.getObjectParam("__QUERY__");
 		if ("application/x-www-form-urlencoded".equals(contentType) && !"GET".equals(method) && !"DELETE".equals(method)) { %>

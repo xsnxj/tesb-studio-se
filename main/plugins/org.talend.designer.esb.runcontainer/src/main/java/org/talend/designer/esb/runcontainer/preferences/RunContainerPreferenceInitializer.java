@@ -80,9 +80,9 @@ public class RunContainerPreferenceInitializer extends AbstractPreferenceInitial
     public static final String P_DEFAULT_ESB_RUNTIME_INSTANCE = "trun";
 
     //
-    public static final String P_ESB_RUNTIME_IN_OSGI = "ESB_RUNTIME_INSTANCE";
+    public static final String P_ESB_IN_OSGI = "ESB_RUNTIME_IN_OSGI";
 
-    public static final boolean P_DEFAULT_ESB_IN_OSGI = true;
+    public static final boolean P_DEFAULT_ESB_IN_OSGI = false;
 
     /*
      * (non-Javadoc)
@@ -103,6 +103,6 @@ public class RunContainerPreferenceInitializer extends AbstractPreferenceInitial
         store.setDefault(P_ESB_RUNTIME_JMX_PORT, P_DEFAULT_ESB_RUNTIME_JMX_PORT);
         store.setDefault(P_ESB_RUNTIME_SYS_LOG, P_DEFAULT_ESB_RUNTIME_SYS_LOG);
         store.setDefault(P_ESB_RUNTIME_INSTANCE, P_DEFAULT_ESB_RUNTIME_INSTANCE);
-        store.setDefault(P_ESB_RUNTIME_IN_OSGI, P_DEFAULT_ESB_IN_OSGI);
+        store.setDefault(P_ESB_IN_OSGI, P_DEFAULT_ESB_IN_OSGI);
     }
 }

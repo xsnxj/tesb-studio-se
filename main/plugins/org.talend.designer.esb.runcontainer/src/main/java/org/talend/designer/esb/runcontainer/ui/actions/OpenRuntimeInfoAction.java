@@ -44,10 +44,10 @@ public class OpenRuntimeInfoAction extends Action {
     @Override
     public void run() {
 
-        MBeanServerConnection mbsc = JMXUtil.createJMXconnection();
-
-        List<Map<String, String>> list = new ArrayList<Map<String, String>>();
+        MBeanServerConnection mbsc;
         try {
+            mbsc = JMXUtil.createJMXconnection();
+            List<Map<String, String>> list = new ArrayList<Map<String, String>>();
             String JOB_MBEAN = "TalendAgent:type=O.S. Informations"; //$NON-NLS-1$
             ObjectName objectJob = new ObjectName(JOB_MBEAN);
             MBeanInfo info = mbsc.getMBeanInfo(objectJob);
@@ -68,10 +68,10 @@ public class OpenRuntimeInfoAction extends Action {
                     e.printStackTrace();
                 }
             }
+            RuntimeInfoDialog dlg = new RuntimeInfoDialog(list);
+            dlg.open();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        RuntimeInfoDialog dlg = new RuntimeInfoDialog(list);
-        dlg.open();
     }
 }

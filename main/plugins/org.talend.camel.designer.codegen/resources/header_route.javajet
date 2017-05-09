@@ -507,6 +507,8 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
     boolean hasCorrelationID = false;
     boolean hasCXFRSProvider = false;
     boolean hasCXFRSServiceLocator = false;
+    boolean hasOidcAuthentication = false;
+    boolean hasOidcClientAuthentication = false;
     for (INode node : graphicalNodes) {
         if ("cSOAP".equals(node.getComponent().getName())) {
             boolean useRegistry = false;
@@ -533,6 +535,18 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
             if ("true".equals(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
                 hasSam = true;
             }
+
+            if (!hasOidcClientAuthentication) {
+                hasOidcClientAuthentication = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_SECURITY__"))
+                                                  && "OIDC".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))
+                                                  && !node.getIncomingConnections().isEmpty();
+            }
+
+            if (!hasOidcAuthentication) {
+                hasOidcAuthentication = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_SECURITY__"))
+                                            && "OIDC".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"));
+            }
+
             if (node.getIncomingConnections().isEmpty()) {
                 hasCXFRSProvider = true;
 
@@ -2030,6 +2044,77 @@ if (isProvider) {
         return new RouteBuilder() {
 <%
     }//end if(isTestContainer)
+
+    if (hasOidcAuthentication) {
+
+    %>
+    java.util.Map<String, String> getOidcSettings() {
+        java.util.Map<String, String> settings = new java.util.HashMap<String, String>();
+
+        String tokenEndpoint = org.talend.esb.security.oidc.OidcClientUtils.getTokenEndpointLocation();
+        String validationEndpoint = org.talend.esb.security.oidc.OidcClientUtils.getValidationEndpointLocation();
+        String clientId = org.talend.esb.security.oidc.OidcClientUtils.getPublicClientID();
+        String scope = org.talend.esb.security.oidc.OidcClientUtils.getScope();
+
+        if (tokenEndpoint == null && validationEndpoint == null) {
+
+            String fileName = "org.talend.esb.job.oidc.cfg";
+            java.io.InputStream stream = null;
+
+            String configFile = "config/" + fileName;
+
+            String file = "";
+            // by default from current "config" directory
+            file = System.getProperty("user.dir") + java.io.File.separator + configFile;
+
+            java.io.File usersfile = new java.io.File(file);
+            if (usersfile.exists()) {
+                try{
+                    stream = new java.io.FileInputStream(file);
+                }catch(Exception e){
+                    stream = this.getClass().getClassLoader().getResourceAsStream(configFile);
+                }
+            } else {
+                stream = this.getClass().getClassLoader().getResourceAsStream(configFile);
+            }
+
+            if (stream != null) {
+                Properties oidcProperties = new Properties();
+                try {
+                    oidcProperties.load(stream);
+                } catch (Exception e) {
+                    throw new RuntimeException("Cannot load OpenID Connect properties", e);
+                } finally {
+                    try {
+                        stream.close();
+                    } catch (Exception e) {}
+                }
+
+                tokenEndpoint = oidcProperties.getProperty(org.talend.esb.security.oidc.OidcClientUtils.OIDC_TOKEN_ENDPOINT_LOCATION);
+                validationEndpoint = oidcProperties.getProperty(org.talend.esb.security.oidc.OidcClientUtils.OIDC_VALIDATION_ENDPOINT_LOCATION);
+                clientId = oidcProperties.getProperty(org.talend.esb.security.oidc.OidcClientUtils.OIDC_PUBLIC_CLIENT_ID);
+                scope = oidcProperties.getProperty(org.talend.esb.security.oidc.OidcClientUtils.OIDC_SCOPE);
+            }
+        }
+
+        settings.put(org.talend.esb.security.oidc.OidcClientUtils.OIDC_TOKEN_ENDPOINT_LOCATION, tokenEndpoint);
+        settings.put(org.talend.esb.security.oidc.OidcClientUtils.OIDC_VALIDATION_ENDPOINT_LOCATION, validationEndpoint);
+        settings.put(org.talend.esb.security.oidc.OidcClientUtils.OIDC_PUBLIC_CLIENT_ID, clientId);
+        settings.put(org.talend.esb.security.oidc.OidcClientUtils.OIDC_SCOPE, scope);
+
+        return settings;
+    }
+    <%
+    } // end if hasOidcAuthentication
+
+    if (hasOidcClientAuthentication) {
+        %>
+
+    private String oidcClientBearer(String oidcUsername, String oidcPassword) throws java.lang.Exception {
+        return org.talend.esb.security.oidc.OidcClientUtils.oidcClientBearer(oidcUsername, oidcPassword, getOidcSettings());
+    }
+<%
+	}
 %>
             @Override
             public void configure() throws java.lang.Exception {
@@ -2181,42 +2266,11 @@ if (isProvider) {
                             }
 <%
                         } else if ("OIDC".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))) {
-                            String oidcIntrospectionEndpoint = ElementParameterParser.getValue(node, "__OIDC_INTROSPECTION_ENDPOINT__");
-%>
+                            %>
                                 // OpenID authentication
-                                sf_<%=cid%>.setProvider(new javax.ws.rs.container.ContainerRequestFilter() {
-                                    @Override
-                                    public void filter(javax.ws.rs.container.ContainerRequestContext requestContext) throws java.io.IOException {
-                                        boolean authFailed = true;
-                                        String authzHeader = requestContext.getHeaders().getFirst("Authorization");
-                                        if (authzHeader != null && authzHeader.startsWith("Bearer ")) {
-                                            String accessToken = authzHeader.substring("Bearer ".length());
-                                            if (accessToken != null && !accessToken.isEmpty()) {
-                                                org.apache.cxf.jaxrs.client.WebClient oidcWebClient =
-                                                    org.apache.cxf.jaxrs.client.WebClient.create(<%=oidcIntrospectionEndpoint%>,
-                                                        java.util.Collections.singletonList(new org.apache.cxf.jaxrs.provider.json.JSONProvider())).type("application/x-www-form-urlencoded");
-                                                javax.ws.rs.core.Response response = oidcWebClient.post("token=" + java.net.URLEncoder.encode(accessToken, "UTF-8")+ "&token_type_hint=access_token");
-                                                String responseString = response.readEntity(String.class);
-                                                org.json.simple.parser.JSONParser parser = new org.json.simple.parser.JSONParser();
-                                                try {
-                                                    org.json.simple.JSONObject responseJson = (org.json.simple.JSONObject)parser.parse(responseString);
-                                                    if ((Boolean)responseJson.get("active") && "Bearer".equals(responseJson.get("token_type"))) {
-                                                        authFailed = false;
-                                                    }
-                                                } catch (Exception e) {
-                                                    authFailed = true;
-                                                }
-                                            }
-                                        }
-
-                                        if (authFailed) {
-                                            javax.ws.rs.core.Response.ResponseBuilder builder = javax.ws.rs.core.Response.status(javax.ws.rs.core.Response.Status.UNAUTHORIZED);
-                                            builder.header(javax.ws.rs.core.HttpHeaders.WWW_AUTHENTICATE, "Bearer");
-                                            requestContext.abortWith(builder.build());
-                                        }
-                                    }
-                                });
-<%
+                                new org.talend.esb.security.oidc.OidcClientUtils(getOidcSettings()); // get settings to use them by access token validator
+                                sf_<%=cid%>.setProvider(new org.talend.esb.security.oidc.OidcAccessTokenValidator());
+                            <%
                         }
                     }
                     if ("true".equals(ElementParameterParser.getValue(node, "__EXPOSE_SWAGGER_SPEC__"))) {
@@ -2229,11 +2283,20 @@ if (isProvider) {
                         epForSwagger = "\"/services" + epForSwagger;
 
                         String swaggerTitle = className + " REST Application";
-%>
+                        String swaggerDescription = "";
+                        if ("true".equals(ElementParameterParser.getValue(node, "__INCLUDE_DOC_INTO_SWAGGER_SPEC__"))) {
+                            swaggerDescription = ElementParameterParser.getValue(node, "__COMMENT__");
+                            if (swaggerDescription.contains("\r\n")) {
+                              swaggerDescription = swaggerDescription.replace("\r\n", "\\n\" + \n\"");
+                            } else {
+                               swaggerDescription = swaggerDescription.replace("\n", "\\n\" + \n\"");
+                            }
+                        }
+                    %>
                     swagger2Feature_<%=cid%>.setBasePath(<%=epForSwagger%>);
                     swagger2Feature_<%=cid%>.setRunAsFilter(true);
                     swagger2Feature_<%=cid%>.setTitle("<%=swaggerTitle%>");
-                    swagger2Feature_<%=cid%>.setDescription("<%=cid%>");
+                    swagger2Feature_<%=cid%>.setDescription("<%=swaggerDescription%>");
                     swagger2Feature_<%=cid%>.setContact(null);
                     swagger2Feature_<%=cid%>.setLicense(null);
                     swagger2Feature_<%=cid%>.setLicenseUrl(null);
@@ -2720,9 +2783,11 @@ if (isProvider) {
                     String username = ElementParameterParser.getValue(node, "__MQTT_USERNAME__");
                     String passwordFieldName = "__MQTT_PASSWORD__";
 %>
+                    {
                     <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
-                    config.setUserName(<%=username%>);
                     config.setPassword(decryptedPassword_<%=cid%>);
+                    }
+                    config.setUserName(<%=username%>);
 <%
                 }
 %>

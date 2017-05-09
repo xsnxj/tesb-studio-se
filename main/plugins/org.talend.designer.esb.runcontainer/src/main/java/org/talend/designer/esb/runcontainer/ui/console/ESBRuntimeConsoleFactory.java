@@ -12,8 +12,12 @@
 // ============================================================================
 package org.talend.designer.esb.runcontainer.ui.console;
 
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.IConsoleFactory;
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
+import org.talend.designer.esb.runcontainer.ui.actions.StartRuntimeAction;
 import org.talend.designer.esb.runcontainer.util.RuntimeConsoleUtil;
 
 public class ESBRuntimeConsoleFactory implements IConsoleFactory {
@@ -23,8 +27,14 @@ public class ESBRuntimeConsoleFactory implements IConsoleFactory {
         if (RuntimeServerController.getInstance().isRunning()) {
             RuntimeConsoleUtil.loadConsole();
         } else {
-            RuntimeConsoleUtil.findConsole(RuntimeConsoleUtil.KARAF_CONSOLE);
+            Shell shell = PlatformUI.getWorkbench().getDisplay().getActiveShell();
+            if (MessageDialog.openConfirm(shell, "ESB Runtime Console",
+                    "ESB Runtime Server is not running, do you want to start it?")) {
+                new StartRuntimeAction(true, shell).run();
+                RuntimeConsoleUtil.loadConsole();
+            } else {
+                RuntimeConsoleUtil.findConsole();
+            }
         }
     }
-
 }

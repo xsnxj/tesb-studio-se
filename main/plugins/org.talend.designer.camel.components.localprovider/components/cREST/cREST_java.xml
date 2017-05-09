@@ -147,7 +147,7 @@
 			<ITEMS DEFAULT="BASIC">
 				<ITEM NAME="BASIC" VALUE="BASIC" />
 				<ITEM NAME="SAML" VALUE="SAML" />
-                <ITEM NAME="OIDC" VALUE="OIDC" />
+                <ITEM NAME="OIDC" VALUE="OIDC" SHOW_IF="IS_STUDIO_EE_VERSION == 'true'" />
 			</ITEMS>
 		</PARAMETER>
 		
@@ -161,10 +161,6 @@
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
 
-        <PARAMETER NAME="OIDC_INTROSPECTION_ENDPOINT" FIELD="TEXT" NUM_ROW="80"
-            REQUIRED="true" SHOW_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'OIDC')">
-            <DEFAULT>"http://127.0.0.1:9080/oidc/oauth2/introspect"</DEFAULT>
-        </PARAMETER>
 
 		<PARAMETER NAME="USE_AUTHORIZATION" FIELD="CHECK" REQUIRED="true"
 			NUM_ROW="81" READONLY="false"
@@ -194,8 +190,12 @@
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
 
-        <PARAMETER NAME="EXPOSE_SWAGGER_SPEC" FIELD="CHECK" REQUIRED="false" SHOW_IF="(IS_STUDIO_EE_VERSION == 'true')" NUM_ROW="8">
+        <PARAMETER NAME="EXPOSE_SWAGGER_SPEC" FIELD="CHECK" REQUIRED="false" NOT_SHOW_IF="(IS_STUDIO_EE_VERSION == 'false') OR (#LINK@CONNECTOR.IN.ANY &gt; '0')" NUM_ROW="8">
             <DEFAULT>false</DEFAULT>
+        </PARAMETER>
+
+        <PARAMETER NAME="INCLUDE_DOC_INTO_SWAGGER_SPEC" FIELD="CHECK" REQUIRED="false" SHOW_IF="(EXPOSE_SWAGGER_SPEC == 'true')" NUM_ROW="9">
+            <DEFAULT>true</DEFAULT>
         </PARAMETER>
 
 		<PARAMETER NAME="ADVARGUMENTS" FIELD="TABLE" NUM_ROW="10"
@@ -232,71 +232,73 @@
                     REQUIRED_IF=" (ENABLE_CORRELATION == 'true')" />
 
             <IMPORT MODULE_GROUP="security-common"
-                    REQUIRED_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'SAML')" />
+                REQUIRED_IF="(ENABLE_SECURITY == 'true') AND ((SECURITY_TYPE == 'SAML') OR  (SECURITY_TYPE == 'OIDC'))" />
 
-            <IMPORT NAME="json-simple-1.1" MODULE="json-simple-1.1.jar" MVN="mvn:org.talend.libraries/json-simple-1.1/6.0.0"
-                UrlPath="platform:/plugin/org.talend.libraries.apache.storm/lib/json-simple-1.1.jar"
-                REQUIRED_IF="(ENABLE_SECURITY == 'true') AND (SECURITY_TYPE == 'OIDC')" />
-
-            <IMPORT MODULE="swagger-annotations-${swagger.version}.jar" MVN="mvn:org.talend.libraries/swagger-annotations/6.0.0" NAME="swagger-annotations-${swagger.version}"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-annotations-${swagger.version}.jar"
+            <IMPORT MODULE="swagger-annotations-1.5.12.jar" MVN="mvn:org.talend.libraries/swagger-annotations/6.0.0" NAME="swagger-annotations-1.5.12"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-annotations-1.5.12.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="cxf-rt-rs-service-description-swagger-${cxf.version}.jar" MVN="mvn:org.talend.libraries/cxf-rt-rs-service-description-swagger/6.0.0"
-                NAME="cxf-rt-rs-service-description-swagger-${cxf.version}"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-rs-service-description-swagger-${cxf.version}.jar"
+            <IMPORT MODULE="cxf-rt-rs-service-description-swagger-3.1.10.jar" MVN="mvn:org.talend.libraries/cxf-rt-rs-service-description-swagger/6.0.0"
+                NAME="cxf-rt-rs-service-description-swagger-3.1.10"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/cxf-rt-rs-service-description-swagger-3.1.10.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="swagger-jaxrs-${swagger.version}.jar" MVN="mvn:org.talend.libraries/swagger-jaxrs/6.0.0" NAME="swagger-jaxrs-${swagger.version}"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-jaxrs-${swagger.version}.jar"
+            <IMPORT MODULE="swagger-jaxrs-1.5.12.jar" MVN="mvn:org.talend.libraries/swagger-jaxrs/6.0.0" NAME="swagger-jaxrs-1.5.12"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-jaxrs-1.5.12.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="swagger-core-${swagger.version}.jar" MVN="mvn:org.talend.libraries/swagger-core/6.0.0" NAME="swagger-core-${swagger.version}"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-core-${swagger.version}.jar"
+            <IMPORT MODULE="swagger-core-1.5.12.jar" MVN="mvn:org.talend.libraries/swagger-core/6.0.0" NAME="swagger-core-1.5.12"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-core-1.5.12.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="swagger-models-${swagger.version}.jar" MVN="mvn:org.talend.libraries/swagger-models/6.0.0" NAME="swagger-models-${swagger.version}"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-models-${swagger.version}.jar"
+            <IMPORT MODULE="swagger-models-1.5.12.jar" MVN="mvn:org.talend.libraries/swagger-models/6.0.0" NAME="swagger-models-1.5.12"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-models-1.5.12.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="commons-lang3-${commons-lang3.version}.jar" MVN="mvn:org.talend.libraries/commons-lang3/6.0.0" NAME="commons-lang3-${commons-lang3.version}"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-lang3-${commons-lang3.version}.jar"
+            <IMPORT MODULE="commons-lang3-3.2.1.jar" MVN="mvn:org.talend.libraries/commons-lang3/6.0.0" NAME="commons-lang3-3.2.1"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-lang3-3.2.1.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="slf4j-api-${slf4j-api.version}.jar" MVN="mvn:org.talend.libraries/slf4j-api/6.0.0" NAME="slf4j-api-${slf4j-api.version}"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-${slf4j-api.version}.jar"
+            <IMPORT MODULE="slf4j-api-1.6.3.jar" MVN="mvn:org.talend.libraries/slf4j-api/6.0.0" NAME="slf4j-api-1.6.3"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.6.3.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="reflections-${reflections.version}.jar" MVN="mvn:org.talend.libraries/reflections/6.0.0" NAME="reflections-${reflections.version}"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/reflections-${reflections.version}.jar"
+            <IMPORT MODULE="reflections-0.9.10.jar" MVN="mvn:org.talend.libraries/reflections/6.0.0" NAME="reflections-0.9.10"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/reflections-0.9.10.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="jackson-core-${jackson.version}.jar" MVN="mvn:org.talend.libraries/jackson-core/6.0.0" NAME="jackson-core-${jackson.version}"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-core-${jackson.version}.jar"
+            <IMPORT MODULE="jackson-core-2.8.4.jar" MVN="mvn:org.talend.libraries/jackson-core/6.0.0" NAME="jackson-core-2.8.4"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-core-2.8.4.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="jackson-databind-${jackson.version}.jar" MVN="mvn:org.talend.libraries/jackson-databind/6.0.0" NAME="jackson-databind-${jackson.version}"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-databind-${jackson.version}.jar"
+            <IMPORT MODULE="jackson-databind-2.8.4.jar" MVN="mvn:org.talend.libraries/jackson-databind/6.0.0" NAME="jackson-databind-2.8.4"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-databind-2.8.4.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="jackson-dataformat-yaml-${jackson.version}.jar" MVN="mvn:org.talend.libraries/jackson-dataformat-yaml/6.0.0" NAME="jackson-dataformat-yaml-${jackson.version}"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-dataformat-yaml-${jackson.version}.jar"
+            <IMPORT MODULE="jackson-dataformat-yaml-2.8.4.jar" MVN="mvn:org.talend.libraries/jackson-dataformat-yaml/6.0.0" NAME="jackson-dataformat-yaml-2.8.4"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-dataformat-yaml-2.8.4.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="jackson-annotations-${jackson.version}.jar" MVN="mvn:org.talend.libraries/jackson-annotations/6.0.0" NAME="jackson-annotations-${jackson.version}"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-annotations-${jackson.version}.jar"
+            <IMPORT MODULE="jackson-annotations-2.8.4.jar" MVN="mvn:org.talend.libraries/jackson-annotations/6.0.0" NAME="jackson-annotations-2.8.4"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-annotations-2.8.4.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="guava-18.0.jar" MVN="mvn:org.talend.libraries/guava/6.0.0" NAME="guava-${guava.version}.jar"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/guava-${guava.version}.jar"
+            <IMPORT MODULE="guava-18.0.jar" MVN="mvn:org.talend.libraries/guava/6.0.0" NAME="guava-18.0.jar"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/guava-18.0.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="validation-api-${validation-api.version}.jar" MVN="mvn:org.talend.libraries/validation-api/6.0.0" NAME="validation-api-${validation-api.version}"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/validation-api-${validation-api.version}.jar"
+            <IMPORT MODULE="validation-api-1.1.0.Final.jar" MVN="mvn:org.talend.libraries/validation-api/6.0.0" NAME="validation-api-1.1.0.Final"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/validation-api-1.1.0.Final.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="swagger-ui-${swagger.ui.version}.jar" MVN="mvn:org.talend.libraries/swagger-ui/${swagger.ui.version}" NAME="swagger-ui-${swagger.ui.version}"
-                UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/swagger-ui-${swagger.ui.version}.jar"
+            <IMPORT NAME="swagger-ui"
+                    MODULE="swagger-ui-6.4.0.jar"
+                    MVN="mvn:org.talend.libraries/swagger-ui/6.4.0"
+                    UrlPath="platform:/plugin/org.talend.libraries.swagger/lib/swagger-ui-6.4.0.jar"
+                    REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
+
+            <IMPORT MODULE="snakeyaml-1.17.jar" MVN="mvn:org.talend.libraries/snakeyaml/1.17" NAME="snakeyaml-1.17"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/snakeyaml-1.17.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 		</IMPORTS>
 	</CODEGENERATION>

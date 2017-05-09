@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 import org.talend.designer.esb.runcontainer.i18n.RunContainerMessages;
+import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
 import org.talend.designer.esb.runcontainer.util.FileUtil;
 
 public class AddRuntimeWizard extends Wizard {
@@ -36,35 +37,47 @@ public class AddRuntimeWizard extends Wizard {
 
     @Override
     public void addPages() {
-        dirPage = new AddRuntimeDirWizardPage(target);
+        dirPage = new AddRuntimeDirWizardPage();
         addPage(dirPage);
     }
 
     @Override
     public boolean performFinish() {
-
-        if (dirPage.isCopyNeeded()) {
+        if (dirPage.shouldInstallNewContainer()) {
+            target = dirPage.getTargetDir();
+            if (target == null) {
+                target = RunContainerPreferenceInitializer.P_DEFAULT_ESB_RUNTIME_LOCATION;
+            }
             try {
-                String runtimeHome = dirPage.getRuntimeHome();
                 getContainer().run(true, true, new IRunnableWithProgress() {
 
                     @Override
                     public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
                         try {
-                            FileUtil.copyContainer(runtimeHome, target, monitor);
+                            FileUtil.unzipContainer(dirPage.getRuntimeArchive(), target, monitor);
                         } catch (IOException e) {
+                            throw new InterruptedException(RunContainerMessages.getString("AddRuntimeWizard.ErrorCopy"));
                         }
                     }
-
                 });
             } catch (Exception e) {
-                MessageDialog.openError(this.getShell(),
+                MessageDialog.openError(getContainer().getShell(),
                         RunContainerMessages.getString("AddRuntimeWizard.ErrorCopy"), ExceptionUtils.getStackTrace(e)); //$NON-NLS-1$
-                return false;
             }
         } else {
             target = dirPage.getRuntimeHome();
         }
+        /*
+         * if (dirPage.isCopyNeeded()) { try { String runtimeHome = dirPage.getRuntimeHome(); getContainer().run(true,
+         * true, new IRunnableWithProgress() {
+         * 
+         * @Override public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+         * try { FileUtil.copyContainer(runtimeHome, target, monitor); } catch (IOException e) { } }
+         * 
+         * }); } catch (Exception e) { MessageDialog.openError(this.getShell(),
+         * RunContainerMessages.getString("AddRuntimeWizard.ErrorCopy"), ExceptionUtils.getStackTrace(e)); //$NON-NLS-1$
+         * return false; } } else { target = dirPage.getRuntimeHome(); }
+         */
         // MessageDialog.openInformation(this.getShell(), "Not implemented", "Only copying is supported");
 
         // return false;

@@ -24,6 +24,7 @@ import javax.management.Notification;
 import javax.management.NotificationListener;
 import javax.management.ObjectName;
 
+import org.talend.designer.esb.runcontainer.util.FileUtil;
 import org.talend.designer.esb.runcontainer.util.JMXUtil;
 
 /**
@@ -77,12 +78,13 @@ public class RuntimeServerController {
                 launcher = new File(karafHome + "/bin/trun.bat");
             } else {
                 launcher = new File(karafHome + "/bin/trun");
+                FileUtil.setFileExecPerm(launcher.toPath());
             }
 
             if (launcher.exists()) {
                 runtimeProcess = Runtime.getRuntime().exec(launcher.getAbsolutePath(), null, launcher.getParentFile());
             } else {
-                throw new IOException("Cannot find launcher file in " + launcher.getPath());
+                throw new IOException("Missing runtime server start script (" + launcher.getPath() + ")");
             }
         } else {
             runtimeProcess = null;
@@ -108,6 +110,7 @@ public class RuntimeServerController {
                 launcher = new File(karafHome + "/bin/client.bat");
             } else {
                 launcher = new File(karafHome + "/bin/client");
+                FileUtil.setFileExecPerm(launcher.toPath());
             }
             return Runtime.getRuntime().exec(
                     launcher.getAbsolutePath() + " -h " + host + " -u " + username + " -p " + password + " \"" + cmd + "\"");
@@ -116,10 +119,16 @@ public class RuntimeServerController {
     }
 
     public boolean isRunning() {
-        if (runtimeProcess != null && runtimeProcess.isAlive()) {
-            return true;
-        }
         return JMXUtil.isConnected();
+    }
+
+    /**
+     * Getter for runtimeProcess.
+     * 
+     * @return the runtimeProcess
+     */
+    public Process getRuntimeProcess() {
+        return runtimeProcess;
     }
 
     /**
@@ -191,7 +200,7 @@ public class RuntimeServerController {
         @Override
         public void run() {
             while (!stop) {
-                // TODO if is local, should using process
+                // TODO if is local rt, better to use process
                 // System.out.println("isRunning:" + isRunning() + ",status:" + status);
                 try {
                     if (isRunning() && status == false) {

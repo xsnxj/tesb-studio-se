@@ -15,6 +15,7 @@ package org.talend.designer.esb.runcontainer.util;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -162,8 +163,8 @@ public class JMXUtil {
         objectCommand = new ObjectName(COMMAND_MBEAN);
         String properties = String.valueOf(mbsc.invoke(objectCommand, "vmSystemProperties", new Object[] {}, new String[] {}));
         int homeValueBegin = properties.indexOf(name) + name.length() + 1;
-        int homeValueEnd = properties.indexOf('\n', homeValueBegin) - 1;
-        return properties.substring(homeValueBegin, homeValueEnd);
+        int homeValueEnd = properties.indexOf('\n', homeValueBegin);
+        return properties.substring(homeValueBegin, homeValueEnd).trim();
     }
 
     public static long findBundleIDWithKarName(String karName) {
@@ -184,6 +185,7 @@ public class JMXUtil {
                 jmxc = null;
                 Map<String, String[]> env = new HashMap<String, String[]>();
                 env.put(CREDENTIALS, new String[] { username, password });
+                System.out.println("Trying to connect to " + serviceUrl);
                 jmxc = JMXConnectorFactory.connect(new JMXServiceURL(serviceUrl), env);
 
                 mbsc = null;
@@ -216,8 +218,8 @@ public class JMXUtil {
 
             instanceName = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_INSTANCE);
 
-            serviceUrl = "service:jmx:rmi://" + host + ":" + jmxPort + "/jndi/rmi://" + host + ":" + karafPort + "/karaf-"
-                    + instanceName;
+            serviceUrl = "service:jmx:rmi://" + "127.0.0.1" + ":" + jmxPort + "/jndi/rmi://" + "127.0.0.1" + ":" + karafPort
+                    + "/karaf-" + instanceName;
         }
     }
 
@@ -253,9 +255,59 @@ public class JMXUtil {
     public static void halt() throws Exception {
         // need to re connect
         MBeanServerConnection mbsc = createJMXconnection();
-        String SYS_MBEAN = "org.apache.karaf:type=system,name=trun";
+        String SYS_MBEAN = "org.apache.karaf:type=system,name=" + instanceName;
         ObjectName objectKar = new ObjectName(SYS_MBEAN);
         mbsc.invoke(objectKar, "halt", new Object[] {}, new String[] {});
     }
 
+    public static void reboot() throws Exception {
+        // need to re connect
+        MBeanServerConnection mbsc = createJMXconnection();
+        String SYS_MBEAN = "org.apache.karaf:type=system,name=" + instanceName;
+        ObjectName objectKar = new ObjectName(SYS_MBEAN);
+        mbsc.invoke(objectKar, "reboot", new Object[] { String.valueOf(0) }, new String[] { String.class.getName() });
+    }
+
+    public static void rebootCleanAll() throws Exception {
+        // need to re connect
+        MBeanServerConnection mbsc = createJMXconnection();
+        String SYS_MBEAN = "org.apache.karaf:type=system,name=" + instanceName;
+        ObjectName objectKar = new ObjectName(SYS_MBEAN);
+        mbsc.invoke(objectKar, "rebootCleanAll", new Object[] { String.valueOf(0) }, new String[] { String.class.getName() });
+    }
+
+    public static long[] getBundlesList() throws Exception {
+        String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
+        ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
+
+        Set<Object> existsBundles = ((TabularDataSupport) mbsc.getAttribute(objectBundle, "Bundles")).keySet();
+        Object[] bundleIds = existsBundles.toArray();
+        long[] bundleIDs = new long[existsBundles.size()];
+        for (int i = 0; i < bundleIds.length; i++) {
+            String id = bundleIds[i].toString();
+            bundleIDs[i] = Long.parseLong(id.substring(1, id.length() - 1));
+        }
+        return bundleIDs;
+    }
+
+    public static String[] getBundlesName() throws Exception {
+        String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
+        ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
+
+        Collection<Object> values = ((TabularDataSupport) mbsc.getAttribute(objectBundle, "Bundles")).values();
+        Object[] bundles = values.toArray();
+        String[] bundleNames = new String[values.size()];
+        for (int i = 0; i < bundles.length; i++) {
+            bundleNames[i] = String.valueOf(((javax.management.openmbean.CompositeDataSupport) bundles[i]).get("Name"));
+        }
+        return bundleNames;
+    }
+
+    public static String getBundleStatus(long bundleID) throws Exception {
+        String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
+        ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
+
+        return mbsc.invoke(objectBundle, "getStatus", new Object[] { String.valueOf(bundleID) },
+                new String[] { String.class.getName() }).toString();
+    }
 }
