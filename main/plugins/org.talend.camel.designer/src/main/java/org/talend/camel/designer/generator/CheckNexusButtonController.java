@@ -65,7 +65,8 @@ public class CheckNexusButtonController extends ConfigOptionController {
     				String a = jn.replaceFirst("[.][^.]+$", "");
     				
     				try {
-    		        	Map metadata = service.getMavenMetadata(null, a , currentNexusVersion);
+    				    
+    		        	Map metadata = service.getMavenMetadata(getGroupId(), a , currentNexusVersion);
     		        	String updated = (String) metadata.get("Versioning.LastUpdated");
     		        	String release = (String) metadata.get("Versioning.Release");
     		        	
