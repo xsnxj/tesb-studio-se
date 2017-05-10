@@ -1,34 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <COMPONENT>
-	<HEADER PLATEFORM="ALL"
-			SERIAL=""
-			VERSION="0.102"
-			STATUS="ALPHA"
-			COMPATIBILITY="ALL"
-			AUTHOR="ITOS"
-			RELEASE_DATE="20050320A"
+	<HEADER AUTHOR="ITOS" RELEASE_DATE="20110805A"
+			VERSION="0.101" STATUS="ALPHA"
+			COMPATIBILITY="ALL" PLATEFORM="ALL"
+			SERIAL="" STARTABLE="true"
 			SCHEMA_AUTO_PROPAGATE="true"
-			STARTABLE="true"
 			DATA_AUTO_PROPAGATE="false"
-			HAS_CONDITIONAL_OUTPUTS="true" >
+			HAS_CONDITIONAL_OUTPUTS="true"
+			TECHNICAL="true">
 		<SIGNATURE />
 	</HEADER>
 	<FAMILIES>
-		<FAMILY>ESB/Route</FAMILY>
+		<FAMILY>Technical</FAMILY>
 	</FAMILIES>
+
 	<DOCUMENTATION>
 		<URL />
 	</DOCUMENTATION>
+
 	<CONNECTORS>
 		<CONNECTOR CTYPE="FLOW" MAX_INPUT="0" MAX_OUTPUT="1" MULTI_SCHEMA="true" BUILTIN="true" />
-		<CONNECTOR CTYPE="ITERATE" MAX_OUTPUT="0" MAX_INPUT="0" />
+		<CONNECTOR CTYPE="ITERATE" MAX_OUTPUT="0" MAX_INPUT="1" />
 		<CONNECTOR CTYPE="SUBJOB_OK" MAX_INPUT="1" MAX_OUTPUT="1" />
 		<CONNECTOR CTYPE="SUBJOB_ERROR" MAX_INPUT="1" MAX_OUTPUT="1" />
 		<CONNECTOR CTYPE="COMPONENT_OK" COLOR="0000FF"/>
 		<!-- CONNECTOR CTYPE="COMPONENT_ERROR" COLOR="FF0000"/> -->
 		<CONNECTOR CTYPE="RUN_IF" />
 	</CONNECTORS>
+
 	<PARAMETERS>
-		<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="1">
+			<PARAMETER NAME="INPUT_SCHEMA" FIELD="SCHEMA_TYPE" REQUIRED="true" NUM_ROW="1">
 			<TABLE>
 				<COLUMN NAME="body" TYPE="id_Document" />
 				<!-- <COLUMN NAME="body" VARIABLE="in.body" TYPE="id_Document"/> -->
@@ -40,25 +41,25 @@
 				<ITEM NAME="VALUE" VALUE="&quot;${in.body}&quot;" />
 			</ITEMS>
 		</PARAMETER>
-	<!--	<PARAMETER NAME="NOTICE" FIELD="LABEL" REQUIRED="true"
-			NUM_ROW="3">
-			<DEFAULT>Please DO NOT set the "Key" of "__BODY__", it will be ignored</DEFAULT>
-		</PARAMETER> -->
 	</PARAMETERS>
+
 	<ADVANCED_PARAMETERS>
 	</ADVANCED_PARAMETERS>
+
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT MODULE_GROUP="camel-core" REQUIRED="true" />
+			<IMPORT NAME="apache-camel"
+					MODULE="camel-core-2.12.3.jar"
+					UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/components/cMessagingEndpoint/camel-core-2.12.3.jar"
+					REQUIRED="true"
+					BundleID="org.apache.camel.camel-core"/>
+			<IMPORT NAME="dom4j"
+					MODULE="dom4j-1.6.1.jar" UrlPath="platform:/plugin/org.talend.libraries.dom4j-jaxen/lib/dom4j-1.6.1.jar"
+					REQUIRED="true"/>
 		</IMPORTS>
-		<TEMPLATES INPUT="Loop" OUTPUT="In">
-			<TEMPLATE NAME="Loop" COMPONENT="tRouteLoop">
-				<LINK_TO NAME="In" CTYPE="ITERATE" />
-			</TEMPLATE>
-			<TEMPLATE NAME="In" COMPONENT="tRouteIn" />
-		</TEMPLATES>
 	</CODEGENERATION>
+
 	<RETURNS>
-		<!-- <RETURN NAME="NB_LINE" TYPE="id_Integer" AVAILABILITY="AFTER" /> -->
 	</RETURNS>
+
 </COMPONENT>

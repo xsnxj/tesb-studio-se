@@ -4,9 +4,12 @@
 		java.util.Vector
 
 		java.util.Map
+		java.util.List
+		java.util.Collection
 		
 		org.talend.designer.codegen.config.CodeGeneratorArgument
 
+		org.talend.core.model.process.INode
 		org.talend.core.model.process.IProcess
 	"
 	class="Header_additional"
@@ -20,13 +23,131 @@ boolean jobHasRouteInputComponent = !process.getNodesOfType("tRouteInput").isEmp
 boolean jobHasRouteOutputComponent = !process.getNodesOfType("tRouteOutput").isEmpty();
 boolean jobHasRouteFaultComponent = !process.getNodesOfType("tRouteFault").isEmpty();
 
-if (jobHasRouteInputComponent || jobHasRouteOutputComponent || jobHasRouteFaultComponent) {%>
+if (jobHasRouteInputComponent || jobHasRouteOutputComponent || jobHasRouteFaultComponent) {
 
-private org.apache.camel.Exchange routerExchange = null;
+List<? extends INode> routeInputComponentsList = process.getNodesOfType("tRouteInput");
+INode node = routeInputComponentsList.get(0);
+String cid = node.getUniqueName();
+%>
 
-public void setExchange(org.apache.camel.Exchange exchange){
-	this.routerExchange = exchange;
-}
+	private final Object lifeCycleMonitor = new Object();
+	private org.apache.camel.Exchange singleUseRouterExchange = null;
+	private boolean initialize = false;
+	private static final String ROUTER_EXCHANGE = "ROUTER_EXCHANGE";
+
+	public void process(org.apache.camel.Exchange routerExchange) {
+		final java.util.Map<String, Object> globalMap = new java.util.HashMap<String, Object>(this.globalMap);
+
+		try {
+			globalMap.put(ROUTER_EXCHANGE, routerExchange);
+
+			// pass DataSource
+			java.util.Map<String, routines.system.TalendDataSource> talendDataSources =
+				(java.util.Map<String, routines.system.TalendDataSource>) this.globalMap.get(KEY_DB_DATASOURCES);
+			if (null != talendDataSources) {
+				java.util.Map<String, routines.system.TalendDataSource> restDataSources = new java.util.HashMap<String, routines.system.TalendDataSource>();
+				for (java.util.Map.Entry<String, routines.system.TalendDataSource> talendDataSourceEntry : talendDataSources.entrySet()) {
+					restDataSources.put(talendDataSourceEntry.getKey(), new routines.system.TalendDataSource(talendDataSourceEntry.getValue().getRawDataSource()));
+				}
+				globalMap.put(KEY_DB_DATASOURCES, restDataSources);
+			}
+
+			this.<%=cid%>_LoopProcess(globalMap);
+
+		} catch (TalendException e) {
+			Exception ex = e;
+			while ( ex instanceof TalendException ) {
+				ex = ((TalendException) ex).getException();
+				ex.printStackTrace(System.out);
+				org.apache.log4j.Logger.getRootLogger().error(ex);
+			}
+			throw new RuntimeException(ex);
+			
+		} finally {
+			// close DB connections
+			try {
+				java.util.Map<String, routines.system.TalendDataSource> routeDataSources =
+					(java.util.Map<String, routines.system.TalendDataSource>) globalMap.get(KEY_DB_DATASOURCES);
+				if (null != routeDataSources) {
+					for (routines.system.TalendDataSource routeDataSource : routeDataSources.values()) {
+						routeDataSource.close();
+					}
+				}
+			} catch (Throwable e) {
+				e.printStackTrace(System.err);
+			}
+		}
+
+	}
+
+	/**
+	 * Initialize the job and wait for execution
+	 * 
+	 * @param contextArgs
+	 */
+	public void initializeForRoute(final String[] contextArgs) {
+		this.execStat = false;
+		this.initialize = true;
+		
+		synchronized (lifeCycleMonitor) {
+			new Thread(
+				new Runnable() {
+					public void run() {
+						runJobInTOS(contextArgs);
+					}
+				}
+			).start();
+			
+			try {
+				lifeCycleMonitor.wait();
+			} catch (InterruptedException e) {
+				org.apache.log4j.Logger.getRootLogger().error("Lifecycle Monitor Exception", e);
+				throw new RuntimeException(e);
+			}
+		} // end synchronized
+	}
+
+	/**
+	 * Wait for bean shutdown to resume and 
+	 * execute the shutdown portion of runJobInTOS()
+	 */
+	private void holdReadyState() {
+		
+		initialize = false;
+		
+		synchronized (lifeCycleMonitor) {
+			lifeCycleMonitor.notify();
+			try {
+				lifeCycleMonitor.wait();
+			} catch (InterruptedException e) {
+				org.apache.log4j.Logger.getRootLogger().error("Lifecycle Monitor Exception", e);
+				throw new RuntimeException(e);
+			}
+		} // end synchronized
+	}
+
+	/**
+	 * Bean Destructor
+	 * 
+	 * Notifies the waiting thread to wrap up the job
+	 */
+	public void destroyForRoute() {
+		synchronized (lifeCycleMonitor) {
+			lifeCycleMonitor.notify();
+		} // end synchronized
+	}
+
+
+    /**
+     * Run as a single-use job
+     * 
+     * @param exchange
+     * @param contextArgs
+     */
+    public void runSingleUseJob(org.apache.camel.Exchange exchange, String[] contextArgs) {
+        singleUseRouterExchange = exchange;
+        runJobInTOS(contextArgs);
+    }
 
 <%
 }
