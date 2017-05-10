@@ -2597,10 +2597,12 @@ if (isProvider) {
                 if ("true".equals(useActiveMQTTAuth)){
                     String username = ElementParameterParser.getValue(node, "__MQTT_USERNAME__");
                     String passwordFieldName = "__MQTT_PASSWORD__";
-%>              
+%>
+                   {
                     <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
-                    config.setUserName(<%=username%>);
                     config.setPassword(decryptedPassword_<%=cid%>);
+                   }
+                    config.setUserName(<%=username%>);
 <%              
                 }
 %>
