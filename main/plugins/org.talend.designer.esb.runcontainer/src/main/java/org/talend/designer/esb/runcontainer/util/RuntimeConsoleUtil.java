@@ -89,8 +89,9 @@ public class RuntimeConsoleUtil {
                 byte[] bs = new byte[1024];
                 try {
                     while ((count = is.read(bs)) > 0) {
-                        // remore duplicate \n
-                        for (; bs[count - 1] == 10; count--) {
+                        // remore duplicate \r\n for Windows
+                        if (count > 1 && bs[count - 1] == 10 && bs[count - 2] == 13) {
+                            count--;
                         }
                         pos.write(Arrays.copyOf(bs, count));
                     }
