@@ -72,8 +72,9 @@ public class WSDLPopulationUtil extends XSDPopulationUtil2 {
                         }
                     }
                 }
+            } else {
+                return super.getXSDSchemaFromNamespace(namespace);
             }
-            return null;
         }
         return super.getXSDSchemaFromNamespace(namespace);
     }
