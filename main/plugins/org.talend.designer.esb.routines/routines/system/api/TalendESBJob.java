@@ -10,8 +10,6 @@
  ******************************************************************************/
 package routines.system.api;
 
-import org.apache.camel.Exchange;
-
 /**
  * A JOB interface for Jobs that are using tESB Components
  */
@@ -44,24 +42,4 @@ public interface TalendESBJob extends TalendJob {
      * @param callback
      */
     void setProviderCallback(ESBProviderCallback callback);
-	
-    /**
-     * Bean Initializer
-	 *
-     * @param contextArgs
-     */
-    void initializeForRoute(String[] contextArgs);
-    
-    /**
-     * Bean Destructor
-     */
-    void destroyForRoute();
-    
-    /**
-     * Run as a single-use job
-     * 
-     * @param exchange
-     * @param contextArgs
-     */
-    void runSingleUseJob(Exchange exchange, String[] contextArgs);
 }
