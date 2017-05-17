@@ -168,12 +168,11 @@
             id="commons-httpclient"
             uripath="platform:/base/plugins/org.apache.commons.httpclient_3.1.0.v201012070820.jar"
             bundleID="" />
-        <libraryNeeded
-              context="context"
-              id="camel-http-common"
-              mvn_uri="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-http-common}"
-              name="${tesb-camel-http-common}" />
-
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+			name="${tesb-camel-http-common}"
+			id="camel-http-common"
+			uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-http-common}"
+			bundleID="" />
         <!-- ${tesb-commons-codec} -->
         <!--libraryNeeded context="plugin:org.apache.commons.codec"
             name="org.apache.commons.codec_1.6.0.v201305230611.jar"
