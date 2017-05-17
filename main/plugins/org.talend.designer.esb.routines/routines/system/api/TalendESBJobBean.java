@@ -8,7 +8,7 @@
  *  http://www.apache.org/licenses/LICENSE-2.0
  *
  ******************************************************************************/
-package org.talend.designer.esb.routines;
+package routines.system.api;
 
 import org.apache.camel.Exchange;
 
@@ -17,14 +17,14 @@ import org.apache.camel.Exchange;
  * invocation from a route while keeping external
  * resources likd DB connections.
  */
-public interface TalendESBJobBean extends TalendESBJob {
+public interface TalendESBJobBean {
 
     /**
      * Bean Initializer
      *
      * @param contextArgs
      */
-    void prepareJob(Iterable<String> contextArgs);
+    void prepareJob(String[] contextArgs);
 
     /**
      * Bean Destructor
@@ -37,13 +37,20 @@ public interface TalendESBJobBean extends TalendESBJob {
      * @param exchange
      * @param contextArgs
      */
-    void runSingleUseJob(Exchange exchange, Iterable<String> contextArgs);
+    void runSingleUseJob(Exchange exchange, String[] contextArgs);
 
-    // /**
-    //  * Run as a prepared multi-use job
-    //  * 
-    //  * @param exchange
-    //  * @param contextArgs
-    //  */
-    // void runPreparedJob(Exchange exchange, Iterable<String> contextArgs);
+    /**
+     * Run as a prepared multi-use job
+     * 
+     * @param exchange
+     * @param contextArgs
+     */
+    void runPreparedJob(Exchange exchange, String[] contextArgs);
+
+    /**
+     * Get the class of the underlying job
+     *
+     * @return the job class
+     */
+    Class<?> getJobClass();
 }

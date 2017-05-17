@@ -30,6 +30,82 @@ INode node = routeInputComponentsList.get(0);
 String cid = node.getUniqueName();
 %>
 
+	/**
+	 * Access bean implemented as inner class in order to avoid incompatible
+	 * changes of existing interfaces and central code generation modules.
+	 */
+	public final TalendESBJobBean esbJobBean = new TalendESBJobBean() {
+
+		/**
+		 * Initialize a job for multiple exchange processing
+		 * in a route.
+		 *
+		 * @param exchange the route message exchange
+		 */
+		public void prepareJob(String[] contextArgs) {
+			initializeJobForRoute(contextArgs);
+		}
+
+		/**
+		 * Cleanup of resources from a job for multiple
+		 * message exchange processing.
+		 */
+		public void discardJob() {
+			destroyJobForRoute();
+		}
+
+		/**
+		 * Run as a single-use job
+		 *
+		 * @param exchange the route message exchange
+		 * @param contextArgs arguments passed in the context
+		 */
+		public void runSingleUseJob(org.apache.camel.Exchange exchange, String[] contextArgs) {
+			singleUseRouterExchange = exchange;
+			int success = runJobInTOS(contextArgs);
+			if (success != 0) {
+				throw new RuntimeException("Job execution failure - details see stderr. ");
+			}
+		}
+
+		/**
+		 * Run as prepared multi-use job
+		 *
+		 * @param exchange the route message exchange
+		 * @param contextArgs arguments passed in the context
+		 */
+		public void runPreparedJob(org.apache.camel.Exchange exchange, String[] contextArgs) {
+			evaluateContextArgs(contextArgs);
+			process(exchange);
+		}
+
+		/**
+		 * Get the class of the underlying job
+		 *
+		 * @return the job class
+		 */
+		public Class<?> getJobClass() {
+			return jobClass();
+		}
+
+		private void evaluateContextArgs(String[] contextArgs) {
+			if (contextArgs == null) {
+				return;
+			}
+			String lastStr = "";
+			for (String arg : contextArgs) {
+				if (arg.equalsIgnoreCase("--context_param")) {
+					lastStr = arg;
+				} else if (lastStr.equals("")) {
+					evalParam(arg);
+				} else {
+					evalParam(lastStr + " " + arg);
+					lastStr = "";
+				}
+			}
+		}
+	};
+
 	private final Object lifeCycleMonitor = new Object();
 	private org.apache.camel.Exchange singleUseRouterExchange = null;
 	private boolean initialize = false;
@@ -85,10 +161,10 @@ String cid = node.getUniqueName();
 	 * 
 	 * @param contextArgs
 	 */
-	public void initializeForRoute(final String[] contextArgs) {
+	public void initializeJobForRoute(final String[] contextArgs) {
 		this.execStat = false;
 		this.initialize = true;
-		
+
 		synchronized (lifeCycleMonitor) {
 			new Thread(
 				new Runnable() {
@@ -97,7 +173,7 @@ String cid = node.getUniqueName();
 					}
 				}
 			).start();
-			
+
 			try {
 				lifeCycleMonitor.wait();
 			} catch (InterruptedException e) {
@@ -131,23 +207,15 @@ String cid = node.getUniqueName();
 	 * 
 	 * Notifies the waiting thread to wrap up the job
 	 */
-	public void destroyForRoute() {
+	public void destroyJobForRoute() {
 		synchronized (lifeCycleMonitor) {
 			lifeCycleMonitor.notify();
 		} // end synchronized
 	}
 
-
-    /**
-     * Run as a single-use job
-     * 
-     * @param exchange
-     * @param contextArgs
-     */
-    public void runSingleUseJob(org.apache.camel.Exchange exchange, String[] contextArgs) {
-        singleUseRouterExchange = exchange;
-        runJobInTOS(contextArgs);
-    }
+	private Class<?> jobClass() {
+		getClass();
+	}
 
 <%
 }
