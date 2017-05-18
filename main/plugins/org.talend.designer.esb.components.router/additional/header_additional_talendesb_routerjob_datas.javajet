@@ -214,7 +214,7 @@ String cid = node.getUniqueName();
 	}
 
 	private Class<?> jobClass() {
-		getClass();
+		return getClass();
 	}
 
 <%
