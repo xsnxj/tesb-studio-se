@@ -106,7 +106,7 @@ String cid = node.getUniqueName();
 		}
 	};
 
-	private final Object lifeCycleMonitor = new Object();
+	private final JobLifecycleSemaphore lifeCycleMonitor = new JobLifecycleSemaphore();
 	private org.apache.camel.Exchange singleUseRouterExchange = null;
 	private boolean initialize = false;
 	private static final String ROUTER_EXCHANGE = "ROUTER_EXCHANGE";
@@ -175,7 +175,7 @@ String cid = node.getUniqueName();
 			).start();
 
 			try {
-				lifeCycleMonitor.wait();
+				lifeCycleMonitor.waitForUpState();
 			} catch (InterruptedException e) {
 				org.apache.log4j.Logger.getRootLogger().error("Lifecycle Monitor Exception", e);
 				throw new RuntimeException(e);
@@ -192,9 +192,9 @@ String cid = node.getUniqueName();
 		initialize = false;
 		
 		synchronized (lifeCycleMonitor) {
-			lifeCycleMonitor.notify();
+			lifeCycleMonitor.signalUpState();
 			try {
-				lifeCycleMonitor.wait();
+				lifeCycleMonitor.waitForDownState();
 			} catch (InterruptedException e) {
 				org.apache.log4j.Logger.getRootLogger().error("Lifecycle Monitor Exception", e);
 				throw new RuntimeException(e);
@@ -209,7 +209,7 @@ String cid = node.getUniqueName();
 	 */
 	public void destroyJobForRoute() {
 		synchronized (lifeCycleMonitor) {
-			lifeCycleMonitor.notify();
+			lifeCycleMonitor.signalDownState();
 		} // end synchronized
 	}
 
