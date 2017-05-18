@@ -1,61 +1,61 @@
 <%@jet
-	package="org.talend.designer.codegen.translators"
-	imports="
-		java.util.List
-		java.util.ArrayList
-		java.util.Collections
-		java.util.Vector
-		java.util.Map
-		java.util.regex.Matcher
-		java.util.regex.Pattern
-		java.io.UnsupportedEncodingException
-		java.net.URLEncoder
-		org.talend.core.GlobalServiceRegister
-		org.talend.core.model.process.IProcess
-		org.talend.core.model.process.INode
-		org.talend.core.model.process.IConnection
-		org.talend.core.model.process.EConnectionType
-		org.talend.core.model.process.IContextParameter
-		org.talend.core.model.process.IElementParameter
-		org.talend.core.model.process.ElementParameterParser
-		org.talend.core.model.metadata.types.JavaTypesManager
-		org.talend.core.model.utils.NodeUtil
-		org.talend.core.model.utils.JavaResourcesHelper
-		org.talend.core.ui.branding.IBrandingService
-		org.talend.core.ui.branding.AbstractBrandingService
-		org.talend.designer.codegen.i18n.Messages
-		org.talend.designer.codegen.ITalendSynchronizer
-		org.talend.designer.codegen.config.CamelEndpointBuilder
-		org.talend.designer.codegen.config.CamelEndpointBuilder.BuildingValueParamAppender
-		org.talend.designer.codegen.config.CamelEndpointBuilder.ConditionParamAppender
-		org.talend.designer.codegen.config.CamelEndpointBuilder.NodeParamNotDefaultAppender
-		org.talend.designer.codegen.config.CodeGeneratorArgument
-		org.talend.designer.codegen.config.NodeParamsHelper
-		org.talend.designer.runprocess.CodeGeneratorRoutine
-		org.talend.core.model.process.EParameterFieldType
-		org.talend.core.model.process.ProcessUtils
-	"
-	class="Header"
-	skeleton="routelet.skeleton"
+    package="org.talend.designer.codegen.translators"
+    imports="
+        java.util.List
+        java.util.ArrayList
+        java.util.Collections
+        java.util.Vector
+        java.util.Map
+        java.util.regex.Matcher
+        java.util.regex.Pattern
+        java.io.UnsupportedEncodingException
+        java.net.URLEncoder
+        org.talend.core.GlobalServiceRegister
+        org.talend.core.model.process.IProcess
+        org.talend.core.model.process.INode
+        org.talend.core.model.process.IConnection
+        org.talend.core.model.process.EConnectionType
+        org.talend.core.model.process.IContextParameter
+        org.talend.core.model.process.IElementParameter
+        org.talend.core.model.process.ElementParameterParser
+        org.talend.core.model.metadata.types.JavaTypesManager
+        org.talend.core.model.utils.NodeUtil
+        org.talend.core.model.utils.JavaResourcesHelper
+        org.talend.core.ui.branding.IBrandingService
+        org.talend.core.ui.branding.AbstractBrandingService
+        org.talend.designer.codegen.i18n.Messages
+        org.talend.designer.codegen.ITalendSynchronizer
+        org.talend.designer.codegen.config.CamelEndpointBuilder
+        org.talend.designer.codegen.config.CamelEndpointBuilder.BuildingValueParamAppender
+        org.talend.designer.codegen.config.CamelEndpointBuilder.ConditionParamAppender
+        org.talend.designer.codegen.config.CamelEndpointBuilder.NodeParamNotDefaultAppender
+        org.talend.designer.codegen.config.CodeGeneratorArgument
+        org.talend.designer.codegen.config.NodeParamsHelper
+        org.talend.designer.runprocess.CodeGeneratorRoutine
+        org.talend.core.model.process.EParameterFieldType
+        org.talend.core.model.process.ProcessUtils
+    "
+    class="Header"
+    skeleton="routelet.skeleton"
 %>
 <%
-	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
-	Vector v = (Vector) codeGenArgument.getArgument();
-	IProcess process = (IProcess) v.get(0);
+    CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+    Vector v = (Vector) codeGenArgument.getArgument();
+    IProcess process = (IProcess) v.get(0);
 
-	String version = (String) v.get(1);
+    String version = (String) v.get(1);
 
-	boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
+    boolean isStudioEEVersion = org.talend.core.PluginChecker.isTIS();
 
-	List<? extends INode> graphicalNodes = process.getGraphicalNodes();
-	//boolean stats = codeGenArgument.isStatistics();
-	//boolean trace = codeGenArgument.isTrace();
-	//boolean isRunInMultiThread = codeGenArgument.getIsRunInMultiThread();
-	//List<IContextParameter> params = new ArrayList<IContextParameter>();
-	//params=process.getContextManager().getDefaultContext().getContextParameterList();
-	boolean isTestContainer = ProcessUtils.isTestContainer(process);
-	String className = isTestContainer ? process.getName() + "Test" : process.getName();
-	String extendsClassName = isTestContainer ? "org.apache.camel.test.junit4.CamelTestSupport" : "org.apache.camel.builder.RouteBuilder";
+    List<? extends INode> graphicalNodes = process.getGraphicalNodes();
+    //boolean stats = codeGenArgument.isStatistics();
+    //boolean trace = codeGenArgument.isTrace();
+    //boolean isRunInMultiThread = codeGenArgument.getIsRunInMultiThread();
+    //List<IContextParameter> params = new ArrayList<IContextParameter>();
+    //params=process.getContextManager().getDefaultContext().getContextParameterList();
+    boolean isTestContainer = ProcessUtils.isTestContainer(process);
+    String className = isTestContainer ? process.getName() + "Test" : process.getName();
+    String extendsClassName = isTestContainer ? "org.apache.camel.test.junit4.CamelTestSupport" : "org.apache.camel.builder.RouteBuilder";
 %>
 <%
 IBrandingService service = (IBrandingService) GlobalServiceRegister.getDefault().getService(IBrandingService.class);
@@ -171,7 +171,7 @@ package <%= packageName %>;
 
         if(exportTypeSpringBoot){
  %>
- 
+
 /**
  * Applies configuration properties to a HTTPConduit
  */
@@ -2022,9 +2022,10 @@ if (isProvider) {
         <%}%>
 
         cxfEndpoint.getFeatures().add(new org.apache.cxf.ws.policy.WSPolicyFeature(policy));
-}<%
+}
+<%
 }//end if(hasCXFSamlTokenConsumer || hasCXFSamlTokenProvider)
-}//end if(hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer||hasCXFRegistryProvider || hasCXFRegistryConsumer)
+}//end if(hasCXFSamlTokenProvider || hasCXFSamlTokenConsumer || hasCXFRegistryProvider || hasCXFRegistryConsumer)
 %>
 
 <%
@@ -2273,10 +2274,10 @@ if (isProvider) {
                         }
                     }
                     if ("true".equals(ElementParameterParser.getValue(node, "__EXPOSE_SWAGGER_SPEC__"))) {
-                    %>
+%>
                     org.apache.cxf.jaxrs.swagger.Swagger2Feature swagger2Feature_<%=cid%> = new org.apache.cxf.jaxrs.swagger.Swagger2Feature();
                     swagger2Feature_<%=cid%>.setScan(false);
-                    <%
+<%
                         String epForSwagger = ElementParameterParser.getValue(node, "__URL__");
                         epForSwagger = epForSwagger.substring(1);
                         epForSwagger = "\"/services" + epForSwagger;
@@ -2300,7 +2301,7 @@ if (isProvider) {
                     swagger2Feature_<%=cid%>.setLicense(null);
                     swagger2Feature_<%=cid%>.setLicenseUrl(null);
                     sf_<%=cid%>.getFeatures().add(swagger2Feature_<%=cid%>);
-                    <%
+<%
                     }
                 } else {
 %>
@@ -2687,11 +2688,11 @@ if (isProvider) {
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setPort(<%=wmqPort%>);
                         // ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setCCSID(866);
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setTransportType(<%=wmqTransportType%>);
-                        ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setQueueManager(<%=wmqUM%>);    
+                        ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setQueueManager(<%=wmqUM%>);
 <%
                         if (wmqTransportType.equals("1") && (wmqChannel != null) && !wmqChannel.equals("")){
 %>
-                            ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setChannel(<%=wmqChannel%>);    						
+                            ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setChannel(<%=wmqChannel%>);
 <%
                         }
 %>
@@ -3327,13 +3328,14 @@ if (isProvider) {
         // when propagateHeader parameter will be removed the https://github.com/Talend/tesb-rt-se/blob/master/camel-talendjob/src/main/java/org/talend/camel/TalendProducer.java
         // have to be changed - remove populateTalendContextParamsWithCamelHeaders(exchange, args);
         String propagateHeader = ElementParameterParser.getValue(node, "__PROPAGATE_HEADER__");
+        String stickyJob = ElementParameterParser.getValue(node, "__STICKY_JOB__");
         if("true".equals(useJar)){
             String typeName = ElementParameterParser.getValue(node, "__JOB__");
             String context = ElementParameterParser.getValue(node, "__CONTEXT__");
             contextParams = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node, "__EXTERNAL_JAR_CONTEXTPARAMS__");
 %>
         org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
-            (org.talend.camel.TalendEndpoint) endpoint("talend:" + <%=typeName%> + "?context=" + <%=context%> + "&propagateHeader=<%=propagateHeader%>");
+            (org.talend.camel.TalendEndpoint) endpoint("talend:" + <%=typeName%> + "?context=" + <%=context%> + "&propagateHeader=<%=propagateHeader%>&sticky=<%=stickyJob%>");
 <%
         }else{
             String typeName = "";
@@ -3374,12 +3376,12 @@ if (isProvider) {
                 String executionContextVariable = "contextStr";
 %>
             org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
-                (org.talend.camel.TalendEndpoint) endpoint("talend:<%=ownerName%>/<%=typeName%>?context=" + <%=executionContextVariable%> + "&propagateHeader=<%=propagateHeader%>");
+                (org.talend.camel.TalendEndpoint) endpoint("talend:<%=ownerName%>/<%=typeName%>?context=" + <%=executionContextVariable%> + "&propagateHeader=<%=propagateHeader%>&sticky=<%=stickyJob%>");
 <%
             } else {
 %>
             org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
-                (org.talend.camel.TalendEndpoint) endpoint("talend:<%=ownerName%>/<%=typeName%>?context=<%=context%>&propagateHeader=<%=propagateHeader%>");
+                (org.talend.camel.TalendEndpoint) endpoint("talend:<%=ownerName%>/<%=typeName%>?context=<%=context%>&propagateHeader=<%=propagateHeader%>&sticky=<%=stickyJob%>");
 <%
             }
         }

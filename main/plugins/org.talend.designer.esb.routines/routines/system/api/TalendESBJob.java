@@ -42,5 +42,4 @@ public interface TalendESBJob extends TalendJob {
      * @param callback
      */
     void setProviderCallback(ESBProviderCallback callback);
-
 }

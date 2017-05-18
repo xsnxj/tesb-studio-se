@@ -27,15 +27,18 @@
 	</CONNECTORS>
 
 	<PARAMETERS>
+		<PARAMETER NAME="STICKY_JOB" FIELD="CHECK" NUM_ROW="1">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>
 		<PARAMETER NAME="FROM_REPOSITORY_JOB" FIELD="RADIO" REQUIRED="true"
-			NUM_ROW="1">
+			NUM_ROW="2">
 			<DEFAULT>true</DEFAULT>
 		</PARAMETER>
 		<PARAMETER NAME="FROM_EXTERNAL_JAR" FIELD="RADIO" REQUIRED="true"
-			NUM_ROW="1">
+			NUM_ROW="2">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="USE_SELECTED_CONTEXT" FIELD="RADIO" NUM_ROW="4" REQUIRED="false"
 				SHOW_IF="FROM_REPOSITORY_JOB == 'true'" GROUP="REPOSITORY_JOB_GROUP">
 				<DEFAULT>true</DEFAULT>
@@ -48,11 +51,11 @@
 				SHOW_IF="FROM_REPOSITORY_JOB == 'true'" GROUP="REPOSITORY_JOB_GROUP">
 				<DEFAULT>false</DEFAULT>
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="SELECTED_JOB_NAME" FIELD="ROUTE_INPUT_PROCESS_TYPE" NUM_ROW="6" REQUIRED="false"
 				SHOW_IF="FROM_REPOSITORY_JOB == 'true'" GROUP="REPOSITORY_JOB_GROUP">
 		</PARAMETER>
-		
+
 		<PARAMETER NAME="LIBRARY" FIELD="MODULE_LIST" NUM_ROW="9" REQUIRED="false"
 			SHOW_IF="FROM_EXTERNAL_JAR == 'true'" GROUP="EXTERNAL_JAR_GROUP">
 			<DEFAULT></DEFAULT>
@@ -67,7 +70,7 @@
 		</PARAMETER>
 
     <PARAMETER NAME="CONTEXTPARAMS" FIELD="TABLE" NUM_ROW="30" NB_LINES="8"
-    	SHOW_IF="FROM_EXTERNAL_JAR == 'false'">
+        SHOW_IF="FROM_EXTERNAL_JAR == 'false'">
       <ITEMS>
         <ITEM NAME="PARAM_NAME_COLUMN" FIELD="CONTEXT_PARAM_NAME_LIST" />
         <ITEM NAME="PARAM_VALUE_COLUMN" FIELD="TEXT" />
@@ -75,7 +78,7 @@
     </PARAMETER>
 
     <PARAMETER NAME="EXTERNAL_JAR_CONTEXTPARAMS" FIELD="TABLE" NUM_ROW="30" NB_LINES="8"
-    	SHOW_IF="FROM_EXTERNAL_JAR == 'true'">
+        SHOW_IF="FROM_EXTERNAL_JAR == 'true'">
       <ITEMS>
         <ITEM NAME="EXTERNAL_JAR_PARAM_NAME_COLUMN" FIELD="TEXT" />
         <ITEM NAME="EXTERNAL_JAR_PARAM_VALUE_COLUMN" FIELD="TEXT" />
@@ -87,23 +90,26 @@
 		<PARAMETER NAME="PROPAGATE_HEADER" FIELD="CHECK" NUM_ROW="20">
 			<DEFAULT>false</DEFAULT>
 		</PARAMETER>
+		<!-- <PARAMETER NAME="STICKY_JOB" FIELD="CHECK" NUM_ROW="25">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER> -->
 	</ADVANCED_PARAMETERS>
 
 	<CODEGENERATION>
 		<IMPORTS>
 			<IMPORT NAME="${tesb-camel-talendjob}"
-			    MODULE="${tesb-camel-talendjob}" MVN="${mvn-camel-talendjob}"
-			    UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-talendjob}"
-                REQUIRED="true" />
+				MODULE="${tesb-camel-talendjob}" MVN="${mvn-camel-talendjob}"
+				UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-talendjob}"
+				REQUIRED="true" />
 		</IMPORTS>
 	</CODEGENERATION>
 
 
 
 	<RETURNS />
-	
-	   <PLUGINDEPENDENCIES>
-   			<PLUGINDEPENDENCY ID="org.talend.model" />
-<!--   	<PLUGINDEPENDENCY ID="org.talend.designer.dbmap" />  --> 
-   			</PLUGINDEPENDENCIES>
+
+	<PLUGINDEPENDENCIES>
+		<PLUGINDEPENDENCY ID="org.talend.model" />
+		<!-- <PLUGINDEPENDENCY ID="org.talend.designer.dbmap" />  --> 
+	</PLUGINDEPENDENCIES>
 </COMPONENT>
