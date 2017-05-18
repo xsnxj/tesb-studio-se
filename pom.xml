@@ -27,7 +27,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-    <cxf.version>3.1.10</cxf.version>
+    <cxf.version>3.1.11</cxf.version>
     <spring.version>3.2.14.RELEASE</spring.version>
     <spring4.version>4.2.7.RELEASE</spring4.version>
     <spring.boot.version>1.2.8.RELEASE</spring.boot.version>
