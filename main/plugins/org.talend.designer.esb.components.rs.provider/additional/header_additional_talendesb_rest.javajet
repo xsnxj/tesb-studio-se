@@ -1377,7 +1377,22 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 			providers.add(new ExceptionMapper4TalendJobRestService(provider));
 			providers.add(new StreamingDOM4JProvider());
 			<%if (Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTH__")) && "OIDC_PASSWORD_GRANT".equals(ElementParameterParser.getValue(node,"__AUTH_TYPE__"))) {%>
-			providers.add(new org.talend.esb.security.oidc.OidcAccessTokenValidator());  
+			
+			
+			boolean inOSGi = false;
+			try {
+				inOSGi = (null != sf.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
+			} catch (ClassNotFoundException e_<%=cid%>) {
+				; // ignore
+			}
+			if (!inOSGi) {
+				org.springframework.context.support.ClassPathXmlApplicationContext context_<%=cid%> =
+					new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/oidc-context.xml");
+				org.talend.esb.security.oidc.OidcConfiguration oidcConfiguration_<%=cid%> = context_<%=cid%>.getBean(org.talend.esb.security.oidc.OidcConfiguration.class);
+				providers.add(new org.talend.esb.security.oidc.OidcAccessTokenValidator(oidcConfiguration_<%=cid%>));
+			}else{
+				providers.add(new org.talend.esb.security.oidc.OidcAccessTokenValidator()); 
+			}
 			<%}%>
 			org.apache.cxf.jaxrs.provider.json.JSONProvider jsonProvider =
 					new org.apache.cxf.jaxrs.provider.json.JSONProvider();

@@ -275,7 +275,7 @@
 			<IMPORT MODULE_GROUP="security-common" REQUIRED="true" />
 
 			<IMPORT MODULE_GROUP="spring-context"
-					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true')" />
+					REQUIRED_IF="(SERVICE_LOCATOR == 'true') OR (SERVICE_ACTIVITY_MONITOR == 'true') OR (AUTH_TYPE == 'OIDC_PASSWORD_GRANT')" />
 
 			<IMPORT MODULE_GROUP="locator"
 					REQUIRED_IF="SERVICE_LOCATOR == 'true'" />

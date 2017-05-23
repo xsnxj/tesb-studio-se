@@ -377,8 +377,15 @@ try {
         String bearerHeader_<%=cid%> = null;
 
         try {
-            bearerHeader_<%=cid%> = org.talend.esb.security.oidc.OidcClientUtils.oidcClientBearer(username_<%=cid%>, password_<%=cid%>);
-        } catch (Exception ex) {
+			if (!inOSGi) {
+				org.springframework.context.support.ClassPathXmlApplicationContext context_<%=cid%> =
+					new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/oidc-context.xml");
+				org.talend.esb.security.oidc.OidcConfiguration oidcConfiguration_<%=cid%> = context_<%=cid%>.getBean(org.talend.esb.security.oidc.OidcConfiguration.class);
+				bearerHeader_<%=cid%> = org.talend.esb.security.oidc.OidcClientUtils.oidcClientBearer(username_<%=cid%>, password_<%=cid%>, oidcConfiguration_<%=cid%>);
+			}else{
+				bearerHeader_<%=cid%> = org.talend.esb.security.oidc.OidcClientUtils.oidcClientBearer(username_<%=cid%>, password_<%=cid%>);
+			}
+		} catch (Exception ex) {
             throw new javax.ws.rs.WebApplicationException("Failed to get OIDC access token: ", ex);
         }
 
