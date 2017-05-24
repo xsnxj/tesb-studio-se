@@ -82,7 +82,8 @@ public class RuntimeServerController {
             }
 
             if (launcher.exists()) {
-                runtimeProcess = Runtime.getRuntime().exec(launcher.getAbsolutePath(), null, launcher.getParentFile());
+                runtimeProcess = Runtime.getRuntime().exec(new String[] { launcher.getAbsolutePath() },
+                        null, launcher.getParentFile());
             } else {
                 throw new IOException("Missing runtime server start script (" + launcher.getPath() + ")");
             }
