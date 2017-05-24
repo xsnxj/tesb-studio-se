@@ -2051,8 +2051,15 @@ if (isProvider) {
     java.util.Map<String, String> getOidcSettings() {
         java.util.Map<String, String> settings = new java.util.HashMap<String, String>();
 
-        String tokenEndpoint = org.talend.esb.security.oidc.OidcClientUtils.getTokenEndpointLocation();
-        String validationEndpoint = org.talend.esb.security.oidc.OidcClientUtils.getValidationEndpointLocation();
+		if(!inOSGi){
+			org.springframework.context.support.ClassPathXmlApplicationContext context =
+				new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/oidc-context.xml");
+			org.talend.esb.security.oidc.OidcConfiguration oidcConfiguration = context.getBean(org.talend.esb.security.oidc.OidcConfiguration.class);
+			return oidcConfiguration.getOidcProperties();
+		}
+		
+        String tokenEndpoint = org.talend.esb.security.oidc.OidcClientUtils.getTokenEndpoint();
+        String validationEndpoint = org.talend.esb.security.oidc.OidcClientUtils.getValidationEndpoint();
         String clientId = org.talend.esb.security.oidc.OidcClientUtils.getPublicClientID();
         String scope = org.talend.esb.security.oidc.OidcClientUtils.getScope();
 
@@ -2090,17 +2097,17 @@ if (isProvider) {
                     } catch (Exception e) {}
                 }
 
-                tokenEndpoint = oidcProperties.getProperty(org.talend.esb.security.oidc.OidcClientUtils.OIDC_TOKEN_ENDPOINT_LOCATION);
-                validationEndpoint = oidcProperties.getProperty(org.talend.esb.security.oidc.OidcClientUtils.OIDC_VALIDATION_ENDPOINT_LOCATION);
-                clientId = oidcProperties.getProperty(org.talend.esb.security.oidc.OidcClientUtils.OIDC_PUBLIC_CLIENT_ID);
-                scope = oidcProperties.getProperty(org.talend.esb.security.oidc.OidcClientUtils.OIDC_SCOPE);
+                tokenEndpoint = oidcProperties.getProperty(org.talend.esb.security.oidc.OidcConfiguration.OIDC_TOKEN_ENDPOINT_LOCATION);
+                validationEndpoint = oidcProperties.getProperty(org.talend.esb.security.oidc.OidcConfiguration.OIDC_VALIDATION_ENDPOINT_LOCATION);
+                clientId = oidcProperties.getProperty(org.talend.esb.security.oidc.OidcConfiguration.OIDC_PUBLIC_CLIENT_ID);
+                scope = oidcProperties.getProperty(org.talend.esb.security.oidc.OidcConfiguration.OIDC_SCOPE);
             }
         }
 
-        settings.put(org.talend.esb.security.oidc.OidcClientUtils.OIDC_TOKEN_ENDPOINT_LOCATION, tokenEndpoint);
-        settings.put(org.talend.esb.security.oidc.OidcClientUtils.OIDC_VALIDATION_ENDPOINT_LOCATION, validationEndpoint);
-        settings.put(org.talend.esb.security.oidc.OidcClientUtils.OIDC_PUBLIC_CLIENT_ID, clientId);
-        settings.put(org.talend.esb.security.oidc.OidcClientUtils.OIDC_SCOPE, scope);
+        settings.put(org.talend.esb.security.oidc.OidcConfiguration.OIDC_TOKEN_ENDPOINT_LOCATION, tokenEndpoint);
+        settings.put(org.talend.esb.security.oidc.OidcConfiguration.OIDC_VALIDATION_ENDPOINT_LOCATION, validationEndpoint);
+        settings.put(org.talend.esb.security.oidc.OidcConfiguration.OIDC_PUBLIC_CLIENT_ID, clientId);
+        settings.put(org.talend.esb.security.oidc.OidcConfiguration.OIDC_SCOPE, scope);
 
         return settings;
     }

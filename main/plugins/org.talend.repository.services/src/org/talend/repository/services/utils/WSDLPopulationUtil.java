@@ -47,7 +47,7 @@ public class WSDLPopulationUtil extends XSDPopulationUtil2 {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.talend.datatools.xml.utils.XSDPopulationUtil2#getXSDSchema(java.lang.String, boolean)
      */
     @Override
@@ -57,6 +57,9 @@ public class WSDLPopulationUtil extends XSDPopulationUtil2 {
 
     @Override
     public XSDSchema getXSDSchemaFromNamespace(String namespace) {
+        if (namespace == null) {
+            return null;
+        }
         if (loadFromWSDL) {
             if (resourceSet.getResources().size() == 1) {
                 Resource resource = resourceSet.getResources().get(0);
@@ -66,7 +69,7 @@ public class WSDLPopulationUtil extends XSDPopulationUtil2 {
                         Definition definition = (Definition) oDef;
                         for (Object o : definition.getETypes().getEExtensibilityElements()) {
                             XSDSchemaExtensibilityElement schema = (XSDSchemaExtensibilityElement) o;
-                            if (schema.getSchema().getTargetNamespace().equals(namespace)) {
+                            if ((schema.getSchema() != null) && (namespace.equals(schema.getSchema().getTargetNamespace()))) {
                                 return schema.getSchema();
                             }
                         }
@@ -81,7 +84,7 @@ public class WSDLPopulationUtil extends XSDPopulationUtil2 {
 
     /**
      * DOC nrousseau Comment method "loadWSDL".
-     * 
+     *
      * @param wsdlFile
      * @throws CoreException
      * @throws IOException

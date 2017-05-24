@@ -241,6 +241,8 @@
                 REQUIRED="true"/>
                 
             <IMPORT MODULE_GROUP="security-common" REQUIRED="true" />
+			
+			<IMPORT MODULE_GROUP="spring-context"  REQUIRED="true" />
 
         </IMPORTS>
 	</CODEGENERATION>
