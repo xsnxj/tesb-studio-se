@@ -7,3 +7,4 @@ Fragment-Host: org.talend.designer.esb.runcontainer
 Require-Bundle: org.talend.testutils,
  org.talend.model,
  org.talend.designer.core
+Eclipse-BundleShape: dir
