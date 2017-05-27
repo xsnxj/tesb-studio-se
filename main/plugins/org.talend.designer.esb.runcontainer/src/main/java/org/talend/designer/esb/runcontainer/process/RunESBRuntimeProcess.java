@@ -55,6 +55,8 @@ public class RunESBRuntimeProcess extends Process {
 
     public static final String INFO = "INFO";
 
+    private static final String LINE_SEPARATOR = System.lineSeparator();
+
     private PipedOutputStream stdOutputStream;
 
     private PipedInputStream errInputStream;
@@ -102,20 +104,36 @@ public class RunESBRuntimeProcess extends Process {
             @Override
             public synchronized void logReceived(FelixLogsModel log) {
                 if (startLogging) {
-                    // runtimeLogQueue.put(logsModel);
                     try {
                         if (INFO.equals(log.getLevel())) {
                             stdOutputStream.write(log.toString().getBytes());
-                            stdOutputStream.write('\n');
+                            stdOutputStream.write(LINE_SEPARATOR.getBytes());
                             stdOutputStream.flush();
                         } else {
                             errOutputStream.write(log.toString().getBytes());
-                            errOutputStream.write('\n');
-                            stdOutputStream.flush();
+                            errOutputStream.write(LINE_SEPARATOR.getBytes());
+                            errOutputStream.flush();
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                }
+            }
+
+            @Override
+            public void logReceived(String logs, boolean isError) {
+                try {
+                    if (isError) {
+                        errOutputStream.write(logs.getBytes());
+                        errOutputStream.write(LINE_SEPARATOR.getBytes());
+                        errOutputStream.flush();
+                    } else {
+                        stdOutputStream.write(logs.getBytes());
+                        stdOutputStream.write(LINE_SEPARATOR.getBytes());
+                        stdOutputStream.flush();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         };

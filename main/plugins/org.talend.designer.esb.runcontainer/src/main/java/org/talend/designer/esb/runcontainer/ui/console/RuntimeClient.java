@@ -59,6 +59,8 @@ import com.sun.xml.internal.ws.util.NoCloseInputStream;
 
 public class RuntimeClient {
 
+    boolean connected = false;
+
     public void connect(String[] args) throws Exception {
         ClientConfig config = new ClientConfig(args);
         SimpleLogger.setLevel(config.getLevel());
@@ -146,7 +148,6 @@ public class RuntimeClient {
 
         try {
             ClientChannel channel;
-
             if (config.getCommand().length() > 0) {
                 channel = session.createChannel("exec", config.getCommand() + "\n");
                 channel.setIn(new ByteArrayInputStream(new byte[0]));
@@ -219,15 +220,25 @@ public class RuntimeClient {
             if (channel instanceof PtyCapableChannelSession) {
                 registerSignalHandler(terminal, (PtyCapableChannelSession) channel);
             }
+            connected = true;
             channel.waitFor(EnumSet.of(ClientChannelEvent.CLOSED), 0);
             if (channel.getExitStatus() != null) {
                 exitStatus = channel.getExitStatus();
             }
+            channel.close();
         } finally {
             terminal.setAttributes(attributes);
-            outputStream.close();
-            inputStream.close();
+            client.stop();
+            client.close();
+            connected = false;
+            if (!outputStream.isClosed()) {
+                outputStream.close();
+            }
         }
+    }
+
+    public boolean isConnected() {
+        return connected;
     }
 
     private InputStream inputStream;

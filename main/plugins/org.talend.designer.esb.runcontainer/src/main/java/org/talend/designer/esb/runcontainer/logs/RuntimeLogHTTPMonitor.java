@@ -13,6 +13,7 @@
 package org.talend.designer.esb.runcontainer.logs;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -25,6 +26,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.osgi.service.log.LogService;
 import org.talend.designer.esb.runcontainer.core.ESBRunContainerPlugin;
 import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceInitializer;
+import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -36,6 +38,10 @@ public class RuntimeLogHTTPMonitor {
     private static RuntimeLogHTTPMonitor instance;
 
     private Map<RuntimeLogHTTPAdapter, Long> listenerMap;
+
+    private Thread outputThread;
+
+    private Thread outputErrorThread;
 
     RuntimeLogHTTPMonitor() {
         // init
@@ -58,13 +64,23 @@ public class RuntimeLogHTTPMonitor {
     }
 
     public boolean startLogging() {
-        // httpLogTimer.cancel();
+        // launch http monitor for runtime log
         if (listenerMap.size() == 0) {
-            new Thread(new HttpLoggingTask(), "ESB Runtime Logging Monitor").start();
+            new Thread(new HttpLoggingTask(), "Runtime Http Logging").start();
         }
-        // if (httpLoggingTask.getStatus() == 0) {
-        // httpLogTimer.schedule(httpLoggingTask, 0);
-        // }
+        if (outputThread == null || !outputThread.isAlive()) {
+            outputThread = null;
+            outputThread = new Thread(new ProcessOutput(RuntimeServerController.getInstance().getRuntimeProcess()
+                    .getInputStream(), false), "Runtime Process Output");
+            outputThread.start();
+        }
+
+        if (outputErrorThread == null || !outputErrorThread.isAlive()) {
+            outputErrorThread = null;
+            outputErrorThread = new Thread(new ProcessOutput(RuntimeServerController.getInstance().getRuntimeProcess()
+                    .getErrorStream(), true), "Runtime Process Error");
+            outputErrorThread.start();
+        }
         return true;
     }
 
@@ -159,4 +175,36 @@ public class RuntimeLogHTTPMonitor {
             }
         }
     }
+
+    final class ProcessOutput implements Runnable {
+
+        private final InputStream input;
+
+        private boolean isError;
+
+        ProcessOutput(InputStream input, boolean isError) {
+            this.input = input;
+            this.isError = isError;
+        }
+
+        @Override
+        public void run() {
+            try {
+                BufferedReader inReader = new BufferedReader(new InputStreamReader(input));
+                String input = null;
+                while ((input = inReader.readLine()) != null) {
+                    if (!input.isEmpty() && listenerMap.size() > 0) {
+                        for (IRuntimeLogListener listener : listenerMap.keySet()) {
+                            listener.logReceived(input, isError);
+                        }
+                        System.out.println("------>" + input + "------");
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("------>" + "stopped" + isError);
+        }
+    }
+
 }

@@ -21,4 +21,6 @@ public interface IRuntimeLogListener {
 
     public abstract void logReceived(FelixLogsModel logsModel);
 
+    public abstract void logReceived(String logs, boolean isError);
+
 }

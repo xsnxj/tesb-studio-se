@@ -34,4 +34,13 @@ public class RuntimeLogHTTPAdapter implements IRuntimeLogListener {
     @Override
     public void logReceived(FelixLogsModel logsModel) {
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.designer.esb.runcontainer.logs.IRuntimeLogListener#logReceived(java.lang.String)
+     */
+    @Override
+    public void logReceived(String logs, boolean isError) {
+    }
 }
