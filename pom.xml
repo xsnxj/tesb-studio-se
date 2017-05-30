@@ -138,7 +138,7 @@
     <module>main/plugins/org.talend.repository.services</module>
     <module>main/plugins/org.talend.repository.view.route</module>
     <module>main/plugins/org.talend.designer.esb.runcontainer</module>
-    <!--module>test/plugins/org.talend.designer.esb.runcontainer.test</module-->
+    <module>test/plugins/org.talend.designer.esb.runcontainer.test</module>
   </modules>
   <build>
     <plugins>
