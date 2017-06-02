@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.components.ComponentCategory;
+import org.talend.core.model.process.IContext;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.process.ProcessUtils;
 import org.talend.core.model.properties.Item;
@@ -42,6 +43,7 @@ import org.talend.designer.esb.runcontainer.logs.RuntimeLogHTTPAdapter;
 import org.talend.designer.esb.runcontainer.logs.RuntimeLogHTTPMonitor;
 import org.talend.designer.esb.runcontainer.util.JMXUtil;
 import org.talend.designer.runprocess.IProcessMessageManager;
+import org.talend.designer.runprocess.ui.ProcessManager;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceItem;
@@ -81,6 +83,7 @@ public class RunESBRuntimeProcess extends Process {
 
     private int exitValue = 0;
 
+    @SuppressWarnings("unused")
     private IProcessMessageManager processMessageManager;
 
     public RunESBRuntimeProcess(IProcess process, int statisticsPort, int tracePort, IProgressMonitor monitor) {
@@ -225,6 +228,7 @@ public class RunESBRuntimeProcess extends Process {
             IRepositoryViewObject viewObject = findJob(process.getId());
             RepositoryNode node = new RepositoryNode(viewObject, null, ENodeType.REPOSITORY_ELEMENT);
             ProcessItem processItem = (ProcessItem) node.getObject().getProperty().getItem();
+            String configID = node.getObject().getLabel();
 
             monitor.setTaskName("Deploy articact into Runimte server");
             if (ComponentCategory.CATEGORY_4_DI.getName().equals(process.getComponentsType())) {
@@ -243,6 +247,7 @@ public class RunESBRuntimeProcess extends Process {
                                 ExportServiceAction action = new ExportServiceAction(serviceItem, target.getAbsolutePath(), null,
                                         new ServiceExportForESBRuntimeManager(null, statisticsPort, tracePort));
                                 action.run(monitor);
+                                applyContextConfiguration(configID);
                                 kars = JMXUtil.installKar(target);
                             }
                         }
@@ -261,6 +266,7 @@ public class RunESBRuntimeProcess extends Process {
 
                     jobAction.run(monitor);
                     if (jobAction.isBuildSuccessful()) {
+                        applyContextConfiguration(configID);
                         bundles = JMXUtil.installBundle(target);
                         // writeLog(processMessageManager, new ProcessMessage(MsgType.STD_OUT,
                         // "Install bundle, return value: "
@@ -273,6 +279,7 @@ public class RunESBRuntimeProcess extends Process {
                 JavaCamelJobScriptsExportWSAction camelAction = new JavaCamelJobScriptsExportWSAction(node, process.getVersion(),
                         target.getAbsolutePath(), true, statisticsPort, tracePort);
                 camelAction.run(monitor);
+                applyContextConfiguration(configID);
                 kars = JMXUtil.installKar(target);
                 // writeLog(processMessageManager,
                 // new ProcessMessage(MsgType.STD_OUT, "Install kar, return value: " + Arrays.toString(kars) + ".\n"));
@@ -299,5 +306,29 @@ public class RunESBRuntimeProcess extends Process {
             ProxyRepositoryFactory proxyRepositoryFactory = ProxyRepositoryFactory.getInstance();
             return proxyRepositoryFactory.getLastVersion(jobID);
         }
+    }
+
+    private void applyContextConfiguration(String configID) throws Exception {
+        ProcessManager processManager = ProcessManager.getInstance();
+        IContext context = processManager.getSelectContext();
+        String contextName = context.getName();
+        JMXUtil.deleteConfigProperties(configID);
+        JMXUtil.setConfigProperty(configID, "context", contextName);
+        /*
+        // The following code is only required if context parameters are
+        // to be modified dynamically at deployment into local runtime.
+        // Such functionaliy is currently not implemented in Talend Studio,
+        // but contexts are applied as generated.
+        List<org.talend.core.model.process.IContextParameter> params = context.getContextParameterList();
+        if (params != null) {
+            for (org.talend.core.model.process.IContextParameter param : params) {
+                String name = param.getName();
+                if ("context".equals(name)) {
+                    continue;
+                }
+                JMXUtil.setConfigProperty(configID, name, param.getValue());
+            }
+        }
+        */
     }
 }
