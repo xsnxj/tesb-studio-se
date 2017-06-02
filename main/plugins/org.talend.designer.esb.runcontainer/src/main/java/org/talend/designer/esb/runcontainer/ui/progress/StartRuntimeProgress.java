@@ -24,7 +24,6 @@ import org.talend.designer.esb.runcontainer.preferences.RunContainerPreferenceIn
 import org.talend.designer.esb.runcontainer.server.RuntimeServerController;
 import org.talend.designer.esb.runcontainer.util.JMXUtil;
 import org.talend.designer.esb.runcontainer.util.RuntimeConsoleUtil;
-import org.talend.designer.esb.runcontainer.util.StringUtil;
 
 public class StartRuntimeProgress extends RuntimeProgress {
 
@@ -52,9 +51,9 @@ public class StartRuntimeProgress extends RuntimeProgress {
                     Thread.sleep(3000);
                 }
                 if (!proc.isAlive()) {
-                    System.out.println("trun process has finished with exit code " + proc.exitValue());
-                    System.out.println("StdOut: " + StringUtil.toString(proc.getInputStream()));
-                    System.out.println("StdErr: " + StringUtil.toString(proc.getErrorStream()));
+                    RuntimeServerController.getInstance().stopLocalRuntimeServer();
+                    throw new InterruptedException(RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog8",
+                            proc.exitValue()));
                 }
                 if (JMXUtil.createJMXconnection() == null) {
                     throw new InterruptedException(RunContainerMessages.getString("RunContainerPreferencePage.InitailzeDialog5"));

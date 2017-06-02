@@ -94,12 +94,39 @@ public class RuntimeServerController {
         return runtimeProcess;
     }
 
+    /**
+     * Stop runtime server by JMX halting
+     * 
+     * @throws Exception
+     */
     public void stopRuntimeServer() throws Exception {
         if (isRunning()) {
             JMXUtil.halt();
             // monitor.stop();
         } else {
             throw new IOException("Runtime Server is not Running");
+        }
+    }
+
+    /**
+     * Stop runtime server by invoking stop script locally
+     * 
+     * @throws Exception
+     */
+    public void stopLocalRuntimeServer() throws Exception {
+        File launcher;
+        String os = System.getProperty("os.name");
+        if (os != null && os.toLowerCase().contains("windows")) {
+            launcher = new File(karafHome + "/bin/stop.bat");
+        } else {
+            launcher = new File(karafHome + "/bin/stop");
+            FileUtil.setFileExecPerm(launcher.toPath());
+        }
+
+        if (launcher.exists()) {
+            Runtime.getRuntime().exec(new String[] { launcher.getAbsolutePath() }, null, launcher.getParentFile());
+        } else {
+            throw new IOException("Missing runtime server stop script (" + launcher.getPath() + ")");
         }
     }
 

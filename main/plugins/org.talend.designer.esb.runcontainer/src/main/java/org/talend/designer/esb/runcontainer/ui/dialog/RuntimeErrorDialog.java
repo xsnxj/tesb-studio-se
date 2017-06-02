@@ -44,11 +44,8 @@ public class RuntimeErrorDialog extends ErrorDialog {
     @Override
     protected List createDropDownList(Composite parent) {
         List list = super.createDropDownList(parent);
-        // list.removeAll();
         for (StackTraceElement st : initStatus.getException().getStackTrace()) {
-            if (!st.getMethodName().isEmpty()) {
-                list.add("    " + st.getMethodName() + "(" + st.getFileName() + ":" + st.getLineNumber() + ")");
-            }
+            list.add(st.toString());
         }
         return list;
     }
