@@ -28,7 +28,6 @@ import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSA
 import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.components.ComponentCategory;
 import org.talend.core.model.process.IContext;
-import org.talend.core.model.process.IContextParameter;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.process.ProcessUtils;
 import org.talend.core.model.properties.Item;
@@ -60,8 +59,6 @@ public class RunESBRuntimeProcess extends Process {
 
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
-    private static final boolean OVERRIDE_CONTEXT_PARAMS = false;
-
     private PipedOutputStream stdOutputStream;
 
     private PipedInputStream errInputStream;
@@ -86,6 +83,7 @@ public class RunESBRuntimeProcess extends Process {
 
     private int exitValue = 0;
 
+    @SuppressWarnings("unused")
     private IProcessMessageManager processMessageManager;
 
     public RunESBRuntimeProcess(IProcess process, int statisticsPort, int tracePort, IProgressMonitor monitor) {
@@ -316,17 +314,21 @@ public class RunESBRuntimeProcess extends Process {
         String contextName = context.getName();
         JMXUtil.deleteConfigProperties(configID);
         JMXUtil.setConfigProperty(configID, "context", contextName);
-        if (OVERRIDE_CONTEXT_PARAMS) {
-            List<IContextParameter> params = context.getContextParameterList();
-            if (params != null) {
-                for (IContextParameter param : params) {
-                    String name = param.getName();
-                    if ("context".equals(name)) {
-                        continue;
-                    }
-                    JMXUtil.setConfigProperty(configID, name, param.getValue());
+        /*
+        // The following code is only required if context parameters are
+        // to be modified dynamically at deployment into local runtime.
+        // Such functionaliy is currently not implemented in Talend Studio,
+        // but contexts are applied as generated.
+        List<org.talend.core.model.process.IContextParameter> params = context.getContextParameterList();
+        if (params != null) {
+            for (org.talend.core.model.process.IContextParameter param : params) {
+                String name = param.getName();
+                if ("context".equals(name)) {
+                    continue;
                 }
+                JMXUtil.setConfigProperty(configID, name, param.getValue());
             }
         }
+        */
     }
 }
