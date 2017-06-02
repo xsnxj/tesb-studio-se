@@ -40,6 +40,8 @@ public class JMXUtil {
 
     private static final String CREDENTIALS = "jmx.remote.credentials";
 
+    private static final String STRING = String.class.getName();
+
     public static String username;
 
     public static String password;
@@ -265,7 +267,7 @@ public class JMXUtil {
         MBeanServerConnection mbsc = createJMXconnection();
         String SYS_MBEAN = "org.apache.karaf:type=system,name=" + instanceName;
         ObjectName objectKar = new ObjectName(SYS_MBEAN);
-        mbsc.invoke(objectKar, "reboot", new Object[] { String.valueOf(0) }, new String[] { String.class.getName() });
+        mbsc.invoke(objectKar, "reboot", new Object[] { String.valueOf(0) }, new String[] { STRING });
     }
 
     public static void rebootCleanAll() throws Exception {
@@ -273,7 +275,7 @@ public class JMXUtil {
         MBeanServerConnection mbsc = createJMXconnection();
         String SYS_MBEAN = "org.apache.karaf:type=system,name=" + instanceName;
         ObjectName objectKar = new ObjectName(SYS_MBEAN);
-        mbsc.invoke(objectKar, "rebootCleanAll", new Object[] { String.valueOf(0) }, new String[] { String.class.getName() });
+        mbsc.invoke(objectKar, "rebootCleanAll", new Object[] { String.valueOf(0) }, new String[] { STRING });
     }
 
     public static long[] getBundlesList() throws Exception {
@@ -308,6 +310,22 @@ public class JMXUtil {
         ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
 
         return mbsc.invoke(objectBundle, "getStatus", new Object[] { String.valueOf(bundleID) },
-                new String[] { String.class.getName() }).toString();
+                new String[] { STRING }).toString();
+    }
+
+    public static void setConfigProperty(String configID, String propertyName, String value) throws Exception {
+        String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=config,name=" + instanceName;
+        ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
+
+        mbsc.invoke(objectBundle, "setProperty", new Object[] { configID, propertyName, value },
+                new String[] { STRING, STRING, STRING });
+    }
+
+    public static void deleteConfigProperties(String configID) throws Exception {
+        String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=config,name=" + instanceName;
+        ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
+
+        mbsc.invoke(objectBundle, "delete", new Object[] { configID },
+                new String[] { STRING });
     }
 }
