@@ -31,7 +31,6 @@ public class ESBRuntimeConsoleFactory implements IConsoleFactory {
             if (MessageDialog.openConfirm(shell, "ESB Runtime Console",
                     "ESB Runtime Server is not running, do you want to start it?")) {
                 new StartRuntimeAction(true, shell).run();
-                RuntimeConsoleUtil.loadConsole();
             } else {
                 RuntimeConsoleUtil.findConsole();
             }

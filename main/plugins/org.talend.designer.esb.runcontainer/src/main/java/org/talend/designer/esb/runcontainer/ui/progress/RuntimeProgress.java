@@ -47,7 +47,7 @@ public abstract class RuntimeProgress implements IRunnableWithProgress {
                 }
             }
         } catch (Exception e) {
-            throw new InvocationTargetException(e);
+            throw new InvocationTargetException(e, e.getMessage());
         }
         return false;
     }
