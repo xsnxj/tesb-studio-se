@@ -1,3 +1,15 @@
+// ============================================================================
+//
+// Copyright (C) 2006-2016 Talend Inc. - www.talend.com
+//
+// This source code is available under agreement available at
+// %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
+//
+// You should have received a copy of the agreement
+// along with this program; if not, write to Talend SA
+// 9 rue Pages 92150 Suresnes, France
+//
+// ============================================================================
 package org.talend.camel.designer.generator;
 
 import java.beans.PropertyChangeEvent;
@@ -10,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -72,13 +85,23 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
 	        MessageDialog.openError(composite.getShell(), "Checking Nexus Connection Error", "Can not initialize the nexus server, Please check the TAC.");
 	    }else{
 	        try {
-	            URL url = new URL(nexusServerBean.getServer());
+                URL url = new URL(
+                        nexusServerBean.getServer() + "/service/local/authentication/login?_dc=" + System.currentTimeMillis());
 	            HttpURLConnection con = (HttpURLConnection) url.openConnection();
 	            con.setConnectTimeout(3000);
+
+                String userpass = nexusServerBean.getUserName() + ":" + nexusServerBean.getPassword();
+                String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
+                con.setRequestProperty("Authorization", basicAuth);
+
 	            int state = con.getResponseCode();
+
 	            if (state == 200) {
 	                log.info("Connect to "+nexusServerBean.getServer()+" successfully!");
 	                return true;
+                } else if (state == 401) {
+                    MessageDialog.openError(composite.getShell(), "Checking Nexus Connection Error", "Can not connect to "
+                            + nexusServerBean.getServer() + "\n" + con.getResponseMessage() + " ResponseCode : " + state);
 	            }
 	        }catch (Exception ex) {
 	            MessageDialog.openError(composite.getShell(), "Checking Nexus Connection Error", "Can not connect to "+nexusServerBean.getServer()+"\n"+ex.getMessage());
@@ -94,7 +117,16 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
     @Override
     public Control createControl(Composite subComposite, IElementParameter param, int numInRow, int nbInRow, int top,
             Control lastControl) {
-        
+
+        Display.getDefault().asyncExec(new Runnable() {
+
+            @Override
+            public void run() {
+                refresh(param, true);
+            }
+
+        });
+
         Button theBtn = getWidgetFactory().createButton(subComposite, "", SWT.PUSH); //$NON-NLS-1$
         theBtn.setBackground(subComposite.getBackground());
         if (param.getDisplayName().equals("")) { //$NON-NLS-1$
@@ -131,13 +163,11 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
         });
         Point initialSize = theBtn.computeSize(SWT.DEFAULT, SWT.DEFAULT);
         dynamicProperty.setCurRowSize(initialSize.y + ITabbedPropertyConstants.VSPACE);
-        Display.getDefault().asyncExec(new Runnable() {
-            @Override
-            public void run() {
-                refresh(param, true);
-            }
 
-        });
+        if (nexusServerBean == null) {
+            theBtn.setVisible(false);
+        }
+
         return theBtn;
     }
 
@@ -158,11 +188,15 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
         if (tableViewerCreator == null || tableViewerCreator.getTable() == null || tableViewerCreator.getTable().isDisposed()) {
             return;
         }else{
-            tableViewerCreator.getTableViewer().refresh();
-            TableViewerCreatorColumn ttt = (TableViewerCreatorColumn) tableViewerCreator.getColumns().get(1);
-            ttt.getTableColumn().setWidth(0);
-            ttt.getTableColumn().setText("");
-            ttt.getTableColumn().setResizable(false);
+            if (nexusServerBean == null) {
+                tableViewerCreator.getTable().setVisible(false);
+            } else {
+                tableViewerCreator.getTableViewer().refresh();
+                TableViewerCreatorColumn ttt = (TableViewerCreatorColumn) tableViewerCreator.getColumns().get(1);
+                ttt.getTableColumn().setWidth(0);
+                ttt.getTableColumn().setText("");
+                ttt.getTableColumn().setResizable(false);
+            }
         	
         }
 	}

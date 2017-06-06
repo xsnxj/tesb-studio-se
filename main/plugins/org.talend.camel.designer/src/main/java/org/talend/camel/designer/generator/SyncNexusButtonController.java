@@ -15,18 +15,24 @@ package org.talend.camel.designer.generator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Button;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.general.ILibrariesService;
 import org.talend.core.model.process.IElementParameter;
+import org.talend.core.runtime.maven.MavenArtifact;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
 import org.talend.core.utils.TalendQuoteUtils;
+import org.talend.designer.maven.utils.PomUtil;
 
 public class SyncNexusButtonController extends ConfigOptionController {
 
@@ -39,61 +45,134 @@ public class SyncNexusButtonController extends ConfigOptionController {
         if (parameter != null) {
             callBeforeActive(parameter);
             // so as to invoke listeners to perform some actions.
-    		
-    		IElementParameter elementParameterFromField = elem.getElementParameter("DRIVER_JAR");
-			IElementParameter needUpdateList = elem.getElementParameter("NEED_UPDATE_LIST");
-    		
-			List needUpdateJars = (List) needUpdateList.getValue();
 
-            if(needUpdateJars!=null && needUpdateJars.size()==0){
+            IElementParameter elementParameterFromField = elem.getElementParameter("DRIVER_JAR");
+            IElementParameter needUpdateList = elem.getElementParameter("NEED_UPDATE_LIST");
+
+            List needUpdateJars = (List) needUpdateList.getValue();
+
+            if (needUpdateJars == null) {
+                MessageDialog.openInformation(composite.getShell(), "Checking libraries", "No dependencies being added");
+                return null;
+            }
+
+            if (needUpdateJars != null && needUpdateJars.size() == 0) {
                 MessageDialog.openInformation(composite.getShell(), "Synchronizing libraries", "Everything is up-to-date");
-            }else{
-                for (int i = 0; i < needUpdateJars.size(); i++) {
-                    Map<String,Object> jar = (Map)needUpdateJars.get(i);
-                    
-                    String jn = TalendQuoteUtils.removeQuotes(jar.get("JAR_NAME").toString());
-                    String jnv = TalendQuoteUtils.removeQuotes(jar.get("JAR_NEXUS_VERSION").toString());
-                    String a = jn.replaceFirst("[.][^.]+$", "");
-                    
-                    if(Boolean.valueOf(jar.get("JAR_SYNC").toString())){
-                        if (GlobalServiceRegister.getDefault().isServiceRegistered(ILibrariesService.class)) {
-                            ILibrariesService librariesService = (ILibrariesService) GlobalServiceRegister.getDefault().getService(
-                                    ILibrariesService.class);
-                            
+            } else {
+                List<Map<String, String>> driverJars = (List) elementParameterFromField.getValue();
+                try {
+                    new ProgressMonitorDialog(button.getShell()).run(true, true,
+                            new RunnableWithProgress(driverJars, needUpdateJars));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            refresh(needUpdateList, true);
+
+            return null;
+        }
+        return null;
+    }
+
+    private class RunnableWithProgress implements IRunnableWithProgress {
+
+        private List<Map<String, String>> jars;
+
+        private List needUpdateJars;
+
+        public RunnableWithProgress(List jars, List needUpdateJars) {
+            this.jars = jars;
+            this.needUpdateJars = needUpdateJars;
+        }
+
+        @Override
+        public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+
+            monitor.beginTask("Syncing the nexus server...", false ? IProgressMonitor.UNKNOWN : jars.size());
+
+            for (int i = 0; i < needUpdateJars.size(); i++) {
+                Map<String, Object> jar = (Map) needUpdateJars.get(i);
+
+                String jn = TalendQuoteUtils.removeQuotes(jar.get("JAR_NAME").toString());
+                String jnv = TalendQuoteUtils.removeQuotes(jar.get("JAR_NEXUS_VERSION").toString());
+                String jnpv = TalendQuoteUtils.removeQuotes(jar.get("JAR_NEXUS_PRE_VERSION").toString());
+                String a = jn.replaceFirst("[.][^.]+$", "");
+
+                if (Boolean.valueOf(jar.get("JAR_SYNC").toString())) {
+                    if (GlobalServiceRegister.getDefault().isServiceRegistered(ILibrariesService.class)) {
+                        ILibrariesService librariesService = (ILibrariesService) GlobalServiceRegister.getDefault()
+                                .getService(ILibrariesService.class);
+
+                        if (jar.get("JAR_STATUS").equals("✔")) {
+                            MavenArtifact ma = new MavenArtifact();
+                            ma.setArtifactId(a);
+                            ma.setGroupId("org.talend.libraries");
+                            ma.setVersion(jnpv);
+                            ma.setType("jar");
+
+                            String p = PomUtil.getAbsArtifactPath(ma);
+                            if (p != null) {
+                                File f = new File(p);
+
+                                if (f.exists()) {
+                                    try {
+
+                                        monitor.subTask("Installing local dependency ... " + jn);
+                                        librariesService.deployLibrary(f.toURI().toURL(),
+                                                "mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
+                                        for (Map dj : jars) {
+                                            if (dj.get(JAR_NAME).equals(jn)) {
+                                                dj.put(JAR_NEXUS_VERSION, jnv);
+                                                break;
+                                            }
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+
+                        } else {
+                            monitor.subTask("Donwloading" + jn + "from " + nexusServerBean.getServer());
+
                             InputStream is = service.getContentInputStream(nexusServerBean, "", getGroupId(), a, jnv, null);
-                            
+
                             File file = generateTempFile(is, jn);
-                            
+
                             try {
-                                
-                                librariesService.deployLibrary(file.toURI().toURL(), "mvn:org.talend.libraries/"+a+"/"+jnv+"/jar");
-                                
+
+                                monitor.subTask("Installing local dependency ... " + jn);
+
+                                librariesService.deployLibrary(file.toURI().toURL(),
+                                        "mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
+
                                 jar.put("JAR_STATUS", "✔");
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }
+
+                        monitor.subTask("Finished syncing " + jn + " from " + nexusServerBean.getServer());
+                        monitor.worked(i);
                     }
                 }
             }
-				
-            refresh(needUpdateList, true);
-                
-			
 
-            
-            return null;
+            monitor.done();
+            if (monitor.isCanceled())
+                throw new InterruptedException("The long running operation was cancelled");
         }
-        return null;
+
     }
-    
-    private void deploy(File file, String version){
-		
+
+    private void deploy(File file, String version) {
+
         try {
             if (GlobalServiceRegister.getDefault().isServiceRegistered(ILibrariesService.class)) {
-                ILibrariesService service = (ILibrariesService) GlobalServiceRegister.getDefault().getService(
-                        ILibrariesService.class);
-                
+                ILibrariesService service = (ILibrariesService) GlobalServiceRegister.getDefault()
+                        .getService(ILibrariesService.class);
+
                 service.deployLibrary(file.toURI().toURL(), version);
             }
         } catch (IOException ee) {
