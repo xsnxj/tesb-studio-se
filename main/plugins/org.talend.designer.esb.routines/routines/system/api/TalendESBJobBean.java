@@ -10,8 +10,6 @@
  ******************************************************************************/
 package routines.system.api;
 
-import org.apache.camel.Exchange;
-
 /**
  * Talend ESB Job with lifecycle support for multiple
  * invocation from a route while keeping external
@@ -34,18 +32,18 @@ public interface TalendESBJobBean {
     /**
      * Run as a single-use job
      * 
-     * @param exchange
+     * @param exchangeData
      * @param contextArgs
      */
-    void runSingleUseJob(Exchange exchange, String[] contextArgs);
+    void runSingleUseJob(Map<String, Object> exchangeData, String[] contextArgs);
 
     /**
      * Run as a prepared multi-use job
      * 
-     * @param exchange
+     * @param exchangeData
      * @param contextArgs
      */
-    void runPreparedJob(Exchange exchange, String[] contextArgs);
+    void runPreparedJob(Map<String, Object> exchangeData, String[] contextArgs);
 
     /**
      * Get the class of the underlying job
