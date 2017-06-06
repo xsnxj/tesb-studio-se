@@ -10,6 +10,8 @@
  ******************************************************************************/
 package routines.system.api;
 
+import java.util.Map;
+
 /**
  * Talend ESB Job with lifecycle support for multiple
  * invocation from a route while keeping external
