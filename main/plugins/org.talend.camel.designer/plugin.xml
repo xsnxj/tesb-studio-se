@@ -260,6 +260,15 @@
           </projecttask>
           <projecttask
                 beforeLogon="false"
+                breaks="5.2.0"
+                class="org.talend.camel.designer.migration.CCXFWsdlFileRepoMigrationTask"
+                description="Update the WSDL_FILE_REPO in cCXF to fix TESB-6226"
+                id="org.talend.camel.designer.migration.CCXFWsdlFileRepoMigrationTask"
+                name="cCXFWsdlFileRepoMigrationTask"
+                version="6.4.1">
+          </projecttask>
+          <projecttask
+                beforeLogon="false"
                 breaks="5.6.0"
                 class="org.talend.camel.designer.migration.RenameToCSoapAndCRestMigrationTask"
                 description="Rename cCXF To cSoap and cCXFRS to cRest"
