@@ -60,7 +60,7 @@ String cid = node.getUniqueName();
 		 * @param exchangeData the data map containing the route message exchange
 		 * @param contextArgs arguments passed in the context
 		 */
-		public void runSingleUseJob(Map<String, Object> exchangeData, String[] contextArgs) {
+		public void runSingleUseJob(java.util.Map<String, Object> exchangeData, String[] contextArgs) {
 			singleUseRouterExchange = (org.apache.camel.Exchange) exchangeData.get("exchange");
 			int success = runJobInTOS(contextArgs);
 			if (success != 0) {
@@ -74,7 +74,7 @@ String cid = node.getUniqueName();
 		 * @param exchangeData the data map containing the route message exchange
 		 * @param contextArgs arguments passed in the context
 		 */
-		public void runPreparedJob(Map<String, Object> exchangeData, String[] contextArgs) {
+		public void runPreparedJob(java.util.Map<String, Object> exchangeData, String[] contextArgs) {
 			evaluateContextArgs(contextArgs);
 			org.apache.camel.Exchange exchange = (org.apache.camel.Exchange) exchangeData.get("exchange");
 			process(exchange);
