@@ -2286,7 +2286,9 @@ if (isProvider) {
                     swagger2Feature_<%=cid%>.setScan(false);
 <%
                         String epForSwagger = ElementParameterParser.getValue(node, "__URL__");
-                        epForSwagger = epForSwagger.substring(1);
+                        if (epForSwagger.startsWith("\"") && epForSwagger.endsWith("\"")) {
+                            epForSwagger = epForSwagger.substring(1, epForSwagger.length() - 1);
+                        }
                         epForSwagger = "/services" + epForSwagger;
 
                         String swaggerTitle = className + " REST Application";
