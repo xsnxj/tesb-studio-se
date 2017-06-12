@@ -45,6 +45,19 @@ if ((metadatas!=null)&&(metadatas.size()>0)) {
 
 // tRouterOutput code
 
+<%
+if ( "true".equals(System.getProperty("org.talend.studio.route.job.inloop")) ) {
+%>
+		org.apache.camel.Exchange routerExchange_<%=cid%> = routerExchange;
+<%
+} else {
+%>
+		org.apache.camel.Exchange routerExchange_<%=cid%> = singleUseRouterExchange != null
+			? singleUseRouterExchange : (org.apache.camel.Exchange) globalMap.get(ROUTER_EXCHANGE);
+<%
+}
+%>
+
     <%
     for(IConnection conn : conns) { // 1
         if(conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {  // 2
@@ -64,20 +77,20 @@ if ((metadatas!=null)&&(metadatas.size()>0)) {
 	                // http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html
 	            	if("id_Document".equals(talendType)){
 	            		%>
-		                routerExchange.getIn().setBody(<%=conn.getName()%>.<%=label%>.getDocument().asXML(), org.w3c.dom.Document.class);
+		                routerExchange_<%=cid%>.getIn().setBody(<%=conn.getName()%>.<%=label%>.getDocument().asXML(), org.w3c.dom.Document.class);
 		            	<%
 	            	}else{
 	            		%>
-		                routerExchange.getIn().setBody(<%=conn.getName()%>.<%=label%>, <%=typeToGenerate%>.class);
+		                routerExchange_<%=cid%>.getIn().setBody(<%=conn.getName()%>.<%=label%>, <%=typeToGenerate%>.class);
 		            	<%
 	            	}
 	            }else if("Header".equals(type)){
 	            	%>
-	            	routerExchange.getIn().setHeader(<%=value%>, <%=conn.getName()%>.<%=label%>);
+	            	routerExchange_<%=cid%>.getIn().setHeader(<%=value%>, <%=conn.getName()%>.<%=label%>);
 	            	<%
 	            }else if("Property".equals(type)){
 	            	%>
-	            	routerExchange.setProperty(<%=value%>, <%=conn.getName()%>.<%=label%>);
+	            	routerExchange_<%=cid%>.setProperty(<%=value%>, <%=conn.getName()%>.<%=label%>);
 	            	<%
 	            }else if("System".equals(type)){
 	            	%>

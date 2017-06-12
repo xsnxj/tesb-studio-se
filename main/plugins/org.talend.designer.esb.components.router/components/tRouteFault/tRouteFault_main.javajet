@@ -26,7 +26,7 @@ List<Map<String, String>> tableValues =
     );
 
 List< ? extends IConnection> conns = node.getIncomingConnections();
-String firstConnName = "";	
+String firstConnName = "";
 
 for(IConnection conn : conns) {
     if(conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {
@@ -45,6 +45,19 @@ if ((metadatas!=null)&&(metadatas.size()>0)) {
 
 // tRouterFault code
 
+<%
+if ( "true".equals(System.getProperty("org.talend.studio.route.job.inloop")) ) {
+%>
+		org.apache.camel.Exchange routerExchange_<%=cid%> = routerExchange;
+<%
+} else {
+%>
+		org.apache.camel.Exchange routerExchange_<%=cid%> = singleUseRouterExchange != null
+			? singleUseRouterExchange : (org.apache.camel.Exchange) globalMap.get(ROUTER_EXCHANGE);
+<%
+}
+%>
+
     <%
     for(IConnection conn : conns) { // 1
         if(conn.getLineStyle().hasConnectionCategory(IConnectionCategory.DATA)) {  // 2
@@ -52,11 +65,11 @@ if ((metadatas!=null)&&(metadatas.size()>0)) {
         	StringBuilder bodySb = new StringBuilder();
 %>        	
 	        // copy Body from IN to OUT to propagate them
-   			routerExchange.getOut().setBody(routerExchange.getIn().getBody());
+   			routerExchange_<%=cid%>.getOut().setBody(routerExchange_<%=cid%>.getIn().getBody());
 	        // copy headers from IN to OUT to propagate them
-			routerExchange.getOut().setHeaders(routerExchange.getIn().getHeaders());
+			routerExchange_<%=cid%>.getOut().setHeaders(routerExchange_<%=cid%>.getIn().getHeaders());
 			// copy attachements from IN to OUT to propagate them
-			routerExchange.getOut().setAttachments(routerExchange.getIn().getAttachments());
+			routerExchange_<%=cid%>.getOut().setAttachments(routerExchange_<%=cid%>.getIn().getAttachments());
 	        
 
 <%                   	
@@ -74,20 +87,20 @@ if ((metadatas!=null)&&(metadatas.size()>0)) {
                     // http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html
 	            	if("id_Document".equals(talendType)){
 	            		%>
-		                routerExchange.getOut().setBody(<%=conn.getName()%>.<%=label%>.getDocument().asXML(), org.w3c.dom.Document.class);
+		                routerExchange_<%=cid%>.getOut().setBody(<%=conn.getName()%>.<%=label%>.getDocument().asXML(), org.w3c.dom.Document.class);
 		            	<%
 	            	}else{
 	            		%>
-		                routerExchange.getOut().setBody(<%=conn.getName()%>.<%=label%>, <%=typeToGenerate%>.class);
+		                routerExchange_<%=cid%>.getOut().setBody(<%=conn.getName()%>.<%=label%>, <%=typeToGenerate%>.class);
 		            	<%
 	            	}
 	            }else if("Header".equals(type)){
 	            	%>
-	            	routerExchange.getOut().setHeader(<%=value%>, <%=conn.getName()%>.<%=label%>);
+	            	routerExchange_<%=cid%>.getOut().setHeader(<%=value%>, <%=conn.getName()%>.<%=label%>);
 	            	<%
 	            }else if("Property".equals(type)){
 	            	%>
-	            	routerExchange.setProperty(<%=value%>, <%=conn.getName()%>.<%=label%>);
+	            	routerExchange_<%=cid%>.setProperty(<%=value%>, <%=conn.getName()%>.<%=label%>);
 	            	<%
 	            }else if("System".equals(type)){
 	            	%>
@@ -97,7 +110,7 @@ if ((metadatas!=null)&&(metadatas.size()>0)) {
         } // 3
 %>
 			//set output as fault    
-	        routerExchange.getOut().setFault(true);
+	        routerExchange_<%=cid%>.getOut().setFault(true);
 <%
     } // 2
 } // 1
