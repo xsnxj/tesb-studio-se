@@ -2286,10 +2286,14 @@ if (isProvider) {
                     swagger2Feature_<%=cid%>.setScan(false);
 <%
                         String epForSwagger = ElementParameterParser.getValue(node, "__URL__");
+                        epForSwagger = epForSwagger.trim();
                         if (epForSwagger.startsWith("\"") && epForSwagger.endsWith("\"")) {
                             epForSwagger = epForSwagger.substring(1, epForSwagger.length() - 1);
                         }
                         epForSwagger = "/services" + epForSwagger;
+                        if (epForSwagger.endsWith("\"")) {
+                            epForSwagger = epForSwagger.substring(0, epForSwagger.length() - 1);
+                        }
 
                         String swaggerTitle = className + " REST Application";
                         String swaggerDescription = "";
