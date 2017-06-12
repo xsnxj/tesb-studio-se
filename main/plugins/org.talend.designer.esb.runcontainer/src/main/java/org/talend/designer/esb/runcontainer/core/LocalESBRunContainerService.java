@@ -12,8 +12,14 @@
 // ============================================================================
 package org.talend.designer.esb.runcontainer.core;
 
+import java.lang.reflect.Constructor;
+
 import javax.management.MBeanServerConnection;
 
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.Bundle;
+import org.talend.commons.exception.ExceptionHandler;
+import org.talend.core.PluginChecker;
 import org.talend.core.model.components.ComponentCategory;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.ProcessItem;
@@ -23,6 +29,7 @@ import org.talend.designer.esb.runcontainer.process.RunContainerProcessor;
 import org.talend.designer.esb.runcontainer.util.JMXUtil;
 import org.talend.designer.runprocess.IESBRunContainerService;
 import org.talend.designer.runprocess.java.JavaProcessor;
+import org.talend.designer.runprocess.maven.MavenJavaProcessor;
 import org.talend.repository.utils.EmfModelUtils;
 
 /**
@@ -57,7 +64,25 @@ public class LocalESBRunContainerService implements IESBRunContainerService {
     public JavaProcessor createJavaProcessor(IProcess process, Property property, boolean filenameFromLabel) {
         if (ESBRunContainerPlugin.getDefault().getPreferenceStore().getBoolean(RunContainerPreferenceInitializer.P_ESB_IN_OSGI)) {
             if (ComponentCategory.CATEGORY_4_CAMEL.getName().equals(process.getComponentsType())) {
-                return new RunContainerProcessor(process, property, filenameFromLabel);
+                if (process.getClass().getName().endsWith("MicroServiceProcess")) {
+
+                    Bundle bundle = Platform.getBundle(PluginChecker.EXPORT_ROUTE_PLUGIN_ID);
+                    if (bundle != null) {
+                        try {
+                            Class camelJavaProcessor = bundle
+                                    .loadClass("org.talend.resources.export.maven.runprocess.CamelJavaProcessor");
+                            Constructor constructor = camelJavaProcessor.getConstructor(IProcess.class, Property.class,
+                                    boolean.class);
+                            return (MavenJavaProcessor) constructor.newInstance(process, property, filenameFromLabel);
+                        } catch (Exception e) {
+                            ExceptionHandler.process(e);
+                        }
+                    } else {
+                        return new RunContainerProcessor(process, property, filenameFromLabel);
+                    }
+                } else {
+                    return new RunContainerProcessor(process, property, filenameFromLabel);
+                }
             } else if (ComponentCategory.CATEGORY_4_DI.getName().equals(process.getComponentsType())) {
                 String[] esbComponents = { "tESBProviderRequest", "tRESTClient", "tRESTRequest", "tRESTResponse",
                         "tESBConsumer", "tESBProviderFault", "tESBProviderRequest", "tESBProviderResponse" };
