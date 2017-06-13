@@ -102,8 +102,6 @@ public class RuntimeServerController {
     public void stopRuntimeServer() throws Exception {
         if (isRunning()) {
             JMXUtil.halt();
-            JMXUtil.closeJMXConnection();
-            // monitor.stop();
         } else {
             throw new IOException("Runtime Server is not Running");
         }
