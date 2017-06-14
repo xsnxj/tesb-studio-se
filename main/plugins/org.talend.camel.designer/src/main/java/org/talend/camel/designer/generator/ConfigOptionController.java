@@ -13,19 +13,27 @@
 package org.talend.camel.designer.generator;
 
 import java.beans.PropertyChangeEvent;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -45,11 +53,15 @@ import org.talend.core.model.general.INexusService;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.nexus.NexusServerBean;
 import org.talend.core.nexus.TalendLibsServerManager;
+import org.talend.core.runtime.maven.MavenArtifact;
 import org.talend.core.ui.CoreUIPlugin;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
+import org.talend.core.utils.TalendQuoteUtils;
 import org.talend.designer.core.ui.editor.properties.controllers.AbstractElementPropertySectionController;
+import org.talend.designer.maven.utils.PomUtil;
 import org.talend.repository.ui.wizards.exportjob.util.ExportJobUtil;
 import org.talend.utils.io.FilesUtils;
+import org.talend.utils.string.MD5;
 
 public class ConfigOptionController extends AbstractElementPropertySectionController {
     
@@ -118,15 +130,6 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
     public Control createControl(Composite subComposite, IElementParameter param, int numInRow, int nbInRow, int top,
             Control lastControl) {
 
-        Display.getDefault().asyncExec(new Runnable() {
-
-            @Override
-            public void run() {
-                refresh(param, true);
-            }
-
-        });
-
         Button theBtn = getWidgetFactory().createButton(subComposite, "", SWT.PUSH); //$NON-NLS-1$
         theBtn.setBackground(subComposite.getBackground());
         if (param.getDisplayName().equals("")) { //$NON-NLS-1$
@@ -168,6 +171,15 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
             theBtn.setVisible(false);
         }
 
+        Display.getDefault().asyncExec(new Runnable() {
+
+            @Override
+            public void run() {
+                refresh(param, true);
+            }
+
+        });
+
         return theBtn;
     }
 
@@ -191,11 +203,18 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
             if (nexusServerBean == null) {
                 tableViewerCreator.getTable().setVisible(false);
             } else {
+
+                TableViewerCreatorColumn blankCol = (TableViewerCreatorColumn) tableViewerCreator.getColumns().get(1);
+                blankCol.getTableColumn().setWidth(0);
+                blankCol.getTableColumn().setText("");
+                blankCol.getTableColumn().setResizable(false);
+
+                TableViewerCreatorColumn syncCheckboxCol = (TableViewerCreatorColumn) tableViewerCreator.getColumns().get(2);
+
+                System.out.println(syncCheckboxCol);
+
+                // refreshDynamicProperty();
                 tableViewerCreator.getTableViewer().refresh();
-                TableViewerCreatorColumn ttt = (TableViewerCreatorColumn) tableViewerCreator.getColumns().get(1);
-                ttt.getTableColumn().setWidth(0);
-                ttt.getTableColumn().setText("");
-                ttt.getTableColumn().setResizable(false);
             }
         	
         }
@@ -243,4 +262,118 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
         return groupId;
     }
 
+    public IRunnableWithProgress getCheckNexusRunnableWithProgress(List jars, List needUpdateJars) {
+        return new CheckNexusRunnableWithProgress(jars, needUpdateJars);
+    }
+
+    private class CheckNexusRunnableWithProgress implements IRunnableWithProgress {
+
+        private List jars;
+
+        private List needUpdateJars;
+
+        public CheckNexusRunnableWithProgress(List jars, List needUpdateJars) {
+            this.jars = jars;
+            this.needUpdateJars = needUpdateJars;
+        }
+
+        @Override
+        public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+
+            monitor.beginTask("Checking the nexus server...", false ? IProgressMonitor.UNKNOWN : jars.size());
+
+            for (int i = 0; i < jars.size(); i++) {
+                Map<String, String> jar = (Map) jars.get(i);
+
+                String currentNexusVersion = TalendQuoteUtils.removeQuotes(jar.get(JAR_NEXUS_VERSION));
+                String currentNexusPreVersion = jar.get(JAR_NEXUS_PRE_VERSION);
+                String jn = TalendQuoteUtils.removeQuotes(jar.get(JAR_NAME));
+                String a = jn.replaceFirst("[.][^.]+$", "");
+
+                if (StringUtils.isBlank(currentNexusVersion)) {
+                    continue;
+                }
+
+                try {
+
+                    monitor.subTask("Checking" + jn + "from " + nexusServerBean.getServer());
+                    Map metadata = service.getMavenMetadata(nexusServerBean, getGroupId(), a, currentNexusVersion);
+
+                    if (metadata.get("Versioning.Latest").equals(currentNexusVersion)) {
+
+                        MavenArtifact ma = new MavenArtifact();
+                        ma.setArtifactId(a);
+                        ma.setGroupId("org.talend.libraries");
+                        ma.setVersion(currentNexusVersion);
+                        ma.setType("jar");
+
+                        String p = PomUtil.getAbsArtifactPath(ma);
+
+                        monitor.subTask("Loading checksum file from " + nexusServerBean.getServer());
+
+                        InputStream is = service.getContentInputStream(nexusServerBean, "", getGroupId(), a,
+                                metadata.get("Versioning.Latest").toString(), "jar.md5");
+
+                        if (p != null) {
+
+                            if (is != null) {
+                                String remoteM2FileMD5 = "";
+                                try (BufferedReader buffer = new BufferedReader(new InputStreamReader(is))) {
+                                    remoteM2FileMD5 = buffer.lines().collect(Collectors.joining("\n"));
+                                }
+                                File f = new File(p);// local file
+
+                                if (f.exists()) {
+                                    String localM2FileMD5 = MD5.getMD5(FilesUtils.getBytes(f));
+
+                                    if (!StringUtils.equalsIgnoreCase(localM2FileMD5, remoteM2FileMD5)) {
+                                        Map needUpdateJar = getNeedUpdateJar("✘", jn, currentNexusVersion,
+                                                currentNexusPreVersion);
+                                        needUpdateJar.put("JAR_SYNC", true);
+                                        needUpdateJars.add(needUpdateJar);
+                                    } else {
+
+                                        Map needUpdateJar = getNeedUpdateJar("✔", jn, currentNexusVersion,
+                                                currentNexusPreVersion);
+                                        needUpdateJar.put("JAR_SYNC", "false");
+                                        needUpdateJars.add(needUpdateJar);
+                                    }
+
+                                } else {
+                                    Map needUpdateJar = getNeedUpdateJar("✘", jn, currentNexusVersion, currentNexusPreVersion);
+                                    needUpdateJar.put("JAR_SYNC", "true");
+                                    needUpdateJars.add(needUpdateJar);
+                                }
+                            }
+                        } else {
+                            if (is != null) {
+                                Map needUpdateJar = getNeedUpdateJar("✘", jn, currentNexusVersion, currentNexusPreVersion);
+                                needUpdateJar.put("JAR_SYNC", "true");
+                                needUpdateJars.add(needUpdateJar);
+                            }
+                        }
+
+                    } else {
+                        Map needUpdateJar = getNeedUpdateJar("✘", jn, currentNexusVersion,
+                                metadata.get("Versioning.Latest").toString());
+                        needUpdateJar.put("JAR_SYNC", "true");
+                        needUpdateJars.add(needUpdateJar);
+                    }
+
+                    monitor.subTask("Finished checking " + jn + " from " + nexusServerBean.getServer());
+                    monitor.worked(i);
+
+                } catch (Exception ee) {
+                    ee.printStackTrace();
+                }
+            }
+
+            monitor.done();
+            if (monitor.isCanceled())
+                throw new InterruptedException("The long running operation was cancelled");
+        }
+
+    }
+
 }
+

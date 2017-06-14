@@ -26,6 +26,7 @@ import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Button;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.commons.ui.swt.tableviewer.TableViewerCreator;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.general.ILibrariesService;
 import org.talend.core.model.process.IElementParameter;
@@ -68,7 +69,20 @@ public class SyncNexusButtonController extends ConfigOptionController {
                 }
             }
 
-            refresh(needUpdateList, true);
+            needUpdateJars.clear();
+
+            TableViewerCreator tableViewerCreator = (TableViewerCreator) hashCurControls.get("NEED_UPDATE_LIST");
+
+            tableViewerCreator.refresh();
+
+            try {
+                new ProgressMonitorDialog(button.getShell()).run(true, true,
+                        getCheckNexusRunnableWithProgress((List) elementParameterFromField.getValue(), needUpdateJars));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            tableViewerCreator.refresh();
 
             return null;
         }
@@ -104,11 +118,21 @@ public class SyncNexusButtonController extends ConfigOptionController {
                         ILibrariesService librariesService = (ILibrariesService) GlobalServiceRegister.getDefault()
                                 .getService(ILibrariesService.class);
 
+                        Map driverJar = null;
+
+                        for (Map dj : jars) {
+                            if (dj.get(JAR_NAME).equals(jn)) {
+                                driverJar = dj;
+                                break;
+                            }
+                        }
+
                         if (jar.get("JAR_STATUS").equals("✔")) {
                             MavenArtifact ma = new MavenArtifact();
                             ma.setArtifactId(a);
                             ma.setGroupId("org.talend.libraries");
-                            ma.setVersion(jnpv);
+                            String djv = TalendQuoteUtils.removeQuotes(driverJar.get("JAR_NEXUS_VERSION").toString());
+                            ma.setVersion(djv);
                             ma.setType("jar");
 
                             String p = PomUtil.getAbsArtifactPath(ma);
@@ -117,16 +141,10 @@ public class SyncNexusButtonController extends ConfigOptionController {
 
                                 if (f.exists()) {
                                     try {
-
                                         monitor.subTask("Installing local dependency ... " + jn);
                                         librariesService.deployLibrary(f.toURI().toURL(),
                                                 "mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
-                                        for (Map dj : jars) {
-                                            if (dj.get(JAR_NAME).equals(jn)) {
-                                                dj.put(JAR_NEXUS_VERSION, jnv);
-                                                break;
-                                            }
-                                        }
+                                        driverJar.put(JAR_NEXUS_VERSION, jnv);
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
