@@ -50,7 +50,6 @@ IMetadataTable metadata = null;
 if ((metadatas!=null)&&(metadatas.size()>0)) {
 	metadata = metadatas.get(0);    
 }
-System.setProperty("org.talend.studio.route.job.inloop", "true");
 %>
 
 	if ( initialize ) { // To divert the initializer thread

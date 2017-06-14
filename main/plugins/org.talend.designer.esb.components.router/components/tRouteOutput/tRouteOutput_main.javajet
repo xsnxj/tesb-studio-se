@@ -46,7 +46,8 @@ if ((metadatas!=null)&&(metadatas.size()>0)) {
 // tRouterOutput code
 
 <%
-if ( "true".equals(System.getProperty("org.talend.studio.route.job.inloop")) ) {
+String startNodeName = node.getDesignSubjobStartNode().getUniqueName();
+if ( startNodeName.startsWith("tRouteInput_") && startNodeName.endsWith("_Loop") ) {
 %>
 		org.apache.camel.Exchange routerExchange_<%=cid%> = routerExchange;
 <%
