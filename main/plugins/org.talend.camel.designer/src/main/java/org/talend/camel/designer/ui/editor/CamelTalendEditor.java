@@ -27,6 +27,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
 import org.talend.camel.designer.ui.SaveAsRoutesAction;
 import org.talend.camel.designer.ui.action.RoutePasteAction;
 import org.talend.core.GlobalServiceRegister;
@@ -125,6 +126,15 @@ public class CamelTalendEditor extends AbstractTalendEditor {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+
+                    Display.getDefault().asyncExec(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            getProcess().refreshProcess();
+                        }
+
+                    });
                 }
             }
         }
@@ -162,6 +172,10 @@ public class CamelTalendEditor extends AbstractTalendEditor {
                 String jnv = TalendQuoteUtils.removeQuotes(o.get("JAR_NEXUS_VERSION"));
                 String jv = String.valueOf(o.get("JAR_PATH"));
                 String a = jn.replaceFirst("[.][^.]+$", "");
+
+                if (StringUtils.isBlank(jnv)) {
+                    continue;
+                }
 
                 if (StringUtils.isNotBlank(jv)) {
                     File jarFile = new File(jv);
@@ -208,6 +222,7 @@ public class CamelTalendEditor extends AbstractTalendEditor {
                                 monitor.subTask("Installing local dependency ... " + jn);
 
                                 service.deployLibrary(tmp.toURI().toURL(), "mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
+
 
                             }
                         } catch (Exception e) {

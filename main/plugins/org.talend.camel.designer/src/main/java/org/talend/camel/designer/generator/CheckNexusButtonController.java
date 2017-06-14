@@ -67,6 +67,8 @@ public class CheckNexusButtonController extends ConfigOptionController {
 
             if (jars.size() > 0) {
 
+                // refreshDynamicProperty();
+
                 IElementParameter needUpdateList = elem.getElementParameter("NEED_UPDATE_LIST");
 
                 needUpdateJars = (List) needUpdateList.getValue();
@@ -129,11 +131,14 @@ public class CheckNexusButtonController extends ConfigOptionController {
                 String jn = TalendQuoteUtils.removeQuotes(jar.get(JAR_NAME));
                 String a = jn.replaceFirst("[.][^.]+$", "");
 
+                if (StringUtils.isBlank(currentNexusVersion)) {
+                    continue;
+                }
+
                 try {
 
                     monitor.subTask("Checking" + jn + "from " + nexusServerBean.getServer());
                     Map metadata = service.getMavenMetadata(nexusServerBean, getGroupId(), a, currentNexusVersion);
-
 
                     if (metadata.get("Versioning.Latest").equals(currentNexusVersion)) {
 
@@ -163,31 +168,39 @@ public class CheckNexusButtonController extends ConfigOptionController {
                                     String localM2FileMD5 = MD5.getMD5(FilesUtils.getBytes(f));
 
                                     if (!StringUtils.equalsIgnoreCase(localM2FileMD5, remoteM2FileMD5)) {
-                                        needUpdateJars
-                                                .add(getNeedUpdateJar("✘", jn, currentNexusVersion, currentNexusPreVersion));
+                                        Map needUpdateJar = getNeedUpdateJar("✘", jn, currentNexusVersion,
+                                                currentNexusPreVersion);
+                                        needUpdateJar.put("JAR_SYNC", true);
+                                        needUpdateJars.add(needUpdateJar);
                                     } else {
 
                                         Map needUpdateJar = getNeedUpdateJar("✔", jn, currentNexusVersion,
                                                 currentNexusPreVersion);
-
                                         needUpdateJar.put("JAR_SYNC", "false");
                                         needUpdateJars.add(needUpdateJar);
                                     }
 
                                 } else {
-                                    needUpdateJars.add(getNeedUpdateJar("✘", jn, currentNexusVersion, currentNexusPreVersion));
+                                    Map needUpdateJar = getNeedUpdateJar("✘", jn, currentNexusVersion, currentNexusPreVersion);
+                                    needUpdateJar.put("JAR_SYNC", "true");
+                                    needUpdateJars.add(needUpdateJar);
                                 }
                             }
                         } else {
                             if (is != null) {
-                                needUpdateJars.add(getNeedUpdateJar("✘", jn, currentNexusVersion, currentNexusPreVersion));
+                                Map needUpdateJar = getNeedUpdateJar("✘", jn, currentNexusVersion, currentNexusPreVersion);
+                                needUpdateJar.put("JAR_SYNC", "true");
+                                needUpdateJars.add(needUpdateJar);
                             }
                         }
 
                     } else {
-                        needUpdateJars.add(
-                                getNeedUpdateJar("✘", jn, currentNexusVersion, metadata.get("Versioning.Latest").toString()));
+                        Map needUpdateJar = getNeedUpdateJar("✘", jn, currentNexusVersion,
+                                metadata.get("Versioning.Latest").toString());
+                        needUpdateJar.put("JAR_SYNC", "true");
+                        needUpdateJars.add(needUpdateJar);
                     }
+
 
                     monitor.subTask("Finished checking " + jn + " from " + nexusServerBean.getServer());
                     monitor.worked(i);
@@ -196,6 +209,7 @@ public class CheckNexusButtonController extends ConfigOptionController {
                     ee.printStackTrace();
                 }
             }
+
             monitor.done();
             if (monitor.isCanceled())
                 throw new InterruptedException("The long running operation was cancelled");
