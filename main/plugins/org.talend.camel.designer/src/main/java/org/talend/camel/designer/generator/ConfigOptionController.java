@@ -209,10 +209,6 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
                 blankCol.getTableColumn().setText("");
                 blankCol.getTableColumn().setResizable(false);
 
-                TableViewerCreatorColumn syncCheckboxCol = (TableViewerCreatorColumn) tableViewerCreator.getColumns().get(2);
-
-                System.out.println(syncCheckboxCol);
-
                 // refreshDynamicProperty();
                 tableViewerCreator.getTableViewer().refresh();
             }

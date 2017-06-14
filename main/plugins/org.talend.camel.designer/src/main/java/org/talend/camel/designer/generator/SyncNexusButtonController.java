@@ -25,11 +25,13 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.ui.swt.tableviewer.TableViewerCreator;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.general.ILibrariesService;
 import org.talend.core.model.process.IElementParameter;
+import org.talend.core.model.process.IProcess2;
 import org.talend.core.runtime.maven.MavenArtifact;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
 import org.talend.core.utils.TalendQuoteUtils;
@@ -176,6 +178,15 @@ public class SyncNexusButtonController extends ConfigOptionController {
                     }
                 }
             }
+
+            Display.getDefault().asyncExec(new Runnable() {
+
+                @Override
+                public void run() {
+                    ((IProcess2) getProcess(elem, part)).refreshProcess();
+                }
+
+            });
 
             monitor.done();
             if (monitor.isCanceled())
