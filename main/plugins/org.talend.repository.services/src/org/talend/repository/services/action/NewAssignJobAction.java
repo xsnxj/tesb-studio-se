@@ -9,6 +9,7 @@ import org.talend.repository.services.Messages;
 import org.talend.repository.services.ui.assign.AssignJobWizard;
 import org.talend.repository.services.ui.assign.AssignJobWizardDialog;
 import org.talend.repository.ui.actions.AContextualAction;
+import org.talend.core.model.repository.RepositoryManager;
 
 public class NewAssignJobAction extends AContextualAction {
 
@@ -35,10 +36,13 @@ public class NewAssignJobAction extends AContextualAction {
 	protected void doRun() {
 
 		AssignJobWizard assignJobWizard = new AssignJobWizard(assignJobAction, newJobAction);
-		
+
 		WizardDialog wizardDialog = new AssignJobWizardDialog(getWorkbench().getActiveWorkbenchWindow().getShell(), assignJobWizard);
 		wizardDialog.open();
-		
+
+        if (getNode().getParent() != null && getNode().getParent().getParent() != null) {
+            RepositoryManager.getRepositoryView().refresh(getNode().getParent().getParent());
+        }
 	}
 
 }
