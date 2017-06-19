@@ -3075,6 +3075,16 @@ if (isProvider) {
 <%
                 }
             }
+            if (!useRegistry && !isProvider) {
+%>			
+                // Avoid using Service Registry for Service Consumer (TESB-19181)
+                if (<%=endpointVar%>.getProperties() == null) {
+                        <%=endpointVar%>.setProperties(new java.util.HashMap<String, Object>());
+                }
+                <%=endpointVar%>.getProperties().put("use.service.registry", "false");
+<%
+            } 
+			
     }else if("cFtp".equals(nodeComponentName)){
             String cid = node.getUniqueName();
             String passwordFieldName = "__PASSWORD__";
