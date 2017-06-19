@@ -350,13 +350,15 @@ if (inputConn != null) {
 
                             // use Service Activity Monitor
                             put("useServiceActivityMonitor", <%=useSAM%>);
+			    
+			    // use Service Registry
+			    put("useServiceRegistry", <%=useSR%>);
 
                             boolean use_auth_<%=cid%> = <%=useAuth%>;
                             if (use_auth_<%=cid%> || <%=useSR%>) {
                             <% passwordFieldName = "__AUTH_PASSWORD__"; %>
                             <%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
                             if (<%=useSR%>) {
-                                put("useServiceRegistry", <%=useSR%>);
                                 put("username", <%=username%>);
                                 put("password", decryptedPassword_<%=cid%>);
                                 <% if (!authorizationRole.isEmpty() && !"\"\"".equals(authorizationRole)) { %>
