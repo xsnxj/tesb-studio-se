@@ -504,6 +504,19 @@
                 <directory>src/main/filtered-resources</directory>
                 <filtering>true</filtering>
             </resource>
+            <resource>
+                <directory>${project.basedir}</directory>
+                <includes>
+                    <include>plugin.xml</include>
+                    <include>components/**/*.xml</include>
+                </includes>
+                <filtering>true</filtering>
+            </resource>
+            <resource>
+                <directory>src/main/filtered-resources</directory>
+                <filtering>true</filtering>
+                <targetPath>${basedir}</targetPath>
+            </resource>
         </resources>
         <plugins>
             <plugin>
