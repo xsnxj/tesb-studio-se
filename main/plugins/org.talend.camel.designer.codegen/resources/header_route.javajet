@@ -3359,7 +3359,7 @@ if (isProvider) {
             contextParams = (List<Map<String,String>>)ElementParameterParser.getObjectValue(node, "__EXTERNAL_JAR_CONTEXTPARAMS__");
 %>
         org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
-            (org.talend.camel.TalendEndpoint) endpoint("talend:" + <%=typeName%> + "?context=" + <%=context%> + "&propagateHeader=<%=propagateHeader%>&sticky=<%=stickyJob%>");
+            (org.talend.camel.TalendEndpoint) endpoint("talend:" + <%=typeName%> + "?context=" + <%=context%> + "&propagateHeader=<%=propagateHeader%>&sticky=<%=stickyJob%>&componentId=<%=cid%>");
 <%
         }else{
             String typeName = "";
@@ -3400,12 +3400,12 @@ if (isProvider) {
                 String executionContextVariable = "contextStr";
 %>
             org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
-                (org.talend.camel.TalendEndpoint) endpoint("talend:<%=ownerName%>/<%=typeName%>?context=" + <%=executionContextVariable%> + "&propagateHeader=<%=propagateHeader%>&sticky=<%=stickyJob%>");
+                (org.talend.camel.TalendEndpoint) endpoint("talend:<%=ownerName%>/<%=typeName%>?context=" + <%=executionContextVariable%> + "&propagateHeader=<%=propagateHeader%>&sticky=<%=stickyJob%>&componentId=<%=cid%>");
 <%
             } else {
 %>
             org.talend.camel.TalendEndpoint endpoint_<%=cid%> =
-                (org.talend.camel.TalendEndpoint) endpoint("talend:<%=ownerName%>/<%=typeName%>?context=<%=context%>&propagateHeader=<%=propagateHeader%>&sticky=<%=stickyJob%>");
+                (org.talend.camel.TalendEndpoint) endpoint("talend:<%=ownerName%>/<%=typeName%>?context=<%=context%>&propagateHeader=<%=propagateHeader%>&sticky=<%=stickyJob%>&componentId=<%=cid%>");
 <%
             }
         }
