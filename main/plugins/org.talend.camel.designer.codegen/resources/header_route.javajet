@@ -2973,6 +2973,10 @@ if (isProvider) {
                 }
 %>
                         );
+                        
+                        <%if("true".equals(ElementParameterParser.getValue(node, "__ENABLE_CXF_MESSAGE_GZIP__"))){%>
+                        		<%=endpointVar%>.getFeatures().add(new org.apache.cxf.transport.common.gzip.GZIPFeature());
+                        <%}%>
 <%
 
             if((isUsePropagateSamlUP || isUsePropagateSamlAP) && !isProvider){
