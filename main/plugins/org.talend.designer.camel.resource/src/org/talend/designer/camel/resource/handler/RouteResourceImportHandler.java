@@ -12,6 +12,8 @@
 // ============================================================================
 package org.talend.designer.camel.resource.handler;
 
+import java.io.File;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.talend.core.model.properties.Property;
@@ -51,13 +53,21 @@ public class RouteResourceImportHandler extends ImportRepTypeHandler {
     protected IPath getReferenceItemPath(IPath importItemPath, ReferenceFileItem rfItem) {
         // TESB-16314 Log error in case of the import file does not exists.
         IPath filePath = super.getReferenceItemPath(importItemPath, rfItem);
-        if (!filePath.toFile().exists()) {
+        File f = filePath.toFile();
+        if (!f.exists()) {
+            if (!f.getParentFile().exists()) {
+                // supposedly not in a regular file system
+                log.info("File status of " + filePath.lastSegment() +
+                        " cannot be verified, assuming import from ZIP archive."); //$NON-NLS-1$
+                return filePath;
+            }
             String portableString = importItemPath.toPortableString();
             String substring = portableString.substring(0, portableString.lastIndexOf('_'));
-            filePath = new Path(substring);
-            if (!filePath.toFile().exists()) {
-                log.error("File with the name " + filePath.lastSegment() + " does not exits."); //$NON-NLS-1$
+            IPath altFilePath = new Path(substring);
+            if (altFilePath.toFile().exists()) {
+                return altFilePath;
             }
+            log.error("File with the name " + filePath.lastSegment() + " does not exits."); //$NON-NLS-2$
         }
         return filePath;
     }
