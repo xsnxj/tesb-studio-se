@@ -242,10 +242,32 @@ if (inputConn != null) {
 
                 <% if (useSl) { %>
                     genericConsumer_<%=cid%>.setAddress("locator://");
-                    genericConsumer_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
-                    org.talend.esb.servicelocator.cxf.LocatorFeature featureSL_<%=cid%> = new org.talend.esb.servicelocator.cxf.LocatorFeature();
+					org.springframework.context.support.ClassPathXmlApplicationContext context_<%=cid%> = new org.springframework.context.support.ClassPathXmlApplicationContext(new String[] { "META-INF/tesb/locator/beans.xml" });
+					org.talend.esb.servicelocator.cxf.LocatorFeature featureSL_<%=cid%> = (org.talend.esb.servicelocator.cxf.LocatorFeature) context_<%=cid%>.getBean("locatorFeature");
+
                     if (null != slCustomProps_<%=cid%> && !slCustomProps_<%=cid%>.isEmpty()) {
-                        featureSL_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
+                        //featureSL_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
+                        ESBConsumer consumer_<%=cid%> = registry.createConsumer(new ESBEndpointInfo() {
+
+						    private java.util.Map<String, Object> props = new java.util.HashMap<String, Object>(){{
+						        put("locator.properties", slCustomProps_<%=cid%>);
+						    }};
+
+							@Override
+							public String getEndpointKey() {
+								return "cxf";
+							}
+
+							@Override
+							public String getEndpointUri() {
+								return "<%=projectName%>_<%=processName%>_<%=cid%>";
+							}
+
+							@Override
+							public java.util.Map<String, Object> getEndpointProperties() {
+								return props;
+							}
+                        });
                     }
                     esbFeatures_<%=cid%>.add(featureSL_<%=cid%>);
                 <% } %>

@@ -363,6 +363,16 @@
 			</exclusion>
 		</exclusions>
 	</dependency>
+	<dependency>
+		<groupId>org.ops4j.pax.cdi</groupId>
+		<artifactId>pax-cdi-api</artifactId>
+		<version>1.0.0.RC1</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.servicemix.bundles</groupId>
+		<artifactId>org.apache.servicemix.bundles.javax-inject</artifactId>
+		<version>1_2</version>
+	</dependency>
 	<!-- SAM -->
 	<dependency>
 		<groupId>org.talend.esb</groupId>

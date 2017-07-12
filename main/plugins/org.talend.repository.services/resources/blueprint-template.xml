@@ -64,23 +64,29 @@
 
             <entry key="use.service.registry" value="${useServiceRegistry}" />
         </jaxws:properties>
+        
+#if ($useSL)
+	<reference interface="org.talend.esb.servicelocator.cxf.LocatorFeature" id="locatorFeature" />
+	#if (!$slCustomProps.isEmpty())
+	<jaxws:properties>
+	    <entry key="esb.locator.properties">
+	        <map>
+	        	#foreach ($entry in $slCustomProps.entrySet())
+	            <entry key="${entry.key}" value="${entry.value}" />
+	            #end ## ($entry in $slCustomProps.entrySet())
+	        </map>
+	    </entry>
+	</jaxws:properties>
+	#end ## (!$slCustomProps.isEmpty())
+#end ## ($useSL)
+
         <jaxws:features>
+#if ($useSL)
+	<ref bean="locatorFeature" />
+#end ## ($useSL)
 #if ($useSAM)
             <ref component-id="eventFeature" />
 #end ## ($useSAM)
-#if ($useSL)
-            <bean class="org.talend.esb.servicelocator.cxf.LocatorFeature">
-#if (!$slCustomProps.isEmpty())
-                <property name="availableEndpointProperties">
-                    <map>
-#foreach ($entry in $slCustomProps.entrySet())
-                        <entry key="${entry.key}" value="${entry.value}" />
-#end ## ($entry in $slCustomProps.entrySet())
-                    </map>
-                </property>
-#end ## (!$slCustomProps.isEmpty())
-            </bean>
-#end ## ($useSL)
 #if ($logMessages)
             <bean class="org.apache.cxf.feature.LoggingFeature" />
 #end ## ($logMessages)

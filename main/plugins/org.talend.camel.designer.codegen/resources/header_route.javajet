@@ -2419,17 +2419,8 @@ if (isProvider) {
                     factory_<%=cid%>.setServiceName(new javax.xml.namespace.QName(
                         <%=ElementParameterParser.getValue(node, "__SERVICE_NAMESPACE__")%>,
                         <%=ElementParameterParser.getValue(node, "__SERVICE_NAME__")%>));
-                    <%if(exportTypeSpringBoot){%>
-                        <%if(isProvider){%>
-                            factory_<%=cid%>.setBus(springBus());
-                        <% }else {%>
-                            factory_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
-                        <%}%>
-                    <%}else{%>
-                        if (!inOSGi) {
-                            factory_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
-                        }
-                    <%}%>
+                        
+						org.springframework.context.support.ClassPathXmlApplicationContext context_<%=cid%> = new org.springframework.context.support.ClassPathXmlApplicationContext(new String[] { "META-INF/tesb/locator/beans.xml" });
 
 <%
                         if (!isProvider) {
@@ -2438,7 +2429,7 @@ if (isProvider) {
 <%
                         }
 %>
-                        org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature_<%=cid%> = new org.talend.esb.servicelocator.cxf.LocatorFeature();
+                        org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature_<%=cid%> = (org.talend.esb.servicelocator.cxf.LocatorFeature) context_<%=cid%>.getBean("locatorFeature");
 <%
                         List<Map<String, String>> customProperties = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node, "__SL_META_DATA__");
                         if (!customProperties.isEmpty()) {
@@ -3014,7 +3005,6 @@ if (isProvider) {
                 List<Map<String, String>> customProperties = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node, "__SL_META_DATA__");
 %>
                 // Add Service Locator Service to <%=endpointVar%>
-                org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature_<%=cid%> = new org.talend.esb.servicelocator.cxf.LocatorFeature();
                 <%if(exportTypeSpringBoot){%>
                     <%if(isProvider){%>
                         <%=endpointVar%>.setBus(springBus());
@@ -3022,23 +3012,9 @@ if (isProvider) {
                         <%=endpointVar%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
                     <%}%>
                 <%}else{%>
-                    if (!inOSGi) {
-                        <%=endpointVar%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
-                    }
+                    org.springframework.context.support.ClassPathXmlApplicationContext context_<%=cid%> = new org.springframework.context.support.ClassPathXmlApplicationContext(new String[] { "META-INF/tesb/locator/beans.xml" });
+					org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature_<%=cid%> = (org.talend.esb.servicelocator.cxf.LocatorFeature) context_<%=cid%>.getBean("locatorFeature");
                 <%}%>
-
-
-                <% if (!customProperties.isEmpty()) { %>
-                    java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
-                    <% for (Map<String, String> custProp : customProperties) { %>
-                        slCustomProps_<%=cid%>.put(<%=custProp.get("NAME")%>, <%=custProp.get("VALUE")%>);
-                    <% } %>
-                    <% if (isProvider) { %>
-                        locatorFeature_<%=cid%>.setAvailableEndpointProperties(slCustomProps_<%=cid%>);
-                    <% } else { %>
-                        locatorFeature_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
-                    <% } %>
-                <% } %>
 
                 <%=endpointVar%>.getFeatures().add(locatorFeature_<%=cid%>);
 <%
