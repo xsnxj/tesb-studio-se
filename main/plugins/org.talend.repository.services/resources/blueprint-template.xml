@@ -5,6 +5,10 @@
     <reference id="eventFeature" interface="org.talend.esb.sam.agent.feature.EventFeature" />
 #end ## ($useSAM)
 
+#if ($useSL)
+	<reference interface="org.talend.esb.servicelocator.cxf.LocatorFeature" id="locatorFeature" />
+#end ## ($useSL)
+
 #if ($useEncryption || $useServiceRegistry)
     <reference id="xkmsCryptoProviderFactory" interface="org.apache.cxf.xkms.crypto.CryptoProviderFactory" />
     <bean id="cryptoProvider" factory-ref="xkmsCryptoProviderFactory" factory-method="create" />
@@ -63,26 +67,22 @@
 #end ## ($useSecuritySAML || $useServiceRegistry)
 
             <entry key="use.service.registry" value="${useServiceRegistry}" />
-        </jaxws:properties>
-        
 #if ($useSL)
-	<reference interface="org.talend.esb.servicelocator.cxf.LocatorFeature" id="locatorFeature" />
 	#if (!$slCustomProps.isEmpty())
-	<jaxws:properties>
-	    <entry key="esb.locator.properties">
-	        <map>
-	        	#foreach ($entry in $slCustomProps.entrySet())
-	            <entry key="${entry.key}" value="${entry.value}" />
-	            #end ## ($entry in $slCustomProps.entrySet())
-	        </map>
-	    </entry>
-	</jaxws:properties>
+		    <entry key="esb.locator.properties">
+		        <map>
+		        	#foreach ($entry in $slCustomProps.entrySet())
+		            <entry key="${entry.key}" value="${entry.value}" />
+		            #end ## ($entry in $slCustomProps.entrySet())
+		        </map>
+		    </entry>
 	#end ## (!$slCustomProps.isEmpty())
 #end ## ($useSL)
+        </jaxws:properties>
 
         <jaxws:features>
 #if ($useSL)
-	<ref bean="locatorFeature" />
+	<ref component-id="locatorFeature" />
 #end ## ($useSL)
 #if ($useSAM)
             <ref component-id="eventFeature" />
