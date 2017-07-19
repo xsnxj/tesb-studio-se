@@ -177,7 +177,7 @@
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-all</artifactId>
-            <version>${activemq.version}</version>
+            <version>5.14.1.tesb1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
