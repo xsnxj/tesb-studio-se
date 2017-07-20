@@ -140,19 +140,29 @@ try {
 			<%=paramsHelper.getStringParam("__SERVICE_NAMESPACE__")%>,
 			<%=paramsHelper.getStringParam("__SERVICE_NAME__")%>));
 
-		if (!inOSGi) {
-			factoryBean_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
-		}
-
-		org.talend.esb.servicelocator.cxf.LocatorFeature feature_<%=cid%> =
-				new org.talend.esb.servicelocator.cxf.LocatorFeature();
-		<% List<Entry<String, String>> customProperties = paramsHelper.getPropertiesPram("__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
+		//if (!inOSGi) {
+		//	factoryBean_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
+		//}
+		
+		org.talend.esb.servicelocator.cxf.LocatorFeature feature_<%=cid%> = null;
+		
+		if(!inOSGi){
+	    	org.springframework.context.support.ClassPathXmlApplicationContext context_ = new org.springframework.context.support.ClassPathXmlApplicationContext(new String[] { "META-INF/tesb/locator/beans.xml" });
+	    	feature_<%=cid%> = (org.talend.esb.servicelocator.cxf.LocatorFeature) context_.getBean(org.talend.esb.servicelocator.cxf.LocatorFeature.class);
+        }else{  
+            org.osgi.framework.BundleContext context = factoryBean_<%=cid%>.getBus().getExtension(org.osgi.framework.BundleContext.class);
+			org.osgi.framework.ServiceReference<org.talend.esb.servicelocator.cxf.LocatorFeature> serviceRef = (org.osgi.framework.ServiceReference<org.talend.esb.servicelocator.cxf.LocatorFeature>) context.getServiceReference(org.talend.esb.servicelocator.cxf.LocatorFeature.class.getName());
+			feature_<%=cid%> = context.getService(serviceRef);
+        }
+		
+		<% List<Map<String, String>> customProperties = (List<Map<String,String>>) ElementParameterParser.getObjectValue(node,"__SERVICE_LOCATOR_CUSTOM_PROPERTIES__");
 		if (!customProperties.isEmpty()) { %>
-				final java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
-			<% for (Entry<String,String> prop : customProperties) { %>
-				slCustomProps_<%=cid%>.put(<%=prop.getKey()%>, <%=prop.getValue()%>);
+			<% for (Map<String,String> prop : customProperties) { %>
+			        if(factoryBean_<%=cid%>.getProperties() == null){
+                		factoryBean_<%=cid%>.setProperties(new java.util.HashMap<String, Object>());
+                	}
+                    factoryBean_<%=cid%>.getProperties().put(<%=prop.get("PROP_NAME")%>, <%=prop.get("PROP_VALUE")%>);
 			<% } %>
-				feature_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
 		<% } %>
 
 		features_<%=cid%>.add(feature_<%=cid%>);

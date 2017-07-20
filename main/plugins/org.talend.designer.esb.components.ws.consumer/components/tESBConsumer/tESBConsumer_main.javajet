@@ -221,6 +221,7 @@ if (inputConn != null) {
                }
             }
             <%}%>
+            
             if (null == registry) {
                 GenericConsumer genericConsumer_<%=cid%> = new GenericConsumer();
                 genericConsumer_<%=cid%>.setServiceQName(serviceName_<%=cid%>);
@@ -242,33 +243,11 @@ if (inputConn != null) {
 
                 <% if (useSl) { %>
                     genericConsumer_<%=cid%>.setAddress("locator://");
-					org.springframework.context.support.ClassPathXmlApplicationContext context_<%=cid%> = new org.springframework.context.support.ClassPathXmlApplicationContext(new String[] { "META-INF/tesb/locator/beans.xml" });
-					org.talend.esb.servicelocator.cxf.LocatorFeature featureSL_<%=cid%> = (org.talend.esb.servicelocator.cxf.LocatorFeature) context_<%=cid%>.getBean("locatorFeature");
+					org.talend.esb.servicelocator.cxf.LocatorFeature featureSL_<%=cid%> = null;
 
-                    if (null != slCustomProps_<%=cid%> && !slCustomProps_<%=cid%>.isEmpty()) {
-                        //featureSL_<%=cid%>.setRequiredEndpointProperties(slCustomProps_<%=cid%>);
-                        ESBConsumer consumer_<%=cid%> = registry.createConsumer(new ESBEndpointInfo() {
-
-						    private java.util.Map<String, Object> props = new java.util.HashMap<String, Object>(){{
-						        put("locator.properties", slCustomProps_<%=cid%>);
-						    }};
-
-							@Override
-							public String getEndpointKey() {
-								return "cxf";
-							}
-
-							@Override
-							public String getEndpointUri() {
-								return "<%=projectName%>_<%=processName%>_<%=cid%>";
-							}
-
-							@Override
-							public java.util.Map<String, Object> getEndpointProperties() {
-								return props;
-							}
-                        });
-                    }
+				    org.springframework.context.support.ClassPathXmlApplicationContext context_ = new org.springframework.context.support.ClassPathXmlApplicationContext(new String[] { "META-INF/tesb/locator/beans.xml" });
+				    featureSL_<%=cid%> = (org.talend.esb.servicelocator.cxf.LocatorFeature) context_.getBean(org.talend.esb.servicelocator.cxf.LocatorFeature.class);
+			        
                     esbFeatures_<%=cid%>.add(featureSL_<%=cid%>);
                 <% } %>
                 <% if (useSAM) { %>
