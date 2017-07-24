@@ -1079,11 +1079,22 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
 
     if (hasSam) {
 %>
+  
     //ESB Service Activity Monitor Feature
-    private org.apache.cxf.feature.Feature eventFeature;
-
-    public void setEventFeature(org.apache.cxf.feature.Feature eventFeature) {
-        this.eventFeature = eventFeature;
+    
+    org.talend.esb.sam.agent.feature.EventFeature eventFeature;
+    
+    public org.talend.esb.sam.agent.feature.EventFeature getEventFeature(org.apache.cxf.Bus bus) {
+    	org.talend.esb.sam.agent.feature.EventFeature eventFeature_;
+    	if(inOSGi){
+			org.osgi.framework.BundleContext context = bus.getExtension(org.osgi.framework.BundleContext.class);
+			org.osgi.framework.ServiceReference<org.talend.esb.sam.agent.feature.EventFeature> serviceRef = (org.osgi.framework.ServiceReference<org.talend.esb.sam.agent.feature.EventFeature>) context.getServiceReference(org.talend.esb.sam.agent.feature.EventFeature.class.getName());
+			eventFeature_ = (org.talend.esb.sam.agent.feature.EventFeature) context.getService(serviceRef);
+		}else{
+			eventFeature_ = new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
+		}
+		
+		return eventFeature_;
     }
 
 <%
@@ -2497,18 +2508,15 @@ if (isProvider) {
                 }
 
                 if ("true".equals(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
+                
 %>
+					
+					eventFeature = getEventFeature(factory_<%=cid%>.getBus());
+					
                     if (eventFeature != null) {
                         factory_<%=cid%>.getFeatures().add(eventFeature);
                     }
 <%
-                    if(exportTypeSpringBoot){
-%>
-                        else {
-                            factory_<%=cid%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
-                        }
-<%
-                    }
                 }
 
                 if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_CORRELATION__"))) {
@@ -3089,17 +3097,14 @@ if (isProvider) {
             if ("true".equals(useSAM) && !"RAW".equals(formatType) && !useRegistry) {
 %>
                 // Add Service Activity Monitor Service to <%=endpointVar%>
+                
+                eventFeature = getEventFeature(<%=endpointVar%>.getBus());
+                
                 if (eventFeature != null) {
                     <%=endpointVar%>.getFeatures().add(eventFeature);
                 }
+                
 <%
-                if(exportTypeSpringBoot){
-%>
-                    else {
-                        <%=endpointVar%>.getFeatures().add(new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class));
-                    }
-<%
-                }
             }
             if (!useRegistry && !isProvider) {
 %>			
