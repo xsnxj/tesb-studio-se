@@ -1737,15 +1737,16 @@ private void addRegistry(org.apache.camel.component.cxf.CxfEndpoint cxfEndpoint,
                 public void clientCreated(org.apache.cxf.endpoint.Client client) {
                     String address = client.getEndpoint().getEndpointInfo().getAddress();
                     if ((address != null) && address.startsWith("locator://")) {
-                    	org.springframework.context.support.ClassPathXmlApplicationContext context_ = new org.springframework.context.support.ClassPathXmlApplicationContext(new String[] { "META-INF/tesb/locator/beans.xml" }){
-                    	                    				protected void initBeanDefinitionReader(XmlBeanDefinitionReader reader)
-									    {
-									        super.initBeanDefinitionReader(reader);
-									        reader.setValidationMode(XmlBeanDefinitionReader.VALIDATION_NONE);
-									        reader.setBeanClassLoader(getClassLoader());
-									    }
-                    	};
-                        ((org.talend.esb.servicelocator.cxf.LocatorFeature) context_.getBean(org.talend.esb.servicelocator.cxf.LocatorFeature.class)).initialize(client, client.getBus());
+				    	org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature_ = null;
+				        if(inOSGi){
+				        	org.osgi.framework.BundleContext context = bus.getExtension(org.osgi.framework.BundleContext.class);
+							org.osgi.framework.ServiceReference<org.talend.esb.servicelocator.cxf.LocatorFeature> serviceRef = (org.osgi.framework.ServiceReference<org.talend.esb.servicelocator.cxf.LocatorFeature>) context.getServiceReference(org.talend.esb.servicelocator.cxf.LocatorFeature.class.getName());
+							locatorFeature_ = context.getService(serviceRef);
+				        }else{  
+					    	org.springframework.context.support.ClassPathXmlApplicationContext context_ = new org.springframework.context.support.ClassPathXmlApplicationContext(new String[] { "META-INF/tesb/locator/beans.xml" });
+					    	locatorFeature_ = (org.talend.esb.servicelocator.cxf.LocatorFeature) context_.getBean(org.talend.esb.servicelocator.cxf.LocatorFeature.class);
+				        }
+                        locatorFeature_.initialize(client, client.getBus());
                     }
                 }
                 public void clientDestroyed(org.apache.cxf.endpoint.Client client) {
