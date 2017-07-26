@@ -734,6 +734,9 @@
             <library id="sam-agent" />
             <library id="sam-common" />
             <library id="commons-lang" />
+            <group id="osgi" />
+            <library id="pax-cdi-api" />
+            <library id="org.apache.servicemix.bundles.javax-inject" />
         </libraryNeededGroup>
 
         <libraryNeeded context="plugin:org.talend.libraries.esb"
