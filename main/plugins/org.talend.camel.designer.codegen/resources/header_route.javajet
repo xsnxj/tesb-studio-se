@@ -158,6 +158,8 @@ package <%= packageName %>;
  
  <%
         boolean exportTypeSpringBoot = false;
+        
+        boolean hasCSoapOrCRest = false;
         boolean isRoutelet = false;
         try{
             isRoutelet = (((org.talend.core.model.properties.Property)process.getClass().getMethod("getProperty", null).invoke(process, null)).getItem().getClass().getName().endsWith("RouteletProcessItemImpl"));
@@ -168,9 +170,19 @@ package <%= packageName %>;
         if(process.getClass().getName().endsWith("MicroServiceProcess")){
             exportTypeSpringBoot = true;
         }
+        
+        for (INode node : graphicalNodes) {
+        	if ("cSOAP".equals(node.getComponent().getName()) || "cREST".equals(node.getComponent().getName())) {
+        		hasCSoapOrCRest = true;
+        	}
+        }
 
         if(exportTypeSpringBoot){
  %>
+ 
+
+
+<% if(hasCSoapOrCRest) { %>
 
 /**
  * Applies configuration properties to a HTTPConduit
@@ -472,6 +484,8 @@ class HttpConduitConfigApplier {
         }
     }
 }
+
+<% } %>
  
 @org.springframework.boot.autoconfigure.SpringBootApplication
 @org.springframework.boot.context.properties.EnableConfigurationProperties(<%=className%>.ContextProperties.class)
@@ -1341,8 +1355,8 @@ static class CxfPayloadProvider implements javax.ws.rs.ext.MessageBodyWriter<org
             } if(hasCXF && exportTypeSpringBoot){
 %>
             @org.springframework.context.annotation.Bean
-            public org.springframework.boot.context.embedded.ServletRegistrationBean servletRegistrationBean(org.springframework.context.ApplicationContext context) {
-                return new org.springframework.boot.context.embedded.ServletRegistrationBean(new org.apache.cxf.transport.servlet.CXFServlet(), "/services/*");
+            public org.springframework.boot.web.servlet.ServletRegistrationBean servletRegistrationBean(org.springframework.context.ApplicationContext context) {
+                return new org.springframework.boot.web.servlet.ServletRegistrationBean(new org.apache.cxf.transport.servlet.CXFServlet(), "/services/*");
             }
             @org.springframework.context.annotation.Bean(name = "cxf")
             public org.apache.cxf.bus.spring.SpringBus springBus() {
