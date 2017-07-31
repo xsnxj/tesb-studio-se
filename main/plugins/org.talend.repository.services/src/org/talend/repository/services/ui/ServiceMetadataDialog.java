@@ -136,7 +136,6 @@ public class ServiceMetadataDialog extends HelpAvailableDialog {
             	}
             });
 
-        }
         final Button tmpSchemaValidationCheck = schemaValidationCheck;
         
         final Button correlationCheck = new Button(samSlGroup, SWT.CHECK);
