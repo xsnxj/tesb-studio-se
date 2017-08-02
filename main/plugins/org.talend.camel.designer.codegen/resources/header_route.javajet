@@ -2497,19 +2497,25 @@ if (isProvider) {
 					if (!customProperties.isEmpty()) 
 					{ 
 %>
+					java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
+					
                     <% for (Map<String, String> custProp : customProperties) { %>
-                        <%if(!isProvider){%>
-                        	if(cf_<%=cid%>.getProperties() == null){
-                        		cf_<%=cid%>.setProperties(new java.util.HashMap<String, Object>());
-                        	}
-                        	cf_<%=cid%>.getProperties().put(<%=custProp.get("NAME")%>, <%=custProp.get("VALUE")%>);
-                        <%}else{%>
-                        	if(sf_<%=cid%>.getProperties() == null){
-                        		sf_<%=cid%>.setProperties(new java.util.HashMap<String, Object>());
-                        	}
-                        	sf_<%=cid%>.getProperties().put(<%=custProp.get("NAME")%>, <%=custProp.get("VALUE")%>);
-                        <%}%>
+                    	slCustomProps_<%=cid%>.put(<%=custProp.get("NAME")%>, <%=custProp.get("VALUE")%>);
                     <% } %>
+					
+					<%if(!isProvider){%>
+                    	if(cf_<%=cid%>.getProperties() == null){
+                    		cf_<%=cid%>.setProperties(new java.util.HashMap<String, Object>());
+                    	}
+
+						cf_<%=cid%>.getProperties().put(org.talend.esb.servicelocator.cxf.LocatorFeature.LOCATOR_PROPERTIES, slCustomProps_<%=cid%>);
+                    <%}else{%>
+                    	if(sf_<%=cid%>.getProperties() == null){
+                    		sf_<%=cid%>.setProperties(new java.util.HashMap<String, Object>());
+                    	}
+                    	
+                    	sf_<%=cid%>.getProperties().put(org.talend.esb.servicelocator.cxf.LocatorFeature.LOCATOR_PROPERTIES, slCustomProps_<%=cid%>);
+                    <%}%>
 <% 
 					} 
 %>
@@ -3077,12 +3083,17 @@ if (isProvider) {
                 org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature_<%=cid%> = getLocatorFeature(<%=endpointVar%>.getBus());
                 
                 <% if (!customProperties.isEmpty()) { %>
-                    <% for (Map<String, String> custProp : customProperties) { %>
-                	    if(<%=endpointVar%>.getProperties() == null){
-                    		<%=endpointVar%>.setProperties(new java.util.HashMap<String, Object>());
-                    	}
-                        <%=endpointVar%>.getProperties().put(<%=custProp.get("NAME")%>, <%=custProp.get("VALUE")%>);
-                    <% } %>
+	                java.util.Map<String, String> slCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
+	                <% for (Map<String, String> custProp : customProperties) { %>
+	                    slCustomProps_<%=cid%>.put(<%=custProp.get("NAME")%>, <%=custProp.get("VALUE")%>);
+	                <% } %>
+	
+	                java.util.Map<String, Object> endpointProps_<%=cid%> = <%=endpointVar%>.getProperties();
+	                if (endpointProps_<%=cid%> == null) {
+	                    endpointProps_<%=cid%> = new java.util.HashMap<String, Object>();
+	                }
+	                endpointProps_<%=cid%>.put(org.talend.esb.servicelocator.cxf.LocatorFeature.LOCATOR_PROPERTIES, slCustomProps_<%=cid%>);
+	                <%=endpointVar%>.setProperties(endpointProps_<%=cid%>);
                 <% } %>
 
                 <%=endpointVar%>.getFeatures().add(locatorFeature_<%=cid%>);
