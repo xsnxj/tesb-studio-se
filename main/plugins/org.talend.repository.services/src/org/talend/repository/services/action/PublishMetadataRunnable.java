@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -257,7 +258,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
     @SuppressWarnings("unchecked")
     private void process(Definition wsdlDefinition, Collection<XmlFileConnectionItem> selectTables) throws Exception,
             CoreException {
-        File tempFile = null;
+        List<File> tempFiles = new ArrayList<File>();
         try {
             File wsdlFile = null;
             String baseUri = wsdlDefinition.getDocumentBaseURI();
@@ -266,9 +267,23 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                 wsdlFile = new File(uri.toURL().getFile());
             } else {
                 Map<String, InputStream> load = new WSDLLoader().load(baseUri, "tempWsdl" + "%d.wsdl");
-                InputStream inputStream = load.get(WSDLLoader.DEFAULT_FILENAME);
-                tempFile = getTempFile(inputStream);
-                wsdlFile = tempFile;
+                InputStream inputStream = load.remove(WSDLLoader.DEFAULT_FILENAME);
+                wsdlFile = getTempFile(inputStream);
+                tempFiles.add(wsdlFile);
+
+                // TESB-19040:save import wsdl files
+                if (!load.isEmpty()) {
+                    for (Map.Entry<String, InputStream> importWsdl : load.entrySet()) {
+                        Project project = ProjectManager.getInstance().getCurrentProject();
+                        IProject fsProject = null;
+                        fsProject = ResourceUtils.getProject(project);
+                        IPath path = new Path("temp");
+                        path = path.append(importWsdl.getKey());
+                        IFile file = fsProject.getFile(path);
+                        file.create(importWsdl.getValue(), false, new NullProgressMonitor());
+                        tempFiles.add(file.getRawLocation().toFile());
+                    }
+                }
             }
             if (populationUtil == null) {
                 populationUtil = new WSDLPopulationUtil();
@@ -331,7 +346,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         } catch (Exception e) {
             throw e;
         } finally {
-            if (tempFile != null) {
+            for (File tempFile : tempFiles) {
                 tempFile.delete();
             }
         }
