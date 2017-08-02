@@ -81,7 +81,14 @@ public class RouteResourceUtilTest {
             e.printStackTrace();
             fail("Test testCreateDependency() method failure.");
         }
-        Assert.assertEquals(resName, RouteResourceUtil.createDependency(id, ResourceDependencyModel.LATEST_VERSION));
-        Assert.assertEquals(resName, RouteResourceUtil.createDependency(id, resVersion));
+        Assert.assertEquals(resName, RouteResourceUtil.createDependency(id, ResourceDependencyModel.LATEST_VERSION).toString());
+        Assert.assertEquals(resName, RouteResourceUtil.createDependency(id, resVersion).toString());
+
+        try {
+            ProxyRepositoryFactory.getInstance().deleteObjectPhysical(ProxyRepositoryFactory.getInstance().getLastVersion(id));
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+            fail("Test testCreateDependency() method failure, cannot delete myResource.");
+        }
     }
 }
