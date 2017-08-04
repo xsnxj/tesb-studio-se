@@ -187,13 +187,16 @@ try {
 		}
 		<% List<Entry<String, String>> samCustomProperties = paramsHelper.getPropertiesPram("__SERVICE_ACTIVITY_MONITOR_CUSTOM_PROPERTIES__");
 		if (!samCustomProperties.isEmpty()) { %>
-			org.talend.esb.sam.common.handler.impl.CustomInfoHandler ciHandler = new org.talend.esb.sam.common.handler.impl.CustomInfoHandler();
 			java.util.Map<String, String> samCustomProps_<%=cid%> = new java.util.HashMap<String, String>();
 			<% for (Entry<String,String> prop : samCustomProperties) { %>
 				samCustomProps_<%=cid%>.put(<%=prop.getKey()%>, <%=prop.getValue()%>);
 			<% } %>
-			ciHandler.setCustomInfo(samCustomProps_<%=cid%>);
-			samEventFeature.setHandler(ciHandler);
+			
+			if(factoryBean_<%=cid%>.getProperties() == null){
+				factoryBean_<%=cid%>.setProperties(new java.util.HashMap<String,Object>());
+			}
+			
+			factoryBean_<%=cid%>.getProperties().put("SAM-PROPS", samCustomProps_<%=cid%>);
 		<% } %>
 		features_<%=cid%>.add(samEventFeature);
 	<% } %>
