@@ -80,9 +80,18 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
 
     private WSDLPopulationUtil populationUtil;
 
+    private IProject fsProject;
+
     public PublishMetadataRunnable(Definition wsdlDefinition, Shell shell) {
         this.wsdlDefinition = wsdlDefinition;
         this.shell = shell;
+
+        Project project = ProjectManager.getInstance().getCurrentProject();
+        try {
+            fsProject = ResourceUtils.getProject(project);
+        } catch (PersistenceException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -258,7 +267,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
     @SuppressWarnings("unchecked")
     private void process(Definition wsdlDefinition, Collection<XmlFileConnectionItem> selectTables) throws Exception,
             CoreException {
-        List<File> tempFiles = new ArrayList<File>();
+        List<IFile> tempFiles = new ArrayList<IFile>();
         try {
             File wsdlFile = null;
             String baseUri = wsdlDefinition.getDocumentBaseURI();
@@ -268,20 +277,15 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
             } else {
                 Map<String, InputStream> load = new WSDLLoader().load(baseUri, "tempWsdl" + "%d.wsdl");
                 InputStream inputStream = load.remove(WSDLLoader.DEFAULT_FILENAME);
-                wsdlFile = getTempFile(inputStream);
-                tempFiles.add(wsdlFile);
+                String name = File.createTempFile("tESBConsumer", ".wsdl").getName();
+                IFile tempWsdlFile = createTempFile(name, inputStream);
+                tempFiles.add(tempWsdlFile);
+                wsdlFile = new File(tempWsdlFile.getLocation().toPortableString());
 
                 // TESB-19040:save import wsdl files
                 if (!load.isEmpty()) {
                     for (Map.Entry<String, InputStream> importWsdl : load.entrySet()) {
-                        Project project = ProjectManager.getInstance().getCurrentProject();
-                        IProject fsProject = null;
-                        fsProject = ResourceUtils.getProject(project);
-                        IPath path = new Path("temp");
-                        path = path.append(importWsdl.getKey());
-                        IFile file = fsProject.getFile(path);
-                        file.create(importWsdl.getValue(), false, new NullProgressMonitor());
-                        tempFiles.add(file.getRawLocation().toFile());
+                        tempFiles.add(createTempFile(importWsdl.getKey(), importWsdl.getValue()));
                     }
                 }
             }
@@ -346,22 +350,19 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         } catch (Exception e) {
             throw e;
         } finally {
-            for (File tempFile : tempFiles) {
-                tempFile.delete();
+            for (IFile tempFile : tempFiles) {
+                tempFile.delete(true, null);
             }
         }
     }
 
-    private File getTempFile(InputStream inputStream) throws PersistenceException, IOException, CoreException {
-        Project project = ProjectManager.getInstance().getCurrentProject();
-        IProject fsProject = null;
-        fsProject = ResourceUtils.getProject(project);
+    private IFile createTempFile(String fileName, InputStream inputStream) throws PersistenceException, IOException,
+            CoreException {
         IPath path = new Path("temp");
-        String name = File.createTempFile("tESBConsumer", ".wsdl").getName();
-        path = path.append(name);
+        path = path.append(fileName);
         IFile file = fsProject.getFile(path);
         file.create(inputStream, false, new NullProgressMonitor());
-        return new File(file.getLocation().toPortableString());
+        return file;
     }
 
 }
