@@ -47,7 +47,7 @@ public class WSDLPopulationUtilTest {
         try {
             URL url = FileLocator.toFileURL(FileLocator.find(b, new Path("resources"), null)); //$NON-NLS-1$
             WSDLPopulationUtil wsdlPopulationUtil = new WSDLPopulationUtil();
-            wsdlPopulationUtil.loadWSDL("file://" + url.getPath() + "/wdsl_test/cliente-v1_1.wsdl");
+            wsdlPopulationUtil.loadWSDL("file://" + url.getPath() + "/client_wsdl/cliente-v1_1.wsdl");
             Assert.assertNotNull(wsdlPopulationUtil
                     .getXSDSchemaFromNamespace("http://www.supervielle.com.ar/xsd/Integracion/common/commonTypes-v1"));
         } catch (IOException e) {
