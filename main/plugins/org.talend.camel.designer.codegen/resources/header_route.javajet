@@ -1096,14 +1096,12 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
   
     //ESB Service Activity Monitor Feature
     
-    org.talend.esb.sam.agent.feature.EventFeature eventFeature;
-    
     public org.talend.esb.sam.agent.feature.EventFeature getEventFeature(org.apache.cxf.Bus bus) {
     	org.talend.esb.sam.agent.feature.EventFeature eventFeature_;
     	if(inOSGi){
 			org.osgi.framework.BundleContext context = bus.getExtension(org.osgi.framework.BundleContext.class);
 			org.osgi.framework.ServiceReference<org.talend.esb.sam.agent.feature.EventFeature> serviceRef = (org.osgi.framework.ServiceReference<org.talend.esb.sam.agent.feature.EventFeature>) context.getServiceReference(org.talend.esb.sam.agent.feature.EventFeature.class.getName());
-			eventFeature_ = (org.talend.esb.sam.agent.feature.EventFeature) context.getService(serviceRef);
+			eventFeature_ = context.getService(serviceRef);
 		}else{
 			eventFeature_ = new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
 		}
@@ -2531,11 +2529,21 @@ if (isProvider) {
                 if ("true".equals(ElementParameterParser.getValue(node, "__SERVICE_ACTIVITY_MONITOR__"))) {
                 
 %>
+<%
+                        if (!isProvider) {
+%>
+							org.talend.esb.sam.agent.feature.EventFeature eventFeature_<%=cid%> = getEventFeature(cf<%=cid%>.getBus());
+<%
+                        }else{
+%>
+							org.talend.esb.sam.agent.feature.EventFeature eventFeature_<%=cid%> = getEventFeature(sf_<%=cid%>.getBus());
+<%
+						}
+%>
+
 					
-					eventFeature = getEventFeature(factory_<%=cid%>.getBus());
-					
-                    if (eventFeature != null) {
-                        factory_<%=cid%>.getFeatures().add(eventFeature);
+                    if (eventFeature_<%=cid%> != null) {
+                        factory_<%=cid%>.getFeatures().add(eventFeature_<%=cid%>);
                     }
 <%
                 }
@@ -3124,10 +3132,10 @@ if (isProvider) {
 %>
                 // Add Service Activity Monitor Service to <%=endpointVar%>
                 
-                eventFeature = getEventFeature(<%=endpointVar%>.getBus());
+                org.talend.esb.sam.agent.feature.EventFeature eventFeature_<%=endpointVar%> = getEventFeature(<%=endpointVar%>.getBus());
                 
-                if (eventFeature != null) {
-                    <%=endpointVar%>.getFeatures().add(eventFeature);
+                if (eventFeature_<%=endpointVar%> != null) {
+                    <%=endpointVar%>.getFeatures().add(eventFeature_<%=endpointVar%>);
                 }
                 
 <%
