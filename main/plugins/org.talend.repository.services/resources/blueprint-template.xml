@@ -155,9 +155,6 @@
 #if ($useSecurityToken || $useSecuritySAML)
         <argument type="org.apache.cxf.Bus" ref="cxf" />
 #end ## ($useSecurityToken || $useSecuritySAML)
-#if ($useSAM)
-        <property name="eventFeature" ref="eventFeature" />
-#end ## ($useSAM)
         <property name="extractHeaders" value="true" />
     </bean>
     <service ref="genericServiceProvider" interface="org.osgi.service.cm.ManagedService">
