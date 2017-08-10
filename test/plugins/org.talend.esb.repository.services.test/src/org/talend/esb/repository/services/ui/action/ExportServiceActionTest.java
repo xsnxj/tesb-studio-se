@@ -34,6 +34,7 @@ import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
+import org.talend.repository.services.model.services.ServicesFactory;
 import org.talend.repository.services.model.services.impl.ServicesFactoryImpl;
 import org.talend.repository.services.ui.action.ExportServiceAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
@@ -60,7 +61,7 @@ public class ExportServiceActionTest {
         exportChoiceMap.put(ExportChoice.applyToChildren, false);
         exportChoiceMap.put(ExportChoice.doNotCompileCode, false);
         exportChoiceMap.put(ExportChoice.needMavenScript, false);
-        ServiceItem serviceItem = ServicesFactoryImpl.eINSTANCE.createServiceItem();
+        ServiceItem serviceItem = ServicesFactory.eINSTANCE.createServiceItem();
         Property property = PropertiesFactory.eINSTANCE.createProperty();
         property.setLabel("testSvr");
         serviceItem.setProperty(property);

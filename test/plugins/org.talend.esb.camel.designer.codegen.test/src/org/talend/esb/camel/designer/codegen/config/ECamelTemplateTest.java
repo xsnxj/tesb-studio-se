@@ -33,7 +33,6 @@ import org.talend.core.model.properties.ItemState;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
-import org.talend.core.model.repository.FakePropertyImpl;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.ui.component.ComponentsFactoryProvider;
 import org.talend.designer.codegen.exception.CodeGeneratorException;
@@ -51,11 +50,6 @@ public class ECamelTemplateTest {
         ECamelTemplate.CONTEXT.getTemplateURL();
         ECamelTemplate.CAMEL_SPECIALLINKS.getTemplateURL();
 
-        IComponent component = ComponentsFactoryProvider.getInstance().get("cTimer", "CAMEL"); //$NON-NLS-1$ //$NON-NLS-2$
-        RouteProcess process = new RouteProcess(new FakePropertyImpl());
-        process.setId("routeprocess");
-        INode nodeTimer = new Node(component, process);
-        nodeTimer.setLabel("cTimer_1");
 
         ProcessItem processItem = PropertiesFactory.eINSTANCE.createProcessItem();
         Property myProperty = PropertiesFactory.eINSTANCE.createProperty();
@@ -70,6 +64,11 @@ public class ECamelTemplateTest {
         myProperty.setVersion("0.1");
         processItem.setProcess(TalendFileFactory.eINSTANCE.createProcessType());
 
+        IComponent component = ComponentsFactoryProvider.getInstance().get("cTimer", "CAMEL"); //$NON-NLS-1$ //$NON-NLS-2$
+        RouteProcess process = new RouteProcess(myProperty);
+        process.setId("routeprocess");
+        INode nodeTimer = new Node(component, process);
+        nodeTimer.setLabel("cTimer_1");
         CamelCodeGenerator codeGenerator = new CamelCodeGenerator(process, false, false);
         try {
             String code = codeGenerator.generateProcessCode();

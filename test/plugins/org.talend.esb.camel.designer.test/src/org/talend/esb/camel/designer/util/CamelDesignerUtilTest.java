@@ -21,8 +21,6 @@
 // ============================================================================
 package org.talend.esb.camel.designer.util;
 
-import static org.junit.Assert.fail;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.talend.camel.designer.util.CamelDesignerUtil;
@@ -81,15 +79,4 @@ public class CamelDesignerUtilTest {
         item.setProcess(processType);
         Assert.assertTrue(CamelDesignerUtil.checkRouteInputExistInJob(item));
     }
-
-    /**
-     * Test method for
-     * {@link org.talend.camel.designer.util.CamelDesignerUtil#checkRouteInputExistInJoblet(org.talend.designer.core.model.utils.emf.talendfile.ProcessType)}
-     * .
-     */
-    @Test
-    public void testCheckRouteInputExistInJoblet() {
-        fail("Not yet implemented");
-    }
-
 }
