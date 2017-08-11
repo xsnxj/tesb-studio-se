@@ -2532,7 +2532,7 @@ if (isProvider) {
 <%
                         if (!isProvider) {
 %>
-							org.talend.esb.sam.agent.feature.EventFeature eventFeature_<%=cid%> = getEventFeature(cf<%=cid%>.getBus());
+							org.talend.esb.sam.agent.feature.EventFeature eventFeature_<%=cid%> = getEventFeature(cf_<%=cid%>.getBus());
 <%
                         }else{
 %>
