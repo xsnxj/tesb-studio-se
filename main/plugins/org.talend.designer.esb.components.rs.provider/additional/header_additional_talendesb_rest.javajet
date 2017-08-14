@@ -1457,10 +1457,15 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 			<% } %>
 
 			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_ACTIVITY_MONITOR__"))) { %>
-				org.springframework.context.support.ClassPathXmlApplicationContext context =
-						new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml");
-				org.talend.esb.sam.agent.feature.EventFeature samEventFeature =
-						context.getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
+				org.talend.esb.sam.agent.feature.EventFeature samEventFeature_<%=cid%> = null;
+				
+				if(!inOSGi){
+			    	samEventFeature_<%=cid%> = (org.talend.esb.sam.agent.feature.EventFeature) new org.springframework.context.support.ClassPathXmlApplicationContext(new String[] { "META-INF/tesb/agent-context.xml" }).getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
+		        }else{  
+		            org.osgi.framework.BundleContext context = sf.getBus().getExtension(org.osgi.framework.BundleContext.class);
+					org.osgi.framework.ServiceReference<org.talend.esb.sam.agent.feature.EventFeature> serviceRef = (org.osgi.framework.ServiceReference<org.talend.esb.sam.agent.feature.EventFeature>) context.getServiceReference(org.talend.esb.sam.agent.feature.EventFeature.class.getName());
+					samEventFeature_<%=cid%> = context.getService(serviceRef);
+		        }
 
 				<% List<Map<String, String>> samCustomProperties = (List<Map<String,String>>)
 						ElementParameterParser.getObjectValue(node, "__SERVICE_ACTIVITY_MONITOR_CUSTOM_PROPERTIES__"); %>
@@ -1470,10 +1475,10 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 						samCustomProps_<%=cid%>.put(<%=samCustomProperties.get(k).get("PROP_NAME")%>, <%=samCustomProperties.get(k).get("PROP_VALUE")%>);
 					<% } %>
 					
-					sf.getProperties().put("SAM-PROPS",samCustomProps_<%=cid%>);
+					sf.getProperties().put(org.talend.esb.sam.agent.feature.EventFeature.SAM_PROPERTIES,samCustomProps_<%=cid%>);
 				<% } %>
 
-				features.add(samEventFeature);
+				features.add(samEventFeature_<%=cid%>);
 			<% } %>
 
 			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__USE_BUSINESS_CORRELATION__"))) { %>
