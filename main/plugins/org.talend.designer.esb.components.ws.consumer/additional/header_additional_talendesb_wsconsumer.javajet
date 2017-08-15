@@ -259,6 +259,7 @@ if (actAsConsumer) {
             }
            	if(null != samCustomProperties){
            		clientFactory.getProperties(true).put("SAM-PROPS", samCustomProperties);
+           		clientFactory.getProperties(true).put(org.talend.esb.sam.agent.feature.EventFeature.SAM_PROPERTIES, samCustomProperties);
            	}
 
             org.apache.cxf.endpoint.Client client = clientFactory.create();
