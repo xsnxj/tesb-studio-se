@@ -125,6 +125,11 @@
             id="camel-cxf-transport"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-cxf-transport}"
             bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-camel-http-common}"
+            id="camel-http-common"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-http-common}"
+            bundleID="" />    
 
         <libraryNeededGroup
                 description="camel-cxf"
@@ -132,6 +137,7 @@
                 name="camel-cxf">
             <library id="camel-cxf" />
             <library id="camel-cxf-transport" />
+            <library id="camel-http-common" />
             <group id="cxf-core" />
             <group id="cxf-rt-frontend-jaxws" />
             <group id="cxf-rt-rs-client" />
