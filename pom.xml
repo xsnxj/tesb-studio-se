@@ -203,6 +203,16 @@
 							<value>mvn:$1/$2/$3</value>
 						</to>
 					</mapping>
+					<mapping>
+						<from>
+							<name>[^:]+:([^:]+):jar:uber</name>
+							<value>.*[\\/]([^\\/]+)</value>
+						</from>
+						<to>
+							<name>tesb-$1</name>
+							<value>$2</value>
+						</to>
+					</mapping>
 				</mappings>
 			</configuration>
 		</plugin>
