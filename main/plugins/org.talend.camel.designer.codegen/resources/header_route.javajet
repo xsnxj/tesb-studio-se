@@ -504,17 +504,41 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
 
     private boolean inOSGi;
 
+	private static Object arguments;
+	
+	public void setArguments(Object arguments) {
+		this.inOSGi = true;
+		<%=className%>.arguments = arguments;
+	}
+	
+	public <T> Map<String, T> getArguments(Object props,Class c){
+		if (props != null) {
+			try {
+				java.lang.reflect.Field propertiesField = props.getClass().getDeclaredField("properties");
+				propertiesField.setAccessible(true);
+				java.util.Dictionary p = (java.util.Dictionary) propertiesField.get(props);
+				java.util.Map<String,T> result = new java.util.HashMap<>();
+				
+				if(p !=null ){
+					for (java.util.Enumeration<String> keys = p.keys(); keys.hasMoreElements();) {
+						String key = keys.nextElement();
+						if(c.equals(String.class)){
+							result.put(key, (T) String.valueOf(p.get(key)));
+						}else{
+							result.put(key, (T) p.get(key));
+						}
+						
+				    }
+				}
+			    
+			    return result;
 
-
-    public void setArguments(Map<String, String> arguments) {
-        inOSGi = true;
-        final String newContext = arguments.remove("context");
-        if (null != newContext) {
-            contextStr = newContext;
-        }
-        context_param.putAll(arguments);
-    }
-
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
 <%
 
     boolean hasSam = false;
@@ -1096,12 +1120,16 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
   
     //ESB Service Activity Monitor Feature
     
+    private org.talend.esb.sam.agent.feature.EventFeature eventFeature;
+    
+    public void setEventFeature(org.talend.esb.sam.agent.feature.EventFeature eventFeature){
+    	this.eventFeature = eventFeature;
+    }
+    
     public org.talend.esb.sam.agent.feature.EventFeature getEventFeature(org.apache.cxf.Bus bus) {
     	org.talend.esb.sam.agent.feature.EventFeature eventFeature_;
     	if(inOSGi){
-			org.osgi.framework.BundleContext context = bus.getExtension(org.osgi.framework.BundleContext.class);
-			org.osgi.framework.ServiceReference<org.talend.esb.sam.agent.feature.EventFeature> serviceRef = (org.osgi.framework.ServiceReference<org.talend.esb.sam.agent.feature.EventFeature>) context.getServiceReference(org.talend.esb.sam.agent.feature.EventFeature.class.getName());
-			eventFeature_ = context.getService(serviceRef);
+			eventFeature_ = eventFeature;
 		}else{
 			eventFeature_ = new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml").getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
 		}
@@ -1116,17 +1144,21 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
 %>
     //ESB Service Locator Feature
 
+	private org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature;
+
     public org.talend.esb.servicelocator.cxf.LocatorFeature getLocatorFeature(org.apache.cxf.Bus bus) {
     	org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature_ = null;
         if(inOSGi){
-        	org.osgi.framework.BundleContext context = bus.getExtension(org.osgi.framework.BundleContext.class);
-			org.osgi.framework.ServiceReference<org.talend.esb.servicelocator.cxf.LocatorFeature> serviceRef = (org.osgi.framework.ServiceReference<org.talend.esb.servicelocator.cxf.LocatorFeature>) context.getServiceReference(org.talend.esb.servicelocator.cxf.LocatorFeature.class.getName());
-			locatorFeature_ = context.getService(serviceRef);
+			locatorFeature_ = locatorFeature;
         }else{  
 	    	org.springframework.context.support.ClassPathXmlApplicationContext context_ = new org.springframework.context.support.ClassPathXmlApplicationContext(new String[] { "META-INF/tesb/locator/beans.xml" });
 	    	locatorFeature_ = (org.talend.esb.servicelocator.cxf.LocatorFeature) context_.getBean(org.talend.esb.servicelocator.cxf.LocatorFeature.class);
         }
         return locatorFeature_;
+    }
+    
+    public void setlocatorFeature(org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature){
+    	this.locatorFeature = locatorFeature;
     }
 
 <%
@@ -1606,8 +1638,8 @@ if(hasCXFSamlTokenConsumer || hasCXFRegistryConsumer){
 
 private Map<String, String> clientProperties;
 
-public void setClientProperties(Map<String, String> clientProperties) {
-        this.clientProperties = clientProperties;
+public void setClientProperties(Object clientProperties) {
+        this.clientProperties = getArguments(clientProperties,String.class);
 }
 
 <%
@@ -1889,8 +1921,8 @@ if (hasCXFSamlTokenProvider || hasCXFRegistryProvider) {
 %>
 private Map<String, Object> securityProps;
 
-public void setSecurityProps(Map<String, Object> securityProps) {
-    this.securityProps = securityProps;
+public void setSecurityProps(Object securityProps) {
+    this.securityProps = getArguments(securityProps,Object.class);
 }
 <%
 }
