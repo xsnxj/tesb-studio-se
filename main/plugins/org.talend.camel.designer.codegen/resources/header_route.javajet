@@ -12,6 +12,7 @@
         java.net.URLEncoder
         org.talend.core.GlobalServiceRegister
         org.talend.core.model.process.IProcess
+        org.talend.core.model.process.IProcess2
         org.talend.core.model.process.INode
         org.talend.core.model.process.IConnection
         org.talend.core.model.process.EConnectionType
@@ -157,19 +158,10 @@ package <%= packageName %>;
  */
  
  <%
-        boolean exportTypeSpringBoot = false;
+        boolean exportTypeSpringBoot = process.getClass().getName().endsWith("MicroServiceProcess");
+        boolean isRoutelet = ((IProcess2) process).getProperty().getItem().getClass().getName().endsWith("RouteletProcessItemImpl");
         
         boolean hasCSoapOrCRest = false;
-        boolean isRoutelet = false;
-        try{
-            isRoutelet = (((org.talend.core.model.properties.Property)process.getClass().getMethod("getProperty", null).invoke(process, null)).getItem().getClass().getName().endsWith("RouteletProcessItemImpl"));
-        }catch(Exception eee){
-
-        }
-
-        if(process.getClass().getName().endsWith("MicroServiceProcess")){
-            exportTypeSpringBoot = true;
-        }
         
         for (INode node : graphicalNodes) {
         	if ("cSOAP".equals(node.getComponent().getName()) || "cREST".equals(node.getComponent().getName())) {
