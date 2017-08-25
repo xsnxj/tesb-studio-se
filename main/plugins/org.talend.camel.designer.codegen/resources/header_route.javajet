@@ -2388,6 +2388,7 @@ if (isProvider) {
                     swagger2Feature_<%=cid%>.setBasePath("<%=epForSwagger%>");
                     swagger2Feature_<%=cid%>.setUsePathBasedConfig(true);
                     swagger2Feature_<%=cid%>.setRunAsFilter(true);
+                    swagger2Feature_<%=cid%>.setSwaggerUiMavenGroupAndArtifact("org.talend.esb/swagger-ui");
                     swagger2Feature_<%=cid%>.setTitle("<%=swaggerTitle%>");
                     swagger2Feature_<%=cid%>.setDescription("<%=swaggerDescription%>");
                     swagger2Feature_<%=cid%>.setContact(null);
