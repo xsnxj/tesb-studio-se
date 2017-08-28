@@ -1149,7 +1149,7 @@ final Map<String, String> contentTypes = new java.util.HashMap<String, String>()
         return locatorFeature_;
     }
     
-    public void setlocatorFeature(org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature){
+    public void setLocatorFeature(org.talend.esb.servicelocator.cxf.LocatorFeature locatorFeature){
     	this.locatorFeature = locatorFeature;
     }
 
