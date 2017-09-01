@@ -2466,13 +2466,13 @@ if (isProvider) {
                                     throw new IllegalArgumentException("SAML based security scenarios are not supported in Studio (standalone)");
                                 }
                             <%}%>
-                            org.apache.cxf.ws.security.trust.STSClient stsClient =
+                            org.apache.cxf.ws.security.trust.STSClient stsClient_<%=cid%> =
                                 org.talend.esb.security.saml.STSClientUtils.createSTSClient(cf_<%=cid%>.getBus(),
                                     <%=ElementParameterParser.getValue(node, "__USERNAME__")%>, decryptedPassword_<%=cid%>);
                             <% if ("true".equals(ElementParameterParser.getValue(node, "__USE_AUTHORIZATION__"))) { %>
-                                org.talend.esb.security.saml.STSClientUtils.applyAuthorization(stsClient, <%=ElementParameterParser.getValue(node, "__ROLE_NAME__")%>);
+                                org.talend.esb.security.saml.STSClientUtils.applyAuthorization(stsClient_<%=cid%>, <%=ElementParameterParser.getValue(node, "__ROLE_NAME__")%>);
                             <% } %>
-                            org.talend.esb.security.saml.SAMLRESTUtils.configureClient(cf_<%=cid%>, stsClient);
+                            org.talend.esb.security.saml.SAMLRESTUtils.configureClient(cf_<%=cid%>, stsClient_<%=cid%>);
 <%
                         }
                     }
