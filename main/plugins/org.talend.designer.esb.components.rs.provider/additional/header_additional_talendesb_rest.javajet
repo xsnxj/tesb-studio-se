@@ -490,6 +490,18 @@ public void setRunInTalendEsbRuntimeContainer(boolean flag) {
 	runInTalendEsbRuntimeContainer = flag;
 }
 
+protected String restEndpoint;
+
+public void setRestEndpoint(String restEndpoint){
+	this.restEndpoint = restEndpoint;
+}
+
+private boolean runInDaemonMode = true;
+
+public void setRunInDaemonMode(boolean flag) {
+	runInDaemonMode = flag;
+}
+
 private boolean restTalendJobAlreadyStarted = false;
 
 /**
@@ -1266,7 +1278,7 @@ public static class ExceptionMapper4TalendJobRestService extends org.apache.cxf.
 	}
 }
 
-private String checkEndpointUrl(String url) {
+protected String checkEndpointUrl(String url) {
 <%
 	String defaultUri = (String) System.getProperties().get("restServiceDefaultUri");
 	if (null == defaultUri || defaultUri.trim().isEmpty() || !defaultUri.contains("://")) {
@@ -1361,21 +1373,29 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 	private final <%=process.getName()%> job;
 
 	private org.apache.cxf.endpoint.Server server;
+	
+	private org.apache.cxf.jaxrs.JAXRSServerFactoryBean sf;
 
 	public Thread4RestServiceProviderEndpoint(<%=process.getName()%> job, String endpointUrl) {
 		this.job = job;
 		this.endpointUrl = endpointUrl;
+		this.sf = new org.apache.cxf.jaxrs.JAXRSServerFactoryBean();
 	}
 	
 	boolean inOSGi = false;
+	
+	public org.apache.cxf.endpoint.Server getServer(){
+		return server;
+	}
 
+	public org.apache.cxf.jaxrs.JAXRSServerFactoryBean getJAXRSServerFactoryBean(){
+		return sf;
+	}
 	
 	public void run() {
 
 		try {
 			RestServiceProviderImpl4TalendJob provider = new RestServiceProviderImpl4TalendJob(job);
-
-			org.apache.cxf.jaxrs.JAXRSServerFactoryBean sf = new org.apache.cxf.jaxrs.JAXRSServerFactoryBean();
 			
 			if(sf.getProperties() == null){
         		sf.setProperties(new java.util.HashMap<String, Object>());
