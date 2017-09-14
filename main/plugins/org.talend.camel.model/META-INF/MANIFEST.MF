@@ -11,10 +11,13 @@ Require-Bundle: org.eclipse.core.runtime,
  org.talend.model;visibility:=reexport,
  org.talend.cwm.mip;visibility:=reexport,
  org.eclipse.gmf.runtime.notation;visibility:=reexport,
- org.talend.core.runtime
+ org.talend.core.runtime,
+ org.eclipse.jface,
+ org.eclipse.equinox.p2.repository
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %providerName
 Export-Package: org.talend.camel.core.model.camelProperties,
  org.talend.camel.core.model.camelProperties.impl,
  org.talend.camel.core.model.camelProperties.util,
- org.talend.camel.model
+ org.talend.camel.model,
+ org.talend.camel.service
