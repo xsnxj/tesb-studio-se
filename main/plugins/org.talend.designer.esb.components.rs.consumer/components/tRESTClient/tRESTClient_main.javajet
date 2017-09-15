@@ -124,8 +124,12 @@ try {
 	org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean factoryBean_<%=cid%> =
 			new org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean();
 
-	org.osgi.framework.BundleContext bundleContext =
-			factoryBean_<%=cid%>.getBus().getExtension(org.osgi.framework.BundleContext.class);
+	Object bundleContextObject = null;
+	try {
+		bundleContextObject = factoryBean_<%=cid%>.getBus().getExtension(routines.system.BundleUtils.getBundleContextClass());
+	} catch (ClassNotFoundException e) {
+		// ignore
+	}
 
 	final java.util.List<org.apache.cxf.feature.Feature> features_<%=cid%> =
 			new java.util.ArrayList<org.apache.cxf.feature.Feature>();
@@ -136,16 +140,17 @@ try {
 			<%=paramsHelper.getStringParam("__SERVICE_NAMESPACE__")%>,
 			<%=paramsHelper.getStringParam("__SERVICE_NAME__")%>));
 
-		//if (bundleContext == null) {
+		//if (bundleContextObject == null) {
 		//	factoryBean_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
 		//}
 		
 		org.talend.esb.servicelocator.cxf.LocatorFeature feature_<%=cid%> = null;
 		
-		if(bundleContext == null){
+		if(bundleContextObject == null){
 			feature_<%=cid%> = (org.talend.esb.servicelocator.cxf.LocatorFeature) new org.springframework.context.support.ClassPathXmlApplicationContext(
 					new String[] { "META-INF/tesb/locator/beans.xml" }).getBean(org.talend.esb.servicelocator.cxf.LocatorFeature.class);
-		}else{  
+		}else{
+			org.osgi.framework.BundleContext bundleContext = (org.osgi.framework.BundleContext) bundleContextObject;
 			org.osgi.framework.ServiceReference<org.talend.esb.servicelocator.cxf.LocatorFeature> serviceRef =
 					bundleContext.getServiceReference(org.talend.esb.servicelocator.cxf.LocatorFeature.class);
 			feature_<%=cid%> = bundleContext.getService(serviceRef);
@@ -175,10 +180,11 @@ try {
 	<% if (isSAMEnable) { %>
 		org.talend.esb.sam.agent.feature.EventFeature samEventFeature_<%=cid%> = null;
 
-		if(bundleContext == null){
+		if(bundleContextObject == null){
 			samEventFeature_<%=cid%> = (org.talend.esb.sam.agent.feature.EventFeature) new org.springframework.context.support.ClassPathXmlApplicationContext(
 					new String[] { "META-INF/tesb/agent-context.xml" }).getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
 		}else{
+			org.osgi.framework.BundleContext bundleContext = (org.osgi.framework.BundleContext) bundleContextObject;
 			org.osgi.framework.ServiceReference<org.talend.esb.sam.agent.feature.EventFeature> serviceRef =
 					bundleContext.getServiceReference(org.talend.esb.sam.agent.feature.EventFeature.class);
 			samEventFeature_<%=cid%> = bundleContext.getService(serviceRef);
@@ -275,7 +281,7 @@ try {
 
 	boolean use_auth_<%=cid%> = <%=useAuth%>;
 	if (use_auth_<%=cid%> && "SAML".equals(<%=authType%>)) {
-		if (bundleContext == null) {
+		if (bundleContextObject == null) {
 			throw new IllegalArgumentException("SAML based security scenarios are not supported in Studio (standalone)");
 		}
 		// set SAML Token authentication
@@ -336,7 +342,7 @@ try {
 		conduit_<%=cid%>.setAuthorization(authPolicy_<%=cid%>);
 	}
 
-	if (bundleContext == null) {
+	if (bundleContextObject == null) {
 		conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=paramsHelper.getStringParam("__RECEIVE_TIMEOUT__")%> * 1000L));
 		conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=paramsHelper.getStringParam("__CONNECTION_TIMEOUT__")%> * 1000L));
 		boolean use_proxy_<%=cid%> = <%=useProxy%>;
@@ -392,7 +398,7 @@ try {
         String bearerHeader_<%=cid%> = null;
 
         try {
-			if (bundleContext == null) {
+			if (bundleContextObject == null) {
 				org.springframework.context.support.ClassPathXmlApplicationContext context_<%=cid%> =
 					new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/oidc-context.xml");
 				org.talend.esb.security.oidc.OidcConfiguration oidcConfiguration_<%=cid%> = context_<%=cid%>.getBean(org.talend.esb.security.oidc.OidcConfiguration.class);
