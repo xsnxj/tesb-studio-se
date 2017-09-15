@@ -10,7 +10,7 @@ public class CLASS {
         for (org.talend.core.model.process.INode node : process.getGeneratingNodes()) {
             if ("Routelets".equals(node.getComponent().getOriginalFamilyName())) {
                 org.talend.core.model.process.IProcess2 routelet = (org.talend.core.model.process.IProcess2) node.getComponent().getProcess();
-                final String clazz = org.talend.core.model.utils.JavaResourcesHelper.getJobClassName(routelet);
+                final String clazz = org.talend.core.model.utils.RouteUtil.resolveClassName(routelet);
                 if (routelets.add(clazz)) {
                     addRoutelets(routelets, routelet);
                 }
