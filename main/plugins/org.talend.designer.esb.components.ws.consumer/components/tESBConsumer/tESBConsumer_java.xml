@@ -198,6 +198,9 @@
 						 OR ((IS_STUDIO_EE_VERSION == 'true') AND (USE_SR == 'true'))">
 			<DEFAULT>""</DEFAULT>
 		</PARAMETER>
+		<PARAMETER NAME="ENABLE_CXF_MESSAGE_GZIP" FIELD="CHECK" NUM_ROW="54">
+			<DEFAULT>false</DEFAULT>
+		</PARAMETER>		
 
 		<PARAMETER NAME="DIE_ON_ERROR" FIELD="CHECK" NUM_ROW="100">
 			<DEFAULT>true</DEFAULT>
@@ -341,7 +344,7 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT MODULE="dom4j" MVN="${mvn-dom4j}" REQUIRED="true" />
+			<IMPORT MODULE="dom4j" MVN="mvn:dom4j/dom4j/1.6.1" REQUIRED="true" />
 
 			<IMPORT MODULE_GROUP="cxf-core" REQUIRED="true" />
 			<IMPORT MODULE_GROUP="cxf-rt-frontend-jaxws" REQUIRED="true" />

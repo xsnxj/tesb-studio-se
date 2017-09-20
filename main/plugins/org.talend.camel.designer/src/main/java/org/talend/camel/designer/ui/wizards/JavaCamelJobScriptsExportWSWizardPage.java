@@ -315,7 +315,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
     }
 
     private void createOptionsForKar(Composite optionsGroup, Font font) {
-        if (!PluginChecker.isPluginLoaded(PluginChecker.EXPORT_ROUTE_PLUGIN_ID)) {
+        if (!PluginChecker.isTIS()) {
             return;
         }
 

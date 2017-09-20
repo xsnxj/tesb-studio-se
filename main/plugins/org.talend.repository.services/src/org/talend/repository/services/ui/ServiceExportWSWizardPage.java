@@ -156,7 +156,7 @@ public class ServiceExportWSWizardPage extends WizardPage {
     }
 
     private void createBSGroup(Group optionsGroup) {
-        if (!PluginChecker.isPluginLoaded(PluginChecker.EXPORT_ROUTE_PLUGIN_ID)) {
+        if (!PluginChecker.isTIS()) {
             return;
         }
 
