@@ -297,7 +297,7 @@ public class KarafJavaScriptForESBWithMavenManager extends JavaScriptForESBWithM
     @Override
     protected void addMavenBuildScripts(ExportFileResource[] processes, List<URL> scriptsUrls,
             Map<String, String> mavenPropertiesMap) {
-        if (!PluginChecker.isPluginLoaded(PluginChecker.EXPORT_ROUTE_PLUGIN_ID)) {
+        if (!PluginChecker.isTIS()) {
             return;
         }
 
