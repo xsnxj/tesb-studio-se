@@ -37,6 +37,8 @@ CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
 Vector v = (Vector) codeGenArgument.getArgument();
 IProcess process = (IProcess) v.get(0);
 
+boolean exportTypeSpringBoot = org.talend.designer.runprocess.ProcessorUtilities.isExportJobAsMicroService();
+
 List<? extends INode> httpRequestComponentsList = process.getNodesOfType("tRESTRequest");
 if (!httpRequestComponentsList.isEmpty()) {
 
@@ -1363,7 +1365,6 @@ public static class StreamingDOM4JProvider extends org.apache.cxf.jaxrs.provider
 	}
 }
 
-
 Thread4RestServiceProviderEndpoint thread4RestServiceProviderEndpoint = null;
 
 class Thread4RestServiceProviderEndpoint extends Thread {
@@ -1405,7 +1406,7 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 			} catch (ClassNotFoundException e_<%=cid%>) {
 				; // ignore
 			}
-			java.util.List<Object> providers = new java.util.ArrayList<Object>();
+			java.util.List<Object> providers = (java.util.List<Object>)sf.getProviders();
 			providers.add(new ExceptionMapper4TalendJobRestService(provider));
 			providers.add(new StreamingDOM4JProvider());
 			<%if (Boolean.valueOf(ElementParameterParser.getValue(node,"__NEED_AUTH__")) && "OIDC_PASSWORD_GRANT".equals(ElementParameterParser.getValue(node,"__AUTH_TYPE__"))) {%>
