@@ -5,7 +5,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.cxf.Bus;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
@@ -27,7 +29,7 @@ import org.springframework.core.env.Environment;
 @Configuration
 @EnableAutoConfiguration
 @ImportResource({ "classpath:META-INF/cxf/cxf.xml" })
-public class App extends ${parent} implements ApplicationRunner{
+public class App extends ${parent} implements ApplicationRunner {
 
     @Autowired
     Environment env;
@@ -54,6 +56,15 @@ public class App extends ${parent} implements ApplicationRunner{
                 getCXFRSEndpointAddress(restEndpoint));
         JAXRSServerFactoryBean sf = thread4RestServiceProviderEndpoint.getJAXRSServerFactoryBean();
         sf.setBus((Bus) applicationContext.getBean(Bus.DEFAULT_BUS_ID));
+
+        List providers = sf.getProviders();
+        // JAASAuthenticationFilter jaasAuthenticationFilter = new JAASAuthenticationFilter();
+        // jaasAuthenticationFilter.setContextName("karaf");
+        // providers.add(jaasAuthenticationFilter);
+        // sf.setProviders(providers);
+        
+        ${enableSAML}
+        
         thread4RestServiceProviderEndpoint.run();
         return thread4RestServiceProviderEndpoint.getServer();
     }
