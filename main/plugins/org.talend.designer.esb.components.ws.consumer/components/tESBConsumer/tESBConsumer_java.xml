@@ -344,7 +344,7 @@
 
 	<CODEGENERATION>
 		<IMPORTS>
-			<IMPORT MODULE="dom4j" MVN="mvn:dom4j/dom4j/1.6.1" REQUIRED="true" />
+			<IMPORT MODULE="dom4j" MVN="${mvn-dom4j}" REQUIRED="true" />
 
 			<IMPORT MODULE_GROUP="cxf-core" REQUIRED="true" />
 			<IMPORT MODULE_GROUP="cxf-rt-frontend-jaxws" REQUIRED="true" />
