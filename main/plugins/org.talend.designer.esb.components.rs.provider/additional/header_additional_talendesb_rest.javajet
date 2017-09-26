@@ -1383,7 +1383,7 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 		this.sf = new org.apache.cxf.jaxrs.JAXRSServerFactoryBean();
 	}
 	
-	boolean inOSGi = false;
+	boolean inOSGi = routines.system.BundleUtils.inOSGi();
 	
 	public org.apache.cxf.endpoint.Server getServer(){
 		return server;
@@ -1401,11 +1401,7 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 			if(sf.getProperties() == null){
         		sf.setProperties(new java.util.HashMap<String, Object>());
         	}
-			try {
-				inOSGi = (null != sf.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
-			} catch (ClassNotFoundException e_<%=cid%>) {
-				; // ignore
-			}
+
 			java.util.List<Object> providers = (java.util.List<Object>)sf.getProviders();
 			providers.add(new ExceptionMapper4TalendJobRestService(provider));
 			providers.add(new StreamingDOM4JProvider());
@@ -1457,9 +1453,7 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 			    	org.springframework.context.support.ClassPathXmlApplicationContext context_ = new org.springframework.context.support.ClassPathXmlApplicationContext(new String[] { "META-INF/tesb/locator/beans.xml" });
 			    	slFeature = (org.talend.esb.servicelocator.cxf.LocatorFeature) context_.getBean(org.talend.esb.servicelocator.cxf.LocatorFeature.class);
 		        }else{  
-		            org.osgi.framework.BundleContext context = sf.getBus().getExtension(org.osgi.framework.BundleContext.class);
-					org.osgi.framework.ServiceReference<org.talend.esb.servicelocator.cxf.LocatorFeature> serviceRef = (org.osgi.framework.ServiceReference<org.talend.esb.servicelocator.cxf.LocatorFeature>) context.getServiceReference(org.talend.esb.servicelocator.cxf.LocatorFeature.class.getName());
-					slFeature = context.getService(serviceRef);
+					slFeature = routines.system.BundleUtils.getService(org.talend.esb.servicelocator.cxf.LocatorFeature.class);
 		        }
 
 				<% List<Map<String, String>> customProperties = (List<Map<String,String>>)
@@ -1482,9 +1476,7 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 				if(!inOSGi){
 			    	samEventFeature_<%=cid%> = (org.talend.esb.sam.agent.feature.EventFeature) new org.springframework.context.support.ClassPathXmlApplicationContext(new String[] { "META-INF/tesb/agent-context.xml" }).getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
 		        }else{  
-		            org.osgi.framework.BundleContext context = sf.getBus().getExtension(org.osgi.framework.BundleContext.class);
-					org.osgi.framework.ServiceReference<org.talend.esb.sam.agent.feature.EventFeature> serviceRef = (org.osgi.framework.ServiceReference<org.talend.esb.sam.agent.feature.EventFeature>) context.getServiceReference(org.talend.esb.sam.agent.feature.EventFeature.class.getName());
-					samEventFeature_<%=cid%> = context.getService(serviceRef);
+					samEventFeature_<%=cid%> = routines.system.BundleUtils.getService(org.talend.esb.sam.agent.feature.EventFeature.class);
 		        }
 
 				<% List<Map<String, String>> samCustomProperties = (List<Map<String,String>>)
