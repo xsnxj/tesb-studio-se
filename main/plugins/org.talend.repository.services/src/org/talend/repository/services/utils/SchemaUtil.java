@@ -46,7 +46,9 @@ public class SchemaUtil {
     private void init(Types types) {
         Collection<Schema> schemas = WSDLUtils.findExtensibilityElements(types.getExtensibilityElements(), Schema.class);
         for (Schema schema : schemas) {
-            createXmlSchema(schema.getElement(), schema.getDocumentBaseURI());
+            if (!schemaAlreadyImported(schema)) {
+                createXmlSchema(schema.getElement(), schema.getDocumentBaseURI());
+            }
         }
     }
 
@@ -58,6 +60,17 @@ public class SchemaUtil {
 
     public XmlSchema[] getSchemas() {
         return xmlSchemaCollection.getXmlSchema(SCHEMA_SYSTEM_ID);
+    }
+
+    private boolean schemaAlreadyImported(Schema schema) {
+        String tns = schema.getElement().getAttribute("targetNamespace");
+        XmlSchema[] importedSchemas = xmlSchemaCollection.getXmlSchema(SCHEMA_SYSTEM_ID);
+        for(XmlSchema scm : importedSchemas) {
+            if (scm.getLogicalTargetNamespace() != null && scm.getLogicalTargetNamespace().equals(tns)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
