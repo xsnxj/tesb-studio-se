@@ -1,6 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Version: 6.3.1.qualifier
-Bundle-SymbolicName: org.talend.libraries.esb;singleton:=true
-Bundle-ActivationPolicy: lazy
-Eclipse-BundleShape: dir
