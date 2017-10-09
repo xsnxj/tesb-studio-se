@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.framework.Bundle;
+import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.CamelDesignerPlugin;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
@@ -489,6 +490,13 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
             }
 
         } else {
+
+            if (getProcessItem() instanceof CamelProcessItem) {
+                CamelProcessItem camelProcessItem = (CamelProcessItem) getProcessItem();
+                if (camelProcessItem.isExportMicroService()) {
+                    camelProcessItem.setExportMicroService(false);
+                }
+            }
 
             if (needMavenScript) {
                 action = new JavaCamelJobScriptsExportWithMavenAction(exportChoiceMap, nodes[0], version, destinationKar, false);
