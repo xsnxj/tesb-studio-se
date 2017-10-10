@@ -1,0 +1,24 @@
+public class CLASS {
+
+    public static java.util.Collection<String> getRoutelets(final org.talend.core.model.process.IProcess process) {
+        java.util.Collection<String> routelets = new java.util.HashSet<String>();
+        addRoutelets(routelets, process);
+        return routelets;
+    }
+
+    private static void addRoutelets(final java.util.Collection<String> routelets, final org.talend.core.model.process.IProcess process) {
+        for (org.talend.core.model.process.INode node : process.getGeneratingNodes()) {
+            if ("Routelets".equals(node.getComponent().getOriginalFamilyName())) {
+                org.talend.core.model.process.IProcess2 routelet = (org.talend.core.model.process.IProcess2) node.getComponent().getProcess();
+                final String clazz = org.talend.core.model.utils.JavaResourcesHelper.getJobClassName(routelet);
+                if (routelets.add(clazz)) {
+                    addRoutelets(routelets, routelet);
+                }
+            }
+        }
+    }
+
+    public String generate(CodeGeneratorArgument argument){
+        return "";
+    }
+}

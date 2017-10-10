@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.talend.studio</groupId>
+    <artifactId>tesb-studio-se</artifactId>
+    <version>6.3.1</version>
+    <relativePath>../../../</relativePath>
+  </parent>
+  <artifactId>org.talend.designer.esb.components.rs.provider</artifactId>
+  <packaging>eclipse-plugin</packaging>
+  <name>Talend Designer ESB Tooling REST Service provider plugin</name>
+  <properties>
+      <swagger.version>1.5.9</swagger.version>
+  </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.talend.studio</groupId>
+            <artifactId>org.talend.libraries.esb</artifactId>
+            <version>${project.version}</version>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <excludeTypes>pom</excludeTypes>
+                            <excludeTransitive>true</excludeTransitive>
+                            <outputDirectory>${basedir}/lib</outputDirectory>
+                            <excludeGroupIds>p2.eclipse-plugin,org.talend.studio</excludeGroupIds>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>${basedir}/lib</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>

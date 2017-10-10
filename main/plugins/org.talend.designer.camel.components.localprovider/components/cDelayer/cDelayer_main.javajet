@@ -1,0 +1,24 @@
+<%@ jet 
+imports="
+    org.talend.core.model.process.INode 
+    org.talend.core.model.process.ElementParameterParser 
+    org.talend.core.model.process.IConnection
+    org.talend.designer.codegen.config.CodeGeneratorArgument
+	java.util.List
+" 
+%>
+<%
+	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
+	INode node = (INode)codeGenArgument.getArgument();
+	String cid = node.getUniqueName();
+	
+	String timeToWait = ElementParameterParser.getValue(node, "__WAIT__");
+	List< ? extends IConnection> conns = node.getIncomingConnections();
+	if(conns.size()>0) {
+		if(timeToWait!=null && timeToWait.length()>0) {
+%>
+			.delay(<%=Integer.parseInt(timeToWait)%>)
+<%
+		}
+	}
+%>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+    <extension point="org.talend.core.repository.repository_node_provider">
+        <repositoryNode
+              folder="route_resources"
+              isAllowMultiName="true"
+              isAllowPlainFolder="true"
+              isResouce="true"
+              key="Resource"
+              label="Resources"
+              name_pattern="\w+([\.-]\w+)*"
+              ordinal="45"
+              products="DI"
+              type="ROUTE_RESOURCES"/>
+    </extension>
+
+   <extension
+         point="org.talend.core.repositoryContextualsActions">
+       <Action
+                  class="org.talend.designer.camel.resource.ui.actions.CreateRouteResourceAction"
+                  id="org.talend.designer.camel.resource.CreateRouteResource"
+                  isEditAction="true"
+                  level="1"
+                  name="Create Route Resource">
+            </Action>
+       <Action
+             class="org.talend.designer.camel.resource.ui.actions.EditRouteResourceAction"
+             id="org.talend.designer.camel.resource.EditRouteResourceAction"
+             isEditAction="true"
+             level="3"
+             name="Edit Route Resource">
+       </Action>
+       <Action
+             class="org.talend.designer.camel.resource.ui.actions.OpenDefaultEditorAction"
+             id="org.talend.designer.camel.resource.OpenDefaultEditorAction"
+             isEditAction="true"
+             level="4"
+             name="Open Text Editor ">
+       </Action>
+       <Action
+             class="org.talend.designer.camel.resource.ui.actions.EditRouteResourcePropertiesAction"
+             id="org.talend.designer.camel.resource.EditRouteResourcePropertiesAction"
+             isPropertiesAction="true"
+             level="4"
+             name="Edit Properties">
+       </Action>
+       <Action
+             class="org.talend.designer.camel.resource.ui.actions.OpenAnotherVersionResourceAction"
+             id="org.talend.designer.camel.resource.OpenAnotherVersionResource"
+             level="4"
+             name="Open Another Version">
+       </Action>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.talend.designer.camel.resource.editors.RouteResourceEditor"
+            icon="icons/route-resource.png"
+            id="org.talend.designer.camel.resource.editors.RouteResourceEditor"
+            name="Route Resource Editor">
+      </editor>
+   </extension>
+   <extension
+         point="org.talend.core.repository.checkDeleteItemReference">
+      <check
+            class="org.talend.designer.camel.resource.delete.CheckRouteResourceDeleteReference"
+            priority="normal">
+      </check>
+   </extension>
+   <extension
+         point="org.talend.repository.items.importexport.handler">
+      <importItemsProvider
+            id="org.talend.designer.camel.resource.importProvider.resources"
+            name="Resources importer"
+            priority="NORMAL">
+         <importItemsHandler
+               class="org.talend.designer.camel.resource.handler.RouteResourceImportHandler">
+            <parameter
+                  name="type"
+                  value="ROUTE_RESOURCES">
+            </parameter>
+         </importItemsHandler>
+      </importItemsProvider>
+   </extension>
+
+   <extension
+         point="org.talend.core.runtime.itemRelationship">
+      <itemHandler
+            class="org.talend.designer.camel.resource.handler.ResourcesItemRelationshipHandler"
+            id="org.talend.designer.camel.resource.itemHandler.resourceType"
+            name="Resource Type">
+      </itemHandler>
+   </extension>
+
+</plugin>

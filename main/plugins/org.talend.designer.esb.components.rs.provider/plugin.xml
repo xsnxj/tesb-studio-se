@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<extension point="org.talend.core.components_provider">
+		<ComponentsProvider
+			id="org.talend.designer.esb.components.rs.provider.ComponentsProvider"
+			class="org.talend.designer.esb.components.rs.provider.ComponentsProvider"
+			folderName="components" />
+	</extension>
+
+	<extension point="org.talend.designer.codegen.additional_jetfile">
+		<jetProvider
+			id="org.talend.designer.esb.components.rs.provider.ESBJetFileProvider"
+			class="org.talend.designer.esb.components.rs.provider.ESBJetFileProvider" />
+	</extension>
+
+	<extension point="org.talend.core.migrationTask">
+		<projecttask
+			id="org.talend.designer.esb.webservice.RestRequestWrongCallMigrationTask"
+			class="org.talend.designer.esb.components.rs.provider.migration.RestRequestWrongCallMigrationTask"
+			name="RestRequestWrongCallMigrationTask"
+			description="Add more information to wrong call flow migration task"
+                           breaks="5.1.1"
+                           version="5.1.2"
+			beforeLogon="false" />
+		<projecttask
+	        beforeLogon="false"
+	        breaks="5.3.2"
+	        class="org.talend.designer.esb.components.rs.provider.migration.FormContentTypeMigrationTask"
+	        description="Change the default Content-Type for FORM paramter type"
+	        id="org.talend.designer.esb.webservice.FormContentTypeMigrationTask"
+	        name="FormContentTypeMigrationTask"
+	        version="5.4.0">
+  		</projecttask>
+      	<projecttask
+                beforeLogon="false"
+                breaks="5.3.0"
+                class="org.talend.designer.esb.components.rs.provider.migration.ConsumesTypeMigrationTask"
+                description="ConsumesTypeMigrationTask"
+                id="org.talend.designer.esb.components.rs.provider.migration.ConsumesTypeMigrationTask"
+                name="ConsumesTypeMigrationTask"
+                version="5.4.0">
+          </projecttask>
+	</extension>
+
+	<extension point="org.eclipse.ui.preferencePages">
+		<page
+			id="org.talend.designer.esb"
+			category="org.talend.repository.services.esb.preference"
+			class="org.talend.designer.esb.components.rs.provider.EsbPreferencePage"
+			name="%preferencesPage.main" />
+	</extension>
+ <extension
+       point="org.talend.designer.core.generators">
+    <generator
+          class="org.talend.designer.esb.components.rs.provider.generator.ResponseSchemaGenerator"
+          mapping="REST_RESPONSE_SCHEMA_TYPE"
+          name="REST Response Schema">
+    </generator>
+ </extension>
+ <extension
+       point="org.talend.designer.core.check_nodes">
+    <checknodes
+          class="org.talend.designer.esb.components.rs.provider.validation.CheckMultiRestRequestNodes">
+    </checknodes>
+ </extension>
+ <!--extension point="org.talend.core.runtime.librariesNeeded">
+
+    <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="${tesb-cxf-rt-rs-service-description-swagger}"
+            id="cxf-rt-rs-service-description-swagger"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-rs-service-description-swagger}"
+            bundleID="" />
+
+    <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="${tesb-swagger-annotations}"
+            id="swagger-annotations"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-swagger-annotations}"
+            bundleID="" />
+
+    <libraryNeededGroup
+            description="cxf-swagger"
+            id="cxf-swagger"
+            name="cxf-swagger">
+        <library id="cxf-rt-rs-service-description-swagger" />
+        <library id="swagger-annotations" />
+    </libraryNeededGroup>
+
+ </extension-->
+</plugin>
