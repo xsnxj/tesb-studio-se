@@ -251,7 +251,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
         List<QName> result = new ArrayList<QName>();
         Iterator<Part> iterator = values.iterator();
         while (iterator.hasNext()) {
-            Part part = values.iterator().next();
+            Part part = iterator.next();
             if (part.getElementName() != null) {
                 result.add(part.getElementName());
             } else if (part.getTypeName() != null) {
