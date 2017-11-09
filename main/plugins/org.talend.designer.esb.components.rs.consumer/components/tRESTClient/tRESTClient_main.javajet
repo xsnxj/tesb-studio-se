@@ -76,7 +76,13 @@ for (IConnection conn : dataOutputs) {
        } else {
            %>java.util. Collection<? extends String><%
        }
-} else { %>Object<% } %> responseDoc_<%=cid%> = null;
+} else { 
+       if ("GET".equals(method)) {
+           %>Object<%
+       }else {
+           %>javax.ws.rs.core.Response<% 
+       }  
+}%> responseDoc_<%=cid%> = null;
 
 try {
 	// request body
@@ -417,12 +423,16 @@ try {
 		<% if ("GET".equals(method)) { %>
 			responseDoc_<%=cid%> = webClient_<%=cid%>.get<%if (MULTIPART_MIXED.equals(acceptType)) {%>Collection<%}%>(responseClass_<%=cid%>);
 		<% } else if ("POST".equals(method)) { %>
-			responseDoc_<%=cid%> = webClient_<%=cid%>.post<%if (MULTIPART_MIXED.equals(acceptType)) {%>ObjectGetCollection<%}%>(requestBody_<%=cid%>, responseClass_<%=cid%>);
+			<%if (MULTIPART_MIXED.equals(acceptType)) { %>
+				responseDoc_<%=cid%> = webClient_<%=cid%>.postObjectGetCollection(requestBody_<%=cid%>, responseClass_<%=cid%>);
+			<% } else { %>
+				responseDoc_<%=cid%> = webClient_<%=cid%>.post(requestBody_<%=cid%>);
+			<% } %>
 		<% } else if ("PUT".equals(method)) { %>
-			responseDoc_<%=cid%> = webClient_<%=cid%>.put(requestBody_<%=cid%>, responseClass_<%=cid%>);
+			responseDoc_<%=cid%> = webClient_<%=cid%>.put(requestBody_<%=cid%>);
 		<% } else if ("PATCH".equals(method)) { %>
 			org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getRequestContext().put("use.httpurlconnection.method.reflection", true);
-			responseDoc_<%=cid%> = webClient_<%=cid%>.invoke("PATCH", requestBody_<%=cid%>, responseClass_<%=cid%>);
+			responseDoc_<%=cid%> = webClient_<%=cid%>.invoke("PATCH", requestBody_<%=cid%>);
 		<% } else { %>
 			webClient_<%=cid%>.invoke("<%=method%>", requestBody_<%=cid%>);
 		<% } %>
@@ -441,16 +451,25 @@ try {
 
 			<%=connResponseName%>.statusCode = webClientResponseStatus_<%=cid%>;
 			<% if (!MULTIPART_MIXED.equals(acceptType)) {%>
-			if (responseDoc_<%=cid%> != null) {
-				if (responseClass_<%=cid%> == String.class) {
-					<%=connResponseName%>.string = (String) responseDoc_<%=cid%>;
-				} else {
-					routines.system.Document responseTalendDoc_<%=cid%> = null;
-					if (null != responseDoc_<%=cid%>) {
-						responseTalendDoc_<%=cid%> = new routines.system.Document();
-						responseTalendDoc_<%=cid%>.setDocument((org.dom4j.Document) responseDoc_<%=cid%>);
+				<% if ("GET".equals(method)) {%>
+				{
+					Object responseObj_<%=cid%> = responseDoc_<%=cid%>;
+				<%} else {%>
+				Object responseObj_<%=cid%> = null;
+				if(responseDoc_<%=cid%>.hasEntity()){
+					responseObj_<%=cid%> = responseDoc_<%=cid%>.readEntity(responseClass_<%=cid%>);
+				<%}%>
+				if(responseObj_<%=cid%> != null){
+					if (responseClass_<%=cid%> == String.class) {
+						<%=connResponseName%>.string = (String) responseObj_<%=cid%>;
+					} else {
+						routines.system.Document responseTalendDoc_<%=cid%> = null;
+						if (null != responseObj_<%=cid%>) {
+							responseTalendDoc_<%=cid%> = new routines.system.Document();
+							responseTalendDoc_<%=cid%>.setDocument((org.dom4j.Document) responseObj_<%=cid%>);
+						}
+						<%=connResponseName%>.body = responseTalendDoc_<%=cid%>;
 					}
-					<%=connResponseName%>.body = responseTalendDoc_<%=cid%>;
 				}
 			}
 			<% } %>
@@ -460,6 +479,14 @@ try {
 			<% if (useBusinessCorrelation) { %>
 			if (null != webClient_<%=cid%>.getResponse().getHeaders().get("CorrelationID")) {
 				globalMap.put("<%=cid%>_CORRELATION_ID", webClient_<%=cid%>.getResponse().getHeaders().get("CorrelationID").get(0));
+			}
+			<% } %>
+			
+			<% if (!MULTIPART_MIXED.equals(acceptType) && !"GET".equals(method)) { %>
+			// handle "oneway" for PUT, POST and PATCH with empty response payload
+			if (webClientResponseStatus_<%=cid%> == 202 && responseObj_<%=cid%> == null){
+				<%=connResponseName%>.string = "";
+				return;
 			}
 			<% } %>
 		<% } %>
