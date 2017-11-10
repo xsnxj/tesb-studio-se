@@ -418,12 +418,16 @@ try {
 		<% if ("GET".equals(method)) { %>
 			responseDoc_<%=cid%> = webClient_<%=cid%>.get<%if (MULTIPART_MIXED.equals(acceptType)) {%>Collection<%}%>(responseClass_<%=cid%>);
 		<% } else if ("POST".equals(method)) { %>
-			responseDoc_<%=cid%> = webClient_<%=cid%>.post<%if (MULTIPART_MIXED.equals(acceptType)) {%>ObjectGetCollection<%}%>(requestBody_<%=cid%>, responseClass_<%=cid%>);
+			<%if (MULTIPART_MIXED.equals(acceptType)) { %>
+				responseDoc_<%=cid%> = webClient_<%=cid%>.postObjectGetCollection(requestBody_<%=cid%>, responseClass_<%=cid%>);
+			<% } else { %>
+				responseDoc_<%=cid%> = webClient_<%=cid%>.post(requestBody_<%=cid%>);
+			<% } %>
 		<% } else if ("PUT".equals(method)) { %>
-			responseDoc_<%=cid%> = webClient_<%=cid%>.put(requestBody_<%=cid%>, responseClass_<%=cid%>);
+			responseDoc_<%=cid%> = webClient_<%=cid%>.put(requestBody_<%=cid%>);
 		<% } else if ("PATCH".equals(method)) { %>
 			org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getRequestContext().put("use.httpurlconnection.method.reflection", true);
-			responseDoc_<%=cid%> = webClient_<%=cid%>.invoke("PATCH", requestBody_<%=cid%>, responseClass_<%=cid%>);
+			responseDoc_<%=cid%> = webClient_<%=cid%>.invoke("PATCH", requestBody_<%=cid%>);
 		<% } else { %>
 			webClient_<%=cid%>.invoke("<%=method%>", requestBody_<%=cid%>);
 		<% } %>
