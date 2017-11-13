@@ -5,6 +5,8 @@
  */
 package org.talend.camel.core.model.camelProperties.impl;
 
+import java.util.regex.Pattern;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
@@ -41,6 +43,16 @@ public class CamelProcessItemImpl extends ProcessItemImpl implements CamelProces
      * @ordered
      */
     protected String springContent = SPRING_CONTENT_EDEFAULT;
+
+    /**
+     * The cached value of the '{@link #getBlueprintContent() <em>Blueprint Content</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getBlueprintContent()
+     * @generated
+     * @ordered
+     */
+    protected String blueprintContent = SPRING_CONTENT_EDEFAULT;
 
     /**
      * The default value of the '{@link #isExportMicroService() <em>Export Micro Service</em>}' attribute.
@@ -96,8 +108,18 @@ public class CamelProcessItemImpl extends ProcessItemImpl implements CamelProces
     public void setSpringContent(String newSpringContent) {
         String oldSpringContent = springContent;
         springContent = newSpringContent;
+        blueprintContent = toBlueprintContent(springContent);
         if (eNotificationRequired())
             eNotify(new ENotificationImpl(this, Notification.SET, CamelPropertiesPackage.CAMEL_PROCESS_ITEM__SPRING_CONTENT, oldSpringContent, springContent));
+    }
+
+    /**
+     * <!-- begin-user-doc --> <!-- end-user-doc -->
+     * @generated
+     */
+    @Override
+    public String getBlueprintContent() {
+        return blueprintContent;
     }
 
     /**
@@ -200,6 +222,19 @@ public class CamelProcessItemImpl extends ProcessItemImpl implements CamelProces
         result.append(exportMicroService);
         result.append(')');
         return result.toString();
+    }
+
+    private static String toBlueprintContent(String springContent) {
+        if (springContent == null || springContent.length() == 0) {
+            return springContent;
+        }
+        String result = springContent;
+        Pattern beansStart = Pattern.compile("<(\\w+:)?beans");
+        Pattern beansEnd = Pattern.compile("</(\\w+:)?beans>");
+        result = beansStart.matcher(springContent).replaceAll(
+                "blueprint:blueprint xmlns:blueprint=\"http://www.osgi.org/xmlns/blueprint/V1.0.0\"");
+        result = beansEnd.matcher(result).replaceAll("</blueprint:blueprint>");
+        return result;
     }
 
 } // CamelProcessItemImpl
