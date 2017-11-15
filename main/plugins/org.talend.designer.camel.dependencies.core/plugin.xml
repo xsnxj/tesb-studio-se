@@ -296,6 +296,9 @@
         <classpath name="cConfig"
             parameter="DRIVER_JAR"
             optional="true"/>
+        <classpath name="cConfig"
+            parameter="DRIVER_JAR_SE"
+            optional="true"/>        
         <classpath name="cMQConnectionFactory"
             parameter="WMQ_DRIVER_JAR"
             optional="true">
