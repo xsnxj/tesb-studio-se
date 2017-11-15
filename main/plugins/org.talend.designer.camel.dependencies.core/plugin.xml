@@ -9,6 +9,7 @@
 
         <importPackage
             name="org.apache.camel,
+                org.apache.camel.component.properties,
                 org.apache.camel.builder,
                 org.apache.camel.impl,
                 org.apache.camel.main,
@@ -295,6 +296,9 @@
         <classpath name="cConfig"
             parameter="DRIVER_JAR"
             optional="true"/>
+        <classpath name="cConfig"
+            parameter="DRIVER_JAR_SE"
+            optional="true"/>        
         <classpath name="cMQConnectionFactory"
             parameter="WMQ_DRIVER_JAR"
             optional="true">
