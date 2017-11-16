@@ -124,9 +124,9 @@ try {
 	org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean factoryBean_<%=cid%> =
 			new org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean();
 
-	boolean inOSGi = false;
+	Object bundleContext = null;
 	try {
-		inOSGi = (null != factoryBean_<%=cid%>.getBus().getExtension(Class.forName("org.osgi.framework.BundleContext")));
+		bundleContext = factoryBean_<%=cid%>.getBus().getExtension(routines.system.BundleUtils.getBundleContextClass());
 	} catch (ClassNotFoundException e_<%=cid%>) {
 		; // ignore
 	}
@@ -140,7 +140,7 @@ try {
 			<%=paramsHelper.getStringParam("__SERVICE_NAMESPACE__")%>,
 			<%=paramsHelper.getStringParam("__SERVICE_NAME__")%>));
 
-		if (!inOSGi) {
+		if (bundleContext == null) {
 			factoryBean_<%=cid%>.setBus(new org.apache.cxf.bus.spring.SpringBusFactory().createBus("META-INF/tesb/locator/beans.xml"));
 		}
 
@@ -164,13 +164,12 @@ try {
 	<% } %>
 
 	<% if (isSAMEnable) { %>
-		org.talend.esb.sam.agent.feature.EventFeature samEventFeature = null;
-		if (null == eventFeature) {
-			org.springframework.context.support.ClassPathXmlApplicationContext context =
-					new org.springframework.context.support.ClassPathXmlApplicationContext("META-INF/tesb/agent-context.xml");
-			samEventFeature = context.getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
+		org.talend.esb.sam.agent.feature.EventFeature samEventFeature_<%=cid%> = null;
+		if (bundleContext == null) {
+			samEventFeature_<%=cid%> = (org.talend.esb.sam.agent.feature.EventFeature) new org.springframework.context.support.ClassPathXmlApplicationContext(
+					new String[] { "META-INF/tesb/agent-context.xml" }).getBean(org.talend.esb.sam.agent.feature.EventFeature.class);
 		} else {
-			samEventFeature = (org.talend.esb.sam.agent.feature.EventFeature) eventFeature;
+			samEventFeature_<%=cid%> = routines.system.BundleUtils.getService(org.talend.esb.sam.agent.feature.EventFeature.class, bundleContext);
 		}
 		<% List<Entry<String, String>> samCustomProperties = paramsHelper.getPropertiesPram("__SERVICE_ACTIVITY_MONITOR_CUSTOM_PROPERTIES__");
 		if (!samCustomProperties.isEmpty()) { %>
@@ -180,9 +179,9 @@ try {
 				samCustomProps_<%=cid%>.put(<%=prop.getKey()%>, <%=prop.getValue()%>);
 			<% } %>
 			ciHandler.setCustomInfo(samCustomProps_<%=cid%>);
-			samEventFeature.setHandler(ciHandler);
+			samEventFeature_<%=cid%>.setHandler(ciHandler);
 		<% } %>
-		features_<%=cid%>.add(samEventFeature);
+		features_<%=cid%>.add(samEventFeature_<%=cid%>);
 	<% } %>
 
 	<% if (paramsHelper.getBoolParam("__LOG_MESSAGES__")) { %>
@@ -260,7 +259,7 @@ try {
 
 	boolean use_auth_<%=cid%> = <%=useAuth%>;
 	if (use_auth_<%=cid%> && "SAML".equals(<%=authType%>)) {
-		if (!inOSGi) {
+		if (bundleContext == null) {
 			throw new IllegalArgumentException("SAML based security scenarios are not supported in Studio (standalone)");
 		}
 		// set SAML Token authentication
@@ -321,7 +320,7 @@ try {
 		conduit_<%=cid%>.setAuthorization(authPolicy_<%=cid%>);
 	}
 
-	if (!inOSGi) {
+	if (bundleContext == null) {
 		conduit_<%=cid%>.getClient().setReceiveTimeout((long)(<%=paramsHelper.getStringParam("__RECEIVE_TIMEOUT__")%> * 1000L));
 		conduit_<%=cid%>.getClient().setConnectionTimeout((long)(<%=paramsHelper.getStringParam("__CONNECTION_TIMEOUT__")%> * 1000L));
 		boolean use_proxy_<%=cid%> = <%=useProxy%>;
