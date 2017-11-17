@@ -450,7 +450,7 @@ try {
 					Object responseObj_<%=cid%> = responseDoc_<%=cid%>;
 				<%} else {%>
 				Object responseObj_<%=cid%> = null;
-				if(responseDoc_<%=cid%>.hasEntity()){
+				if(responseDoc_<%=cid%> != null && responseDoc_<%=cid%>.hasEntity()){
 					responseObj_<%=cid%> = responseDoc_<%=cid%>.readEntity(responseClass_<%=cid%>);
 				<%}%>
 				if(responseObj_<%=cid%> != null){
