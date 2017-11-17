@@ -13,7 +13,9 @@
 package org.talend.camel.designer.ui.bean;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -30,8 +32,12 @@ import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.CorePlugin;
+import org.talend.core.model.components.IComponent;
 import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.ui.component.ComponentsFactoryProvider;
+import org.talend.designer.core.model.utils.emf.component.impl.ComponentFactoryImpl;
+import org.talend.designer.core.model.utils.emf.component.impl.IMPORTTypeImpl;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.RepositoryNode;
@@ -89,6 +95,34 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
             repositoryNode = (RepositoryNode) ((IStructuredSelection) getSelection()).getFirstElement();
         }
         BeanItem beanItem = (BeanItem) repositoryNode.getObject().getProperty().getItem();
+
+        byte[] ct = beanItem.getContent().getInnerContent();
+
+        String contentString = new String(ct);
+
+        if (contentString.contains("org.apache.camel.")) {
+            Pattern p = Pattern.compile("camel-core-\\d+(.\\d+)*(\\S+)*(\\.jar)$");
+
+            if (beanItem.getImports().size() == 0) {
+                addCamelDependency(beanItem);
+            }
+
+            for (int i = 0; i < beanItem.getImports().size(); i++) {
+                Object o = beanItem.getImports().get(i);
+
+                if (o instanceof IMPORTTypeImpl) {
+                    IMPORTTypeImpl importType = (IMPORTTypeImpl) o;
+                    if (p.matcher(importType.getMODULE()).matches()) {
+                        continue;
+                    }
+                } else {
+                    addCamelDependency(beanItem);
+                }
+
+            }
+
+        }
+
         try {
             openBeanEditor(beanItem, false);
             refresh(repositoryNode);
@@ -99,6 +133,24 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
         } catch (SystemException e) {
             MessageBoxExceptionHandler.process(e);
         }
+    }
+
+    private void addCamelDependency(BeanItem beanItem) {
+        IMPORTTypeImpl camelImport = (IMPORTTypeImpl) ComponentFactoryImpl.eINSTANCE.createIMPORTType();
+        IComponent component = ComponentsFactoryProvider.getInstance().get("cTimer", "CAMEL");
+        ModuleNeeded cmn = null;
+        List<ModuleNeeded> mns = component.getModulesNeeded();
+
+        for (ModuleNeeded mn : mns) {
+            if (mn.getId().equals("camel-core")) {
+                cmn = mn;
+                break;
+            }
+        }
+        camelImport.setMODULE(cmn.getModuleName());
+        camelImport.setMVN(cmn.getMavenUri());
+        camelImport.setREQUIRED(true);
+        beanItem.getImports().add(camelImport);
     }
 
     @Override

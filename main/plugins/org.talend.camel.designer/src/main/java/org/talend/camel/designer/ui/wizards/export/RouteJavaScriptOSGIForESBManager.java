@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import aQute.bnd.osgi.Analyzer;
 
@@ -56,6 +57,29 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
         Collection<String> routelets) {
         super(exportChoiceMap, contextName, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
         this.routelets = routelets;
+    }
+
+    @Override
+    protected ExportFileResource getCompiledLibExportFileResource(ExportFileResource[] processes) {
+        Pattern p = Pattern.compile("([\\s\\S]*)camel-core-\\d+(.\\d+)*(\\S+)*(\\.jar)$");
+
+        ExportFileResource libResource = new ExportFileResource(null, LIBRARY_FOLDER_NAME);
+        // Gets talend libraries
+        List<URL> talendLibraries = getExternalLibraries(true, processes, getCompiledModuleNames());
+        if (talendLibraries != null) {
+
+            for (int i = 0; i < talendLibraries.size(); i++) {
+                URL tURL = talendLibraries.get(i);
+                if (p.matcher(tURL.getFile()).matches()) {
+                    continue;
+                } else {
+                    libResource.addResources(talendLibraries);
+                }
+            }
+
+        }
+        addRoutinesResources(processes, libResource);
+        return libResource;
     }
 
     /**
