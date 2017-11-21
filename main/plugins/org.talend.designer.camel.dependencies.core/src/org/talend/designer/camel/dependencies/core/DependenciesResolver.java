@@ -68,7 +68,8 @@ public class DependenciesResolver {
         handleAllNodeTypes(item.getProcess().getNode());
         handleAllConnectionTypes(item.getProcess().getConnection());
 
-        final Collection<ImportPackage> customImportPackages = new ArrayList<ImportPackage>(importPackages);
+        final Collection<ImportPackage> customImportPackages = new TreeSet<ImportPackage>(SORTER);
+        customImportPackages.addAll(importPackages);
         customImportPackages.addAll(DependenciesCoreUtil.getStoredImportPackages(additionProperties));
         importPackages = customImportPackages;
 
