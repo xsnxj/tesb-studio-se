@@ -433,6 +433,8 @@ try {
 		<% } else if ("PATCH".equals(method)) { %>
 			org.apache.cxf.jaxrs.client.WebClient.getConfig(webClient_<%=cid%>).getRequestContext().put("use.httpurlconnection.method.reflection", true);
 			responseDoc_<%=cid%> = webClient_<%=cid%>.invoke("PATCH", requestBody_<%=cid%>);
+		<% } else if ("DELETE".equals(method)) { %>
+		    responseDoc_<%=cid%> = webClient_<%=cid%>.invoke("<%=method%>", requestBody_<%=cid%>);
 		<% } else { %>
 			webClient_<%=cid%>.invoke("<%=method%>", requestBody_<%=cid%>);
 		<% } %>
@@ -456,7 +458,7 @@ try {
 					Object responseObj_<%=cid%> = responseDoc_<%=cid%>;
 				<%} else {%>
 				Object responseObj_<%=cid%> = null;
-				if(responseDoc_<%=cid%>.hasEntity()){
+				if(responseDoc_<%=cid%> != null && responseDoc_<%=cid%>.hasEntity()){
 					responseObj_<%=cid%> = responseDoc_<%=cid%>.readEntity(responseClass_<%=cid%>);
 				<%}%>
 				if(responseObj_<%=cid%> != null){
