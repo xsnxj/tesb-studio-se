@@ -36,6 +36,7 @@ import org.talend.commons.exception.SystemException;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.ui.runtime.image.OverlayImageProvider;
+import org.talend.core.CorePlugin;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.utils.RepositoryManagerHelper;
 import org.talend.core.repository.model.ProjectRepositoryNode;
@@ -143,7 +144,11 @@ public class CreateCamelBean extends AbstractBeanAction implements IIntroAction 
         if (dlg.open() == Window.OK) {
 
             try {
+                addCamelDependency(beanWizard.getBean());
                 openBeanEditor(beanWizard.getBean(), false);
+                refresh(repositoryNode);
+                CorePlugin.getDefault().getRunProcessService().updateLibraries(beanWizard.getBean());
+
             } catch (PartInitException e) {
                 MessageBoxExceptionHandler.process(e);
             } catch (SystemException e) {
