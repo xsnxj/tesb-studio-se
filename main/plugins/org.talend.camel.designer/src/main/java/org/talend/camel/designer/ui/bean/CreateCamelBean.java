@@ -149,7 +149,7 @@ public class CreateCamelBean extends AbstractBeanAction implements IIntroAction 
                 addCamelDependency(beanWizard.getBean());
                 openBeanEditor(beanWizard.getBean(), false);
                 refresh(repositoryNode);
-                CorePlugin.getDefault().getLibrariesService().resetModulesNeeded();
+                // CorePlugin.getDefault().getLibrariesService().resetModulesNeeded();
                 CorePlugin.getDefault().getRunProcessService().updateLibraries(new HashSet<ModuleNeeded>(), null);
 
             } catch (PartInitException e) {
