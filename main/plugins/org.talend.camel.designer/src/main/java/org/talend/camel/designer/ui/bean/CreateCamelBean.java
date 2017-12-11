@@ -151,7 +151,6 @@ public class CreateCamelBean extends AbstractBeanAction implements IIntroAction 
                 refresh(repositoryNode);
                 // CorePlugin.getDefault().getLibrariesService().resetModulesNeeded();
                 CorePlugin.getDefault().getRunProcessService().updateLibraries(new HashSet<ModuleNeeded>(), null);
-
             } catch (PartInitException e) {
                 MessageBoxExceptionHandler.process(e);
             } catch (SystemException e) {
