@@ -12,9 +12,19 @@
 // ============================================================================
 package org.talend.camel.designer.ui.bean;
 
+import java.net.URL;
+import java.util.List;
+import java.util.regex.Pattern;
+
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.m2e.core.MavenPlugin;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -26,9 +36,18 @@ import org.talend.core.GlobalServiceRegister;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
 import org.talend.core.language.ECodeLanguage;
+import org.talend.core.model.components.IComponent;
+import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.repository.ui.editor.RepositoryEditorInput;
+import org.talend.core.runtime.process.ITalendProcessJavaProject;
+import org.talend.core.ui.component.ComponentsFactoryProvider;
 import org.talend.designer.codegen.ICodeGeneratorService;
 import org.talend.designer.codegen.ITalendSynchronizer;
+import org.talend.designer.core.model.utils.emf.component.impl.ComponentFactoryImpl;
+import org.talend.designer.core.model.utils.emf.component.impl.IMPORTTypeImpl;
+import org.talend.designer.maven.model.TalendMavenConstants;
+import org.talend.designer.maven.utils.PomUtil;
+import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.actions.AContextualAction;
 
@@ -36,6 +55,8 @@ import org.talend.repository.ui.actions.AContextualAction;
  * DOC Administrator class global comment. Detailled comment
  */
 public abstract class AbstractBeanAction extends AContextualAction {
+
+    private Pattern CAMEL_CORE_PATTERN = Pattern.compile("camel-core-\\d+(.\\d+)*(\\S+)*(\\.jar)$");
 
     // protected RepositoryNode repositoryNode;
 
@@ -112,4 +133,116 @@ public abstract class AbstractBeanAction extends AContextualAction {
 
     }
 
+    protected void addCamelDependency(BeanItem beanItem) {
+
+        if (beanItem.getImports().size() == 0) {
+            ModuleNeeded mn = addDefaultDependency(beanItem);
+            deployLibrary(mn);
+        } else {
+
+            boolean needAddCamelCore = true;
+
+            for (int i = 0; i < beanItem.getImports().size(); i++) {
+                Object o = beanItem.getImports().get(i);
+
+                if (o instanceof IMPORTTypeImpl) {
+                    IMPORTTypeImpl importType = (IMPORTTypeImpl) o;
+                    if (CAMEL_CORE_PATTERN.matcher(importType.getMODULE()).matches()) {
+                        deployLibrary(getModuleNeeded("camel-core"));
+                        needAddCamelCore = false;
+                        continue;
+                    }
+                }
+            }
+
+            if (needAddCamelCore) {
+                ModuleNeeded mn = addDefaultDependency(beanItem);
+                deployLibrary(mn);
+            }
+        }
+    }
+
+    private ModuleNeeded getModuleNeeded(String aname) {
+        IComponent component = ComponentsFactoryProvider.getInstance().get("cTimer", "CAMEL");
+        List<ModuleNeeded> mns = component.getModulesNeeded();
+
+        ModuleNeeded cmn = null;
+
+        for (ModuleNeeded mn : mns) {
+            if (mn.getId().equals(aname)) {
+                cmn = mn;
+                break;
+            }
+        }
+
+        return cmn;
+    }
+
+    private ModuleNeeded addDefaultDependency(BeanItem beanItem) {
+
+        IMPORTTypeImpl camelImport = (IMPORTTypeImpl) ComponentFactoryImpl.eINSTANCE.createIMPORTType();
+
+        ModuleNeeded cmn = getModuleNeeded("camel-core");
+
+        camelImport.setMODULE(cmn.getModuleName());
+        camelImport.setMVN(cmn.getMavenUri());
+        camelImport.setREQUIRED(true);
+        beanItem.getImports().add(camelImport);
+
+        return cmn;
+    }
+
+    public void deployLibrary(ModuleNeeded mn) {
+
+        IFile pomFile = null;
+
+        ITalendProcessJavaProject talendJavaProject = null;
+        Model readMavenModel = null;
+
+        if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
+            IRunProcessService service = (IRunProcessService) GlobalServiceRegister.getDefault()
+                    .getService(IRunProcessService.class);
+            talendJavaProject = service.getTalendProcessJavaProject();
+
+            IFile beansPomFile = talendJavaProject.getProject()
+                    .getFile(PomUtil.getPomFileName(TalendMavenConstants.DEFAULT_BEANS_ARTIFACT_ID));
+
+            if (!beansPomFile.exists()) {
+                try {
+                    talendJavaProject.cleanMavenFiles(new NullProgressMonitor());
+                } catch (Exception ee) {
+                    ee.printStackTrace();
+                }
+            }
+
+            if (talendJavaProject != null) {
+                pomFile = talendJavaProject.getProject().getFile(TalendMavenConstants.POM_FILE_NAME);
+                try {
+                    readMavenModel = MavenPlugin.getMavenModelManager().readMavenModel(pomFile);
+                } catch (CoreException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        try {
+
+            boolean needReDeployLibrary = true;
+
+            for (Dependency dependency : readMavenModel.getDependencies()) {
+                if (mn.getModuleName().startsWith(dependency.getArtifactId())) {
+                    needReDeployLibrary = false;
+                    break;
+                }
+            }
+
+            if (needReDeployLibrary) {
+                CorePlugin.getDefault().getLibrariesService()
+                        .deployLibrary(FileLocator.toFileURL(new URL(mn.getModuleLocaion())));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
