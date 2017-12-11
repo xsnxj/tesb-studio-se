@@ -12,10 +12,13 @@
 // ============================================================================
 package org.talend.camel.designer.ui.bean;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.IEditorPart;
@@ -155,6 +158,12 @@ public abstract class AbstractBeanAction extends AContextualAction {
         for (ModuleNeeded mn : mns) {
             if (mn.getId().equals("camel-core")) {
                 cmn = mn;
+                try {
+                    CorePlugin.getDefault().getLibrariesService()
+                            .deployLibrary(FileLocator.toFileURL(new URL(cmn.getModuleLocaion())), cmn.getMavenUri());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 break;
             }
         }
