@@ -52,22 +52,6 @@ public interface CamelProcessItem extends ProcessItem {
 	void setSpringContent(String value);
 
     /**
-     * Returns the value of the '<em><b>Blueprint Content</b></em>' attribute.
-     * The default value is <code>""</code>.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of the '<em>Blueprint Content</em>' attribute isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @return the value of the '<em>Blueprint Content</em>' attribute.
-     * @see org.talend.camel.core.model.camelProperties.CamelPropertiesPackage#getCamelProcessItem_BlueprintContent()
-     * @model default="" dataType="org.eclipse.emf.ecore.xml.type.String"
-     * @generated
-     */
-    String getBlueprintContent();
-
-    /**
      * Returns the value of the '<em><b>Export Micro Service</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <p>

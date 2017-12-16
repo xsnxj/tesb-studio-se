@@ -12,21 +12,34 @@
 // ============================================================================
 package org.talend.camel.designer.ui.wizards.export;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
+import java.net.URLStreamHandler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import org.dom4j.Attribute;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
+import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.process.ElementParameterParser;
 import org.talend.core.model.process.IProcess;
@@ -34,6 +47,7 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.designer.camel.dependencies.core.DependenciesResolver;
+import org.talend.designer.camel.resource.core.model.ResourceDependencyModel;
 import org.talend.designer.camel.resource.core.util.RouteResourceUtil;
 import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
@@ -43,6 +57,7 @@ import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.DataSourceConfig;
 import org.talend.repository.utils.EmfModelUtils;
 import org.talend.repository.utils.TemplateProcessor;
+import org.talend.utils.io.FilesUtils;
 
 import aQute.bnd.osgi.Analyzer;
 
@@ -50,6 +65,11 @@ import aQute.bnd.osgi.Analyzer;
  * DOC ycbai class global comment. Detailled comment
  */
 public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIForESBManager {
+
+    private static final String CONVERT_SPRING_IMPORT_PROPERTY = "org.talend.esb.route.spring.import.convert"; //$NON-NLS-1$
+    private static final String TEMPLATE_BLUEPRINT_ROUTE = "/resources/blueprint-template.xml"; //$NON-NLS-2$
+    private static final String IMPORT_RESOURCE_PREFIX = ".." + File.separator + ".." + File.separator; //$NON-NLS-3$ 
+    private static final boolean CONVERT_SPRING_IMPORT = wantsConversionOfSpringImport();
 
     private final Collection<String> routelets;
 
@@ -136,15 +156,135 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
         }
     }
 
-    private static final String TEMPLATE_BLUEPRINT_ROUTE = "/resources/blueprint-template.xml"; //$NON-NLS-1$
-
     @Override
     protected void generateConfig(ExportFileResource osgiResource, ProcessItem processItem, IProcess process) throws IOException {
         final File targetFile = new File(getTmpFolder() + PATH_SEPARATOR + "blueprint.xml"); //$NON-NLS-1$
+
+        Map<String, Object> collectRouteInfo = collectRouteInfo(processItem, process);
+
         TemplateProcessor.processTemplate("ROUTE_BLUEPRINT_CONFIG", //$NON-NLS-1$
-            collectRouteInfo(processItem, process), targetFile, getClass().getResourceAsStream(TEMPLATE_BLUEPRINT_ROUTE));
-        // osgiResource.addResource(FileConstants.META_INF_FOLDER_NAME + "/spring", targetFile.toURI().toURL());
+                collectRouteInfo, targetFile, getClass().getResourceAsStream(TEMPLATE_BLUEPRINT_ROUTE));
+
         osgiResource.addResource(FileConstants.BLUEPRINT_FOLDER_NAME, targetFile.toURI().toURL());
+
+        String springContent = null;
+        if (processItem instanceof CamelProcessItem) {
+            springContent = ((CamelProcessItem) processItem).getSpringContent();
+        }
+
+        if (springContent != null && springContent.length() > 0) {
+            String springTargetFilePath = collectRouteInfo.get("name").toString().toLowerCase() + ".xml"; //$NON-NLS-1$
+            InputStream springContentInputStream = new ByteArrayInputStream(springContent.getBytes());
+            handleSpringXml(springTargetFilePath, processItem, springContentInputStream, osgiResource,
+                    true, CONVERT_SPRING_IMPORT);
+        }
+    }
+
+    @Override
+    protected Set<String> getCompiledModuleNames() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    protected void addOsgiDependencies(Analyzer analyzer, ExportFileResource libResource, ProcessItem processItem)
+            throws IOException {
+        final DependenciesResolver resolver = new DependenciesResolver(processItem);
+        //exportPackage.append(getPackageName(processItem));
+        // Add Route Resource Export packages
+        // http://jira.talendforge.org/browse/TESB-6227
+
+        // add manifest items
+        analyzer.setProperty(Analyzer.REQUIRE_BUNDLE, resolver.getManifestRequireBundle(MANIFEST_ITEM_SEPARATOR));
+        analyzer.setProperty(Analyzer.IMPORT_PACKAGE,
+            resolver.getManifestImportPackage(MANIFEST_ITEM_SEPARATOR) + ",*;resolution:=optional"); //$NON-NLS-1$
+        analyzer.setProperty(Analyzer.EXPORT_PACKAGE, resolver.getManifestExportPackage(MANIFEST_ITEM_SEPARATOR));
+
+        if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
+            IRunProcessService processService = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
+                    IRunProcessService.class);
+            ITalendProcessJavaProject talendProcessJavaProject = processService.getTalendProcessJavaProject();
+            if (talendProcessJavaProject != null) {
+                final IPath libPath = talendProcessJavaProject.getLibFolder().getLocation();
+                // process external libs
+                final List<URL> list = new ArrayList<URL>();
+                for (String s : resolver.getManifestBundleClasspath(MANIFEST_ITEM_SEPARATOR)
+                    .split(Character.toString(MANIFEST_ITEM_SEPARATOR))) {
+                    if (!s.isEmpty()) {
+                        list.add(libPath.append(s).toFile().toURI().toURL());
+                    }
+                }
+                libResource.addResources(list);
+            }
+        }
+    }
+
+    private void handleSpringXml(String  targetFilePath, ProcessItem processItem, InputStream springInput,
+            ExportFileResource osgiResource, boolean convertToBP, boolean convertImports) {
+
+        File targetFile = new File(getTmpFolder() + PATH_SEPARATOR + targetFilePath);
+        try {
+            SAXReader saxReader = new SAXReader();
+            saxReader.setStripWhitespaceText(false);
+            Document document = saxReader.read(springInput);
+            Element root = document.getRootElement();
+
+            if (convertToBP) {
+                if ("blueprint".equals(root.getName())) {
+                    formatSchemaLocation(root, false);
+                    InputStream inputStream = new ByteArrayInputStream(root.asXML().getBytes());
+                    FilesUtils.copyFile(inputStream, targetFile);
+                    osgiResource.addResource(FileConstants.BLUEPRINT_FOLDER_NAME, targetFile.toURI().toURL());
+                    return;
+                }
+
+                String bpPrefix = "bp";
+                int cnt = 0;
+                while (root.getNamespaceForPrefix(bpPrefix) != null) {
+                    bpPrefix = "bp" + (++cnt);
+                }
+                root.addNamespace(bpPrefix, "http://www.osgi.org/xmlns/blueprint/v1.0.0");
+                root.setName(bpPrefix + ":blueprint");
+            }
+
+            formatSchemaLocation(root, convertToBP);
+
+            for (Iterator<?> i = root.elementIterator("import"); i.hasNext();) {
+                Element ip = (Element) i.next();
+                Attribute resource = ip.attribute("resource");
+
+                URL path = new URL(null, resource.getValue(), new URLStreamHandler() {
+
+                    @Override
+                    protected URLConnection openConnection(URL u) throws IOException {
+                        return null;
+                    }
+
+                });
+                for (ResourceDependencyModel resourceModel : RouteResourceUtil.getResourceDependencies(processItem)) {
+                    if (matches(path, resourceModel)) {
+                        IFile resourceFile = RouteResourceUtil.getSourceFile(resourceModel.getItem());
+                        String cpUrl = adaptClassPathUrl(resourceModel, convertImports);
+                        handleSpringXml(cpUrl, processItem, resourceFile.getContents(), osgiResource, convertImports, convertImports);
+                        resource.setValue(IMPORT_RESOURCE_PREFIX + cpUrl);
+                    }
+                }
+                if (convertImports) {
+                    i.remove();
+                }
+            }
+
+            InputStream inputStream = new ByteArrayInputStream(root.asXML().getBytes());
+            FilesUtils.copyFile(inputStream, targetFile);
+            osgiResource.addResource(adaptedResourceFolderName(targetFilePath, convertToBP), targetFile.toURI().toURL());
+        } catch (Exception e) {
+            Logger.getAnonymousLogger().log(Level.WARNING, "Custom Spring to OSGi conversion failed. ", e);
+        } finally {
+            try {
+                springInput.close();
+            } catch (IOException e) {
+                Logger.getAnonymousLogger().log(Level.WARNING, "Unexpected File closing failure. ", e);
+            }
+        }
     }
 
     private Map<String, Object> collectRouteInfo(ProcessItem processItem, IProcess process) {
@@ -156,7 +296,7 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
         String idName = className;
         String suffix = getOsgiServiceIdSuffix();
         if (suffix != null && suffix.length() > 0) {
-        	idName += suffix;
+            idName += suffix;
         }
         routeInfo.put("className", className); //$NON-NLS-1$
         routeInfo.put("idName", idName); //$NON-NLS-2$
@@ -239,41 +379,67 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
         return routeInfo;
     }
 
-    @Override
-    protected Set<String> getCompiledModuleNames() {
-        return Collections.emptySet();
+    private static boolean matches(URL importURL, ResourceDependencyModel resourceModel) {
+        String path = importURL.getPath();
+        String refPath = resourceModel.getClassPathUrl();
+        if (path == null || path.length() == 0 || refPath == null || refPath.length() == 0) {
+            return false;
+        }
+        if (path.startsWith("/")) {
+            return path.length() == refPath.length() + 1 && path.endsWith(refPath);
+        }
+        return path.equals(refPath);
     }
 
-    @Override
-    protected void addOsgiDependencies(Analyzer analyzer, ExportFileResource libResource, ProcessItem processItem)
-            throws IOException {
-        final DependenciesResolver resolver = new DependenciesResolver(processItem);
-        //exportPackage.append(getPackageName(processItem));
-        // Add Route Resource Export packages
-        // http://jira.talendforge.org/browse/TESB-6227
-
-        // add manifest items
-        analyzer.setProperty(Analyzer.REQUIRE_BUNDLE, resolver.getManifestRequireBundle(MANIFEST_ITEM_SEPARATOR));
-        analyzer.setProperty(Analyzer.IMPORT_PACKAGE,
-            resolver.getManifestImportPackage(MANIFEST_ITEM_SEPARATOR) + ",*;resolution:=optional"); //$NON-NLS-1$
-        analyzer.setProperty(Analyzer.EXPORT_PACKAGE, resolver.getManifestExportPackage(MANIFEST_ITEM_SEPARATOR));
-
-        if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
-            IRunProcessService processService = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
-                    IRunProcessService.class);
-            ITalendProcessJavaProject talendProcessJavaProject = processService.getTalendProcessJavaProject();
-            if (talendProcessJavaProject != null) {
-                final IPath libPath = talendProcessJavaProject.getLibFolder().getLocation();
-                // process external libs
-                final List<URL> list = new ArrayList<URL>();
-                for (String s : resolver.getManifestBundleClasspath(MANIFEST_ITEM_SEPARATOR)
-                    .split(Character.toString(MANIFEST_ITEM_SEPARATOR))) {
-                    if (!s.isEmpty()) {
-                        list.add(libPath.append(s).toFile().toURI().toURL());
-                    }
-                }
-                libResource.addResources(list);
-            }
+    private static String adaptClassPathUrl(ResourceDependencyModel resourceModel, boolean convertToBP) {
+        String cpUrl = resourceModel.getClassPathUrl();
+        if (convertToBP) {
+            return "csi__" + cpUrl.replaceAll("/", "__");
         }
+        int insert = cpUrl.lastIndexOf('/') + 1;
+        return cpUrl.substring(0, insert) + "sei__" + cpUrl.substring(insert);
+    }
+
+    private static String adaptedResourceFolderName(String filePath, boolean convertToBP) {
+        if (convertToBP) {
+            return FileConstants.BLUEPRINT_FOLDER_NAME;
+        }
+        int ndx = filePath.lastIndexOf('/');
+        return ndx < 0 ? "" : filePath.substring(0,ndx);
+    }
+
+    private static void formatSchemaLocation(Element root, boolean addBlueprint) {
+        Attribute schemaLocation = root.attribute("schemaLocation");
+        if (schemaLocation == null) {
+            return;
+        }
+        String value = schemaLocation.getValue().replaceAll("(\\A|\\b)\\s\\s+\\b", "\n            ");
+        if (addBlueprint) {
+            value += "\n            http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd";
+        }
+        schemaLocation.setValue(value);
+    }
+
+    private static boolean wantsConversionOfSpringImport() {
+        String option = System.getProperty(CONVERT_SPRING_IMPORT_PROPERTY);
+        if (option == null || option.length() == 0) {
+            return false;
+        }
+        if ("true".equalsIgnoreCase(option)) {
+            return true;
+        }
+        if ("1".equalsIgnoreCase(option)) {
+            return true;
+        }
+        if ("on".equalsIgnoreCase(option)) {
+            return true;
+        }
+        if ("yes".equalsIgnoreCase(option)) {
+            return true;
+        }
+        if ("y".equalsIgnoreCase(option)) {
+            return true;
+        }
+        return false;
     }
 }

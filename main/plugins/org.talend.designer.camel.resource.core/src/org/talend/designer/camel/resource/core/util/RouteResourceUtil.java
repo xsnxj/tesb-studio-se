@@ -214,27 +214,16 @@ public class RouteResourceUtil {
         // add spring file
         if (!routelet) {
             final IFolder metaInf = routeResourceFolder.getFolder("META-INF/spring/");
-            final IFolder osgiInf = routeResourceFolder.getFolder("OSGI-INF/blueprint/");
             try {
                 prepareFolder(metaInf);
-                prepareFolder(osgiInf);
-                final String fileName = item.getProperty().getLabel().toLowerCase() + ".xml";
-                final IFile spring = metaInf.getFile(fileName);
+                final IFile spring = metaInf.getFile(item.getProperty().getLabel().toLowerCase() + ".xml");
                 final InputStream inputStream = new ByteArrayInputStream(((CamelProcessItem) item).getSpringContent().getBytes());
                 if (spring.exists()) {
                     spring.setContents(inputStream, 0, null);
                 } else {
                     spring.create(inputStream, true, null);
                 }
-                final IFile blueprint = osgiInf.getFile(fileName);
-                final InputStream blueprintStream = new ByteArrayInputStream(((CamelProcessItem) item).getBlueprintContent().getBytes());
-                if (blueprint.exists()) {
-                    blueprint.setContents(blueprintStream, 0, null);
-                } else {
-                    blueprint.create(blueprintStream, true, null);
-                }
                 result.add(spring.getLocation());
-                result.add(blueprint.getLocation());
             } catch (CoreException e) {
                 ExceptionHandler.process(e);
             }
