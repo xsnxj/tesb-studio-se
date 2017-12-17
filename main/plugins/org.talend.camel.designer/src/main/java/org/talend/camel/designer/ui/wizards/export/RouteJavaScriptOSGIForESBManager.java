@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
@@ -35,6 +36,8 @@ import java.util.regex.Pattern;
 import org.dom4j.Attribute;
 import org.dom4j.Document;
 import org.dom4j.Element;
+import org.dom4j.Namespace;
+import org.dom4j.QName;
 import org.dom4j.io.SAXReader;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -67,9 +70,15 @@ import aQute.bnd.osgi.Analyzer;
 public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIForESBManager {
 
     private static final String CONVERT_SPRING_IMPORT_PROPERTY = "org.talend.esb.route.spring.import.convert"; //$NON-NLS-1$
-    private static final String TEMPLATE_BLUEPRINT_ROUTE = "/resources/blueprint-template.xml"; //$NON-NLS-2$
-    private static final String IMPORT_RESOURCE_PREFIX = ".." + File.separator + ".." + File.separator; //$NON-NLS-3$ 
-    private static final boolean CONVERT_SPRING_IMPORT = wantsConversionOfSpringImport();
+    private static final String CONVERT_CAMEL_CONTEXT_PROPERTY = "org.talend.esb.route.spring.camel.convert"; //$NON-NLS-1$
+    private static final String TEMPLATE_BLUEPRINT_ROUTE = "/resources/blueprint-template.xml"; //$NON-NLS-1$
+    private static final String IMPORT_RESOURCE_PREFIX = ".." + File.separator + ".." + File.separator; //$NON-NLS-1$
+    private static final String BLUEPRINT_NSURI = "http://www.osgi.org/xmlns/blueprint/v1.0.0"; //$NON-NLS-1$
+    private static final String CAMEL_SPRING_NSURI = "http://camel.apache.org/schema/spring"; //$NON-NLS-1$
+    private static final String CAMEL_BLUEPRINT_NSURI = "http://camel.apache.org/schema/blueprint"; //$NON-NLS-1$
+    private static final boolean CONVERT_SPRING_IMPORT = isNotNegated(CONVERT_SPRING_IMPORT_PROPERTY);
+    private static final boolean CONVERT_CAMEL_CONTEXT = isNotNegated(CONVERT_CAMEL_CONTEXT_PROPERTY);
+    private static final boolean CONVERT_CAMEL_CONTEXT_ALL = isAll(CONVERT_CAMEL_CONTEXT_PROPERTY);
 
     private final Collection<String> routelets;
 
@@ -242,8 +251,7 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
                 while (root.getNamespaceForPrefix(bpPrefix) != null) {
                     bpPrefix = "bp" + (++cnt);
                 }
-                root.addNamespace(bpPrefix, "http://www.osgi.org/xmlns/blueprint/v1.0.0");
-                root.setName(bpPrefix + ":blueprint");
+                root.setQName(QName.get("blueprint", bpPrefix, BLUEPRINT_NSURI));
             }
 
             formatSchemaLocation(root, convertToBP);
@@ -251,25 +259,35 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
             for (Iterator<?> i = root.elementIterator("import"); i.hasNext();) {
                 Element ip = (Element) i.next();
                 Attribute resource = ip.attribute("resource");
-
-                URL path = new URL(null, resource.getValue(), new URLStreamHandler() {
-
-                    @Override
-                    protected URLConnection openConnection(URL u) throws IOException {
-                        return null;
-                    }
-
-                });
+                URL path = dummyURL(resource.getValue());
                 for (ResourceDependencyModel resourceModel : RouteResourceUtil.getResourceDependencies(processItem)) {
                     if (matches(path, resourceModel)) {
                         IFile resourceFile = RouteResourceUtil.getSourceFile(resourceModel.getItem());
-                        String cpUrl = adaptClassPathUrl(resourceModel, convertImports);
-                        handleSpringXml(cpUrl, processItem, resourceFile.getContents(), osgiResource, convertImports, convertImports);
+                        String cpUrl = adaptedClassPathUrl(resourceModel, convertImports);
+                        handleSpringXml(cpUrl, processItem, resourceFile.getContents(), osgiResource,
+                                convertImports, convertImports);
                         resource.setValue(IMPORT_RESOURCE_PREFIX + cpUrl);
                     }
                 }
                 if (convertImports) {
                     i.remove();
+                }
+            }
+
+            if (CONVERT_CAMEL_CONTEXT) {
+                for (Iterator<?> i = root.elementIterator("camelContext"); i.hasNext();) {
+                    Element cc = (Element) i.next();
+                    Namespace nsp = cc.getNamespace();
+                    String nsPrefix = nsp.getPrefix();
+                    String nsURI = nsp.getURI();
+                    if (CAMEL_SPRING_NSURI.equals(nsURI)) {
+                        if (CONVERT_CAMEL_CONTEXT_ALL) {
+                            moveNamespace(cc, CAMEL_SPRING_NSURI, CAMEL_BLUEPRINT_NSURI);
+                        } else if (nsPrefix == null || nsPrefix.length() == 0) {
+                            Namespace newNsp = Namespace.get(nsPrefix, CAMEL_BLUEPRINT_NSURI);
+                            moveNamespace(cc, nsp, newNsp);
+                        }
+                    }
                 }
             }
 
@@ -391,7 +409,7 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
         return path.equals(refPath);
     }
 
-    private static String adaptClassPathUrl(ResourceDependencyModel resourceModel, boolean convertToBP) {
+    private static String adaptedClassPathUrl(ResourceDependencyModel resourceModel, boolean convertToBP) {
         String cpUrl = resourceModel.getClassPathUrl();
         if (convertToBP) {
             return "csi__" + cpUrl.replaceAll("/", "__");
@@ -420,8 +438,62 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
         schemaLocation.setValue(value);
     }
 
-    private static boolean wantsConversionOfSpringImport() {
-        String option = System.getProperty(CONVERT_SPRING_IMPORT_PROPERTY);
+    private static URL dummyURL(String path) throws MalformedURLException {
+        return new URL(null, path, new URLStreamHandler() {
+
+            @Override
+            protected URLConnection openConnection(URL u) throws IOException {
+                return null;
+            }
+
+        });
+    }
+
+    private static void moveNamespace(Element treeRoot, Namespace oldNsp, Namespace newNsp) {
+        if (treeRoot.getNamespace().equals(oldNsp)) {
+            treeRoot.setQName(QName.get(treeRoot.getName(), newNsp));
+            treeRoot.remove(oldNsp);
+        }
+        moveNamespaceInChildren(treeRoot, oldNsp, newNsp);
+    }
+
+    private static void moveNamespaceInChildren(Element treeRoot, Namespace oldNsp, Namespace newNsp) {
+        for (Iterator<?> i = treeRoot.elementIterator(); i.hasNext();) {
+            Element e = (Element) i.next();
+            if (e.getNamespace().equals(oldNsp)) {
+                e.setQName(QName.get(e.getName(), newNsp));
+                e.remove(oldNsp);
+            }
+            moveNamespaceInChildren(e, oldNsp, newNsp);
+        }
+    }
+
+    private static void moveNamespace(Element treeRoot, String oldNspURI, String newNspURI) {
+        Namespace oldNsp = treeRoot.getNamespace();
+        if (oldNspURI.equals(oldNsp.getURI())) {
+            Namespace newNsp = Namespace.get(oldNsp.getPrefix(), newNspURI);
+            treeRoot.setQName(QName.get(treeRoot.getName(), newNsp));
+            treeRoot.remove(oldNsp);
+        }
+        moveNamespaceInChildren(treeRoot, oldNspURI, newNspURI);
+    }
+
+    private static void moveNamespaceInChildren(Element treeRoot, String oldNspURI, String newNspURI) {
+        for (Iterator<?> i = treeRoot.elementIterator(); i.hasNext();) {
+            Element e = (Element) i.next();
+            Namespace oldNsp = e.getNamespace();
+            if (oldNspURI.equals(oldNsp.getURI())) {
+                Namespace newNsp = Namespace.get(oldNsp.getPrefix(), newNspURI);
+                e.setQName(QName.get(e.getName(), newNsp));
+                e.remove(oldNsp);
+            }
+            moveNamespaceInChildren(e, oldNspURI, newNspURI);
+        }
+    }
+
+    /*
+    private static boolean isAffirmative(String systemProperty) {
+        String option = System.getProperty(systemProperty);
         if (option == null || option.length() == 0) {
             return false;
         }
@@ -438,6 +510,41 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
             return true;
         }
         if ("y".equalsIgnoreCase(option)) {
+            return true;
+        }
+        return false;
+    }
+    */
+
+    private static boolean isNotNegated(String systemProperty) {
+        String option = System.getProperty(systemProperty);
+        if (option == null || option.length() == 0) {
+            return true;
+        }
+        if ("false".equalsIgnoreCase(option)) {
+            return false;
+        }
+        if ("0".equalsIgnoreCase(option)) {
+            return false;
+        }
+        if ("off".equalsIgnoreCase(option)) {
+            return false;
+        }
+        if ("no".equalsIgnoreCase(option)) {
+            return false;
+        }
+        if ("n".equalsIgnoreCase(option)) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isAll(String systemProperty) {
+        String option = System.getProperty(systemProperty);
+        if (option == null || option.length() == 0) {
+            return false;
+        }
+        if ("all".equalsIgnoreCase(option)) {
             return true;
         }
         return false;
