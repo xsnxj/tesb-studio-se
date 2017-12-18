@@ -239,7 +239,7 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
 
             if (convertToBP) {
                 if ("blueprint".equals(root.getName())) {
-                    formatSchemaLocation(root, false);
+                    formatSchemaLocation(root, false, false);
                     InputStream inputStream = new ByteArrayInputStream(root.asXML().getBytes());
                     FilesUtils.copyFile(inputStream, targetFile);
                     osgiResource.addResource(FileConstants.BLUEPRINT_FOLDER_NAME, targetFile.toURI().toURL());
@@ -254,7 +254,9 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
                 root.setQName(QName.get("blueprint", bpPrefix, BLUEPRINT_NSURI));
             }
 
-            formatSchemaLocation(root, convertToBP);
+            Namespace springCamelNsp = Namespace.get("camel", CAMEL_SPRING_NSURI);
+            boolean addCamel = springCamelNsp.equals(root.getNamespaceForPrefix("camel"));
+            formatSchemaLocation(root, convertToBP, addCamel);
 
             for (Iterator<?> i = root.elementIterator("import"); i.hasNext();) {
                 Element ip = (Element) i.next();
@@ -275,17 +277,17 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
             }
 
             if (CONVERT_CAMEL_CONTEXT) {
-                for (Iterator<?> i = root.elementIterator("camelContext"); i.hasNext();) {
-                    Element cc = (Element) i.next();
-                    Namespace nsp = cc.getNamespace();
-                    String nsPrefix = nsp.getPrefix();
-                    String nsURI = nsp.getURI();
-                    if (CAMEL_SPRING_NSURI.equals(nsURI)) {
-                        if (CONVERT_CAMEL_CONTEXT_ALL) {
-                            moveNamespace(cc, CAMEL_SPRING_NSURI, CAMEL_BLUEPRINT_NSURI);
-                        } else if (nsPrefix == null || nsPrefix.length() == 0) {
-                            Namespace newNsp = Namespace.get(nsPrefix, CAMEL_BLUEPRINT_NSURI);
-                            moveNamespace(cc, nsp, newNsp);
+                if (CONVERT_CAMEL_CONTEXT_ALL) {
+                    moveNamespace(root, CAMEL_SPRING_NSURI, CAMEL_BLUEPRINT_NSURI);
+                } else {
+                    Namespace blueprintCamelNsp = Namespace.get("camel", CAMEL_BLUEPRINT_NSURI);
+                    moveNamespace(root,springCamelNsp, blueprintCamelNsp);
+                    Namespace springCamelDefNsp = Namespace.get(CAMEL_SPRING_NSURI);
+                    Namespace blueprintCamelDefNsp = Namespace.get(CAMEL_BLUEPRINT_NSURI);
+                    for (Iterator<?> i = root.elementIterator("camelContext"); i.hasNext();) {
+                        Element cc = (Element) i.next();
+                        if (springCamelDefNsp.equals(cc.getNamespace())) {
+                            moveNamespace(cc, springCamelDefNsp, blueprintCamelDefNsp);
                         }
                     }
                 }
@@ -426,7 +428,7 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
         return ndx < 0 ? "" : filePath.substring(0,ndx);
     }
 
-    private static void formatSchemaLocation(Element root, boolean addBlueprint) {
+    private static void formatSchemaLocation(Element root, boolean addBlueprint, boolean addCamel) {
         Attribute schemaLocation = root.attribute("schemaLocation");
         if (schemaLocation == null) {
             return;
@@ -434,6 +436,9 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
         String value = schemaLocation.getValue().replaceAll("(\\A|\\b)\\s\\s+\\b", "\n            ");
         if (addBlueprint) {
             value += "\n            http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd";
+        }
+        if (addCamel) {
+            value += "\n            http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd";
         }
         schemaLocation.setValue(value);
     }
