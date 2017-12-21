@@ -34,6 +34,7 @@ import org.talend.core.context.RepositoryContext;
 import org.talend.core.language.ECodeLanguage;
 import org.talend.core.model.components.IComponent;
 import org.talend.core.model.general.ModuleNeeded;
+import org.talend.core.model.general.ModuleNeeded.ELibraryInstallStatus;
 import org.talend.core.repository.ui.editor.RepositoryEditorInput;
 import org.talend.core.ui.component.ComponentsFactoryProvider;
 import org.talend.designer.codegen.ICodeGeneratorService;
@@ -138,6 +139,7 @@ public abstract class AbstractBeanAction extends AContextualAction {
             if (o instanceof IMPORTTypeImpl) {
                 IMPORTTypeImpl importType = (IMPORTTypeImpl) o;
                 if (CAMEL_CORE_PATTERN.matcher(importType.getMODULE()).matches()) {
+                    deployLibrary("camel-core");
                     needAddCamelCore = false;
                     continue;
                 }
@@ -151,26 +153,36 @@ public abstract class AbstractBeanAction extends AContextualAction {
 
     private void addDefaultDependency(BeanItem beanItem) {
         IMPORTTypeImpl camelImport = (IMPORTTypeImpl) ComponentFactoryImpl.eINSTANCE.createIMPORTType();
+
+        ModuleNeeded cmn = deployLibrary("camel-core");
+
+        camelImport.setMODULE(cmn.getModuleName());
+        camelImport.setMVN(cmn.getMavenUri());
+        camelImport.setREQUIRED(true);
+        beanItem.getImports().add(camelImport);
+    }
+
+    public ModuleNeeded deployLibrary(String moduleNeededId) {
         IComponent component = ComponentsFactoryProvider.getInstance().get("cTimer", "CAMEL");
         ModuleNeeded cmn = null;
         List<ModuleNeeded> mns = component.getModulesNeeded();
 
         for (ModuleNeeded mn : mns) {
-            if (mn.getId().equals("camel-core")) {
+            if (mn.getId().equals(moduleNeededId)) {
                 cmn = mn;
                 try {
-                    CorePlugin.getDefault().getLibrariesService()
-                            .deployLibrary(FileLocator.toFileURL(new URL(cmn.getModuleLocaion())), cmn.getMavenUri());
+                    if (cmn.getDeployStatus() != ELibraryInstallStatus.DEPLOYED) {
+                        CorePlugin.getDefault().getLibrariesService()
+                                .deployLibrary(FileLocator.toFileURL(new URL(cmn.getModuleLocaion())));
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 break;
             }
         }
-        camelImport.setMODULE(cmn.getModuleName());
-        camelImport.setMVN(cmn.getMavenUri());
-        camelImport.setREQUIRED(true);
-        beanItem.getImports().add(camelImport);
+
+        return cmn;
     }
 
 }
