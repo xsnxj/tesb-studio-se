@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import aQute.bnd.osgi.Analyzer;
-
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 import org.talend.core.GlobalServiceRegister;
@@ -45,6 +43,8 @@ import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.DataSourceConfig;
 import org.talend.repository.utils.EmfModelUtils;
 import org.talend.repository.utils.TemplateProcessor;
+
+import aQute.bnd.osgi.Analyzer;
 
 /**
  * DOC ycbai class global comment. Detailled comment
@@ -71,12 +71,12 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
             for (int i = 0; i < talendLibraries.size(); i++) {
                 URL tURL = talendLibraries.get(i);
                 if (p.matcher(tURL.getFile()).matches()) {
+                    talendLibraries.remove(tURL);
                     continue;
-                } else {
-                    libResource.addResources(talendLibraries);
                 }
             }
 
+            libResource.addResources(talendLibraries);
         }
         addRoutinesResources(processes, libResource);
         return libResource;
