@@ -293,6 +293,10 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
                 } else {
                     Namespace blueprintCamelNsp = Namespace.get("camel", CAMEL_BLUEPRINT_NSURI);
                     moveNamespace(root,springCamelNsp, blueprintCamelNsp);
+                    if (springCamelNsp.equals(root.getNamespaceForPrefix("camel"))) {
+                        root.remove(springCamelNsp);
+                        root.add(blueprintCamelNsp);
+                    }
                     Namespace springCamelDefNsp = Namespace.get(CAMEL_SPRING_NSURI);
                     Namespace blueprintCamelDefNsp = Namespace.get(CAMEL_BLUEPRINT_NSURI);
                     for (Iterator<?> i = root.elementIterator("camelContext"); i.hasNext();) {
