@@ -57,6 +57,8 @@ public final class CamelFeatureUtil {
 	private static final FeatureModel FEATURE_ESB_SAM = new FeatureModel("tesb-sam-agent"); //$NON-NLS-1$
 	private static final FeatureModel FEATURE_ESB_LOCATOR = new FeatureModel("tesb-locator-client"); //$NON-NLS-1$
 
+	
+	public static final String FEATURE_CAMEL_QUARTZ2_BNDL_NAME = "camel-quartz2-alldep";
     @SuppressWarnings("serial")
     private static final Map<String, FeatureModel[]> camelFeaturesMap = new HashMap<String, FeatureModel[]>() {{
         //put("camel-cxf", new FeatureModel[] { new FeatureModel("camel-cxf"), new FeatureModel("cxf") });
@@ -225,6 +227,10 @@ public final class CamelFeatureUtil {
 
         Collection<FeatureModel> features = new HashSet<FeatureModel>();
         for (String lib : process.getNeededLibraries(true)) {
+        	// Camel quartz2 is component feature is explicitly excluded for TESB-20793
+            if(FEATURE_CAMEL_QUARTZ2_BNDL_NAME.equalsIgnoreCase(getNameWithoutVersion(lib))) {
+                continue;
+            } 
             Collection<FeatureModel> featureModel = computeFeature(getNameWithoutVersion(lib));
             if (featureModel != null) {
                 features.addAll(featureModel);
