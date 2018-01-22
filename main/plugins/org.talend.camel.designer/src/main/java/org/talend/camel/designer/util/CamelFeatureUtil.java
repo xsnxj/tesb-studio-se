@@ -39,6 +39,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementValueType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
+import org.talend.designer.maven.utils.PomIdsHelper;
 import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.repository.ProjectManager;
@@ -66,8 +67,6 @@ public final class CamelFeatureUtil {
 
 	private static final FeatureModel FEATURE_ESB_SAM = new FeatureModel("tesb-sam-agent"); //$NON-NLS-1$
 	private static final FeatureModel FEATURE_ESB_LOCATOR = new FeatureModel("tesb-locator-client"); //$NON-NLS-1$
-	
-	public static final String FEATURE_CAMEL_QUARTZ2_BNDL_NAME = "camel-quartz2-alldep";
 
     @SuppressWarnings("serial")
     private static final Map<String, FeatureModel[]> camelFeaturesMap = new HashMap<String, FeatureModel[]>() {{
@@ -237,11 +236,7 @@ public final class CamelFeatureUtil {
         IProcess process = designerService.getProcessFromProcessItem(routeProcess, false);
 
         Collection<FeatureModel> features = new HashSet<FeatureModel>();
-        for (String lib : process.getNeededLibraries(true)) {
-        	// Camel quartz2 is component feature is explicitly excluded for TESB-20793
-        	if(FEATURE_CAMEL_QUARTZ2_BNDL_NAME.equalsIgnoreCase(getNameWithoutVersion(lib))) {
-        		continue;
-        	}        	
+        for (String lib : process.getNeededLibraries(true)) {      	
             Collection<FeatureModel> featureModel = computeFeature(getNameWithoutVersion(lib));
             if (featureModel != null) {
                 features.addAll(featureModel);
@@ -265,15 +260,12 @@ public final class CamelFeatureUtil {
 	 */
 	public static String getMavenGroupId(Item item) {
 		if (item != null) {
-			String projectName = JavaResourcesHelper.getProjectFolderName(item);
-			String itemName = item.getProperty().getDisplayName(); // .getLabel()
-																	// ?
-
-			return projectName + '.' + itemName;
+		    return PomIdsHelper.getJobGroupId(item.getProperty());
 		}
 		return null;
 	}
 
+	@Deprecated
 	public static String getMavenGroupId(String jobId, String jobName, String defaultProject) {
 		return JavaResourcesHelper.getGroupItemName(
 				getJobProjectName(jobId, jobName, defaultProject), jobName);
