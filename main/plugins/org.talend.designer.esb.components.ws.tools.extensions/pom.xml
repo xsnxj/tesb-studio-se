@@ -8,6 +8,6 @@
     <relativePath>../../../</relativePath>
   </parent>
 
-  <artifactId>org.talend.designer.esb.components.ws.crest</artifactId>
+  <artifactId>org.talend.designer.esb.components.ws.tools.extensions</artifactId>
   <packaging>eclipse-plugin</packaging>
 </project>

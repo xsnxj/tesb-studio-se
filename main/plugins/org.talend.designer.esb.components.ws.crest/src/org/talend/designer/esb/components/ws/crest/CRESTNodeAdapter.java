@@ -21,8 +21,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.utils.TalendTextUtils;
-import org.talend.designer.esb.components.ws.tools.external.OASManager;
-import org.talend.designer.esb.components.ws.tools.external.RestAPIMapping;
+import org.talend.designer.esb.components.ws.tools.extensions.external.IOASDecoder;
+import org.talend.designer.esb.components.ws.tools.extensions.external.RestAPIMapping;
 
 /**
  * DOC dsergent class global comment. Detailled comment
@@ -36,14 +36,17 @@ public class CRESTNodeAdapter implements CRESTConstants {
     }
 
     @SuppressWarnings("unchecked")
-    public IStatus setNodeSetting(OASManager oasManager) {
+    public IStatus setNodeSetting(IOASDecoder oasManager) {
 
         // endpoint
         node.setParamValue(URL, TalendTextUtils.addQuotes(oasManager.getEndpoint()));
+
         node.setParamValue(SERVICE_TYPE, "MANUAL");
 
         IElementParameter schemasParameter = node.getElementParameter("SCHEMAS");
+
         List<Map<?, ?>> schemasChildren = (List<Map<?, ?>>) schemasParameter.getValue();
+
         schemasChildren.clear();
 
         // API Mappings
@@ -69,10 +72,17 @@ public class CRESTNodeAdapter implements CRESTConstants {
 
     @SuppressWarnings("unchecked")
     public boolean isNodeToDefaultValues() {
+
+        String endpointDefaultValue = "";
+        if (node.getElementParameter(URL) != null && node.getElementParameter(URL).getDefaultValues().get(0) != null) {
+            endpointDefaultValue = String.valueOf(node.getElementParameter(URL).getDefaultValues().get(0).getDefaultValue());
+        }
+
         IElementParameter schemasParameter = node.getElementParameter("SCHEMAS");
         List<Map<?, ?>> schemasChildren = (List<Map<?, ?>>) schemasParameter.getValue();
 
-        return StringUtils.isBlank(TalendTextUtils.removeQuotes(node.getParamStringValue(URL)))
+        return (endpointDefaultValue.equals(node.getParamStringValue(URL))
+                || StringUtils.isBlank(TalendTextUtils.removeQuotes(node.getParamStringValue(URL))))
                 && StringUtils.isBlank(node.getParamStringValue(COMMENT)) && schemasChildren.isEmpty();
     }
 }

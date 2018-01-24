@@ -87,31 +87,5 @@ public class MessageDialogWithLink extends MessageDialog {
         new MessageDialogWithLink(shell, title, null, messageWithLink, linkUrl, MessageDialog.ERROR, new String[] { "OK" }, 0)
                 .open();
     }
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.jface.dialogs.MessageDialog#createCustomArea(org.eclipse.swt.widgets.Composite)
-     */
-    // @Override
-    // protected Control createCustomArea(Composite parent) {
-    // Composite cpoMessage = new Composite(parent, SWT.NONE);
-    //
-    // cpoMessage.setLayout(new GridLayout(1, false));
-    // GridDataFactory.fillDefaults().grab(true, false).applyTo(cpoMessage);
-    //
-    // Link myLink = new Link(cpoMessage, SWT.WRAP);
-    // GridDataFactory.fillDefaults().grab(true, false).applyTo(myLink);
-    //
-    // myLink.setText("Ceci est un <a>test de lien</a> !");
-    // myLink.addSelectionListener(new SelectionAdapter() {
-    //
-    // @Override
-    // public void widgetSelected(SelectionEvent e) {
-    // System.out.println("Link clicked");
-    // }
-    // });
-    //
-    // return cpoMessage;
-    // }
 
 }

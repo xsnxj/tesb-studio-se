@@ -3,9 +3,11 @@ package org.talend.designer.esb.components.ws.crest;
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Composite;
@@ -18,16 +20,21 @@ import org.talend.core.model.process.AbstractExternalNode;
 import org.talend.core.model.process.IComponentDocumentation;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.IExternalData;
-import org.talend.designer.esb.components.ws.tools.external.OASManager;
-import org.talend.designer.esb.components.ws.tools.external.TranslationException;
+import org.talend.designer.esb.components.ws.tools.extensions.external.IOASDecoder;
+import org.talend.designer.esb.components.ws.tools.extensions.external.OASDecoderFactory;
+import org.talend.designer.esb.components.ws.tools.extensions.external.TranslationException;
 
 public class CRESTNode extends AbstractExternalNode {
+
+    private static final String ACCEPTED_OASDECODER_ID = "org.talend.designer.esb.components.ws.tools.RWADefDecoder";
 
     private class OASImporter implements Runnable {
 
         private Path pathToOASFile;
 
-        private OASManager oasManager;
+        private IOASDecoder oasManager;
+
+        private Shell shell;
 
         /**
          * DOC dsergent OASImporter constructor comment.
@@ -35,14 +42,26 @@ public class CRESTNode extends AbstractExternalNode {
          * @param node
          * @param pathToOASFile
          */
-        public OASImporter(Path pathToOASFile) {
+        public OASImporter(Shell shell, Path pathToOASFile) {
             super();
+            this.shell = shell;
             this.pathToOASFile = pathToOASFile;
         }
 
         @Override
         public void run() {
-            oasManager = new OASManager(pathToOASFile);
+
+            Map<String, IOASDecoder> decoders;
+            try {
+                decoders = OASDecoderFactory.getInstance().getOASDecoders();
+                if (decoders.keySet().contains(ACCEPTED_OASDECODER_ID)) {
+                    oasManager = decoders.get(ACCEPTED_OASDECODER_ID);
+                    oasManager.setOASSourceFile(pathToOASFile);
+                }
+            } catch (CoreException e) {
+                MessageDialogWithLink.openError(shell, "OAS/Swagger 2.0 import error",
+                        "We were unable to find a suitable decoder for API definition.");
+            }
         }
 
         /**
@@ -50,7 +69,7 @@ public class CRESTNode extends AbstractExternalNode {
          * 
          * @return the oasManager
          */
-        public OASManager getOasManager() {
+        public IOASDecoder getOasManager() {
             return this.oasManager;
         }
 
@@ -87,9 +106,9 @@ public class CRESTNode extends AbstractExternalNode {
             CRESTNodeAdapter crestNodeAdapter = new CRESTNodeAdapter(this);
 
             try {
-                OASImporter oasImporter = new OASImporter(Paths.get(selectedFile));
+                OASImporter oasImporter = new OASImporter(shell, Paths.get(selectedFile));
                 BusyIndicator.showWhile(shell.getDisplay(), oasImporter);
-                OASManager oasManager = oasImporter.getOasManager();
+                IOASDecoder oasManager = oasImporter.getOasManager();
 
                 switch (oasManager.getTranslationStatus()) {
                 case SUCCESS:
