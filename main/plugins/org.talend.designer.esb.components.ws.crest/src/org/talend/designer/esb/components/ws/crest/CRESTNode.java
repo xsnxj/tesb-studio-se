@@ -110,44 +110,50 @@ public class CRESTNode extends AbstractExternalNode {
                 BusyIndicator.showWhile(shell.getDisplay(), oasImporter);
                 IOASDecoder oasManager = oasImporter.getOasManager();
 
-                switch (oasManager.getTranslationStatus()) {
-                case SUCCESS:
-                    if (crestNodeAdapter.isNodeToDefaultValues()) {
-                        if (MessageDialogWithLink.openConfirm(shell, "Confirm component initialization",
-                                "Initialize component?")) {
-                            crestNodeAdapter.setNodeSetting(oasManager);
-                            return SWT.OK;
+                if (oasManager != null && oasManager.getTranslationStatus() != null) {
+                    switch (oasManager.getTranslationStatus()) {
+                    case SUCCESS:
+                        if (crestNodeAdapter.isNodeToDefaultValues()) {
+                            if (MessageDialogWithLink.openConfirm(shell, "Confirm component initialization",
+                                    "Initialize component?")) {
+                                crestNodeAdapter.setNodeSetting(oasManager);
+                                return SWT.OK;
+                            } else {
+                                return SWT.CANCEL;
+                            }
                         } else {
-                            return SWT.CANCEL;
+                            if (MessageDialogWithLink.openConfirm(shell, "Confirm component initialization",
+                                    "Initialize component?\n\nYour existing endpoint, API mappings and documentation will be overridden.")) {
+                                crestNodeAdapter.setNodeSetting(oasManager);
+                                return SWT.OK;
+                            } else {
+                                return SWT.CANCEL;
+                            }
                         }
-                    } else {
-                        if (MessageDialogWithLink.openConfirm(shell, "Confirm component initialization",
-                                "Initialize component?\n\nYour existing endpoint, API mappings and documentation will be overridden.")) {
-                            crestNodeAdapter.setNodeSetting(oasManager);
-                            return SWT.OK;
-                        } else {
-                            return SWT.CANCEL;
-                        }
-                    }
-                case SUCCESS_WITH_WARNINGS:
-                    boolean confirm = MessageDialogWithLink.openConfirm(shell, "Confirm component initialization",
-                            "Initialize component?\nYour existing endpoint, API mappings and documentation will be overridden.\n\nIf some parts seem missing in your initialized component, please check your OAS/Swagger 2.0 definition in <a>Restlet Studio</a>.",
-                            "https://studio.restlet.com");
+                    case SUCCESS_WITH_WARNINGS:
+                        boolean confirm = MessageDialogWithLink.openConfirm(shell, "Confirm component initialization",
+                                "Initialize component?\nYour existing endpoint, API mappings and documentation will be overridden.\n\nIf some parts seem missing in your initialized component, please check your OAS/Swagger 2.0 definition in <a>Restlet Studio</a>.",
+                                "https://studio.restlet.com");
 
-                    if (confirm) {
-                        crestNodeAdapter.setNodeSetting(oasManager);
-                        return SWT.OK;
-                    } else {
+                        if (confirm) {
+                            crestNodeAdapter.setNodeSetting(oasManager);
+                            return SWT.OK;
+                        } else {
+                            return SWT.CANCEL;
+                        }
+                    case ERROR:
+                        MessageDialogWithLink.openError(shell, "OAS/Swagger 2.0 import error",
+                                "We were unable to initialize your component from your OAS/Swagger 2.0 definition.\n\nPlease check your OAS/Swagger 2.0 definition in <a>Restlet Studio</a>.",
+                                "https://studio.restlet.com");
                         return SWT.CANCEL;
-                    }
-                case ERROR:
-                    MessageDialogWithLink.openError(shell, "OAS/Swagger 2.0 import error",
-                            "We were unable to initialize your component from your OAS/Swagger 2.0 definition.\n\nPlease check your OAS/Swagger 2.0 definition in <a>Restlet Studio</a>.",
-                            "https://studio.restlet.com");
-                    return SWT.CANCEL;
-                default:
-                    return SWT.CANCEL;
+                    default:
+                        return SWT.CANCEL;
 
+                    }
+                } else {
+                    MessageDialogWithLink.openError(shell, "OAS/Swagger 2.0 import error",
+                            "We were unable to find a suitable decoder for API definition.");
+                    return SWT.CANCEL;
                 }
             } catch (TranslationException e) {
                 MessageDialogWithLink.openError(shell, "OAS/Swagger 2.0 import error",
