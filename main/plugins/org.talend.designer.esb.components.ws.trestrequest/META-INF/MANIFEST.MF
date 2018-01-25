@@ -21,5 +21,4 @@ Require-Bundle: org.eclipse.ui,
  org.talend.libraries.apache,
  org.apache.xerces,
  org.talend.designer.esb.components.ws.tools.extensions;bundle-version="7.0.1"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Eclipse-BundleShape: dir
