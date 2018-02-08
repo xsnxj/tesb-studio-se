@@ -570,15 +570,19 @@ if (isTestContainer) {
             */
             private void readContextValues(String contextName){
                 try {
-                    java.io.InputStream inContext = <%=className %>.class.getClassLoader().getResourceAsStream("<%=JavaResourcesHelper.getJobClassPackageFolder(process) %>/contexts/"+contextName+".properties");
-
-                    if (inContext!=null) {
-                        context.load(inContext);
-                        inContext.close();
-                    }else{
-                        //print info and job continue to run, for case: context_param is not empty.
-                        System.err.println("Could not find the context " + contextName);
-                    }
+            java.io.InputStream inContext = <%=className%>.class.getClassLoader().getResourceAsStream("<%=jobClassPackageFolder%>/contexts/" + contextStr + ".properties");
+            if (inContext == null) {
+                inContext = <%=className%>.class.getClassLoader().getResourceAsStream("config/contexts/" + contextStr + ".properties");
+            }
+            if (inContext != null) {
+                //defaultProps is in order to keep the original context value
+                defaultProps.load(inContext);
+                inContext.close();
+                context = new ContextProperties(defaultProps);
+            } else if (!isDefaultContext) {
+                //print info and job continue to run, for case: context_param is not empty.
+                System.err.println("Could not find the context " + contextStr);
+            }
 
                     if(!context_param.isEmpty()) {
                         context.putAll(context_param);
