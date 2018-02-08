@@ -13,11 +13,14 @@
 package org.talend.camel.designer.ui.wizards;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -42,14 +45,19 @@ import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWithMavenAction;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
+import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.PluginChecker;
 import org.talend.core.repository.constants.FileConstants;
+import org.talend.core.runtime.process.IBuildJobHandler;
 import org.talend.core.service.IESBMicroService;
 import org.talend.designer.runprocess.IProcessor;
+import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.repository.ui.wizards.exportjob.ExportTreeViewer;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
+import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage.JobExportType;
 import org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.BuildJobFactory;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManagerFactory;
@@ -421,11 +429,12 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
         }
 
         IESBMicroService microService = null;
+        if (GlobalServiceRegister.getDefault().isServiceRegistered(IESBMicroService.class)) {
+            microService = (IESBMicroService) GlobalServiceRegister.getDefault().getService(IESBMicroService.class);
+        }
+        
         if (exportTypeCombo.getText().equals(EXPORTTYPE_SPRING_BOOT)) {
 
-            if (GlobalServiceRegister.getDefault().isServiceRegistered(IESBMicroService.class)) {
-                microService = (IESBMicroService) GlobalServiceRegister.getDefault().getService(IESBMicroService.class);
-            }
             try {
                 if (microService != null) {
 
@@ -454,14 +463,30 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                 }
             }
 
+            IBuildJobHandler buildJobHandler = null;
+
             if (needMavenScript) {
                 action = new JavaCamelJobScriptsExportWithMavenAction(exportChoiceMap, nodes[0], version, destinationKar, false);
             } else {
+
+                exportChoiceMap.put(ExportChoice.esbExportType, "kar");
+
+                buildJobHandler = BuildJobFactory.createBuildJobHandler(getProcessItem(), getContextName(), version,
+                        exportChoiceMap, JobExportType.OSGI);
+
                 action = new JavaCamelJobScriptsExportWSAction(nodes[0], version, destinationKar, false);
+
+                ProcessorUtilities.setExportAsOSGI(true);
             }
 
             try {
                 getContainer().run(false, true, action);
+                try {
+                    buildJobHandler.build(new NullProgressMonitor());
+                } catch (Exception e) {
+                    MessageBoxExceptionHandler.process(e.getCause(), getShell());
+                    return false;
+                }
             } catch (InvocationTargetException e) {
                 MessageBoxExceptionHandler.process(e.getCause(), getShell());
                 return false;
@@ -472,6 +497,16 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
             // save output directory
             manager.setDestinationPath(destinationKar);
             saveWidgetValues();
+
+            IFile targetFile = buildJobHandler.getJobTargetFile();
+
+            if (targetFile != null && targetFile.exists()) {
+                try {
+                    FilesUtils.copyFile(targetFile.getLocation().toFile(), new File(getDestinationValue()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         return true;

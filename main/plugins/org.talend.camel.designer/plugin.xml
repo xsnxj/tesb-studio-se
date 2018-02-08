@@ -11,6 +11,11 @@
             class="org.talend.camel.designer.CamelDesignerCoreUIService"
             serviceId="ICamelDesignerCoreUIService">
       </Service>
+      
+      <Service
+            class="org.talend.camel.designer.service.RouteService"
+            serviceId="IESBRouteService">
+      </Service>
    </extension>
 
     <extension point="org.talend.core.repository.repository_content">
@@ -415,9 +420,24 @@
         <extension
               point="org.talend.core.runtime.buildExport_provider">
            <buildProvider
-                 description="Test case for Route job"
-                 id="testcase.route.job"
+                 description="Test case for Route"
+                 id="build.provider.esb.route.testcase"
                  provider="org.talend.camel.designer.build.RouteTestCaseBuildProvider">
+              <buildType
+                    label="Route test case"
+                    name="Route test case"
+                    order="40">
+              </buildType>
+           </buildProvider>
+           <buildProvider
+                 description="Build OSGi bundle for ESB Route"
+                 id="build.provider.esb.route.osgibundle"
+                 provider="org.talend.camel.designer.build.RouteOSGiBundleBuildProvider">
+                 <buildType
+                       label="Route"
+                       name="ROUTE"
+                 order="20">
+           </buildType>
            </buildProvider>
         </extension>
 

@@ -147,9 +147,9 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
         if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
             IRunProcessService processService = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
                     IRunProcessService.class);
-            ITalendProcessJavaProject talendProcessJavaProject = processService.getTalendProcessJavaProject();
+            ITalendProcessJavaProject talendProcessJavaProject = processService.getTalendJobJavaProject(processItem.getProperty());
             if (talendProcessJavaProject != null) {
-                srcFolder = talendProcessJavaProject.getResourcesFolder();
+                srcFolder = talendProcessJavaProject.getExternalResourcesFolder();
             }
         }
         if (srcFolder == null) {
