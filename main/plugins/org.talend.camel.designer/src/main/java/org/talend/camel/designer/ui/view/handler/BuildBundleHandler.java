@@ -35,7 +35,7 @@ import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManag
 public class BuildBundleHandler extends BuildJobHandler {
 
     /**
-     * DOC sunchaoqun BuildMicroServiceHandler constructor comment.
+     * DOC sunchaoqun BuildBundleHandler constructor comment.
      * 
      * @param processItem
      * @param version
