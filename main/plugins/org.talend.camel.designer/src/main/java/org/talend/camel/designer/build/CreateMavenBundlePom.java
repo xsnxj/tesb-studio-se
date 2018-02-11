@@ -269,6 +269,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
                     } else {
                         assemblyFile.create(source, true, monitor);
                     }
+                    updateDependencySet(assemblyFile);
                     set = true;
                 }
             } catch (Exception e) {
