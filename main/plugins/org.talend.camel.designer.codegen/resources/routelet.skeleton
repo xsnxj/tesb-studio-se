@@ -102,6 +102,7 @@ public class CLASS {
 	            	code.append(instanceName+".setContextName(\""+node.getComponent().getProcess().getContextManager().getDefaultContext().getName()+"\");\n");
 	            }
 	            if(userDefinedParams!=null && userDefinedParams.size()>0){
+	                code.append("readContextValues(contextStr);\n");
 	            	code.append("final Map<String, String> overwriteContext_"+instanceName+" = new HashMap<String, String>();\n"); 
 	            	for(Map<String,String> map :userDefinedParams){
 	            		code.append("overwriteContext_"+instanceName+".put(\""+map.get("Parameters")+"\", "+map.get("Values")+");\n"); 

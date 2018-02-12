@@ -564,11 +564,17 @@ if (isTestContainer) {
     <%if(exportTypeSpringBoot){%>
     
     <% }else{ %>
+            private boolean contextValuesRead = false;
+
             /**
-            * read context values from specified context
-            * @parameter contextName : the name of context while will be used
-            */
+             * read context values from specified context
+             * @parameter contextName : the name of context while will be used
+             */
             private void readContextValues(String contextName){
+                if (contextValuesRead) {
+                    return;
+                }
+                contextValuesRead = true;
                 try {
                     java.io.InputStream inContext = <%=className %>.class.getClassLoader().getResourceAsStream("<%=JavaResourcesHelper.getJobClassPackageFolder(process) %>/contexts/"+contextName+".properties");
 
