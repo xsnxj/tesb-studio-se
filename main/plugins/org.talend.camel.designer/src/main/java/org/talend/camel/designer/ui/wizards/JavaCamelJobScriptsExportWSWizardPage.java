@@ -19,6 +19,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -57,7 +58,6 @@ import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.repository.ui.wizards.exportjob.ExportTreeViewer;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
-import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage.JobExportType;
 import org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.BuildJobFactory;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
@@ -402,6 +402,20 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage#getContextName()
+     */
+    @Override
+    protected String getContextName() {
+        String contextName = super.getContextName();
+        if (StringUtils.isBlank(contextName)) {
+            contextName = processItem.getProcess().getDefaultContext();
+        }
+        return contextName;
+    }
+
     @Override
     protected ExportTreeViewer getExportTree() {
         return new ExportCamelTreeViewer(selection, this) {
@@ -519,7 +533,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                 exportChoiceMap.put(ExportChoice.esbExportType, "kar");
 
                 buildJobHandler = BuildJobFactory.createBuildJobHandler(getProcessItem(), getContextName(), version,
-                        exportChoiceMap, JobExportType.OSGI);
+                        exportChoiceMap, "ROUTE");
 
                 Map<String, Object> prepareParams = new HashMap<String, Object>();
                 prepareParams.put(IBuildResourceParametes.OPTION_ITEMS, true);
