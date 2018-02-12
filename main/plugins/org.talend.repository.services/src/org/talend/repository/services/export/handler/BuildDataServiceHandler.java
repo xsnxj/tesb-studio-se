@@ -237,7 +237,7 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
         }
 
         for (IRepositoryViewObject node : nodes) {
-            features.addBundle(new BundleModel(PomIdsHelper.getJobGroupId(node.getProperty()), serviceExportManager.getNodeLabel(node) + "-bundle", serviceVersion));
+            features.addBundle(new BundleModel(PomIdsHelper.getJobGroupId(node.getProperty()), serviceExportManager.getNodeLabel(node) + "-bundle", PomIdsHelper.getJobVersion(node.getProperty())));
         }
         final String artifactName = serviceName + "-control-bundle"; //$NON-NLS-1$
         features.addBundle(new BundleModel(PomIdsHelper.getJobGroupId(serviceItem.getProperty()), artifactName, serviceVersion));
