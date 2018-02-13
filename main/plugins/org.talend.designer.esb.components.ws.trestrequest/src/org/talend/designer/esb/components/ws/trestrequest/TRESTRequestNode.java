@@ -126,7 +126,7 @@ public class TRESTRequestNode extends AbstractExternalNode {
                             }
                         } else {
                             if (MessageDialogWithLink.openConfirm(shell, "Confirm component initialization",
-                                    "Initialize component?\n\nYour existing endpoint, API mappings and documentation will be overridden.",
+                                    "Initialize component?\n\nYour existing endpoint, API mappings and documentation will be updated.",
                                     "", "", crestNodeAdapter.isEndpointNotNull())) {
                                 crestNodeAdapter.setNodeSetting(oasManager);
                                 return SWT.OK;
@@ -136,7 +136,7 @@ public class TRESTRequestNode extends AbstractExternalNode {
                         }
                     case SUCCESS_WITH_WARNINGS:
                         boolean confirm = MessageDialogWithLink.openConfirm(shell, "Confirm component initialization",
-                                "Initialize component?\n\nYour existing endpoint, API mappings and documentation will be overridden.",
+                                "Initialize component?\n\nYour existing endpoint, API mappings and documentation will be updated.",
                                 "If some parts seem missing in your initialized component, please check your OAS/Swagger 2.0 definition in <a>Restlet Studio</a>.",
                                 "https://studio.restlet.com", crestNodeAdapter.isEndpointNotNull());
 

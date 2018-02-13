@@ -124,4 +124,39 @@ public class RestAPIMapping {
         this.produces = produces;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.outputFlow == null) ? 0 : this.outputFlow.hashCode());
+        return result;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        RestAPIMapping other = (RestAPIMapping) obj;
+        if (this.outputFlow == null) {
+            if (other.outputFlow != null)
+                return false;
+        } else if (!this.outputFlow.equals(other.outputFlow))
+            return false;
+        return true;
+    }
+
 }

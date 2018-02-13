@@ -104,7 +104,7 @@ public class MessageDialogWithLink extends MessageDialog {
             boolean keepEndpointValue = prefs.getBoolean(TRESTRequestConstants.PREF_KEEP_ENDPOINT);
 
             final Button chkKeepEndpoint = new Button(cpoRight, SWT.CHECK);
-            chkKeepEndpoint.setText("Keep existing endpoint configuration (do not override)");
+            chkKeepEndpoint.setText("Keep existing endpoint configuration (do not update)");
             chkKeepEndpoint.setSelection(keepEndpointValue);
 
             GridDataFactory.fillDefaults().align(SWT.FILL, SWT.BEGINNING).grab(true, false)
