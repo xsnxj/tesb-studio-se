@@ -2803,7 +2803,7 @@ if (isProvider) {
 
 %>
                     {
-                    javax.jms.ConnectionFactory jmsConnectionFactory = new com.ibm.mq.jms.MQQueueConnectionFactory();
+                    javax.jms.ConnectionFactory jmsConnectionFactory = new com.ibm.mq.jms.MQConnectionFactory();
                     ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setHostName(<%=wmqServer%>);
                     try {
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setPort(<%=wmqPort%>);
