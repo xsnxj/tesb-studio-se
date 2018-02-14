@@ -57,7 +57,9 @@ public class CRESTNodeAdapter implements CRESTConstants {
         schemasChildren.clear();
 
         // API Mappings
-        for (RestAPIMapping mapping : oasManager.getMappings()) {
+        for (String key : oasManager.getMappings().keySet()) {
+
+            RestAPIMapping mapping = oasManager.getMappings().get(key);
 
             Map<String, String> newMapping = new LinkedHashMap<>();
 

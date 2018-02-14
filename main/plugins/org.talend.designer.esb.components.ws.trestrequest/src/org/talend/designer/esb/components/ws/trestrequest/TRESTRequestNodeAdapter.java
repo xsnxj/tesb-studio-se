@@ -12,14 +12,17 @@
 // ============================================================================
 package org.talend.designer.esb.components.ws.trestrequest;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.talend.core.model.metadata.IMetadataTable;
 import org.talend.core.model.metadata.MetadataTable;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.utils.TalendTextUtils;
@@ -51,12 +54,17 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
 
         IElementParameter schemasParameter = node.getElementParameter("SCHEMAS");
         List<Map<?, ?>> schemasChildren = (List<Map<?, ?>>) schemasParameter.getValue();
+
         schemasChildren.clear();
+
+        Map<String, IMetadataTable> savedMetadataTables = getMetadataTablesToKeep(oasManager);
 
         node.getMetadataList().clear();
 
         // API Mappings
-        for (RestAPIMapping mapping : oasManager.getMappings()) {
+        for (String key : oasManager.getMappings().keySet()) {
+
+            RestAPIMapping mapping = oasManager.getMappings().get(key);
 
             Map<String, String> newMapping = new LinkedHashMap<>();
 
@@ -69,9 +77,13 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
             schemasChildren.add(newMapping);
 
             if (StringUtils.isNotBlank(mapping.getOutputFlow())) {
-                MetadataTable metadataTable = new MetadataTable();
-                metadataTable.setTableName(mapping.getOutputFlow());
-                node.getMetadataList().add(metadataTable);
+                if (savedMetadataTables.containsKey(mapping.getOutputFlow())) {
+                    node.getMetadataList().add(savedMetadataTables.get(mapping.getOutputFlow()));
+                } else {
+                    MetadataTable metadataTable = new MetadataTable();
+                    metadataTable.setTableName(mapping.getOutputFlow());
+                    node.getMetadataList().add(metadataTable);
+                }
             }
 
         }
@@ -80,6 +92,21 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
         node.setParamValue(COMMENT, oasManager.getDocumentationComment());
 
         return Status.OK_STATUS;
+    }
+
+    private Map<String, IMetadataTable> getMetadataTablesToKeep(IOASDecoder oasManager) {
+
+        Map<String, IMetadataTable> existingMappings = new HashMap<String, IMetadataTable>();
+
+        Set<String> newOperationIds = oasManager.getMappings().keySet();
+
+        for (IMetadataTable table : node.getMetadataList()) {
+            if (newOperationIds.contains(table.getTableName())) {
+                existingMappings.put(table.getTableName(), table);
+            }
+        }
+
+        return existingMappings;
     }
 
     public boolean isEndpointNotNull() {

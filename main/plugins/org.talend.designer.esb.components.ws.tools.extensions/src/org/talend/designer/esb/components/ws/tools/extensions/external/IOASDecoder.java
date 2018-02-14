@@ -13,7 +13,7 @@
 package org.talend.designer.esb.components.ws.tools.extensions.external;
 
 import java.nio.file.Path;
-import java.util.List;
+import java.util.Map;
 
 /**
  * DOC dsergent class global comment. Detailled comment
@@ -28,5 +28,5 @@ public interface IOASDecoder {
 
     public String getDocumentationComment();
 
-    public List<RestAPIMapping> getMappings();
+    public Map<String, RestAPIMapping> getMappings();
 }
