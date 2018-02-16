@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -13,11 +13,15 @@
 package org.talend.camel.designer.ui.wizards;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -42,14 +46,20 @@ import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWithMavenAction;
 import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
+import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.PluginChecker;
 import org.talend.core.repository.constants.FileConstants;
+import org.talend.core.runtime.process.IBuildJobHandler;
+import org.talend.core.runtime.process.TalendProcessArgumentConstant;
+import org.talend.core.runtime.repository.build.IBuildResourceParametes;
 import org.talend.core.service.IESBMicroService;
 import org.talend.designer.runprocess.IProcessor;
+import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.repository.ui.wizards.exportjob.ExportTreeViewer;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage;
 import org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.BuildJobFactory;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManagerFactory;
@@ -153,12 +163,37 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
             }
         });
+
     }
 
     @Override
     public void createOptions(final Composite optionsGroup, Font font) {
         createOptionsForKar(optionsGroup, font);
         restoreWidgetValuesForKar();
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage#createControl(org.eclipse.swt.widgets.
+     * Composite)
+     */
+    @Override
+    public void createControl(Composite parent) {
+        super.createControl(parent);
+
+        if ("ROUTE_MICROSERVICE".equals(
+                getProcessItem().getProperty().getAdditionalProperties().get(TalendProcessArgumentConstant.ARG_BUILD_TYPE))) {
+
+            exportTypeCombo.select(1);
+            exportTypeCombo.notifyListeners(SWT.Selection, null);
+            exportTypeCombo.setEnabled(false);
+
+        } else {
+            exportTypeCombo.select(0);
+            exportTypeCombo.notifyListeners(SWT.Selection, null);
+            exportTypeCombo.setEnabled(false);
+        }
     }
 
     @Override
@@ -367,6 +402,20 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.repository.ui.wizards.exportjob.JobScriptsExportWizardPage#getContextName()
+     */
+    @Override
+    protected String getContextName() {
+        String contextName = super.getContextName();
+        if (StringUtils.isBlank(contextName)) {
+            contextName = processItem.getProcess().getDefaultContext();
+        }
+        return contextName;
+    }
+
     @Override
     protected ExportTreeViewer getExportTree() {
         return new ExportCamelTreeViewer(selection, this) {
@@ -421,29 +470,52 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
         }
 
         IESBMicroService microService = null;
+        if (GlobalServiceRegister.getDefault().isServiceRegistered(IESBMicroService.class)) {
+            microService = (IESBMicroService) GlobalServiceRegister.getDefault().getService(IESBMicroService.class);
+        }
+        
+        IBuildJobHandler buildJobHandler = null;
+
         if (exportTypeCombo.getText().equals(EXPORTTYPE_SPRING_BOOT)) {
 
-            if (GlobalServiceRegister.getDefault().isServiceRegistered(IESBMicroService.class)) {
-                microService = (IESBMicroService) GlobalServiceRegister.getDefault().getService(IESBMicroService.class);
-            }
             try {
                 if (microService != null) {
 
-                    actionMS = microService.createRunnableWithProgress(exportChoiceMap, Arrays.asList(getCheckNodes()), version,
-                            destinationKar, "");
+                    buildJobHandler = microService.createBuildJobHandler(getProcessItem(), version, destinationKar,
+                            exportChoiceMap);
+
+                    Map<String, Object> prepareParams = new HashMap<String, Object>();
+                    prepareParams.put(IBuildResourceParametes.OPTION_ITEMS, true);
+                    prepareParams.put(IBuildResourceParametes.OPTION_ITEMS_DEPENDENCIES, true);
 
                     try {
-                        getContainer().run(false, true, actionMS);
+                        buildJobHandler.prepare(new NullProgressMonitor(), prepareParams);
                     } catch (Exception e) {
                         MessageBoxExceptionHandler.process(e.getCause(), getShell());
                         return false;
                     }
+
+                    actionMS = microService.createRunnableWithProgress(exportChoiceMap, Arrays.asList(getCheckNodes()), version,
+                            destinationKar, "");
                 }
 
             } catch (Exception e) {
                 MessageBoxExceptionHandler.process(e.getCause(), getShell());
                 e.printStackTrace();
             }
+
+            try {
+                getContainer().run(false, true, actionMS);
+                buildJobHandler.build(new NullProgressMonitor());
+            } catch (Exception e) {
+                MessageBoxExceptionHandler.process(e.getCause(), getShell());
+                return false;
+            }
+
+            manager = action.getManager();
+            // save output directory
+            manager.setDestinationPath(destinationKar);
+            saveWidgetValues();
 
         } else {
 
@@ -457,21 +529,51 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
             if (needMavenScript) {
                 action = new JavaCamelJobScriptsExportWithMavenAction(exportChoiceMap, nodes[0], version, destinationKar, false);
             } else {
+
+                exportChoiceMap.put(ExportChoice.esbExportType, "kar");
+
+                buildJobHandler = BuildJobFactory.createBuildJobHandler(getProcessItem(), getContextName(), version,
+                        exportChoiceMap, "ROUTE");
+
+                Map<String, Object> prepareParams = new HashMap<String, Object>();
+                prepareParams.put(IBuildResourceParametes.OPTION_ITEMS, true);
+                prepareParams.put(IBuildResourceParametes.OPTION_ITEMS_DEPENDENCIES, true);
+
+                try {
+                    buildJobHandler.prepare(new NullProgressMonitor(), prepareParams);
+                } catch (Exception e) {
+                    MessageBoxExceptionHandler.process(e.getCause(), getShell());
+                    return false;
+                }
+
                 action = new JavaCamelJobScriptsExportWSAction(nodes[0], version, destinationKar, false);
+
+                ProcessorUtilities.setExportAsOSGI(true);
             }
 
             try {
                 getContainer().run(false, true, action);
-            } catch (InvocationTargetException e) {
+
+                buildJobHandler.build(new NullProgressMonitor());
+            } catch (Exception e) {
                 MessageBoxExceptionHandler.process(e.getCause(), getShell());
-                return false;
-            } catch (InterruptedException e) {
                 return false;
             }
             manager = action.getManager();
             // save output directory
             manager.setDestinationPath(destinationKar);
             saveWidgetValues();
+
+        }
+
+        IFile targetFile = buildJobHandler.getJobTargetFile();
+
+        if (targetFile != null && targetFile.exists()) {
+            try {
+                FilesUtils.copyFile(targetFile.getLocation().toFile(), new File(getDestinationValue()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return true;

@@ -1,6 +1,6 @@
 // ============================================================================
 //
-// Copyright (C) 2006-2017 Talend Inc. - www.talend.com
+// Copyright (C) 2006-2018 Talend Inc. - www.talend.com
 //
 // This source code is available under agreement available at
 // %InstallDIR%\features\org.talend.rcp.branding.%PRODUCTNAME%\%PRODUCTNAME%license.txt
@@ -37,6 +37,7 @@ import org.talend.core.repository.utils.XmiResourceManager;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
+import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -44,7 +45,6 @@ import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.model.services.ServicesFactory;
 import org.talend.repository.services.model.services.ServicesPackage;
 import org.talend.repository.services.model.services.util.EServiceCoreImage;
-import org.talend.repository.services.Messages;
 
 /**
  * DOC hwang class global comment. Detailled comment

@@ -501,9 +501,11 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
 	public void setArguments(Object arguments) {
 		this.inOSGi = true;
 		<%=className%>.arguments = arguments;
+		<% if(!exportTypeSpringBoot){ %>
 		if (null != context && null != context.getProperty("context")) {
 			contextStr = (String) context.getProperty("context");
-		}		
+		}
+		<% } %>		
 	}
 	
 	public <T> Map<String, T> getArguments(Object props,Class c){
@@ -2801,7 +2803,7 @@ if (isProvider) {
 
 %>
                     {
-                    javax.jms.ConnectionFactory jmsConnectionFactory = new com.ibm.mq.jms.MQQueueConnectionFactory();
+                    javax.jms.ConnectionFactory jmsConnectionFactory = new com.ibm.mq.jms.MQConnectionFactory();
                     ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setHostName(<%=wmqServer%>);
                     try {
                         ((com.ibm.mq.jms.MQConnectionFactory) jmsConnectionFactory).setPort(<%=wmqPort%>);
