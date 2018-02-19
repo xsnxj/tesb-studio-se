@@ -94,16 +94,6 @@
             id="cxf-rt-databinding-jaxb"
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cxf-rt-databinding-jaxb}"
             bundleID="" />
-        <libraryNeeded context="plugin:org.talend.libraries.esb"
-            name="${tesb-jaxb-impl}"
-            id="jaxb-impl"
-            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-jaxb-impl}"
-            bundleID="" />
-        <libraryNeeded context="plugin:org.talend.libraries.esb"
-            name="${tesb-jaxb-core}"
-            id="jaxb-core"
-            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-jaxb-core}"
-            bundleID="" />
 
         <libraryNeededGroup
                 description="cxf-rt-bindings-soap"
