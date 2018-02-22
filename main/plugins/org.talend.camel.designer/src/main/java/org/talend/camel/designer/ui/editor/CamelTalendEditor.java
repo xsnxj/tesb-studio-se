@@ -12,10 +12,12 @@
 // ============================================================================
 package org.talend.camel.designer.ui.editor;
 
+import java.io.DataOutputStream;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -292,23 +294,10 @@ public class CamelTalendEditor extends AbstractTalendEditor {
                     "Can not initialize the nexus server, Please check the TAC.");
         } else {
             try {
-                URL url = new URL(
-                        nexusServerBean.getServer() + "/service/local/authentication/login?_dc=" + System.currentTimeMillis());
-                HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                con.setConnectTimeout(3000);
-
-                String userpass = nexusServerBean.getUserName() + ":" + nexusServerBean.getPassword();
-                String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
-                con.setRequestProperty("Authorization", basicAuth);
-
-                int state = con.getResponseCode();
-
-                if (state == 200) {
-                    return true;
-                } else if (state == 401) {
-                    MessageDialog.openError(getParent().getEditorSite().getShell(), "Checking Nexus Connection Error",
-                            "Can not connect to " + nexusServerBean.getServer() + "\n" + con.getResponseMessage()
-                                    + " ResponseCode : " + state + " Please upload the related jar files manually");
+                if (nexusServerBean.getType().equals(NexusServerBean.NexusType.NEXUS_3.name())) {
+                    return isAvailableNexus3(nexusServerBean);
+                } else {
+                    return isAvailableNexus2(nexusServerBean);
                 }
             } catch (Exception ex) {
                 MessageDialog.openError(getParent().getEditorSite().getShell(), "Checking Nexus Connection Error",
@@ -322,4 +311,58 @@ public class CamelTalendEditor extends AbstractTalendEditor {
         return false;
     }
 
+
+    protected boolean isAvailableNexus2(NexusServerBean nexusServerBean) throws  Exception {
+        String authUrl = nexusServerBean.getServer() + "/service/local/authentication/login?_dc=" + System.currentTimeMillis();
+        URL url = new URL(authUrl);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+        con.setConnectTimeout(3000);
+
+        String userpass = nexusServerBean.getUserName() + ":" + nexusServerBean.getPassword();
+        String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
+        con.setRequestProperty("Authorization", basicAuth);
+
+        int state = con.getResponseCode();
+
+        if (state == 200) {
+            return true;
+        } else if (state == 401) {
+            MessageDialog.openError(getParent().getEditorSite().getShell(), "Checking Nexus Connection Error",
+                    "Can not connect to " + nexusServerBean.getServer() + "\n" + con.getResponseMessage()
+                            + " ResponseCode : " + state + " Please upload the related jar files manually");
+        }
+        return false;
+    }
+
+    protected boolean isAvailableNexus3(NexusServerBean nexusServerBean) throws Exception {
+        String authUrl = nexusServerBean.getServer() + "/service/rapture/session?_dc=" + System.currentTimeMillis();
+        URL url = new URL(authUrl);
+        String urlParameters  = "username=" + java.util.Base64.getEncoder().encodeToString(nexusServerBean.getUserName().getBytes())  +
+                               "&password=" + java.util.Base64.getEncoder().encodeToString(nexusServerBean.getPassword().getBytes());
+        byte[] postData       = urlParameters.getBytes( StandardCharsets.UTF_8 );
+        int    postDataLength = postData.length;
+
+        HttpURLConnection conn= (HttpURLConnection) url.openConnection();
+        conn.setDoOutput( true );
+        conn.setInstanceFollowRedirects( false );
+        conn.setRequestMethod( "POST" );
+        conn.setRequestProperty( "Content-Type", "application/x-www-form-urlencoded");
+        conn.setRequestProperty( "charset", "utf-8");
+        conn.setRequestProperty( "Content-Length", Integer.toString( postDataLength ));
+        conn.setUseCaches( false );
+        try( DataOutputStream wr = new DataOutputStream( conn.getOutputStream())) {
+            wr.write( postData );
+        }
+
+        int state = conn.getResponseCode();
+        if (state == 204) {
+            return true;
+        } else if (state == 401) {
+            MessageDialog.openError(getParent().getEditorSite().getShell(), "Checking Nexus Connection Error",
+                "Can not connect to " + nexusServerBean.getServer() + "\n" + conn.getResponseMessage()
+                        + " ResponseCode : " + state + " Please upload the related jar files manually");
+        }
+
+        return false;
+    }
 }
