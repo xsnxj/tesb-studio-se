@@ -32,8 +32,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.model.process.JobInfo;
-import org.talend.core.model.properties.Property;
-import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.runtime.projectsetting.IProjectSettingPreferenceConstants;
 import org.talend.core.runtime.projectsetting.IProjectSettingTemplateConstants;
 import org.talend.designer.maven.model.MavenSystemFolders;
@@ -44,7 +42,7 @@ import org.talend.designer.maven.utils.PomUtil;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.utils.io.FilesUtils;
 
-public class CreateMavenBundlePom extends CreateMavenJobPom {
+public class CreateRouteletMavenBundlePom extends CreateMavenJobPom {
 
     private Model model;
 
@@ -54,7 +52,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
      * @param jobProcessor
      * @param pomFile
      */
-    public CreateMavenBundlePom(IProcessor jobProcessor, IFile pomFile) {
+    public CreateRouteletMavenBundlePom(IProcessor jobProcessor, IFile pomFile) {
         super(jobProcessor, pomFile);
     }
 
@@ -82,47 +80,6 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
         if ("CAMEL".equals(getJobProcessor().getProcess().getComponentsType())) {
 
-            File featurePom = new File(parent.getLocation().toOSString() + File.separator + "pom-feature.xml");
-
-            Model fm = new Model();
-
-            fm.setModelVersion("4.0.0");
-            fm.setGroupId(model.getGroupId());
-            fm.setArtifactId(model.getArtifactId() + "-Feature");
-
-            fm.setName(model.getName() + " Feature");
-
-            fm.setVersion(model.getVersion());
-            fm.setPackaging("pom");
-            Build fmBuild = new Build();
-            fmBuild.addPlugin(addFeaturesMavenPlugin(model.getProperties().getProperty("talend.job.finalName")));
-            
-            Set<JobInfo> subjobs = getJobProcessor().getBuildChildrenJobs();
-            if( subjobs != null && !subjobs.isEmpty()) {
-                for(JobInfo subjob : subjobs) {
-                	if(isRoutelet(subjob)) {
-                    	fmBuild.addPlugin(addFileInstallPlugin(subjob));                 		
-                	}
-                }
-            }
-            
-            fm.setBuild(fmBuild);
-            /*
-             * <modelVersion>4.0.0</modelVersion>
-             * 
-             * <groupId>org.talend.job.ffffff</groupId> <artifactId>simpleRoute-feature</artifactId>
-             * <version>3.0.0</version> <packaging>pom</packaging> <build> <plugins> <plugin>
-             * <groupId>org.apache.karaf.tooling</groupId> <artifactId>features-maven-plugin</artifactId>
-             * <version>2.2.9</version> <executions> <execution> <id>create-kar</id> <goals> <goal>create-kar</goal>
-             * </goals> <configuration> <finalName>simpleroute_3_0</finalName>
-             * <resourcesDir>${project.build.directory}/bin</resourcesDir>
-             * <featuresFile>/Volumes/M2/tmp/feature/feature.xml</featuresFile> </configuration> </execution>
-             * </executions> </plugin> </plugins> </build>
-             * 
-             */
-
-            PomUtil.savePom(monitor, fm, featurePom);
-
             Model pom = new Model();
 
             pom.setModelVersion("4.0.0");
@@ -132,14 +89,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             pom.setName(model.getName() + " Kar");
             pom.setVersion(model.getVersion());
             pom.setPackaging("pom");
-            
-            for(JobInfo job : getJobProcessor().getBuildChildrenJobs()) {
-            	String routeletFolderName = (job.getJobName()+"_"+job.getJobVersion()).toLowerCase();
-            	pom.addModule("../../routelets/" + routeletFolderName +"/pom.xml");
-            }
-            
             pom.addModule("pom-bundle.xml");
-            pom.addModule("pom-feature.xml");
             pom.setDependencies(model.getDependencies());
 
             /*
@@ -410,65 +360,5 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         plugin.setExecutions(pluginExecutions);
         
         return plugin;
-    }
-    
-    private Plugin addFileInstallPlugin(JobInfo routlet) {
-    	Plugin plugin = new Plugin();
-
-        plugin.setGroupId("org.apache.maven.plugins");
-        plugin.setArtifactId("maven-install-plugin");
-        plugin.setVersion("2.5.1");
-    	
-        Xpp3Dom configuration = new Xpp3Dom("configuration");
-
-        Xpp3Dom groupId = new Xpp3Dom("groupId");
-        groupId.setValue(model.getGroupId());
-        
-        Xpp3Dom artifactId = new Xpp3Dom("artifactId");
-        artifactId.setValue(model.getArtifactId()+"_" + routlet.getJobName());
-        
-        Xpp3Dom version = new Xpp3Dom("version");
-        version.setValue(routlet.getJobVersion());
-        
-        Xpp3Dom packaging = new Xpp3Dom("packaging");
-        packaging.setValue("jar");
-        
-        Xpp3Dom file = new Xpp3Dom("file");
-        String routeletFolderName = (routlet.getJobName()+"_"+routlet.getJobVersion()).toLowerCase();
-        String pathToJar = "../../routelets/" + routeletFolderName +"/target/" + routlet.getJobName().toLowerCase() + "_" + routlet.getJobVersion().replaceAll("\\.", "_")+".jar"; 
-        file.setValue(pathToJar);
-
-        Xpp3Dom generatePom = new Xpp3Dom("generatePom");
-        generatePom.setValue("true");
-        
-        configuration.addChild(groupId);
-        configuration.addChild(artifactId);
-        configuration.addChild(version);
-        configuration.addChild(packaging);
-        configuration.addChild(file);
-        configuration.addChild(generatePom);
-        
-        List<PluginExecution> pluginExecutions = new ArrayList<PluginExecution>();
-        PluginExecution pluginExecution = new PluginExecution();
-        pluginExecution.setId("install-jar-lib");
-        pluginExecution.addGoal("install-file");
-        pluginExecution.setPhase("validate");
-
-        
-        pluginExecution.setConfiguration(configuration);
-        pluginExecutions.add(pluginExecution);
-        plugin.setExecutions(pluginExecutions);
-        
-        return plugin;
-    }
-    
-    boolean isRoutelet(JobInfo job ) {
-    	if(job != null && job.getProcessItem() != null) {
-    		Property p = job.getProcessItem().getProperty();
-    		if (p != null) {
-                return ERepositoryObjectType.getType(p).equals(ERepositoryObjectType.PROCESS_ROUTELET);
-            }
-    	}
-    	return false;
     }
 }
