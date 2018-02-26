@@ -2386,15 +2386,34 @@ if (isProvider) {
                     org.apache.cxf.jaxrs.swagger.Swagger2Feature swagger2Feature_<%=cid%> = new org.apache.cxf.jaxrs.swagger.Swagger2Feature();
                     swagger2Feature_<%=cid%>.setScan(false);
 <%
-                        String epForSwagger = ElementParameterParser.getValue(node, "__URL__");
-                        epForSwagger = epForSwagger.trim();
-                        if (epForSwagger.startsWith("\"") && epForSwagger.endsWith("\"")) {
-                            epForSwagger = epForSwagger.substring(1, epForSwagger.length() - 1);
-                        }
-                        epForSwagger = "/services" + epForSwagger;
-                        if (epForSwagger.endsWith("\"")) {
-                            epForSwagger = epForSwagger.substring(0, epForSwagger.length() - 1);
-                        }
+
+
+                        String epForSwagger = "";
+                        
+                        
+                        
+                        String initialEp = ElementParameterParser.getValue(node, "__URL__");
+                        
+				        String[] splittedEp = initialEp.split("\\+");
+				
+				        if (splittedEp.length > 1) {
+				
+				            epForSwagger = "\"/services\"";
+				
+				            for (String s : splittedEp) {
+				                s = s.trim();
+				                if (s.startsWith("\"") && s.endsWith("\"")) {
+				                    epForSwagger += " + " + s;
+				                } else {
+				                    epForSwagger += (" + " + s);
+				                }
+				            }
+				        } else {
+				
+				            if (initialEp.startsWith("\"") && initialEp.endsWith("\"")) {
+				                epForSwagger = "\"/services" + initialEp.substring(1, initialEp.length());
+				            }
+				        }
 
                         String swaggerTitle = className + " REST Application";
                         String swaggerDescription = "";
@@ -2407,7 +2426,10 @@ if (isProvider) {
                             }
                         }
                     %>
-                    swagger2Feature_<%=cid%>.setBasePath("<%=epForSwagger%>");
+                    
+                    // swagger2Feature_<%=cid%>.setBasePath(getCXFRSEndpointAddress(<%=ElementParameterParser.getValue(node, "__URL__")%>));
+                    swagger2Feature_<%=cid%>.setBasePath(<%=epForSwagger%>);
+                    
                     swagger2Feature_<%=cid%>.setUsePathBasedConfig(true);
                     swagger2Feature_<%=cid%>.setRunAsFilter(true);
                     swagger2Feature_<%=cid%>.setSwaggerUiMavenGroupAndArtifact("org.talend.esb/swagger-ui");
