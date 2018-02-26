@@ -278,6 +278,7 @@ public class RunESBRuntimeProcess extends Process {
                 target = File.createTempFile("route", FileConstants.KAR_FILE_SUFFIX, null);
                 JavaCamelJobScriptsExportWSAction camelAction = new JavaCamelJobScriptsExportWSAction(node, process.getVersion(),
                         target.getAbsolutePath(), true, statisticsPort, tracePort);
+                camelAction.setBuildProject(true);
                 camelAction.run(monitor);
                 applyContextConfiguration(configID);
                 kars = JMXUtil.installKar(target);

@@ -16,15 +16,18 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.talend.camel.designer.build.RouteBundleExportAction;
 import org.talend.camel.designer.ui.wizards.export.RouteDedicatedJobManager;
@@ -41,14 +44,15 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.runtime.process.IBuildJobHandler;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
+import org.talend.core.runtime.repository.build.IBuildResourceParametes;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.maven.utils.PomIdsHelper;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
-import org.talend.designer.publish.core.utils.ZipModel;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.repository.ProjectManager;
@@ -56,9 +60,11 @@ import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.BuildJobFactory;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.JobJavaScriptOSGIForESBManager;
+import org.talend.repository.ui.wizards.exportjob.util.ExportJobUtil;
 import org.talend.repository.utils.EmfModelUtils;
 import org.talend.repository.utils.JobContextUtils;
 
@@ -83,6 +89,12 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     private int statisticPort;
 
     private int tracePort;
+
+    private Map<IRepositoryNode, Map<String, File>> buildArtifactsMap = new HashMap<IRepositoryNode, Map<String, File>>();
+    
+    private IBuildJobHandler  buildJobHandler = null;
+    
+    private boolean buildProject = false;
 
     public JavaCamelJobScriptsExportWSAction(IRepositoryNode routeNode, String version,
             String destinationKar, boolean addStatisticsCode) {
@@ -167,15 +179,20 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         String groupId = getGroupId();
         String routeName = getArtifactId();
         String routeVersion = getArtifactVersion();
-
+        
+        try {
+ 	        prepareJobBuild();
+         } catch (Exception e) {
+             throw new InvocationTargetException(e);
+         }
+        
         featuresModel = new FeaturesModel(groupId, routeName, routeVersion);
         try {
-            // generated bundle jar first
             File routeFile;
             try {
                 routeFile = File.createTempFile("route", FileConstants.JAR_FILE_SUFFIX,
                         new File(getTempDir())); //$NON-NLS-1$
-                copyArtifactFromMavenProject(routeNode, "jar", routeFile);
+                addBuildArtifact(routeNode, "jar", routeFile);
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }
@@ -199,7 +216,11 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
 
             try {
-
+                
+                if(destinationKar !=null ) {
+                	addBuildArtifact(routeNode, "kar", new File(destinationKar));
+                }
+                
                 IRunProcessService runProcessService = CorePlugin.getDefault().getRunProcessService();
                 ITalendProcessJavaProject talendProcessJavaProject = runProcessService
                         .getTalendJobJavaProject(routeNode.getObject().getProperty());
@@ -208,9 +229,16 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                         talendProcessJavaProject.getBundleResourcesFolder().getLocation().toOSString() + File.separator
                                 + "feature.xml"));
                 
-                if(destinationKar !=null ) {
-                	copyArtifactFromMavenProject(routeNode, "kar", new File(destinationKar));
+                // Build project and collect build artifacts
+                try {
+                	buildJob();
+                }catch(Exception ex) {
+                	throw new InvocationTargetException(ex);
                 }
+                
+                collectBuildArtifacts();
+                
+
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -224,22 +252,43 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         }
     }
     
-    protected void copyArtifactFromMavenProject(IRepositoryNode node, String extension, File destination) throws IOException {
+    protected void addBuildArtifact(IRepositoryNode node, String extension, File destination) {
+    	Map<String, File> m = this.buildArtifactsMap.get(node);
+    	if(m == null) {
+    		m = new HashMap<String, File>();
+    	}
+    	m.put(extension, destination);
+    	buildArtifactsMap.put(node, m);
+    }
+    
+    protected void collectBuildArtifacts() throws IOException {
     	
     	IRunProcessService runProcessService = CorePlugin.getDefault().getRunProcessService();
-        ITalendProcessJavaProject talendProcessJavaProject = runProcessService
-                .getTalendJobJavaProject(node.getObject().getProperty());
     	
-    	List<File> fileList = new ArrayList<File>();
-        FilesUtils.getAllFilesFromFolder(talendProcessJavaProject.getTargetFolder().getLocation().toFile(), fileList, null);
-        if(!fileList.isEmpty()) {
-        	for(File f:fileList) {
-        		if(f.isFile() && f.getName().endsWith(extension) && destination != null ) {
-        			FilesUtils.copyFile(f, destination);
-        			break;
-        		}
-        	}
-        }
+    	for (Map.Entry<IRepositoryNode, Map<String, File>> e : buildArtifactsMap.entrySet()) {
+    		
+    		IRepositoryNode node = e.getKey();
+    		Map<String, File> m = e.getValue();
+    		
+    		ITalendProcessJavaProject talendProcessJavaProject = runProcessService
+                    .getTalendJobJavaProject(node.getObject().getProperty());
+    		
+    		for (Map.Entry<String, File> e1 : m.entrySet()) {
+    			String extension = e1.getKey();
+    			File destination = e1.getValue();
+    			
+    			List<File> fileList = new ArrayList<File>();
+    	        FilesUtils.getAllFilesFromFolder(talendProcessJavaProject.getTargetFolder().getLocation().toFile(), fileList, null);
+    	        if(!fileList.isEmpty()) {
+    	        	for(File f:fileList) {
+    	        		if(f.isFile() && f.getName().endsWith(extension) && destination != null ) {
+    	        			FilesUtils.copyFile(f, destination);
+    	        			break;
+    	        		}
+    	        	}
+    	        }
+    		}
+		}
     }
 
     protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor)
@@ -302,7 +351,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             try {
                 jobFile = File.createTempFile("job", FileConstants.JAR_FILE_SUFFIX,
                         new File(getTempDir())); //$NON-NLS-1$
-                copyArtifactFromMavenProject(referencedJobNode, "jar", jobFile);
+                addBuildArtifact(referencedJobNode, "jar", jobFile);
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }
@@ -358,7 +407,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 try {
                     routeletFile = File.createTempFile("routelet", FileConstants.JAR_FILE_SUFFIX,
                             new File(getTempDir())); //$NON-NLS-1$
-                    copyArtifactFromMavenProject(referencedRouteletNode, "jar", routeletFile);
+                    addBuildArtifact(referencedRouteletNode, "jar", routeletFile);
                 } catch (IOException e) {
                     throw new InvocationTargetException(e);
                 }
@@ -464,5 +513,62 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     protected void removeTempFiles() {
         FilesUtils.removeFolder(getTempDir(), true);
     }
+    
+  
+    protected void prepareJobBuild() throws Exception  {
+    	if(getBuildJobHandler() != null && getBuildProject()) {
+    		getBuildJobHandler().prepare(new NullProgressMonitor(), getBuildJobHandlerPrepareParams());
+ 	    }
+    }
+    
+    protected void buildJob() throws Exception  {
+    	if(getBuildJobHandler() !=null && getBuildProject()) {
+    		getBuildJobHandler().build(new NullProgressMonitor());
+    	}
+    }
+    
+    protected ProcessItem getProcessItem() {
+    	return  ExportJobUtil.getProcessItem(Arrays.asList(routeNode));
+    }
 
+    protected String getContextName() {
+    	return  getProcessItem().getProcess().getDefaultContext();
+    }
+    
+    public IBuildJobHandler getBuildJobHandler() {
+    	if(buildJobHandler == null) {
+    		buildJobHandler = BuildJobFactory.createBuildJobHandler(getProcessItem(), getContextName(), version,
+         			getExportChoiceMap(), "ROUTE");
+    	}
+    	return buildJobHandler;
+    }
+    
+    protected Map<String, Object> getBuildJobHandlerPrepareParams() {
+        Map<String, Object> prepareParams = new HashMap<String, Object>();
+        prepareParams.put(IBuildResourceParametes.OPTION_ITEMS, true);
+        prepareParams.put(IBuildResourceParametes.OPTION_ITEMS_DEPENDENCIES, true);
+        return prepareParams;
+    }
+    
+    protected Map<ExportChoice, Object> getExportChoiceMap() {
+        Map<ExportChoice, Object> exportChoiceMap = new EnumMap<ExportChoice, Object>(ExportChoice.class);
+        
+        exportChoiceMap.put(ExportChoice.esbExportType, "kar");
+        exportChoiceMap.put(ExportChoice.needJobItem, false);
+        exportChoiceMap.put(ExportChoice.needSourceCode, false);
+        exportChoiceMap.put(ExportChoice.needMetaInfo, true);
+        exportChoiceMap.put(ExportChoice.needContext, true);
+        exportChoiceMap.put(ExportChoice.needLauncher, false);
+        
+        exportChoiceMap.put(ExportChoice.onlyDefautContext, false);
+        return exportChoiceMap;
+    }
+    
+    public boolean getBuildProject() {
+    	return buildProject;
+    }
+    
+    public void setBuildProject(boolean buildProject) {
+    	this.buildProject = buildProject;
+    }
 }
