@@ -175,6 +175,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             try {
                 routeFile = File.createTempFile("route", FileConstants.JAR_FILE_SUFFIX,
                         new File(getTempDir())); //$NON-NLS-1$
+                copyArtifactFromMavenProject(routeNode, "jar", routeFile);
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }
@@ -206,26 +207,45 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 FilesUtils.copyFile(featuresModel.getContent(), new File(
                         talendProcessJavaProject.getBundleResourcesFolder().getLocation().toOSString() + File.separator
                                 + "feature.xml"));
+                
+                if(destinationKar !=null ) {
+                	copyArtifactFromMavenProject(routeNode, "kar", new File(destinationKar));
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            // processResults(featuresModel, monitor);
+            processResults(featuresModel, monitor);
 
         } finally {
             // remove generated files
             removeTempFiles();
         }
     }
+    
+    protected void copyArtifactFromMavenProject(IRepositoryNode node, String extension, File destination) throws IOException {
+    	
+    	IRunProcessService runProcessService = CorePlugin.getDefault().getRunProcessService();
+        ITalendProcessJavaProject talendProcessJavaProject = runProcessService
+                .getTalendJobJavaProject(node.getObject().getProperty());
+    	
+    	List<File> fileList = new ArrayList<File>();
+        FilesUtils.getAllFilesFromFolder(talendProcessJavaProject.getTargetFolder().getLocation().toFile(), fileList, null);
+        if(!fileList.isEmpty()) {
+        	for(File f:fileList) {
+        		if(f.isFile() && f.getName().endsWith(extension) && destination != null ) {
+        			FilesUtils.copyFile(f, destination);
+        			break;
+        		}
+        	}
+        }
+    }
 
     protected void processResults(FeaturesModel featuresModel, IProgressMonitor monitor)
             throws InvocationTargetException, InterruptedException {
-        // create kar file
-        try {
-            new ZipModel(featuresModel, new File(destinationKar));
-        } catch (IOException e) {
-            throw new InvocationTargetException(e);
-        }
+        // do nothing (kar will be created by maven)
+        return;
     }
 
     private void exportAllReferenceJobs(String routeName, ProcessItem routeProcess)
@@ -282,6 +302,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             try {
                 jobFile = File.createTempFile("job", FileConstants.JAR_FILE_SUFFIX,
                         new File(getTempDir())); //$NON-NLS-1$
+                copyArtifactFromMavenProject(referencedJobNode, "jar", jobFile);
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }
@@ -337,6 +358,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 try {
                     routeletFile = File.createTempFile("routelet", FileConstants.JAR_FILE_SUFFIX,
                             new File(getTempDir())); //$NON-NLS-1$
+                    copyArtifactFromMavenProject(referencedRouteletNode, "jar", routeletFile);
                 } catch (IOException e) {
                     throw new InvocationTargetException(e);
                 }

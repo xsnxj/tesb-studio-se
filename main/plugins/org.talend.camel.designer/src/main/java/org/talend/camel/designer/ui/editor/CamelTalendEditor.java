@@ -335,7 +335,8 @@ public class CamelTalendEditor extends AbstractTalendEditor {
     }
 
     protected boolean isAvailableNexus3(NexusServerBean nexusServerBean) throws Exception {
-        String authUrl = nexusServerBean.getServer() + "/service/rapture/session?_dc=" + System.currentTimeMillis();
+        String authUrl = nexusServerBean.getServer() +  (nexusServerBean.getServer().endsWith("/") ? "" : "/") +
+                            "service/rapture/session?_dc=" + System.currentTimeMillis();
         URL url = new URL(authUrl);
         String urlParameters  = "username=" + java.util.Base64.getEncoder().encodeToString(nexusServerBean.getUserName().getBytes())  +
                                "&password=" + java.util.Base64.getEncoder().encodeToString(nexusServerBean.getPassword().getBytes());

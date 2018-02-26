@@ -439,6 +439,16 @@
                  order="20">
            </buildType>
            </buildProvider>
+           <buildProvider
+                 description="Build OSGi bundle for ESB Routelet"
+                 id="build.provider.esb.routelet.osgibundle"
+                 provider="org.talend.camel.designer.build.RouteletOSGiBundleBuildProvider">
+                 <buildType
+                       label="Routelet"
+                       name="ROUTELET"
+                 order="10">
+           </buildType>
+           </buildProvider>           
         </extension>
 
 </plugin>
