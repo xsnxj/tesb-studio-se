@@ -27,12 +27,15 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.camel.designer.util.CamelDesignerUtil;
+import org.talend.commons.exception.PersistenceException;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProjectRepositoryNode;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.ui.utils.RecombineRepositoryNodeUtil;
+import org.talend.core.runtime.process.TalendProcessArgumentConstant;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
@@ -71,7 +74,17 @@ public class AssignJobPage extends WizardPage {
         dialog.finish();
         if (dialog.getResult() != null) {
             IRepositoryViewObject repositoryObject = dialog.getResult().getObject();
+
             final Item item = repositoryObject.getProperty().getItem();
+
+            repositoryObject.getProperty().getAdditionalProperties().put(TalendProcessArgumentConstant.ARG_BUILD_TYPE, "ROUTE");
+
+            try {
+                ProxyRepositoryFactory.getInstance().save(item, false);
+            } catch (PersistenceException e) {
+                e.printStackTrace();
+            }
+
             id = item.getProperty().getId();
             return true;
         }

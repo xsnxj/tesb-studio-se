@@ -5,10 +5,13 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Composite;
 import org.talend.camel.designer.i18n.Messages;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.RepositoryManager;
+import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.CoreRuntimePlugin;
+import org.talend.core.runtime.process.TalendProcessArgumentConstant;
 import org.talend.designer.core.model.utils.emf.talendfile.ContextType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
@@ -75,6 +78,18 @@ public class AssignJobWizard extends Wizard {
 		} else if (processWizard != null && currentPage == processWizard.getPages()[0]) {
 			if (processWizard.performFinish()) {
 				addRouteComponents(processWizard.getProcess().getProcess());
+
+                final Item item = processWizard.getProcess().getProperty().getItem();
+
+                processWizard.getProcess().getProperty().getAdditionalProperties()
+                        .put(TalendProcessArgumentConstant.ARG_BUILD_TYPE, "ROUTE");
+
+                try {
+                    ProxyRepositoryFactory.getInstance().save(item, false);
+                } catch (PersistenceException e) {
+                    e.printStackTrace();
+                }
+
 				saveCreatedProcess(processWizard.getProcess());
 				selectedProcessId = processWizard.getProcess().getProperty().getId();
 				

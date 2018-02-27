@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.talend.camel.designer.ui.wizards.export.RouteDedicatedJobManager;
 import org.talend.camel.designer.ui.wizards.export.RouteJavaScriptOSGIForESBManager;
 import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.CorePlugin;
@@ -51,7 +52,7 @@ public class RouteBundleExportAction extends JobExportAction {
 
     private IRunProcessService runProcessService;
 
-    private RouteJavaScriptOSGIForESBManager manager;
+    private JobScriptsManager manager;
 
     private String type;
 
@@ -73,7 +74,12 @@ public class RouteBundleExportAction extends JobExportAction {
         this.nodes = nodes;
         this.runProcessService = CorePlugin.getDefault().getRunProcessService();
         this.type = type;
-        this.manager = (RouteJavaScriptOSGIForESBManager) manager;
+        if (manager instanceof RouteDedicatedJobManager) {
+            this.manager = (RouteDedicatedJobManager) manager;
+        } else {
+            this.manager = (RouteJavaScriptOSGIForESBManager) manager;
+        }
+
     }
 
     private File getTemporaryStoreFile(File realFile, String relatedPath) {

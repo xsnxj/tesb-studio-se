@@ -24,8 +24,10 @@ package org.talend.camel.designer.service;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.talend.camel.designer.build.CreateMavenBundlePom;
 import org.talend.camel.designer.runprocess.maven.BundleJavaProcessor;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.ProcessItem;
@@ -92,6 +94,18 @@ public class RouteService implements IESBRouteService {
     public IBuildJobHandler createBuildJobHandler(ProcessItem itemToExport, String version, String context, Map exportChoiceMap) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.core.service.IESBMicroService#createMavenJobPom(org.talend.designer.runprocess.IProcessor,
+     * org.eclipse.core.resources.IFile)
+     */
+    @Override
+    public Object createMavenJobPom(IProcessor jobProcessor, IFile pomFile) {
+
+        return new CreateMavenBundlePom(jobProcessor, pomFile);
     }
 
 }

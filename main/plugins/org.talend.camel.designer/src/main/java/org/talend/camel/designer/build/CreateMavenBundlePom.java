@@ -69,7 +69,6 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
         IFile curPomFile = getPomFile();
 
-
         if (curPomFile == null) {
             return;
         }
@@ -80,7 +79,11 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
         IContainer parent = curPomFile.getParent();
 
-        if ("CAMEL".equals(getJobProcessor().getProcess().getComponentsType())) {
+        Model pom = new Model();
+
+        boolean route = "CAMEL".equals(getJobProcessor().getProcess().getComponentsType());
+
+        if (route) {
 
             File featurePom = new File(parent.getLocation().toOSString() + File.separator + "pom-feature.xml");
 
@@ -96,16 +99,16 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             fm.setPackaging("pom");
             Build fmBuild = new Build();
             fmBuild.addPlugin(addFeaturesMavenPlugin(model.getProperties().getProperty("talend.job.finalName")));
-            
+
             Set<JobInfo> subjobs = getJobProcessor().getBuildChildrenJobs();
-            if( subjobs != null && !subjobs.isEmpty()) {
-                for(JobInfo subjob : subjobs) {
-                	if(isRoutelet(subjob)) {
-                    	fmBuild.addPlugin(addFileInstallPlugin(subjob));                 		
-                	}
+            if (subjobs != null && !subjobs.isEmpty()) {
+                for (JobInfo subjob : subjobs) {
+                    if (isRoutelet(subjob)) {
+                        fmBuild.addPlugin(addFileInstallPlugin(subjob));
+                    }
                 }
             }
-            
+
             fm.setBuild(fmBuild);
             /*
              * <modelVersion>4.0.0</modelVersion>
@@ -123,145 +126,108 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
             PomUtil.savePom(monitor, fm, featurePom);
 
-            Model pom = new Model();
-
-            pom.setModelVersion("4.0.0");
-            // pom.setParent(model.getParent());
-            pom.setGroupId(model.getGroupId());
-            pom.setArtifactId(model.getArtifactId() + "-Kar");
-            pom.setName(model.getName() + " Kar");
-            pom.setVersion(model.getVersion());
-            pom.setPackaging("pom");
-            
-            for(JobInfo job : getJobProcessor().getBuildChildrenJobs()) {
-            	String routeletFolderName = (job.getJobName()+"_"+job.getJobVersion()).toLowerCase();
-            	pom.addModule("../../routelets/" + routeletFolderName +"/pom.xml");
-            }
-            
-            pom.addModule("pom-bundle.xml");
-            pom.addModule("pom-feature.xml");
-            pom.setDependencies(model.getDependencies());
-
-            /*
-             * 
-             * <modelVersion>4.0.0</modelVersion> <parent> <groupId>org.talend.master.ffffff</groupId>
-             * <artifactId>code.Master</artifactId> <version>7.0.1</version> <relativePath>../../../</relativePath>
-             * </parent> <groupId>org.talend.job.ffffff</groupId> <artifactId>simpleRoute-ogsi</artifactId>
-             * <version>3.0.0</version> <packaging>pom</packaging> <modules> <module>a.xml</module>
-             * <module>b.xml</module> </modules>
-             * 
-             */
-
-            File bd = new File(parent.getLocation().toOSString() + File.separator + "pom-bundle.xml");
-            // model.setParent(null);
-            // model.setDependencies(null);
-
-            // List<Plugin> plugins = model.getBuild().getPlugins();
-            //
-            // for (Plugin plugin : plugins) {
-            // if (plugin.getArtifactId().equals("maven-jar-plugin")) {
-            // PluginExecution pluginExecution = plugin.getExecutionsAsMap().get("default-jar");
-            // Xpp3Dom configuration = (Xpp3Dom) pluginExecution.getConfiguration();
-            // /*
-            // * <archive> <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-            // * </archive>
-            // */
-            //
-            // Xpp3Dom archive = new Xpp3Dom("archive");
-            // Xpp3Dom manifestFile = new Xpp3Dom("manifestFile");
-            // manifestFile.setValue("${project.build.outputDirectory}/META-INF/MANIFEST.MF");
-            //
-            // archive.addChild(manifestFile);
-            //
-            // configuration.addChild(archive);
-            // System.out.println(configuration);
-            // }
-            // }
-
-            List<Profile> profiles = model.getProfiles();
-
-            for (Profile profile : profiles) {
-
-                if (profile.getId().equals("packaging-and-assembly")) {
-                    List<Plugin> plugins = profile.getBuild().getPlugins();
-
-                    for (Plugin plugin : plugins) {
-                        if (plugin.getArtifactId().equals("maven-assembly-plugin")) {
-                            PluginExecution pluginExecution = plugin.getExecutionsAsMap().get("default");
-                            Xpp3Dom configuration = (Xpp3Dom) pluginExecution.getConfiguration();
-                            /*
-                             * <archive>
-                             * <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                             * </archive>
-                             */
-
-                            Xpp3Dom archive = new Xpp3Dom("archive");
-                            Xpp3Dom manifestFile = new Xpp3Dom("manifestFile");
-                            manifestFile.setValue("${current.bundle.resources.dir}/META-INF/MANIFEST.MF");
-
-                            archive.addChild(manifestFile);
-
-                            configuration.addChild(archive);
-                            // System.out.println(configuration);
-                        }
-                    }
-
-                }
-
-            }
-
-
-
-            model.setName(model.getName() + " Bundle");
-
-            PomUtil.savePom(monitor, model, bd);
-
-            PomUtil.savePom(monitor, pom, curPomFile);
-
-        } else {
-
-            List<Profile> profiles = model.getProfiles();
-
-            for (Profile profile : profiles) {
-
-                if (profile.getId().equals("packaging-and-assembly")) {
-                    List<Plugin> plugins = profile.getBuild().getPlugins();
-
-                    for (Plugin plugin : plugins) {
-                        if (plugin.getArtifactId().equals("maven-assembly-plugin")) {
-                            PluginExecution pluginExecution = plugin.getExecutionsAsMap().get("default");
-                            Xpp3Dom configuration = (Xpp3Dom) pluginExecution.getConfiguration();
-                            /*
-                             * <archive>
-                             * <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                             * </archive>
-                             */
-
-                            Xpp3Dom archive = new Xpp3Dom("archive");
-                            Xpp3Dom manifestFile = new Xpp3Dom("manifestFile");
-                            manifestFile.setValue("${current.bundle.resources.dir}/META-INF/MANIFEST.MF");
-
-                            archive.addChild(manifestFile);
-
-                            configuration.addChild(archive);
-                            // System.out.println(configuration);
-                        }
-                    }
-
-                }
-
-            }
-
-            PomUtil.savePom(monitor, model, curPomFile);
         }
 
-        parent.refreshLocal(IResource.DEPTH_ONE, monitor);
+        pom.setModelVersion("4.0.0");
+        // pom.setParent(model.getParent());
+        pom.setGroupId(model.getGroupId());
+        pom.setArtifactId(model.getArtifactId() + "-Kar");
+        pom.setName(model.getName() + " Kar");
+        pom.setVersion(model.getVersion());
+        pom.setPackaging("pom");
 
+        for (JobInfo job : getJobProcessor().getBuildChildrenJobs()) {
+            if (isRoutelet(job)) {
+                String routeletFolderName = (job.getJobName() + "_" + job.getJobVersion()).toLowerCase();
+                pom.addModule("../../routelets/" + routeletFolderName + "/pom.xml");
+            }
+        }
+
+        pom.addModule("pom-bundle.xml");
+        if (route) {
+            pom.addModule("pom-feature.xml");
+        }
+        pom.setDependencies(model.getDependencies());
+
+        /*
+         * 
+         * <modelVersion>4.0.0</modelVersion> <parent> <groupId>org.talend.master.ffffff</groupId>
+         * <artifactId>code.Master</artifactId> <version>7.0.1</version> <relativePath>../../../</relativePath>
+         * </parent> <groupId>org.talend.job.ffffff</groupId> <artifactId>simpleRoute-ogsi</artifactId>
+         * <version>3.0.0</version> <packaging>pom</packaging> <modules> <module>a.xml</module> <module>b.xml</module>
+         * </modules>
+         * 
+         */
+
+        File bd = new File(parent.getLocation().toOSString() + File.separator + "pom-bundle.xml");
+        // model.setParent(null);
+        // model.setDependencies(null);
+
+        // List<Plugin> plugins = model.getBuild().getPlugins();
+        //
+        // for (Plugin plugin : plugins) {
+        // if (plugin.getArtifactId().equals("maven-jar-plugin")) {
+        // PluginExecution pluginExecution = plugin.getExecutionsAsMap().get("default-jar");
+        // Xpp3Dom configuration = (Xpp3Dom) pluginExecution.getConfiguration();
+        // /*
+        // * <archive> <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+        // * </archive>
+        // */
+        //
+        // Xpp3Dom archive = new Xpp3Dom("archive");
+        // Xpp3Dom manifestFile = new Xpp3Dom("manifestFile");
+        // manifestFile.setValue("${project.build.outputDirectory}/META-INF/MANIFEST.MF");
+        //
+        // archive.addChild(manifestFile);
+        //
+        // configuration.addChild(archive);
+        // System.out.println(configuration);
+        // }
+        // }
+
+        List<Profile> profiles = model.getProfiles();
+
+        for (Profile profile : profiles) {
+
+            if (profile.getId().equals("packaging-and-assembly")) {
+                List<Plugin> plugins = profile.getBuild().getPlugins();
+
+                for (Plugin plugin : plugins) {
+                    if (plugin.getArtifactId().equals("maven-assembly-plugin")) {
+                        PluginExecution pluginExecution = plugin.getExecutionsAsMap().get("default");
+                        Xpp3Dom configuration = (Xpp3Dom) pluginExecution.getConfiguration();
+                        /*
+                         * <archive> <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                         * </archive>
+                         */
+
+                        Xpp3Dom archive = new Xpp3Dom("archive");
+                        Xpp3Dom manifestFile = new Xpp3Dom("manifestFile");
+                        manifestFile.setValue("${current.bundle.resources.dir}/META-INF/MANIFEST.MF");
+
+                        archive.addChild(manifestFile);
+
+                        configuration.addChild(archive);
+                        // System.out.println(configuration);
+                    }
+                }
+
+            }
+
+        }
+
+        model.setName(model.getName() + " Bundle");
+
+        PomUtil.savePom(monitor, model, bd);
+
+        PomUtil.savePom(monitor, pom, curPomFile);
+
+        parent.refreshLocal(IResource.DEPTH_ONE, monitor);
 
         afterCreate(monitor);
 
     }
-    
+
     protected void generateAssemblyFile(IProgressMonitor monitor, final Set<JobInfo> clonedChildrenJobInfors) throws Exception {
         IFile assemblyFile = this.getAssemblyFile();
         if (assemblyFile != null) {
@@ -297,32 +263,20 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
     }
 
     private Plugin addMavenBundlePlugin() {
-        
 
-        /* 
-            <plugin> 
-                <groupId>org.apache.felix</groupId>  
-                <artifactId>maven-bundle-plugin</artifactId>  
-                <version>3.3.0</version>  
-                <extensions>true</extensions>  
-                <configuration> 
-                  <archive> 
-                    <addMavenDescriptor>false</addMavenDescriptor> 
-                  </archive>  
-                  <instructions> 
-                    <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>  
-                    <Bundle-Name>${talend.job.name}</Bundle-Name>  
-                    <Bundle-Version>${project.version}</Bundle-Version>  
-                    <Export-Package>${bundle.config.export.package}</Export-Package>  
-                    <Export-Service>${bundle.config.export.service}</Export-Service>  
-                    <Import-Package>${bundle.config.import.package}, *;resolution:=optional</Import-Package>  
-                    <Include-Resource>{maven-resources}, {maven-dependencies},</Include-Resource>  
-                    <Bundle-ClassPath>., {maven-dependencies}</Bundle-ClassPath> 
-                  </instructions> 
-                </configuration> 
-              </plugin> 
-        */
-        
+        /*
+         * <plugin> <groupId>org.apache.felix</groupId> <artifactId>maven-bundle-plugin</artifactId>
+         * <version>3.3.0</version> <extensions>true</extensions> <configuration> <archive>
+         * <addMavenDescriptor>false</addMavenDescriptor> </archive> <instructions>
+         * <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+         * <Bundle-Name>${talend.job.name}</Bundle-Name> <Bundle-Version>${project.version}</Bundle-Version>
+         * <Export-Package>${bundle.config.export.package}</Export-Package>
+         * <Export-Service>${bundle.config.export.service}</Export-Service>
+         * <Import-Package>${bundle.config.import.package}, *;resolution:=optional</Import-Package>
+         * <Include-Resource>{maven-resources}, {maven-dependencies},</Include-Resource> <Bundle-ClassPath>.,
+         * {maven-dependencies}</Bundle-ClassPath> </instructions> </configuration> </plugin>
+         */
+
         Plugin plugin = new Plugin();
 
         plugin.setGroupId("org.apache.felix");
@@ -373,10 +327,10 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         configuration.addChild(instructions);
 
         plugin.setConfiguration(configuration);
-        
+
         return plugin;
     }
-    
+
     private Plugin addFeaturesMavenPlugin(String finalNameValue) {
         Plugin plugin = new Plugin();
 
@@ -408,67 +362,67 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
         pluginExecutions.add(pluginExecution);
         plugin.setExecutions(pluginExecutions);
-        
+
         return plugin;
     }
-    
+
     private Plugin addFileInstallPlugin(JobInfo routlet) {
-    	Plugin plugin = new Plugin();
+        Plugin plugin = new Plugin();
 
         plugin.setGroupId("org.apache.maven.plugins");
         plugin.setArtifactId("maven-install-plugin");
         plugin.setVersion("2.5.1");
-    	
+
         Xpp3Dom configuration = new Xpp3Dom("configuration");
 
         Xpp3Dom groupId = new Xpp3Dom("groupId");
         groupId.setValue(model.getGroupId());
-        
+
         Xpp3Dom artifactId = new Xpp3Dom("artifactId");
-        artifactId.setValue(model.getArtifactId()+"_" + routlet.getJobName());
-        
+        artifactId.setValue(model.getArtifactId() + "_" + routlet.getJobName());
+
         Xpp3Dom version = new Xpp3Dom("version");
         version.setValue(routlet.getJobVersion());
-        
+
         Xpp3Dom packaging = new Xpp3Dom("packaging");
         packaging.setValue("jar");
-        
+
         Xpp3Dom file = new Xpp3Dom("file");
-        String routeletFolderName = (routlet.getJobName()+"_"+routlet.getJobVersion()).toLowerCase();
-        String pathToJar = "../../routelets/" + routeletFolderName +"/target/" + routlet.getJobName().toLowerCase() + "_" + routlet.getJobVersion().replaceAll("\\.", "_")+".jar"; 
+        String routeletFolderName = (routlet.getJobName() + "_" + routlet.getJobVersion()).toLowerCase();
+        String pathToJar = "../../routelets/" + routeletFolderName + "/target/" + routlet.getJobName().toLowerCase() + "_"
+                + routlet.getJobVersion().replaceAll("\\.", "_") + ".jar";
         file.setValue(pathToJar);
 
         Xpp3Dom generatePom = new Xpp3Dom("generatePom");
         generatePom.setValue("true");
-        
+
         configuration.addChild(groupId);
         configuration.addChild(artifactId);
         configuration.addChild(version);
         configuration.addChild(packaging);
         configuration.addChild(file);
         configuration.addChild(generatePom);
-        
+
         List<PluginExecution> pluginExecutions = new ArrayList<PluginExecution>();
         PluginExecution pluginExecution = new PluginExecution();
         pluginExecution.setId("install-jar-lib");
         pluginExecution.addGoal("install-file");
         pluginExecution.setPhase("validate");
 
-        
         pluginExecution.setConfiguration(configuration);
         pluginExecutions.add(pluginExecution);
         plugin.setExecutions(pluginExecutions);
-        
+
         return plugin;
     }
-    
-    boolean isRoutelet(JobInfo job ) {
-    	if(job != null && job.getProcessItem() != null) {
-    		Property p = job.getProcessItem().getProperty();
-    		if (p != null) {
+
+    boolean isRoutelet(JobInfo job) {
+        if (job != null && job.getProcessItem() != null) {
+            Property p = job.getProcessItem().getProperty();
+            if (p != null) {
                 return ERepositoryObjectType.getType(p).equals(ERepositoryObjectType.PROCESS_ROUTELET);
             }
-    	}
-    	return false;
+        }
+        return false;
     }
 }

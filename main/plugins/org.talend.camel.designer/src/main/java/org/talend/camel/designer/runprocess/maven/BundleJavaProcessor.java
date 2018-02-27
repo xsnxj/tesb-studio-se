@@ -12,8 +12,6 @@
 // ============================================================================
 package org.talend.camel.designer.runprocess.maven;
 
-import java.lang.reflect.InvocationTargetException;
-
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -21,6 +19,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.process.IProcess;
+import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.core.runtime.repository.build.IMavenPomCreator;
@@ -28,6 +27,7 @@ import org.talend.designer.maven.model.TalendMavenConstants;
 import org.talend.designer.maven.tools.AggregatorPomsHelper;
 import org.talend.designer.maven.utils.PomUtil;
 import org.talend.designer.runprocess.ProcessorException;
+import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.designer.runprocess.maven.MavenJavaProcessor;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryService;
@@ -148,6 +148,11 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
         super.build(monitor);
     }
 
+    @Override
+    protected boolean packagingAndAssembly() {
+        return true;
+    }
+
     private static IRepositoryService getRepositoryService() {
         return (IRepositoryService) GlobalServiceRegister.getDefault().getService(IRepositoryService.class);
     }
@@ -165,12 +170,17 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
                     false);
 
             try {
-                IRunnableWithProgress action = new JavaCamelJobScriptsExportWSAction(repositoryNode, "", "", false);
-                action.run(new NullProgressMonitor());
-            } catch (InvocationTargetException e) {
+                ProcessorUtilities.generateCode((ProcessItem) getProperty().getItem(), getContext().getName(), true, false);
+            } catch (Exception e) {
                 e.printStackTrace();
-            } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
+            }
+
+            try {
+                
+                IRunnableWithProgress action = new JavaCamelJobScriptsExportWSAction(repositoryNode, getProperty().getVersion(),
+                        "", false);
+                action.run(new NullProgressMonitor());
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {

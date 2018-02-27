@@ -512,11 +512,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                 return false;
             }
 
-            manager = action.getManager();
-            // save output directory
-            manager.setDestinationPath(destinationKar);
-            saveWidgetValues();
-
         } else {
 
             if (getProcessItem() instanceof CamelProcessItem) {
@@ -559,10 +554,6 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                 MessageBoxExceptionHandler.process(e.getCause(), getShell());
                 return false;
             }
-            manager = action.getManager();
-            // save output directory
-            manager.setDestinationPath(destinationKar);
-            saveWidgetValues();
 
         }
 
