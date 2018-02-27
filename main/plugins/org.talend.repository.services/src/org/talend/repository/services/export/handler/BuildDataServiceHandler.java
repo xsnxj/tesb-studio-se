@@ -24,17 +24,20 @@ import java.util.Map;
 import java.util.Set;
 import java.util.jar.Manifest;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
+import org.talend.commons.CommonsPlugin;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.workbench.resources.ResourceUtils;
 import org.talend.core.CorePlugin;
 import org.talend.core.model.process.IContext;
+import org.talend.core.model.process.ProcessUtils;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -71,6 +74,18 @@ import org.talend.repository.utils.JobContextUtils;
  * For OSGi data service - SOAP
  */
 public class BuildDataServiceHandler implements IBuildJobHandler {
+
+    protected static final String PATH_SEPARATOR = "/"; //$NON-NLS-1$
+
+    protected static final String COMMA = ","; //$NON-NLS-1$
+
+    protected static final String SPACE = " "; //$NON-NLS-1$
+
+    protected static final String NEGATION = "!"; //$NON-NLS-1$
+
+    protected static final String JOB_EXTENSION = "zip"; //$NON-NLS-1$
+
+    protected static final String JOB_NAME_SEP = "-"; //$NON-NLS-1$
 
     private ServiceItem serviceItem;
 
@@ -178,8 +193,120 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
      * IProgressMonitor)
      */
     public void build(IProgressMonitor monitor) throws Exception {
+
+        final Map<String, Object> argumentsMap = new HashMap<String, Object>();
+        argumentsMap.put(TalendProcessArgumentConstant.ARG_GOAL, TalendMavenConstants.GOAL_PACKAGE);
+        argumentsMap.put(TalendProcessArgumentConstant.ARG_PROGRAM_ARGUMENTS, getProgramArgs());
+
         argumentsMap.put(TalendProcessArgumentConstant.ARG_GOAL, TalendMavenConstants.GOAL_PACKAGE);
         talendProcessJavaProject.buildModules(monitor, null, argumentsMap);
+    }
+
+    protected String getProgramArgs() {
+        StringBuffer programArgs = new StringBuffer();
+        StringBuffer profileArgs = getProfileArgs();
+        StringBuffer otherArgs = getOtherArgs();
+        if (profileArgs.length() > 0) {
+            programArgs.append(profileArgs);
+            programArgs.append(SPACE);
+        }
+        if (otherArgs.length() > 0) {
+            programArgs.append(otherArgs);
+        }
+        return programArgs.toString();
+    }
+
+    protected StringBuffer getProfileArgs() {
+        StringBuffer profileBuffer = new StringBuffer();
+        String property = System.getProperty("maven.additional.params");
+        if (property != null) {
+            profileBuffer.append(SPACE);
+            profileBuffer.append(property);
+            profileBuffer.append(SPACE);
+        }
+
+        profileBuffer.append(TalendMavenConstants.PREFIX_PROFILE);
+        profileBuffer.append(SPACE);
+
+        // should add the default settings always.
+        addArg(profileBuffer, true, true, TalendMavenConstants.PROFILE_DEFAULT_SETTING);
+
+        addArg(profileBuffer, isOptionChoosed(ExportChoice.needSourceCode), TalendMavenConstants.PROFILE_INCLUDE_JAVA_SOURCES);
+        // if not binaries, need add maven resources
+        boolean isBinaries = isOptionChoosed(ExportChoice.binaries);
+        addArg(profileBuffer, !isBinaries, TalendMavenConstants.PROFILE_INCLUDE_MAVEN_RESOURCES);
+
+        // for binaries
+        addArg(profileBuffer, isOptionChoosed(ExportChoice.includeLibs), TalendMavenConstants.PROFILE_INCLUDE_LIBS);
+        addArg(profileBuffer, isBinaries, TalendMavenConstants.PROFILE_INCLUDE_BINARIES);
+
+        // the running context is only useful, when binaries
+        addArg(profileBuffer, isBinaries && isOptionChoosed(ExportChoice.needContext),
+                TalendMavenConstants.PROFILE_INCLUDE_CONTEXTS, ProcessUtils.jarNeedsToContainContext());
+
+        // for test
+        addArg(profileBuffer, isOptionChoosed(ExportChoice.includeTestSource), TalendMavenConstants.PROFILE_INCLUDE_TEST_SOURCES);
+        addArg(profileBuffer, isOptionChoosed(ExportChoice.executeTests), TalendMavenConstants.PROFILE_INCLUDE_TEST_REPORTS);
+
+        // If the map doesn't contain the assembly key, then take the default value activation from the POM.
+        boolean isAssemblyNeeded = exportChoice.get(ExportChoice.needAssembly) == null
+                || isOptionChoosed(ExportChoice.needAssembly);
+        addArg(profileBuffer, isAssemblyNeeded, TalendMavenConstants.PROFILE_PACKAGING_AND_ASSEMBLY);
+
+        // always disable ci-builder from studio/commandline
+        addArg(profileBuffer, false, TalendMavenConstants.PROFILE_CI_BUILDER);
+
+        return profileBuffer;
+    }
+
+    protected StringBuffer getOtherArgs() {
+        StringBuffer otherArgsBuffer = new StringBuffer();
+
+        if (!isOptionChoosed(ExportChoice.executeTests)) {
+            otherArgsBuffer.append(TalendMavenConstants.ARG_SKIPTESTS);
+        } else {
+            otherArgsBuffer.append("-fn");
+        }
+        otherArgsBuffer.append(" -Dmaven.main.skip=true");
+
+        // if debug
+        if (CommonsPlugin.isDebugMode()) {
+            otherArgsBuffer.append(" -X");
+        }
+        return otherArgsBuffer;
+    }
+
+    protected void addArg(StringBuffer commandBuffer, boolean isFirst, boolean include, String arg) {
+        if (!isFirst) {
+            commandBuffer.append(COMMA);
+        }
+        if (!include) {
+            commandBuffer.append(NEGATION);
+        }
+        commandBuffer.append(arg);
+    }
+
+    protected void addArg(StringBuffer commandBuffer, boolean include, String arg) {
+        addArg(commandBuffer, false, include, arg);
+    }
+
+    private void addArg(StringBuffer commandBuffer, boolean include, String arg, boolean isHD) {
+        if (isHD) {
+            commandBuffer.append(COMMA);
+            commandBuffer.append(arg);
+        } else {
+            addArg(commandBuffer, false, include, arg);
+        }
+    }
+
+    protected boolean isOptionChoosed(Object key) {
+        if (key != null) {
+            final Object object = exportChoice.get(key);
+            if (object instanceof Boolean) {
+                return BooleanUtils.isTrue((Boolean) object);
+            }
+        }
+        return false;
     }
 
     /*
@@ -210,8 +337,9 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
             IBuildJobHandler buildJobOSGiHandler = BuildJobFactory.createBuildJobHandler(processItem, contextName,
                     processItem.getProperty().getVersion(), exportChoice, JobExportType.OSGI);
             if (buildJobOSGiHandler != null) {
-                buildJobOSGiHandler.generateItemFiles(true, monitor);
                 buildJobOSGiHandler.generateJobFiles(monitor);
+                // buildJobOSGiHandler.generateItemFiles(true, monitor);
+                buildJobOSGiHandler.build(monitor);
             }
         }
 
@@ -237,7 +365,8 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
         }
 
         for (IRepositoryViewObject node : nodes) {
-            features.addBundle(new BundleModel(PomIdsHelper.getJobGroupId(node.getProperty()), serviceExportManager.getNodeLabel(node) + "-bundle", PomIdsHelper.getJobVersion(node.getProperty())));
+            features.addBundle(new BundleModel(PomIdsHelper.getJobGroupId(node.getProperty()),
+                    serviceExportManager.getNodeLabel(node) + "-bundle", PomIdsHelper.getJobVersion(node.getProperty())));
         }
         final String artifactName = serviceName + "-control-bundle"; //$NON-NLS-1$
         features.addBundle(new BundleModel(PomIdsHelper.getJobGroupId(serviceItem.getProperty()), artifactName, serviceVersion));
