@@ -40,6 +40,7 @@ import org.talend.designer.maven.model.MavenSystemFolders;
 import org.talend.designer.maven.model.TalendMavenConstants;
 import org.talend.designer.maven.template.MavenTemplateManager;
 import org.talend.designer.maven.tools.creator.CreateMavenJobPom;
+import org.talend.designer.maven.utils.PomIdsHelper;
 import org.talend.designer.maven.utils.PomUtil;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.utils.io.FilesUtils;
@@ -372,6 +373,8 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         plugin.setGroupId("org.apache.maven.plugins");
         plugin.setArtifactId("maven-install-plugin");
         plugin.setVersion("2.5.1");
+        
+        String jobVersion = PomIdsHelper.getJobVersion(routlet);
 
         Xpp3Dom configuration = new Xpp3Dom("configuration");
 
@@ -382,15 +385,15 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         artifactId.setValue(model.getArtifactId() + "_" + routlet.getJobName());
 
         Xpp3Dom version = new Xpp3Dom("version");
-        version.setValue(routlet.getJobVersion());
+        version.setValue(PomIdsHelper.getJobVersion(routlet.getProcessItem().getProperty()));
 
         Xpp3Dom packaging = new Xpp3Dom("packaging");
         packaging.setValue("jar");
 
         Xpp3Dom file = new Xpp3Dom("file");
-        String routeletFolderName = (routlet.getJobName() + "_" + routlet.getJobVersion()).toLowerCase();
+        String routeletFolderName = (routlet.getJobName() + "_" + jobVersion).toLowerCase();
         String pathToJar = "../../routelets/" + routeletFolderName + "/target/" + routlet.getJobName().toLowerCase() + "_"
-                + routlet.getJobVersion().replaceAll("\\.", "_") + ".jar";
+                + jobVersion.replaceAll("\\.", "_") + ".jar";
         file.setValue(pathToJar);
 
         Xpp3Dom generatePom = new Xpp3Dom("generatePom");
