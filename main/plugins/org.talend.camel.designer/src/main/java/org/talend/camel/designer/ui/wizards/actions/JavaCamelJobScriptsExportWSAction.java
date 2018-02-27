@@ -536,7 +536,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
     }
     
     public IBuildJobHandler getBuildJobHandler() {
-    	if(buildJobHandler == null) {
+    	if(buildJobHandler == null && getBuildProject()) {
     		buildJobHandler = BuildJobFactory.createBuildJobHandler(getProcessItem(), getContextName(), version,
          			getExportChoiceMap(), "ROUTE");
     	}
