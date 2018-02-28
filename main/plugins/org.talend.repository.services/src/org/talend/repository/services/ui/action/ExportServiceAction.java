@@ -45,6 +45,7 @@ import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.designer.runprocess.java.TalendJavaProjectManager;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceConnection;
@@ -155,10 +156,9 @@ public class ExportServiceAction implements IRunnableWithProgress {
     }
 
     public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-        
-        ITalendProcessJavaProject javaProject = createServiceJavaProject();
-        String path = javaProject.getProject().getLocation().toPortableString();
-        
+
+        createServiceJavaProject();
+
         String destinationPath = serviceManager.getDestinationPath();
         if (!destinationPath.endsWith(FileConstants.KAR_FILE_SUFFIX)) {
             destinationPath = destinationPath.replace("\\", PATH_SEPERATOR); //$NON-NLS-1$
@@ -198,41 +198,28 @@ public class ExportServiceAction implements IRunnableWithProgress {
         }
     }
 
-
     protected ITalendProcessJavaProject createServiceJavaProject() {
         IProgressMonitor monitor = new NullProgressMonitor();
 
         // temp model.
         Model model = new Model();
         model.setModelVersion("4.0.0"); //$NON-NLS-1$
-        model.setGroupId(PomIdsHelper.getJobGroupId("services.talend.org.CRMService.CRMService"));
-        model.setArtifactId("talend"); //$NON-NLS-1$
+        model.setGroupId(PomIdsHelper.getJobGroupId(serviceItem.getProperty()));
+        model.setArtifactId(PomIdsHelper.getJobArtifactId(serviceItem.getProperty())); // $NON-NLS-1$
         model.setVersion(PomIdsHelper.getProjectVersion());
         model.setPackaging(TalendMavenConstants.PACKAGING_JAR);
-        // if (pomFile.exists()) {
-        // model = MavenPlugin.getMavenModelManager().readMavenModel(pomFile);
-        // } else {
-        // // first time create, use temp model.
-        // }
-        // always use temp model to avoid classpath problem?
 
+        // always use temp model to avoid classpath problem
         final ProjectImportConfiguration importConfiguration = new ProjectImportConfiguration();
-        IProject p = ResourcesPlugin.getWorkspace().getRoot().getProject("LOCAL_PROJECT");
-        // beforeCreate(monitor, p);// mvn clean
-
+        IProject root = ResourcesPlugin.getWorkspace().getRoot()
+                .getProject(ProjectManager.getInstance().getCurrentProject().getTechnicalLabel());
         try {
-            return createSimpleProject(monitor, p, model, importConfiguration);
+            return createSimpleProject(monitor, root, model, importConfiguration);
         } catch (CoreException e) {
             e.printStackTrace();
         }
         return null;
-
-        // gen jobs project with OSGi type
-
-        // package the parent maven project
-
     }
-    
 
     private ITalendProcessJavaProject createSimpleProject(IProgressMonitor monitor, IProject p, Model model,
             ProjectImportConfiguration importConfiguration) throws CoreException {
@@ -250,7 +237,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
         ITalendProcessJavaProject javaProject = TalendJavaProjectManager.getTalendJobJavaProject(serviceItem.getProperty());
         // ITalendProcessJavaProject javaProject =
         // TalendJavaProjectManager.getTalendCodeJavaProject(ERepositoryObjectType.PROCESS);
-        
+
         p.open(monitor);
         monitor.worked(1);
 
@@ -281,7 +268,7 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
         return javaProject;
     }
-    
+
     protected String[] getFolders() {
         ProjectSystemFolder[] mavenDirectories = MavenSystemFolders.ALL_DIRS;
 
@@ -292,24 +279,25 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
         return directories;
     }
-    
+
     private void addControlBundle(FeaturesModel feature) throws IOException, CoreException {
         final String artifactName = getServiceName() + "-control-bundle"; //$NON-NLS-1$
-        feature.addBundle(new BundleModel(getGroupId(), artifactName, getServiceVersion(), generateControlBundle(getGroupId(),
-                artifactName)));
+        feature.addBundle(new BundleModel(getGroupId(), artifactName, getServiceVersion(),
+                generateControlBundle(getGroupId(), artifactName)));
     }
 
-    private void exportJobsBundle(IProgressMonitor monitor, FeaturesModel feature) throws InvocationTargetException,
-            InterruptedException {
+    private void exportJobsBundle(IProgressMonitor monitor, FeaturesModel feature)
+            throws InvocationTargetException, InterruptedException {
         String directoryName = serviceManager.getRootFolderName(tempFolder);
         for (IRepositoryViewObject node : nodes) {
             JobScriptsManager manager = serviceManager.getJobManager(exportChoiceMap, tempFolder, node, getGroupId(),
                     getServiceVersion());
-            JobExportAction job = new JobExportAction(Collections.singletonList(new RepositoryNode(node, null,
-                    ENodeType.REPOSITORY_ELEMENT)), node.getVersion(), getBundleVersion(), manager, directoryName, "Service"); //$NON-NLS-1$
+            JobExportAction job = new JobExportAction(
+                    Collections.singletonList(new RepositoryNode(node, null, ENodeType.REPOSITORY_ELEMENT)), node.getVersion(),
+                    getBundleVersion(), manager, directoryName, "Service"); //$NON-NLS-1$
             job.run(monitor);
-            feature.addBundle(new BundleModel(getGroupId(), serviceManager.getNodeLabel(node), getServiceVersion(), new File(
-                    manager.getDestinationPath())));
+            feature.addBundle(new BundleModel(getGroupId(), serviceManager.getNodeLabel(node), getServiceVersion(),
+                    new File(manager.getDestinationPath())));
         }
     }
 
@@ -355,8 +343,8 @@ public class ExportServiceAction implements IRunnableWithProgress {
         // blueprint
         File blueprint = new File(tempWsdl, FileConstants.BLUEPRINT_FOLDER_NAME);
         blueprint.mkdirs();
-        serviceManager
-                .createBlueprint(new File(blueprint, "blueprint.xml"), ports, additionalInfo, serviceWsdl, getServiceName());
+        serviceManager.createBlueprint(new File(blueprint, "blueprint.xml"), ports, additionalInfo, serviceWsdl,
+                getServiceName());
         String jarName = artefactName + '-' + getServiceVersion() + FileConstants.JAR_FILE_SUFFIX;
         File jar = new File(serviceManager.getFilePath(tempFolder, groupId, artefactName, getServiceVersion()), jarName);
         FilesUtils.jar(serviceManager.getManifest(artefactName, getBundleVersion(), additionalInfo), tempWsdl, jar);
@@ -392,8 +380,8 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     protected File getFeatureFile() {
         final String artifactName = getServiceName() + FeaturesModel.NAME_SUFFIX;
-        return new File(serviceManager.getFilePath(tempFolder, getGroupId(), artifactName, getServiceVersion()), artifactName
-                + '-' + getServiceVersion() + ".xml"); //$NON-NLS-1$
+        return new File(serviceManager.getFilePath(tempFolder, getGroupId(), artifactName, getServiceVersion()),
+                artifactName + '-' + getServiceVersion() + ".xml"); //$NON-NLS-1$
     }
 
     public String getServiceVersion() {
