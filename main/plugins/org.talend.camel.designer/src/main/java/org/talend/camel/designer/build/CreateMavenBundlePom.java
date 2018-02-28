@@ -34,6 +34,7 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.model.process.JobInfo;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.runtime.process.LastGenerationInfo;
 import org.talend.core.runtime.projectsetting.IProjectSettingPreferenceConstants;
 import org.talend.core.runtime.projectsetting.IProjectSettingTemplateConstants;
 import org.talend.designer.maven.model.MavenSystemFolders;
@@ -147,6 +148,16 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         pom.addModule("pom-bundle.xml");
         if (route) {
             pom.addModule("pom-feature.xml");
+        } else {
+            for (JobInfo job : LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
+                if (model.getArtifactId().equals(job.getJobName())) {
+                    if (job.getFatherJobInfo() != null) {
+                        model.setArtifactId(job.getFatherJobInfo().getJobName() + "_" + model.getArtifactId());
+                        break;
+                    }
+                }
+            }
+
         }
         pom.setDependencies(model.getDependencies());
 
