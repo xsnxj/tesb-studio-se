@@ -29,7 +29,9 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.model.process.JobInfo;
 import org.talend.core.model.properties.Property;
@@ -140,8 +142,10 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
         for (JobInfo job : getJobProcessor().getBuildChildrenJobs()) {
             if (isRoutelet(job)) {
-                String routeletFolderName = (job.getJobName() + "_" + job.getJobVersion()).toLowerCase();
-                pom.addModule("../../routelets/" + routeletFolderName + "/pom.xml");
+            	IPath currentProjectRootDir = getJobProcessor().getTalendJavaProject().getProject().getLocation();
+            	IPath routeletPomPath = job.getProcessor().getTalendJavaProject().getProjectPom().getLocation();
+            	String relativePomPath = routeletPomPath.makeRelativeTo(currentProjectRootDir).toString();
+                pom.addModule(relativePomPath);
             }
         }
 
@@ -402,8 +406,10 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         packaging.setValue("jar");
 
         Xpp3Dom file = new Xpp3Dom("file");
-        String routeletFolderName = (routlet.getJobName() + "_" + jobVersion).toLowerCase();
-        String pathToJar = "../../routelets/" + routeletFolderName + "/target/" + routlet.getJobName().toLowerCase() + "_"
+        IPath currentProjectRootDir = getJobProcessor().getTalendJavaProject().getProject().getLocation();
+        IPath routeletTargetDir = routlet.getProcessor().getTalendJavaProject().getTargetFolder().getLocation();
+        String relativeRouteletTargetDir = routeletTargetDir.makeRelativeTo(currentProjectRootDir).toString();
+        String pathToJar = relativeRouteletTargetDir + Path.SEPARATOR + routlet.getJobName().toLowerCase() + "_"
                 + jobVersion.replaceAll("\\.", "_") + ".jar";
         file.setValue(pathToJar);
 
