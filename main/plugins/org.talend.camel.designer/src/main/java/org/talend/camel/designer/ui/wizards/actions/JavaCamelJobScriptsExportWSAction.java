@@ -337,7 +337,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             }
 
             String jobName = referencedJobNode.getObject().getProperty().getDisplayName();
-            String jobBundleName = jobName;// routeName + "_" + jobName;
+            String jobBundleName = routeName + "_" + jobName;
             String jobBundleSymbolicName = jobBundleName;
             Project project = ProjectManager.getInstance().getCurrentProject();
             if (project != null) {
@@ -471,6 +471,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         talendJobManager.setOsgiServiceIdSuffix(idSuffix);
         talendJobManager.setMultiNodes(false);
         talendJobManager.setDestinationPath(filePath.getAbsolutePath());
+
         JobExportAction action = new RouteBundleExportAction(Collections.singletonList(node), version, bundleVersion,
                 talendJobManager, getTempDir(), "Route");
         action.run(monitor);
