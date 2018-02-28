@@ -140,8 +140,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                         contextButton.setEnabled(true);
                         exportAsZipButton.setEnabled(true);
                     } else {
-                        contextButton.setEnabled(false);
-                        exportAsZipButton.setEnabled(false);
+                        if(contextButton != null)contextButton.setEnabled(false);
+                        if(exportAsZipButton != null)exportAsZipButton.setEnabled(false);
                     }
 
                     String destinationValue = getDestinationValue();
