@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.talend.commons.CommonsPlugin;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
@@ -133,4 +134,12 @@ public class BuildBundleHandler extends BuildJobHandler {
         return jobFile;
     }
 
+    @Override
+    public void build(IProgressMonitor monitor) throws Exception {
+        // Change to maven online,
+        // @see MavenCommandLauncher.createLaunchConfiguration(IContainer basedir, String goal)
+        CommonsPlugin.setESBMicorservice(true);
+        super.build(monitor);
+        CommonsPlugin.setESBMicorservice(false);
+    }
 }
