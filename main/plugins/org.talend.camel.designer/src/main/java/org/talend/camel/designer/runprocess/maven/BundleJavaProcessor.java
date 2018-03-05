@@ -16,12 +16,14 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
+import org.talend.core.runtime.process.TalendProcessArgumentConstant;
 import org.talend.core.runtime.repository.build.IMavenPomCreator;
 import org.talend.designer.maven.model.TalendMavenConstants;
 import org.talend.designer.maven.tools.AggregatorPomsHelper;
@@ -166,11 +168,25 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
     public void generatePom(int option) {
 
         if (option == 1) {
+
+            ProcessItem processItem = (ProcessItem) getProperty().getItem();
+
+            Object bt = processItem.getProperty().getAdditionalProperties().get(TalendProcessArgumentConstant.ARG_BUILD_TYPE);
+
+            if (processItem instanceof CamelProcessItem) {
+                CamelProcessItem camelProcessItem = (CamelProcessItem) processItem;
+                if ("ROUTE".equals(bt)) {
+                    camelProcessItem.setExportMicroService(false);
+                } else {
+                    camelProcessItem.setExportMicroService(true);
+                }
+            }
+
             IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(),
                     false);
 
             try {
-                ProcessorUtilities.generateCode((ProcessItem) getProperty().getItem(), getContext().getName(), true, false);
+                ProcessorUtilities.generateCode(processItem, getContext().getName(), true, false);
             } catch (Exception e) {
                 e.printStackTrace();
             }
