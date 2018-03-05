@@ -48,7 +48,7 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
     public void generateEsbFiles() throws ProcessorException {
         super.generateEsbFiles();
     }
-    
+
     /**
      * DOC sunchaoqun BundleJavaProcessor constructor comment.
      * 
@@ -120,6 +120,7 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
     }
 
     private boolean standardJobChanged;
+
     /*
      * (non-Javadoc)
      * 
@@ -167,6 +168,7 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
     @Override
     public void generatePom(int option) {
 
+        IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(), false);
         if (option == 1) {
 
             ProcessItem processItem = (ProcessItem) getProperty().getItem();
@@ -182,25 +184,20 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
                 }
             }
 
-            IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(),
-                    false);
-
             try {
                 ProcessorUtilities.generateCode(processItem, getContext().getName(), true, false);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            try {
-                
-                IRunnableWithProgress action = new JavaCamelJobScriptsExportWSAction(repositoryNode, getProperty().getVersion(),
-                        "", false);
-                action.run(new NullProgressMonitor());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
         } else {
             super.generatePom(option);
+        }
+        try {
+            IRunnableWithProgress action = new JavaCamelJobScriptsExportWSAction(repositoryNode, getProperty().getVersion(), "",
+                    false);
+            action.run(new NullProgressMonitor());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
