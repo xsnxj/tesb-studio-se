@@ -194,15 +194,14 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
      */
     public void build(IProgressMonitor monitor) throws Exception {
         // Change to maven online,
-        // @see MavenCommandLauncher.createLaunchConfiguration(IContainer basedir, String goal)
-        CommonsPlugin.setESBMicorservice(true);
+    	CommonsPlugin.setMavenOfflineState(false);
         final Map<String, Object> argumentsMap = new HashMap<String, Object>();
         argumentsMap.put(TalendProcessArgumentConstant.ARG_GOAL, TalendMavenConstants.GOAL_PACKAGE);
         argumentsMap.put(TalendProcessArgumentConstant.ARG_PROGRAM_ARGUMENTS, getProgramArgs());
 
         argumentsMap.put(TalendProcessArgumentConstant.ARG_GOAL, TalendMavenConstants.GOAL_PACKAGE);
         talendProcessJavaProject.buildModules(monitor, null, argumentsMap);
-        CommonsPlugin.setESBMicorservice(false);
+        CommonsPlugin.setMavenOfflineState(true);
     }
 
     protected String getProgramArgs() {

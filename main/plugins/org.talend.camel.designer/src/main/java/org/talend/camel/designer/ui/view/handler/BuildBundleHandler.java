@@ -137,9 +137,9 @@ public class BuildBundleHandler extends BuildJobHandler {
     @Override
     public void build(IProgressMonitor monitor) throws Exception {
         // Change to maven online,
-        // @see MavenCommandLauncher.createLaunchConfiguration(IContainer basedir, String goal)
-        CommonsPlugin.setESBMicorservice(true);
+
+        CommonsPlugin.setMavenOfflineState(false);
         super.build(monitor);
-        CommonsPlugin.setESBMicorservice(false);
+        CommonsPlugin.setMavenOfflineState(true);
     }
 }
