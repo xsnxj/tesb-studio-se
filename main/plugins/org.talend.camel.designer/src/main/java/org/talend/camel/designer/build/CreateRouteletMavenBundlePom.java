@@ -248,36 +248,11 @@ public class CreateRouteletMavenBundlePom extends CreateMavenJobPom {
 
     private Plugin addMavenBundlePlugin() {
         
-
-        /* 
-            <plugin> 
-                <groupId>org.apache.felix</groupId>  
-                <artifactId>maven-bundle-plugin</artifactId>  
-                <version>3.3.0</version>  
-                <extensions>true</extensions>  
-                <configuration> 
-                  <archive> 
-                    <addMavenDescriptor>false</addMavenDescriptor> 
-                  </archive>  
-                  <instructions> 
-                    <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>  
-                    <Bundle-Name>${talend.job.name}</Bundle-Name>  
-                    <Bundle-Version>${project.version}</Bundle-Version>  
-                    <Export-Package>${bundle.config.export.package}</Export-Package>  
-                    <Export-Service>${bundle.config.export.service}</Export-Service>  
-                    <Import-Package>${bundle.config.import.package}, *;resolution:=optional</Import-Package>  
-                    <Include-Resource>{maven-resources}, {maven-dependencies},</Include-Resource>  
-                    <Bundle-ClassPath>., {maven-dependencies}</Bundle-ClassPath> 
-                  </instructions> 
-                </configuration> 
-              </plugin> 
-        */
-        
         Plugin plugin = new Plugin();
 
         plugin.setGroupId("org.apache.felix");
         plugin.setArtifactId("maven-bundle-plugin");
-        plugin.setVersion("3.3.0");
+        plugin.setVersion("2.5.3");
 
         plugin.setExtensions(true);
 
