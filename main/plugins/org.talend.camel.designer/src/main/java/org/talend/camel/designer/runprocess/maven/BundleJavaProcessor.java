@@ -177,7 +177,7 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
 
             if (processItem instanceof CamelProcessItem) {
                 CamelProcessItem camelProcessItem = (CamelProcessItem) processItem;
-                if ("ROUTE".equals(bt)) {
+                if (bt == null || "ROUTE".equals(bt)) {
                     camelProcessItem.setExportMicroService(false);
                 } else {
                     camelProcessItem.setExportMicroService(true);
