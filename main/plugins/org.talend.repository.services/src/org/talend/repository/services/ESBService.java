@@ -36,6 +36,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.commons.exception.BusinessException;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
@@ -53,6 +54,7 @@ import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.PropertiesFactory;
+import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProjectRepositoryNode;
@@ -69,6 +71,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 import org.talend.designer.core.ui.editor.cmd.ChangeValuesFromRepository;
 import org.talend.designer.core.ui.editor.nodes.Node;
+import org.talend.designer.maven.model.TalendMavenConstants;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.RepositoryPlugin;
 import org.talend.repository.model.IProxyRepositoryFactory;
@@ -121,6 +124,10 @@ public class ESBService implements IESBService {
     // changeOldOperationLabel(serConn, node);
     // changenewOperationLabel(newNode, node, serConn);
     // }
+
+    private static final String GROUP_ID_ROUTE_SUFFIX = "route";
+
+    private static final String GROUP_ID_SERVICE_SUFFIX = "service";
 
     private void changeOldOperationLabel(RepositoryNode topParent, INode node, ServiceOperation newOperation) {
         // here should be all the ports, not just ports of one connection
@@ -442,8 +449,8 @@ public class ESBService implements IESBService {
             connectionItem.getProperty().getId();
             ((PortRepositoryObject) repNode.getParent().getObject()).getId();
             ((OperationRepositoryObject) repNode.getObject()).getId();
-            ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(node, null, param.getName()
-                    + ":" + EParameterName.PROPERTY_TYPE.getName(), "BUILT_IN"); //$NON-NLS-1$
+            ChangeValuesFromRepository command2 = new ChangeValuesFromRepository(node, null,
+                    param.getName() + ":" + EParameterName.PROPERTY_TYPE.getName(), "BUILT_IN"); //$NON-NLS-1$
             IEditorPart editor = process.getEditor();
             if (editor == null) {
                 command2.execute();
@@ -1007,15 +1014,61 @@ public class ESBService implements IESBService {
         if (editorPart instanceof LocalWSDLEditor && cmd instanceof Command) {
             CommandStack commandStack = (CommandStack) editorPart.getAdapter(CommandStack.class);
             editorPart.getEditorSite().getShell().getDisplay().syncExec(new Runnable() {
-                
+
                 @Override
                 public void run() {
                     commandStack.execute((Command) cmd);
                 }
-                
+
             });
             return true;
         }
         return false;
     }
-}
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.core.IESBService#getDefaultGroupIdSuffix(org.talend.core.model.properties.Property)
+     */
+    @Override
+    public String getDefaultGroupIdSuffix(Property property) {
+
+        if (property.getItem() != null) {
+
+            if (property.getItem() instanceof CamelProcessItem) {
+                // Case of a route
+                return GROUP_ID_ROUTE_SUFFIX;
+
+            } else if (property.getItem() instanceof ServiceItem) {
+                // case of a service
+                return GROUP_ID_SERVICE_SUFFIX;
+
+            } else if (property.getItem() instanceof ProcessItem) {
+                // case of a job with a tRESTRequest component (considered as a service)
+                ProcessItem item = (ProcessItem) property.getItem();
+                if (item.getProcess() != null && item.getProcess().getNode() != null) {
+                    if (containsTRESTRequest(item.getProcess().getNode())) {
+                        return GROUP_ID_SERVICE_SUFFIX;
+                    }
+                }
+            }
+        }
+
+        // Default suffix is "job"
+        return TalendMavenConstants.DEFAULT_JOB;
+    }
+
+    private boolean containsTRESTRequest(EList<?> components) {
+        for (Object obj : components) {
+            NodeType component = (NodeType) obj;
+            String componentName = component.getComponentName();
+
+            if ("tRESTRequest".equals(componentName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+};
