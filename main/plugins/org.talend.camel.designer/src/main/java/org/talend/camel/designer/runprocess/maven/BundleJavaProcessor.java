@@ -168,7 +168,6 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
     @Override
     public void generatePom(int option) {
 
-        IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(), false);
         if (option == 1) {
 
             ProcessItem processItem = (ProcessItem) getProperty().getItem();
@@ -177,7 +176,7 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
 
             if (processItem instanceof CamelProcessItem) {
                 CamelProcessItem camelProcessItem = (CamelProcessItem) processItem;
-                if ("ROUTE".equals(bt)) {
+                if (bt == null || "ROUTE".equals(bt)) {
                     camelProcessItem.setExportMicroService(false);
                 } else {
                     camelProcessItem.setExportMicroService(true);
@@ -193,6 +192,9 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
             super.generatePom(option);
         }
         try {
+            IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(),
+                    false);
+
             IRunnableWithProgress action = new JavaCamelJobScriptsExportWSAction(repositoryNode, getProperty().getVersion(), "",
                     false);
             action.run(new NullProgressMonitor());
