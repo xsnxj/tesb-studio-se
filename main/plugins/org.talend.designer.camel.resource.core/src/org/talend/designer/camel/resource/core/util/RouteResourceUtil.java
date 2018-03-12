@@ -214,13 +214,13 @@ public class RouteResourceUtil {
             return null;
         }
 
-        final IFolder routeResourceFolder = talendProcessJavaProject.getExternalResourcesFolder();
+        final IFolder routeExternalResourceFolder = talendProcessJavaProject.getExternalResourcesFolder();
 
         final Collection<IPath> result = new ArrayList<IPath>();
         // https://jira.talendforge.org/browse/TESB-7893
         // add spring file
         if (!routelet) {
-            final IFolder metaInf = routeResourceFolder.getFolder("META-INF/spring/");
+            final IFolder metaInf = routeExternalResourceFolder.getFolder("META-INF/spring/");
             try {
                 prepareFolder(metaInf);
                 final IFile spring = metaInf.getFile(item.getProperty().getLabel().toLowerCase() + ".xml");
@@ -238,7 +238,7 @@ public class RouteResourceUtil {
 
         for (ResourceDependencyModel model : getResourceDependencies(item)) {
 
-            IFile file = copyResources(routeResourceFolder, model);
+            IFile file = copyResources(routeExternalResourceFolder, model);
 
             String itemName = getItemName(model.getItem()) + file.getName();
 
@@ -249,6 +249,10 @@ public class RouteResourceUtil {
                             new File(talendProcessJavaProject.getBundleResourcesFolder().getLocation().toOSString()
                                     + File.separator
                                     + RESOURCES + File.separator + itemName));
+
+                    FilesUtils.copyFile(file.getLocation().toFile(),
+                            new File(talendProcessJavaProject.getResourcesFolder().getLocation().toOSString() + File.separator
+                                    + itemName));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
