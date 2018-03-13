@@ -7,7 +7,6 @@ import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import java.util.Map;
 import org.apache.maven.model.Model;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -31,11 +29,13 @@ import org.eclipse.osgi.util.NLS;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.runtime.utils.io.FileCopyUtils;
+import org.talend.core.model.process.IContext;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.runtime.process.IBuildJobHandler;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.designer.maven.model.MavenSystemFolders;
 import org.talend.designer.maven.model.ProjectSystemFolder;
@@ -46,8 +46,6 @@ import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.designer.runprocess.java.TalendJavaProjectManager;
 import org.talend.repository.ProjectManager;
-import org.talend.repository.model.IRepositoryNode.ENodeType;
-import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -55,8 +53,8 @@ import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
 import org.talend.repository.services.ui.scriptmanager.ServiceExportManager;
 import org.talend.repository.services.utils.WSDLUtils;
-import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
-import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
+import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage.JobExportType;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.BuildJobFactory;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.utils.EmfModelUtils;
 import org.talend.repository.utils.JobContextUtils;
@@ -232,7 +230,6 @@ public class ExportServiceAction implements IRunnableWithProgress {
         monitor.beginTask(NLS.bind(Messages.ProjectConfigurationManager_task_creating, projectName), 5);
 
         monitor.subTask(Messages.ProjectConfigurationManager_task_creating_workspace);
-        IProjectDescription description = ResourcesPlugin.getWorkspace().newProjectDescription(projectName);
 
         ITalendProcessJavaProject javaProject = TalendJavaProjectManager.getTalendJobJavaProject(serviceItem.getProperty());
         // ITalendProcessJavaProject javaProject =
@@ -290,14 +287,30 @@ public class ExportServiceAction implements IRunnableWithProgress {
             throws InvocationTargetException, InterruptedException {
         String directoryName = serviceManager.getRootFolderName(tempFolder);
         for (IRepositoryViewObject node : nodes) {
-            JobScriptsManager manager = serviceManager.getJobManager(exportChoiceMap, tempFolder, node, getGroupId(),
-                    getServiceVersion());
-            JobExportAction job = new JobExportAction(
-                    Collections.singletonList(new RepositoryNode(node, null, ENodeType.REPOSITORY_ELEMENT)), node.getVersion(),
-                    getBundleVersion(), manager, directoryName, "Service"); //$NON-NLS-1$
-            job.run(monitor);
-            feature.addBundle(new BundleModel(getGroupId(), serviceManager.getNodeLabel(node), getServiceVersion(),
-                    new File(manager.getDestinationPath())));
+            ProcessItem processItem = (ProcessItem) node.getProperty().getItem();
+
+            IBuildJobHandler buildJobOSGiHandler = BuildJobFactory.createBuildJobHandler(processItem, IContext.DEFAULT,
+                    processItem.getProperty().getVersion(), exportChoiceMap, JobExportType.OSGI);
+            if (buildJobOSGiHandler != null) {
+                // buildJobOSGiHandler.generateItemFiles(true, monitor);
+                try {
+                    buildJobOSGiHandler.generateJobFiles(monitor);
+                    buildJobOSGiHandler.build(monitor);
+
+                    IFile serviceTargetFile = buildJobOSGiHandler.getJobTargetFile();
+                    if (serviceTargetFile != null && serviceTargetFile.exists()) {
+                        FilesUtils.copyFile(serviceTargetFile.getLocation().toFile(),
+                                new File(directoryName + "\\" + serviceTargetFile.getName())); // $NON-NLS-1$
+                    }
+
+                    feature.addBundle(new BundleModel(getGroupId(), serviceManager.getNodeLabel(node), getServiceVersion(),
+                            buildJobOSGiHandler.getJobTargetFile().getLocation().toFile()));
+
+                } catch (Exception e) {
+                    throw new InvocationTargetException(e);
+                }
+            }
+
         }
     }
 
