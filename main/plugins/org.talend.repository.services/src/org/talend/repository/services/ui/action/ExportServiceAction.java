@@ -285,7 +285,6 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
     private void exportJobsBundle(IProgressMonitor monitor, FeaturesModel feature)
             throws InvocationTargetException, InterruptedException {
-        String directoryName = serviceManager.getRootFolderName(tempFolder);
         for (IRepositoryViewObject node : nodes) {
             ProcessItem processItem = (ProcessItem) node.getProperty().getItem();
 
@@ -297,15 +296,12 @@ public class ExportServiceAction implements IRunnableWithProgress {
                     buildJobOSGiHandler.generateJobFiles(monitor);
                     buildJobOSGiHandler.build(monitor);
 
+                    // TESB-21586 Windows-specific path objects created by Studio CommandLine when publishing
                     IFile serviceTargetFile = buildJobOSGiHandler.getJobTargetFile();
                     if (serviceTargetFile != null && serviceTargetFile.exists()) {
-                        FilesUtils.copyFile(serviceTargetFile.getLocation().toFile(),
-                                new File(directoryName + "\\" + serviceTargetFile.getName())); // $NON-NLS-1$
+                        feature.addBundle(new BundleModel(getGroupId(), serviceManager.getNodeLabel(node), getServiceVersion(),
+                                serviceTargetFile.getLocation().toFile()));
                     }
-
-                    feature.addBundle(new BundleModel(getGroupId(), serviceManager.getNodeLabel(node), getServiceVersion(),
-                            buildJobOSGiHandler.getJobTargetFile().getLocation().toFile()));
-
                 } catch (Exception e) {
                     throw new InvocationTargetException(e);
                 }
