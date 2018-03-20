@@ -15,6 +15,7 @@ import org.talend.designer.codegen.config.EInternalTemplate;
 import org.talend.designer.codegen.config.JetBean;
 import org.talend.designer.codegen.config.TemplateUtil;
 import org.talend.designer.codegen.exception.CodeGeneratorException;
+import org.talend.designer.codegen.model.CodeGeneratorInternalTemplatesFactory;
 import org.talend.designer.codegen.model.CodeGeneratorInternalTemplatesFactoryProvider;
 
 public class ContextPartGenerator extends ArgumentBuilderHolder implements PartGenerator<IContext> {
@@ -44,7 +45,13 @@ public class ContextPartGenerator extends ArgumentBuilderHolder implements PartG
 
 		JetBean jetBean = JetUtil.createJetBean(codeGenArgument);
 
-        for (TemplateUtil template : CodeGeneratorInternalTemplatesFactoryProvider.getInstance().getTemplatesFromType(
+        CodeGeneratorInternalTemplatesFactory codegenTemplatesFactory = CodeGeneratorInternalTemplatesFactoryProvider.getInstance();
+        if (codegenTemplatesFactory.getTemplates() == null) {
+            codegenTemplatesFactory.init();
+        }
+
+
+        for (TemplateUtil template : codegenTemplatesFactory.getTemplatesFromType(
                 EInternalTemplate.CONTEXT)) {
             jetBean.setJetPluginRepository(template.getJetPluginRepository());
             jetBean.setTemplateRelativeUri(template.getTemplateRelativeUri());
