@@ -252,12 +252,12 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
     }
 
     private static List<QName> getMessageParts(Message msg) {
+        List<QName> result = new ArrayList<QName>();
         @SuppressWarnings("unchecked")
         Collection<Part> values = msg.getParts().values();
         if (values == null || values.isEmpty()) {
-            return null;
+            return result;
         }
-        List<QName> result = new ArrayList<QName>();
         Iterator<Part> iterator = values.iterator();
         while (iterator.hasNext()) {
             Part part = iterator.next();
