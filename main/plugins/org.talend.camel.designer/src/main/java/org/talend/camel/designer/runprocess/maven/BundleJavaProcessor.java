@@ -24,6 +24,7 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.core.runtime.process.TalendProcessArgumentConstant;
+import org.talend.core.runtime.process.TalendProcessOptionConstants;
 import org.talend.core.runtime.repository.build.IMavenPomCreator;
 import org.talend.core.utils.BitwiseOptionUtils;
 import org.talend.designer.maven.model.TalendMavenConstants;
@@ -169,7 +170,7 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
     @Override
     public void generatePom(int option) {
 
-        if (option > 0) { // save and create
+        if (BitwiseOptionUtils.containOption(option, TalendProcessOptionConstants.GENERATE_POM_ONLY)) {
 
             ProcessItem processItem = (ProcessItem) getProperty().getItem();
 
@@ -184,7 +185,7 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
                 }
             }
 
-            if (BitwiseOptionUtils.containOption(option, 0x4)) {
+            if (!BitwiseOptionUtils.containOption(option, TalendProcessOptionConstants.GENERATE_NO_CODEGEN)) {
                 try {
                     ProcessorUtilities.generateCode(processItem, getContext().getName(), true, false);
                 } catch (Exception e) {
