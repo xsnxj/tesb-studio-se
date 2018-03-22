@@ -12,11 +12,11 @@
 // ============================================================================
 package org.talend.designer.esb.components.ws.trestrequest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IStatus;
@@ -98,7 +98,13 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
 
         Map<String, IMetadataTable> existingMappings = new HashMap<String, IMetadataTable>();
 
-        Set<String> newOperationIds = oasManager.getMappings().keySet();
+        List<String> newOperationIds = new ArrayList<String>();
+        for (String key : oasManager.getMappings().keySet()) {
+            RestAPIMapping mapping = oasManager.getMappings().get(key);
+            if (StringUtils.isNoneBlank(mapping.getOutputFlow())) {
+                newOperationIds.add(mapping.getOutputFlow());
+            }
+        }
 
         for (IMetadataTable table : node.getMetadataList()) {
             if (newOperationIds.contains(table.getTableName())) {
