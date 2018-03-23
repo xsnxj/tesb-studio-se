@@ -112,7 +112,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             Set<JobInfo> subjobs = getJobProcessor().getBuildChildrenJobs();
             if (subjobs != null && !subjobs.isEmpty()) {
                 for (JobInfo subjob : subjobs) {
-                    if (isRoutelet(subjob)) {
+                    if (isRoutelet(subjob) || isJob(subjob)) {
                         fmBuild.addPlugin(addFileInstallPlugin(subjob));
                     }
                 }
@@ -146,9 +146,9 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         pom.setPackaging("pom");
 
         for (JobInfo job : getJobProcessor().getBuildChildrenJobs()) {
-            if (isRoutelet(job)) {
+            if (isRoutelet(job) || isJob(job)) {
             	IPath currentProjectRootDir = getJobProcessor().getTalendJavaProject().getProject().getLocation();
-            	IPath routeletPomPath = getRouteletProcessor(job).getTalendJavaProject().getProjectPom().getLocation();
+            	IPath routeletPomPath = getProcessor(job).getTalendJavaProject().getProjectPom().getLocation();
             	String relativePomPath = routeletPomPath.makeRelativeTo(currentProjectRootDir).toString();
                 pom.addModule(relativePomPath);
             }
@@ -158,14 +158,14 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         if (route) {
             pom.addModule("pom-feature.xml");
         } else {
-            for (JobInfo job : LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
-                if (model.getArtifactId().equals(job.getJobName())) {
-                    if (job.getFatherJobInfo() != null) {
-                        model.setArtifactId(job.getFatherJobInfo().getJobName() + "_" + model.getArtifactId());
-                        break;
-                    }
-                }
-            }
+//            for (JobInfo job : LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
+//                if (model.getArtifactId().equals(job.getJobName())) {
+//                    if (job.getFatherJobInfo() != null) {
+//                        model.setArtifactId(job.getFatherJobInfo().getJobName() + "_" + model.getArtifactId());
+//                        break;
+//                    }
+//                }
+//            }
 
         }
         pom.setDependencies(model.getDependencies());
@@ -372,14 +372,14 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         return plugin;
     }
 
-    private Plugin addFileInstallPlugin(JobInfo routlet) {
+    private Plugin addFileInstallPlugin(JobInfo job) {
         Plugin plugin = new Plugin();
 
         plugin.setGroupId("org.apache.maven.plugins");
         plugin.setArtifactId("maven-install-plugin");
         plugin.setVersion("2.5.1");
         
-        String jobVersion = PomIdsHelper.getJobVersion(routlet);
+        String jobVersion = PomIdsHelper.getJobVersion(job);
 
         Xpp3Dom configuration = new Xpp3Dom("configuration");
 
@@ -387,19 +387,19 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         groupId.setValue(model.getGroupId());
 
         Xpp3Dom artifactId = new Xpp3Dom("artifactId");
-        artifactId.setValue(model.getArtifactId() + "_" + routlet.getJobName());
+        artifactId.setValue(model.getArtifactId() + "_" + job.getJobName());
 
         Xpp3Dom version = new Xpp3Dom("version");
-        version.setValue(PomIdsHelper.getJobVersion(routlet.getProcessItem().getProperty()));
+        version.setValue(PomIdsHelper.getJobVersion(job.getProcessItem().getProperty()));
 
         Xpp3Dom packaging = new Xpp3Dom("packaging");
         packaging.setValue("jar");
 
         Xpp3Dom file = new Xpp3Dom("file");
         IPath currentProjectRootDir = getJobProcessor().getTalendJavaProject().getProject().getLocation();
-        IPath routeletTargetDir = getRouteletProcessor(routlet).getTalendJavaProject().getTargetFolder().getLocation();
-        String relativeRouteletTargetDir = routeletTargetDir.makeRelativeTo(currentProjectRootDir).toString();
-        String pathToJar = relativeRouteletTargetDir + Path.SEPARATOR + routlet.getJobName().toLowerCase() + "_"
+        IPath targetDir = getProcessor(job).getTalendJavaProject().getTargetFolder().getLocation();
+        String relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
+        String pathToJar = relativeTargetDir + Path.SEPARATOR + job.getJobName().toLowerCase() + "_"
                 + jobVersion.replaceAll("\\.", "_") + ".jar";
         file.setValue(pathToJar);
 
@@ -436,7 +436,18 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         return false;
     }
     
-    public static IProcessor getRouteletProcessor(JobInfo jobInfo) {
+
+    boolean isJob(JobInfo job) {
+        if (job != null && job.getProcessItem() != null) {
+            Property p = job.getProcessItem().getProperty();
+            if (p != null) {
+                return ERepositoryObjectType.getType(p).equals(ERepositoryObjectType.PROCESS);
+            }
+        }
+        return false;
+    }    
+    
+    public static IProcessor getProcessor(JobInfo jobInfo) {
     	
     	if(jobInfo.getProcessor() != null) {
     		return jobInfo.getProcessor();
