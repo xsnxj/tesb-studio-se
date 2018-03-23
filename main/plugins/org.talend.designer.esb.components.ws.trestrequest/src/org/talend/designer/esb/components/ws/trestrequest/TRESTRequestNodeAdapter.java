@@ -112,28 +112,38 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
 
         for (Map<?, ?> mapping : schemasChildren) {
 
-            String mappingId = getUniqueOperationId(((String) mapping.get(HTTP_VERB)),
-                    TalendTextUtils.removeQuotes((String) mapping.get(URI_PATTERN)));
+            if (mapping.get(HTTP_VERB) instanceof String) {
+                String mappingId = getUniqueOperationId(((String) mapping.get(HTTP_VERB)),
+                        TalendTextUtils.removeQuotes((String) mapping.get(URI_PATTERN)));
 
-            String tableName = (String) mapping.get(SCHEMA);
+                String tableName = (String) mapping.get(SCHEMA);
 
-            if (oasManager.getMappings().containsKey(mappingId)) {
+                if (oasManager.getMappings().containsKey(mappingId)) {
 
-                for (IMetadataTable table : node.getMetadataList()) {
-                    if (tableName.equals(table.getTableName())) {
-                        existingMappings.put(mappingId, table);
+                    for (IMetadataTable table : node.getMetadataList()) {
+                        if (tableName.equals(table.getTableName())) {
+                            existingMappings.put(mappingId, table);
+                        }
                     }
+
                 }
 
             }
-
         }
 
         return existingMappings;
     }
 
     private String getUniqueOperationId(String method, String path) {
-        String id = method + "|" + StringUtils.replace(path, "/", "");
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+
+        String id = method + "|" + path;
         return id.toLowerCase();
     }
 

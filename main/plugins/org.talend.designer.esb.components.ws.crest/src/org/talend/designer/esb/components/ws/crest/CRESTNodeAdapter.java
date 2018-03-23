@@ -97,18 +97,27 @@ public class CRESTNodeAdapter implements CRESTConstants {
 
         for (Map<?, ?> mapping : schemasChildren) {
 
-            String mappingId = getUniqueOperationId(((String) mapping.get(HTTP_VERB)),
-                    TalendTextUtils.removeQuotes((String) mapping.get(URI_PATTERN)));
+            if (mapping.get(HTTP_VERB) instanceof String) {
+                String mappingId = getUniqueOperationId(((String) mapping.get(HTTP_VERB)),
+                        TalendTextUtils.removeQuotes((String) mapping.get(URI_PATTERN)));
 
-            existingMappings.put(mappingId, (String) mapping.get(SCHEMA));
-
+                existingMappings.put(mappingId, (String) mapping.get(SCHEMA));
+            }
         }
 
         return existingMappings;
     }
 
     private String getUniqueOperationId(String method, String path) {
-        String id = method + "|" + StringUtils.replace(path, "/", "");
+        if (path.startsWith("/")) {
+            path = path.substring(1);
+        }
+
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+
+        String id = method + "|" + path;
         return id.toLowerCase();
     }
 
