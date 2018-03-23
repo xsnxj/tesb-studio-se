@@ -17,6 +17,8 @@ package org.talend.designer.esb.components.ws.tools.extensions.external;
  */
 public class RestAPIMapping {
 
+    private String id;
+
     private String outputFlow = "";
 
     private String httpVerb = "";
@@ -30,8 +32,18 @@ public class RestAPIMapping {
     /**
      * DOC dsergent RestAPIMapping constructor comment.
      */
-    public RestAPIMapping() {
+    public RestAPIMapping(String id) {
         super();
+        this.id = id;
+    }
+
+    /**
+     * Getter for id.
+     * 
+     * @return the id
+     */
+    public String getId() {
+        return this.id;
     }
 
     /**
@@ -133,7 +145,7 @@ public class RestAPIMapping {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((this.outputFlow == null) ? 0 : this.outputFlow.hashCode());
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
         return result;
     }
 
@@ -151,10 +163,10 @@ public class RestAPIMapping {
         if (getClass() != obj.getClass())
             return false;
         RestAPIMapping other = (RestAPIMapping) obj;
-        if (this.outputFlow == null) {
-            if (other.outputFlow != null)
+        if (this.id == null) {
+            if (other.id != null)
                 return false;
-        } else if (!this.outputFlow.equals(other.outputFlow))
+        } else if (!this.id.equals(other.id))
             return false;
         return true;
     }
