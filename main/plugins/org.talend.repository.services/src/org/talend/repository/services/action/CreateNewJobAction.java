@@ -12,7 +12,10 @@
 // ============================================================================
 package org.talend.repository.services.action;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
@@ -37,6 +40,9 @@ import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.INode;
 import org.talend.core.model.properties.ConnectionItem;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.relationship.Relation;
+import org.talend.core.model.relationship.RelationshipItemBuilder;
+import org.talend.core.model.relationship.RelationshipRegistryReader;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
@@ -92,7 +98,7 @@ public class CreateNewJobAction extends AbstractCreateAction {
         for (ServicePort port : ((ServiceConnection) serviceItem.getConnection()).getServicePort()) {
             for (ServiceOperation operation : port.getServiceOperation()) {
                 if (operation.getLabel().equals(node.getLabel()) && operation.getReferenceJobId() != null
-                    && !operation.getReferenceJobId().equals("")) {
+                        && !operation.getReferenceJobId().equals("")) {
                     flag = false;
                 }
             }
@@ -126,12 +132,16 @@ public class CreateNewJobAction extends AbstractCreateAction {
         if (process == null) {
             return false;
         }
+        final RepositoryNode portNode = nodeOperation.getParent();
+        ServiceItem serviceItem = (ServiceItem) portNode.getParent().getObject().getProperty().getItem();
+
+        addToMergeRelationship(process, serviceItem);
 
         try {
             // Set readonly to false since created job will always be editable.
             ProcessEditorInput fileEditorInput = new ProcessEditorInput(process, false, true, false);
-            IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance().searchRepoViewNode(
-                    fileEditorInput.getItem().getProperty().getId());
+            IRepositoryNode repositoryNode = RepositorySeekerManager.getInstance()
+                    .searchRepoViewNode(fileEditorInput.getItem().getProperty().getId());
             fileEditorInput.setRepositoryNode(repositoryNode);
 
             IEditorPart openEditor = getActivePage().openEditor(fileEditorInput, MultiPageTalendEditor.ID, true);
@@ -140,8 +150,6 @@ public class CreateNewJobAction extends AbstractCreateAction {
             final Node nodeProviderRequest = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_REQUEST,
                     ComponentCategory.CATEGORY_4_DI.getName()), fileEditorInput.getLoadedProcess());
 
-            final RepositoryNode portNode = nodeOperation.getParent();
-            ServiceItem serviceItem = (ServiceItem) portNode.getParent().getObject().getProperty().getItem();
             IFile wsdlPath = WSDLUtils.getWsdlFile(serviceItem);
             Map<String, String> serviceParameters = WSDLUtils.getServiceOperationParameters(wsdlPath,
                     ((OperationRepositoryObject) nodeOperation.getObject()).getName(), portNode.getObject().getLabel());
@@ -154,8 +162,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
             if (!WSDLUtils.ONE_WAY.equals(serviceParameters.get(WSDLUtils.COMMUNICATION_STYLE))) {
                 Node node = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_RESPONSE,
                         ComponentCategory.CATEGORY_4_DI.getName()), fileEditorInput.getLoadedProcess());
-                cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), new NodeContainer(node), new Point(
-                        9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+                cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), new NodeContainer(node),
+                        new Point(9 * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                 commandStack.execute(cNcc);
             }
             String faults = serviceParameters.get(WSDLUtils.FAULTS);
@@ -164,8 +172,8 @@ public class CreateNewJobAction extends AbstractCreateAction {
                 for (String fault : faults.split(",")) {
                     Node node = new Node(ComponentsFactoryProvider.getInstance().get(T_ESB_PROVIDER_FAULT,
                             ComponentCategory.CATEGORY_4_DI.getName()), fileEditorInput.getLoadedProcess());
-                    cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), new NodeContainer(node), new Point(
-                            horMultiplier * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
+                    cNcc = new CreateNodeContainerCommand(fileEditorInput.getLoadedProcess(), new NodeContainer(node),
+                            new Point(horMultiplier * Node.DEFAULT_SIZE, 4 * Node.DEFAULT_SIZE));
                     commandStack.execute(cNcc);
                     node.getElementParameter("ESB_FAULT_TITLE").setValue('\"' + fault + '\"'); //$NON-NLS-1$
 
@@ -202,6 +210,31 @@ public class CreateNewJobAction extends AbstractCreateAction {
             ExceptionHandler.process(e);
         }
         return false;
+    }
+
+    /**
+     * Add relation from job to service, without save action
+     * 
+     * @param processItem
+     * @param serviceItem
+     */
+    private void addToMergeRelationship(final ProcessItem processItem, ServiceItem serviceItem) {
+        Set<Relation> relationSet = new HashSet<Relation>();
+        Relation addedRelation = new Relation();
+        addedRelation.setId(serviceItem.getProperty().getId());
+        addedRelation.setType(RelationshipItemBuilder.SERVICES_RELATION);
+        addedRelation.setVersion(serviceItem.getProperty().getVersion());
+        relationSet.add(addedRelation);
+
+        Map<Relation, Set<Relation>> merge = new HashMap<Relation, Set<Relation>>();
+        Relation processRelation = new Relation();
+        processRelation.setId(processItem.getProperty().getId());
+        processRelation.setType(RelationshipItemBuilder.JOB_RELATION);
+        processRelation.setVersion(processItem.getProperty().getVersion());
+
+        merge.put(processRelation, relationSet);
+
+        RelationshipItemBuilder.mergeRelationship(RelationshipItemBuilder.getInstance().getCurrentProjectItemsRelations(), merge);
     }
 
     private NewProcessWizard getNewProcessWizard(RepositoryNode node) {

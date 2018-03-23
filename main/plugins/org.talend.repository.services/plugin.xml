@@ -301,5 +301,14 @@
            </buildType>
            </buildProvider>
  </extension>
+   <extension
+         point="org.talend.core.runtime.itemRelationship">
+      <itemHandler
+            class="org.talend.repository.services.relation.ServiceRelationshipHandler"
+            description="service and operation job relation"
+            id="org.talend.repository.services.relation.ServiceRelationshipHandler"
+            name="Service Type">
+      </itemHandler>
+   </extension>
 
 </plugin>
