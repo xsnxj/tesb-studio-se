@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.designer.esb.components.ws.trestrequest;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -55,35 +54,45 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
         IElementParameter schemasParameter = node.getElementParameter("SCHEMAS");
         List<Map<?, ?>> schemasChildren = (List<Map<?, ?>>) schemasParameter.getValue();
 
-        schemasChildren.clear();
-
         Map<String, IMetadataTable> savedMetadataTables = getMetadataTablesToKeep(oasManager);
+
+        schemasChildren.clear();
 
         node.getMetadataList().clear();
 
         // API Mappings
         for (String key : oasManager.getMappings().keySet()) {
 
-            RestAPIMapping mapping = oasManager.getMappings().get(key);
+            RestAPIMapping apiStuidioMapping = oasManager.getMappings().get(key);
 
             Map<String, String> newMapping = new LinkedHashMap<>();
 
-            newMapping.put(SCHEMA, mapping.getOutputFlow());
-            newMapping.put(HTTP_VERB, mapping.getHttpVerb());
-            newMapping.put(URI_PATTERN, TalendTextUtils.addQuotes(mapping.getUriPattern()));
-            newMapping.put(CONSUMES, (mapping.getConsumes() != null ? mapping.getConsumes().getLabel() : ""));
-            newMapping.put(PRODUCES, (mapping.getProduces() != null ? mapping.getProduces().getLabel() : ""));
+            newMapping.put(HTTP_VERB, apiStuidioMapping.getHttpVerb());
+            newMapping.put(URI_PATTERN, TalendTextUtils.addQuotes(apiStuidioMapping.getUriPattern()));
+            newMapping.put(CONSUMES, (apiStuidioMapping.getConsumes() != null ? apiStuidioMapping.getConsumes().getLabel() : ""));
+            newMapping.put(PRODUCES, (apiStuidioMapping.getProduces() != null ? apiStuidioMapping.getProduces().getLabel() : ""));
 
             schemasChildren.add(newMapping);
 
-            if (StringUtils.isNotBlank(mapping.getOutputFlow())) {
-                if (savedMetadataTables.containsKey(mapping.getOutputFlow())) {
-                    node.getMetadataList().add(savedMetadataTables.get(mapping.getOutputFlow()));
+            if (savedMetadataTables.containsKey(apiStuidioMapping.getId())) {
+
+                IMetadataTable table = savedMetadataTables.get(apiStuidioMapping.getId());
+
+                if (StringUtils.isNotBlank(apiStuidioMapping.getOutputFlow())) {
+                    newMapping.put(SCHEMA, apiStuidioMapping.getOutputFlow());
+                    table.setTableName(apiStuidioMapping.getOutputFlow());
                 } else {
-                    MetadataTable metadataTable = new MetadataTable();
-                    metadataTable.setTableName(mapping.getOutputFlow());
-                    node.getMetadataList().add(metadataTable);
+                    newMapping.put(SCHEMA, table.getTableName());
                 }
+                node.getMetadataList().add(table);
+
+            } else {
+
+                newMapping.put(SCHEMA, apiStuidioMapping.getOutputFlow());
+
+                MetadataTable metadataTable = new MetadataTable();
+                metadataTable.setTableName(apiStuidioMapping.getOutputFlow());
+                node.getMetadataList().add(metadataTable);
             }
 
         }
@@ -98,21 +107,34 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
 
         Map<String, IMetadataTable> existingMappings = new HashMap<String, IMetadataTable>();
 
-        List<String> newOperationIds = new ArrayList<String>();
-        for (String key : oasManager.getMappings().keySet()) {
-            RestAPIMapping mapping = oasManager.getMappings().get(key);
-            if (StringUtils.isNoneBlank(mapping.getOutputFlow())) {
-                newOperationIds.add(mapping.getOutputFlow());
-            }
-        }
+        IElementParameter schemasParameter = node.getElementParameter("SCHEMAS");
+        List<Map<?, ?>> schemasChildren = (List<Map<?, ?>>) schemasParameter.getValue();
 
-        for (IMetadataTable table : node.getMetadataList()) {
-            if (newOperationIds.contains(table.getTableName())) {
-                existingMappings.put(table.getTableName(), table);
+        for (Map<?, ?> mapping : schemasChildren) {
+
+            String mappingId = getUniqueOperationId(((String) mapping.get(HTTP_VERB)),
+                    TalendTextUtils.removeQuotes((String) mapping.get(URI_PATTERN)));
+
+            String tableName = (String) mapping.get(SCHEMA);
+
+            if (oasManager.getMappings().containsKey(mappingId)) {
+
+                for (IMetadataTable table : node.getMetadataList()) {
+                    if (tableName.equals(table.getTableName())) {
+                        existingMappings.put(mappingId, table);
+                    }
+                }
+
             }
+
         }
 
         return existingMappings;
+    }
+
+    private String getUniqueOperationId(String method, String path) {
+        String id = method + "|" + StringUtils.replace(path, "/", "");
+        return id.toLowerCase();
     }
 
     public boolean isEndpointNotNull() {

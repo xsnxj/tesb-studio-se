@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.designer.esb.components.ws.crest;
 
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,8 @@ public class CRESTNodeAdapter implements CRESTConstants {
 
         List<Map<?, ?>> schemasChildren = (List<Map<?, ?>>) schemasParameter.getValue();
 
+        Map<String, String> existingOutputFlows = getOutputFlowsToKeep(oasManager);
+
         schemasChildren.clear();
 
         // API Mappings
@@ -63,7 +66,13 @@ public class CRESTNodeAdapter implements CRESTConstants {
 
             Map<String, String> newMapping = new LinkedHashMap<>();
 
-            newMapping.put(SCHEMA, mapping.getOutputFlow());
+            if (StringUtils.isNotBlank(mapping.getOutputFlow())) {
+                newMapping.put(SCHEMA, mapping.getOutputFlow());
+            } else {
+                if (existingOutputFlows.containsKey(mapping.getId())) {
+                    newMapping.put(SCHEMA, existingOutputFlows.get(mapping.getId()));
+                }
+            }
             newMapping.put(HTTP_VERB, mapping.getHttpVerb());
             newMapping.put(URI_PATTERN, TalendTextUtils.addQuotes(mapping.getUriPattern()));
             newMapping.put(CONSUMES, (mapping.getConsumes() != null ? mapping.getConsumes().getLabel() : ""));
@@ -77,6 +86,30 @@ public class CRESTNodeAdapter implements CRESTConstants {
         node.setParamValue(COMMENT, oasManager.getDocumentationComment());
 
         return Status.OK_STATUS;
+    }
+
+    private Map<String, String> getOutputFlowsToKeep(IOASDecoder oasManager) {
+
+        Map<String, String> existingMappings = new HashMap<String, String>();
+
+        IElementParameter schemasParameter = node.getElementParameter("SCHEMAS");
+        List<Map<?, ?>> schemasChildren = (List<Map<?, ?>>) schemasParameter.getValue();
+
+        for (Map<?, ?> mapping : schemasChildren) {
+
+            String mappingId = getUniqueOperationId(((String) mapping.get(HTTP_VERB)),
+                    TalendTextUtils.removeQuotes((String) mapping.get(URI_PATTERN)));
+
+            existingMappings.put(mappingId, (String) mapping.get(SCHEMA));
+
+        }
+
+        return existingMappings;
+    }
+
+    private String getUniqueOperationId(String method, String path) {
+        String id = method + "|" + StringUtils.replace(path, "/", "");
+        return id.toLowerCase();
     }
 
     public boolean isEndpointNotNull() {

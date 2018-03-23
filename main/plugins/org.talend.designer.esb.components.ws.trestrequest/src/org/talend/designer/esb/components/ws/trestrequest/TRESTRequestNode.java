@@ -137,7 +137,7 @@ public class TRESTRequestNode extends AbstractExternalNode {
                     case SUCCESS_WITH_WARNINGS:
                         boolean confirm = MessageDialogWithLink.openConfirm(shell, "Confirm component initialization",
                                 "Initialize component?\n\nYour existing endpoint, API mappings and documentation will be updated.",
-                                "If some parts seem missing in your initialized component, please check your OAS/Swagger 2.0 definition in <a>Restlet Studio</a>.",
+                                "If some parts seem missing in your initialized component, please check your OAS/Swagger 2.0 definition in <a>API Designer</a>.",
                                 "https://studio.restlet.com", crestNodeAdapter.isEndpointNotNull());
 
                         if (confirm) {
@@ -149,7 +149,7 @@ public class TRESTRequestNode extends AbstractExternalNode {
                     case ERROR:
                         MessageDialogWithLink.openError(shell, "OAS/Swagger 2.0 import error",
                                 "We were unable to initialize your component from your OAS/Swagger 2.0 definition.",
-                                "Please check your OAS/Swagger 2.0 definition in <a>Restlet Studio</a>.",
+                                "Please check your OAS/Swagger 2.0 definition in <a>API Designer</a>.",
                                 "https://studio.restlet.com", false);
                         return SWT.CANCEL;
                     default:
@@ -165,7 +165,7 @@ public class TRESTRequestNode extends AbstractExternalNode {
             } catch (TranslationException e) {
                 MessageDialogWithLink.openError(shell, "OAS/Swagger 2.0 import error",
                         "We were unable to initialize your component from your OAS/Swagger 2.0 definition.",
-                        "Please check your OAS/Swagger 2.0 definition in <a>Restlet Studio</a>.", "https://studio.restlet.com",
+                        "Please check your OAS/Swagger 2.0 definition in <a>API Designer</a>.", "https://studio.restlet.com",
                         false);
                 return SWT.CANCEL;
             }
