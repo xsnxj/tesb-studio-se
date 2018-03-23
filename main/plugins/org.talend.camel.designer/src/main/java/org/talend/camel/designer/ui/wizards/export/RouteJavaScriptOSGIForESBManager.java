@@ -22,7 +22,6 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -191,7 +190,7 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
 
     @Override
     protected Set<String> getCompiledModuleNames() {
-        return Collections.emptySet();
+        return super.getCompiledModuleNames();
     }
 
     @Override
