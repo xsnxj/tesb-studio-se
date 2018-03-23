@@ -63,24 +63,24 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
         // API Mappings
         for (String key : oasManager.getMappings().keySet()) {
 
-            RestAPIMapping apiStuidioMapping = oasManager.getMappings().get(key);
+            RestAPIMapping apiDesignerMapping = oasManager.getMappings().get(key);
 
             Map<String, String> newMapping = new LinkedHashMap<>();
 
-            newMapping.put(HTTP_VERB, apiStuidioMapping.getHttpVerb());
-            newMapping.put(URI_PATTERN, TalendTextUtils.addQuotes(apiStuidioMapping.getUriPattern()));
-            newMapping.put(CONSUMES, (apiStuidioMapping.getConsumes() != null ? apiStuidioMapping.getConsumes().getLabel() : ""));
-            newMapping.put(PRODUCES, (apiStuidioMapping.getProduces() != null ? apiStuidioMapping.getProduces().getLabel() : ""));
+            newMapping.put(HTTP_VERB, apiDesignerMapping.getHttpVerb());
+            newMapping.put(URI_PATTERN, TalendTextUtils.addQuotes(apiDesignerMapping.getUriPattern()));
+            newMapping.put(CONSUMES, (apiDesignerMapping.getConsumes() != null ? apiDesignerMapping.getConsumes().getLabel() : ""));
+            newMapping.put(PRODUCES, (apiDesignerMapping.getProduces() != null ? apiDesignerMapping.getProduces().getLabel() : ""));
 
             schemasChildren.add(newMapping);
 
-            if (savedMetadataTables.containsKey(apiStuidioMapping.getId())) {
+            if (savedMetadataTables.containsKey(apiDesignerMapping.getId())) {
 
-                IMetadataTable table = savedMetadataTables.get(apiStuidioMapping.getId());
+                IMetadataTable table = savedMetadataTables.get(apiDesignerMapping.getId());
 
-                if (StringUtils.isNotBlank(apiStuidioMapping.getOutputFlow())) {
-                    newMapping.put(SCHEMA, apiStuidioMapping.getOutputFlow());
-                    table.setTableName(apiStuidioMapping.getOutputFlow());
+                if (StringUtils.isNotBlank(apiDesignerMapping.getOutputFlow())) {
+                    newMapping.put(SCHEMA, apiDesignerMapping.getOutputFlow());
+                    table.setTableName(apiDesignerMapping.getOutputFlow());
                 } else {
                     newMapping.put(SCHEMA, table.getTableName());
                 }
@@ -88,10 +88,10 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
 
             } else {
 
-                newMapping.put(SCHEMA, apiStuidioMapping.getOutputFlow());
+                newMapping.put(SCHEMA, apiDesignerMapping.getOutputFlow());
 
                 MetadataTable metadataTable = new MetadataTable();
-                metadataTable.setTableName(apiStuidioMapping.getOutputFlow());
+                metadataTable.setTableName(apiDesignerMapping.getOutputFlow());
                 node.getMetadataList().add(metadataTable);
             }
 
