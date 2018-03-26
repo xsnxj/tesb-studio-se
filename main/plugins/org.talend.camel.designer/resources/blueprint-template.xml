@@ -50,7 +50,7 @@
 #if ($hasCXFRSSamlProviderAuthz)
 #[[
 	<bean id="authorizingInterceptor" class="org.talend.esb.authorization.xacml.rt.pep.CXFXACMLAuthorizingInterceptor">
-		<property name="pdpAddress" value="$pep{tesb.pdp.address}"/>
+		<property name="pdpAddress" value="$core2{tesb.pdp.address}"/>
 	</bean>
 ]]#
 #end
