@@ -281,6 +281,15 @@
                 name="RenameToCSoapAndCRestMigrationTask"
                 version="6.4.0">
           </projecttask>
+          <projecttask
+                beforeLogon="false"
+                breaks="5.6.0"
+                class="org.talend.camel.designer.migration.AddBeansDefaultLibrariesMigrationTask"
+                description="Add Beans default libraries"
+                id="org.talend.camel.designer.migration.AddBeansDefaultLibrariesMigrationTask"
+                name="AddBeansDefaultLibrariesMigrationTask"
+                version="7.0.1">
+          </projecttask>
     </extension>
 
         <extension

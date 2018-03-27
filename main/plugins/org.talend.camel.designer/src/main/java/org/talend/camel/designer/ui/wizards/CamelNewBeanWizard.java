@@ -15,6 +15,7 @@ package org.talend.camel.designer.ui.wizards;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -31,10 +32,14 @@ import org.talend.core.CorePlugin;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.general.ILibrariesService;
+import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.core.model.utils.emf.component.ComponentFactory;
+import org.talend.designer.core.model.utils.emf.component.IMPORTType;
+import org.talend.librariesmanager.model.ModulesNeededProvider;
 import org.talend.repository.model.IProxyRepositoryFactory;
 
 /**
@@ -67,8 +72,8 @@ public class CamelNewBeanWizard extends Wizard {
         this.path = path;
 
         this.property = PropertiesFactory.eINSTANCE.createProperty();
-        this.property.setAuthor(((RepositoryContext) CorePlugin.getContext().getProperty(Context.REPOSITORY_CONTEXT_KEY))
-                .getUser());
+        this.property
+                .setAuthor(((RepositoryContext) CorePlugin.getContext().getProperty(Context.REPOSITORY_CONTEXT_KEY)).getUser());
         this.property.setVersion(VersionUtils.DEFAULT_VERSION);
         this.property.setStatusCode(""); //$NON-NLS-1$
 
@@ -91,6 +96,21 @@ public class CamelNewBeanWizard extends Wizard {
         }
 
         beanItem.setContent(byteArray);
+
+        addDefaultModulesForBeans();
+    }
+
+    private void addDefaultModulesForBeans() {
+        List<ModuleNeeded> importNeedsList = ModulesNeededProvider.getModulesNeededForBeans();
+
+        for (ModuleNeeded model : importNeedsList) {
+            IMPORTType importType = ComponentFactory.eINSTANCE.createIMPORTType();
+            importType.setMODULE(model.getModuleName());
+            importType.setMESSAGE(model.getInformationMsg());
+            importType.setREQUIRED(model.isRequired());
+            importType.setMVN(model.getMavenUri());
+            beanItem.getImports().add(importType);
+        }
     }
 
     /**
@@ -113,8 +133,8 @@ public class CamelNewBeanWizard extends Wizard {
         try {
             property.setId(repositoryFactory.getNextId());
 
-			// http://jira.talendforge.org/browse/TESB-5000 LiXiaopeng
-			property.setLabel(property.getDisplayName());
+            // http://jira.talendforge.org/browse/TESB-5000 LiXiaopeng
+            property.setLabel(property.getDisplayName());
             // repositoryFactory.create(routineItem, mainPage.getDestinationPath());
             repositoryFactory.create(beanItem, mainPage.getDestinationPath());
         } catch (PersistenceException e) {
