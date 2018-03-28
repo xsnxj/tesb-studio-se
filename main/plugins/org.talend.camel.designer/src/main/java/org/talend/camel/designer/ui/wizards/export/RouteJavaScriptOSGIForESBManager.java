@@ -30,7 +30,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 import org.dom4j.Attribute;
 import org.dom4j.Document;
@@ -43,6 +42,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
 import org.talend.core.GlobalServiceRegister;
+import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.model.process.ElementParameterParser;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.ProcessItem;
@@ -55,6 +55,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ConnectionType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.IRunProcessService;
+import org.talend.librariesmanager.model.ModulesNeededProvider;
 import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.esb.DataSourceConfig;
 import org.talend.repository.utils.EmfModelUtils;
@@ -80,32 +81,35 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
     private static final boolean CONVERT_CAMEL_CONTEXT_ALL = isAll(CONVERT_CAMEL_CONTEXT_PROPERTY);
 
     private final Collection<String> routelets;
+    private List<ModuleNeeded> defaultModulesNeededForBeans;
 
     public RouteJavaScriptOSGIForESBManager(Map<ExportChoice, Object> exportChoiceMap, String contextName,
         Collection<String> routelets) {
         super(exportChoiceMap, contextName, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
         this.routelets = routelets;
+        this.defaultModulesNeededForBeans = ModulesNeededProvider.getModulesNeededForBeans();
     }
 
     @Override
     protected ExportFileResource getCompiledLibExportFileResource(ExportFileResource[] processes) {
-        Pattern p = Pattern.compile("([\\s\\S]*)camel-core-\\d+(.\\d+)*(\\S+)*(\\.jar)$");
-
         ExportFileResource libResource = new ExportFileResource(null, LIBRARY_FOLDER_NAME);
-        // Gets talend libraries
         List<URL> talendLibraries = getExternalLibraries(true, processes, getCompiledModuleNames());
         if (talendLibraries != null) {
-
-            for (int i = 0; i < talendLibraries.size(); i++) {
-                URL tURL = talendLibraries.get(i);
-                if (p.matcher(tURL.getFile()).matches()) {
-                    continue;
-                } else {
-                    libResource.addResources(talendLibraries);
+            for (URL libUrl : talendLibraries) {
+                boolean addRes = true;
+                // TESB-21485: Exclude DEFAULT beans model
+                for (ModuleNeeded need : defaultModulesNeededForBeans) {
+                    if (libUrl.getFile().contains(need.getId())) {
+                        addRes = false;
+                        break;
+                    }
+                }
+                if (addRes) {
+                    libResource.addResource("", libUrl);
                 }
             }
-
         }
+
         addRoutinesResources(processes, libResource);
         return libResource;
     }
