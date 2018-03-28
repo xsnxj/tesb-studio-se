@@ -94,6 +94,9 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
     protected ExportFileResource getCompiledLibExportFileResource(ExportFileResource[] processes) {
         ExportFileResource libResource = new ExportFileResource(null, LIBRARY_FOLDER_NAME);
         List<URL> talendLibraries = getExternalLibraries(true, processes, getCompiledModuleNames());
+        if(defaultModulesNeededForBeans == null) {
+            defaultModulesNeededForBeans = ModulesNeededProvider.getModulesNeededForBeans();    
+        }
         if (talendLibraries != null) {
             for (URL libUrl : talendLibraries) {
                 boolean addRes = true;
