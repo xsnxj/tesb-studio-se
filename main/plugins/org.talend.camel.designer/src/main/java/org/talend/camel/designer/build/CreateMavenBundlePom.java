@@ -112,7 +112,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             Set<JobInfo> subjobs = getJobProcessor().getBuildChildrenJobs();
             if (subjobs != null && !subjobs.isEmpty()) {
                 for (JobInfo subjob : subjobs) {
-                    if (isRoutelet(subjob) || isJob(subjob)) {
+                    if (isRoutelet(subjob) ) {
                         fmBuild.addPlugin(addFileInstallPlugin(subjob));
                     }
                 }
@@ -146,7 +146,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         pom.setPackaging("pom");
 
         for (JobInfo job : getJobProcessor().getBuildChildrenJobs()) {
-            if (isRoutelet(job) || isJob(job)) {
+            if (isRoutelet(job)) {
             	IPath currentProjectRootDir = getJobProcessor().getTalendJavaProject().getProject().getLocation();
             	IPath routeletPomPath = getProcessor(job).getTalendJavaProject().getProjectPom().getLocation();
             	String relativePomPath = routeletPomPath.makeRelativeTo(currentProjectRootDir).toString();
@@ -158,14 +158,14 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         if (route) {
             pom.addModule("pom-feature.xml");
         } else {
-//            for (JobInfo job : LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
-//                if (model.getArtifactId().equals(job.getJobName())) {
-//                    if (job.getFatherJobInfo() != null) {
-//                        model.setArtifactId(job.getFatherJobInfo().getJobName() + "_" + model.getArtifactId());
-//                        break;
-//                    }
-//                }
-//            }
+            for (JobInfo job : LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
+                if (model.getArtifactId().equals(job.getJobName())) {
+                    if (job.getFatherJobInfo() != null) {
+                        model.setArtifactId(job.getFatherJobInfo().getJobName() + "_" + model.getArtifactId());
+                        break;
+                    }
+                }
+            }
 
         }
         pom.setDependencies(model.getDependencies());
