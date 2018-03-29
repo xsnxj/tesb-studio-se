@@ -681,6 +681,39 @@
               name="${tesb-hawtdb}"
               uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-hawtdb}">
         </libraryNeeded>
+        
+		<libraryNeeded context="plugin:org.talend.libraries.esb"
+			name="jackson-annotations-2.8.9.jar"
+			id="aws-jackson-annotations"
+			uripath="platform:/plugin/org.talend.libraries.esb/lib/jackson-annotations-2.8.9.jar"
+			bundleID="" />
+
+		<libraryNeeded context="plugin:org.talend.libraries.esb"
+			name="jackson-core-2.8.9.jar"
+			id="aws-jackson-core"
+			uripath="platform:/plugin/org.talend.libraries.esb/lib/jackson-core-2.8.9.jar"
+			bundleID="" />
+			
+		<libraryNeeded context="plugin:org.talend.libraries.esb"
+			name="jackson-databind-2.8.9.jar"
+			id="aws-jackson-databind"
+			uripath="platform:/plugin/org.talend.libraries.esb/lib/jackson-databind-2.8.9.jar"
+			bundleID="" />
+        
+        <libraryNeededGroup
+              description="aws-jackson"
+              id="aws-jackson"
+              name="aws-jackson">
+           <library
+                 id="aws-jackson-annotations">
+           </library>
+           <library
+                 id="aws-jackson-core">
+           </library>
+           <library
+                 id="aws-jackson-databind">
+           </library>
+        </libraryNeededGroup>
 
         <libraryNeededGroup
               description="camel-jsonpath-alldep"

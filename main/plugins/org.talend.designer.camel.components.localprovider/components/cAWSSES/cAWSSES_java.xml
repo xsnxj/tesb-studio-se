@@ -83,9 +83,8 @@
             <IMPORT MODULE_GROUP="camel-core" REQUIRED="true" />
             <IMPORT MODULE_GROUP="camel-spring" REQUIRED="true" />
             <IMPORT MODULE_GROUP="camel-aws-ses" REQUIRED="true" />
-            <IMPORT NAME="jackson-databind" MODULE="jackson-databind-2.5.3.jar" MVN="mvn:org.talend.libraries/jackson-databind-2.5.3/6.0.0"  UrlPath="platform:/plugin/org.talend.libraries.jackson/lib/jackson-databind-2.5.3.jar" REQUIRED="true"/>
-            <IMPORT NAME="jackson-core" MODULE="jackson-core-2.5.3.jar" MVN="mvn:org.talend.libraries/jackson-core-2.5.3/6.0.0"  UrlPath="platform:/plugin/org.talend.libraries.jackson/lib/jackson-core-2.5.3.jar" REQUIRED="true"/>
-            <IMPORT NAME="jackson-annotations" MODULE="jackson-annotations-2.5.3.jar" MVN="mvn:org.talend.libraries/jackson-annotations-2.5.3/6.0.0"  UrlPath="platform:/plugin/org.talend.libraries.jackson/lib/jackson-annotations-2.5.3.jar" REQUIRED="true"/>
+            <IMPORT MODULE_GROUP="aws-jackson" REQUIRED="true" />
+            
             <IMPORT NAME="httpclient-4.3.6.jar" MODULE="httpclient-4.3.6.jar"
                 MVN="mvn:org.talend.libraries/httpclient-4.3.6/6.0.0"
                 UrlPath="platform:/plugin/org.talend.libraries.apache.http/lib/httpclient-4.3.6.jar"
