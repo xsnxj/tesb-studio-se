@@ -112,7 +112,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             Set<JobInfo> subjobs = getJobProcessor().getBuildChildrenJobs();
             if (subjobs != null && !subjobs.isEmpty()) {
                 for (JobInfo subjob : subjobs) {
-                    if (isRoutelet(subjob) ) {
+                    if (isRoutelet(subjob) || isJob(subjob) ) {
                         fmBuild.addPlugin(addFileInstallPlugin(subjob));
                     }
                 }
@@ -158,15 +158,15 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         if (route) {
             pom.addModule("pom-feature.xml");
         } else {
-            for (JobInfo job : LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
-                if (model.getArtifactId().equals(job.getJobName())) {
-                    if (job.getFatherJobInfo() != null) {
-                        model.setArtifactId(job.getFatherJobInfo().getJobName() + "_" + model.getArtifactId());
-                        break;
-                    }
-                }
-            }
-
+//            for (JobInfo job : LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
+//                if (model.getArtifactId().equals(job.getJobName())) {
+//                    if (job.getFatherJobInfo() != null) {
+//                        model.setArtifactId(job.getFatherJobInfo().getJobName() + "_" + model.getArtifactId());
+//                        break;
+//                    }
+//                }
+//            }
+//
         }
         pom.setDependencies(model.getDependencies());
 
