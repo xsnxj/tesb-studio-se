@@ -57,7 +57,7 @@ public class CLASS {
 	            	if(!routeContextCodeGenerated && !exportTypeSpringBoot){
 	            		routeContextCodeGenerated=true;
 				        code.append("final Map<String, String> routeContext = new HashMap<String, String>();\n" + 
-			                "readContextValues(contextStr);\n" + 
+			                (exportTypeSpringBoot ? "" : "readContextValues(contextStr);\n") + 
 			                "for (java.util.Map.Entry<Object, Object> entry : context.entrySet()) {\n" + 
 			                "    routeContext.put((String) entry.getKey(), (String) entry.getValue());\n" + 
 			                "}\n");
