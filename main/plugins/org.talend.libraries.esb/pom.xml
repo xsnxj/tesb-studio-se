@@ -380,6 +380,12 @@
 		<artifactId>security-common</artifactId>
 		<version>${tesb.version}</version>
 	</dependency>
+	<!-- cTalendJob -->
+	<dependency>
+		<groupId>org.talend.camel</groupId>
+		<artifactId>camel-talendjob</artifactId>
+		<version>${tesb.version}</version>
+	</dependency>	
 	
 	<!-- Scala -->
     <dependency>
