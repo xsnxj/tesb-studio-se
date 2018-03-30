@@ -831,5 +831,19 @@
               name="${tesb-lz4}"
               uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-lz4}">
         </libraryNeeded>
+        <libraryNeededGroup
+              description="camel-talendjob-alldep"
+              id="camel-talendjob-alldep"
+              name="camel-talendjob-alldep">
+           <library
+                 id="camel-talendjob">
+           </library>
+        </libraryNeededGroup>
+        <libraryNeeded
+              context="plugin:org.talend.libraries.esb"
+              id="camel-talendjob"
+              name="${tesb-camel-talendjob}"
+              uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-camel-talendjob}">
+        </libraryNeeded>
     </extension>
 </plugin>
