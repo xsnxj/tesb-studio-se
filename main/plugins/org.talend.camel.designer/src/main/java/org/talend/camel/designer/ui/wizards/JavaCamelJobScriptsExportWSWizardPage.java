@@ -495,7 +495,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                     try {
                         buildJobHandler.prepare(new NullProgressMonitor(), prepareParams);
                     } catch (Exception e) {
-                        MessageBoxExceptionHandler.process(e.getCause(), getShell());
+                        MessageBoxExceptionHandler.process(e.getCause() == null ? e : e.getCause(), getShell());
                         return false;
                     }
 
@@ -504,7 +504,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                 }
 
             } catch (Exception e) {
-                MessageBoxExceptionHandler.process(e.getCause(), getShell());
+                MessageBoxExceptionHandler.process(e.getCause() == null ? e : e.getCause(), getShell());
                 e.printStackTrace();
             }
 
@@ -512,7 +512,7 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
                 getContainer().run(false, true, actionMS);
                 buildJobHandler.build(new NullProgressMonitor());
             } catch (Exception e) {
-                MessageBoxExceptionHandler.process(e.getCause(), getShell());
+                MessageBoxExceptionHandler.process(e.getCause() == null ? e : e.getCause(), getShell());
                 return false;
             }
 
