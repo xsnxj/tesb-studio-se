@@ -12,6 +12,7 @@
 // ============================================================================
 package org.talend.designer.esb.components.ws.trestrequest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -54,16 +55,18 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
         IElementParameter schemasParameter = node.getElementParameter("SCHEMAS");
         List<Map<?, ?>> schemasChildren = (List<Map<?, ?>>) schemasParameter.getValue();
 
-        Map<String, IMetadataTable> savedMetadataTables = getMetadataTablesToKeep(oasManager);
+        Map<String, RestAPIMapping> apiDesignerMappings = oasManager.getMappings();
+        
+        Map<String, IMetadataTable> savedMetadataTables = getMetadataTablesToKeep(apiDesignerMappings);
 
         schemasChildren.clear();
 
         node.getMetadataList().clear();
 
         // API Mappings
-        for (String key : oasManager.getMappings().keySet()) {
+        for (String key : apiDesignerMappings.keySet()) {
 
-            RestAPIMapping apiDesignerMapping = oasManager.getMappings().get(key);
+            RestAPIMapping apiDesignerMapping = apiDesignerMappings.get(key);
 
             Map<String, String> newMapping = new LinkedHashMap<>();
 
@@ -87,11 +90,13 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
                 node.getMetadataList().add(table);
 
             } else {
-
-                newMapping.put(SCHEMA, apiDesignerMapping.getOutputFlow());
+                
+                String outputFlow = apiDesignerMapping.getOutputFlow() != null ? apiDesignerMapping.getOutputFlow() :"";
+                
+                newMapping.put(SCHEMA, outputFlow);
 
                 MetadataTable metadataTable = new MetadataTable();
-                metadataTable.setTableName(apiDesignerMapping.getOutputFlow());
+                metadataTable.setTableName(outputFlow);
                 node.getMetadataList().add(metadataTable);
             }
 
@@ -103,34 +108,36 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
         return Status.OK_STATUS;
     }
 
-    private Map<String, IMetadataTable> getMetadataTablesToKeep(IOASDecoder oasManager) {
+    private Map<String, IMetadataTable> getMetadataTablesToKeep(Map<String, RestAPIMapping> apiDesignerMappings) {
 
         Map<String, IMetadataTable> existingMappings = new HashMap<String, IMetadataTable>();
 
         IElementParameter schemasParameter = node.getElementParameter("SCHEMAS");
         List<Map<?, ?>> schemasChildren = (List<Map<?, ?>>) schemasParameter.getValue();
 
+        Map<String,String> tableNamesToKeep = new HashMap<>();
+        
         for (Map<?, ?> mapping : schemasChildren) {
 
             if (mapping.get(HTTP_VERB) instanceof String) {
+                
                 String mappingId = getUniqueOperationId(((String) mapping.get(HTTP_VERB)),
                         TalendTextUtils.removeQuotes((String) mapping.get(URI_PATTERN)));
 
                 String tableName = (String) mapping.get(SCHEMA);
 
-                if (oasManager.getMappings().containsKey(mappingId)) {
-
-                    for (IMetadataTable table : node.getMetadataList()) {
-                        if (tableName.equals(table.getTableName())) {
-                            existingMappings.put(mappingId, table);
-                        }
-                    }
-
+                if (!"".equals(tableName) &&  apiDesignerMappings.containsKey(mappingId)) {
+                    tableNamesToKeep.put(tableName, mappingId);
                 }
-
             }
         }
 
+        for (IMetadataTable table : node.getMetadataList()) {
+            if (tableNamesToKeep.keySet().contains(table.getTableName())) {
+                existingMappings.put(tableNamesToKeep.get(table.getTableName()), table);
+            }
+        }
+        
         return existingMappings;
     }
 
