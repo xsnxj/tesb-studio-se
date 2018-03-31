@@ -57,7 +57,7 @@ public class CLASS {
 	            	if(!routeContextCodeGenerated && !exportTypeSpringBoot){
 	            		routeContextCodeGenerated=true;
 				        code.append("final Map<String, String> routeContext = new HashMap<String, String>();\n" + 
-			                (exportTypeSpringBoot ? "" : "readContextValues(contextStr);\n") + 
+			                "readContextValues(contextStr);\n" + 
 			                "for (java.util.Map.Entry<Object, Object> entry : context.entrySet()) {\n" + 
 			                "    routeContext.put((String) entry.getKey(), (String) entry.getValue());\n" + 
 			                "}\n");
@@ -70,7 +70,10 @@ public class CLASS {
 	            	code.append(instanceName+".setContextName(\""+node.getComponent().getProcess().getContextManager().getDefaultContext().getName()+"\");\n");
 	            }	            
 	            if(userDefinedParams!=null && userDefinedParams.size()>0){
-	            	code.append("final Map<String, String> overwriteContext_"+instanceName+" = new HashMap<String, String>();\n"); 
+	            	code.append("final Map<String, String> overwriteContext_"+instanceName+" = new HashMap<String, String>();\n");
+	            	if (!exportTypeSpringBoot) {
+	            	    code.append("readContextValues(contextStr);\n");
+	            	} 
 	            	for(Map<String,String> map :userDefinedParams){
 	            		code.append("overwriteContext_"+instanceName+".put(\""+map.get("Parameters")+"\", "+map.get("Values")+");\n"); 
 	            	}
@@ -85,6 +88,7 @@ public class CLASS {
     }
 
     private static void addRouteletsWithContext(final org.talend.core.model.process.IProcess process, StringBuilder code){
+		boolean exportTypeSpringBoot = process.getClass().getName().endsWith("MicroServiceProcess");
         for (org.talend.core.model.process.INode node : process.getGeneratingNodes()) {
             if ("Routelets".equals(node.getComponent().getOriginalFamilyName())) {
 	            boolean useSelected = "true".equals(ElementParameterParser.getValue(node, "__SELECTED_CONTEXT__"));
@@ -103,7 +107,9 @@ public class CLASS {
 	            	code.append(instanceName+".setContextName(\""+node.getComponent().getProcess().getContextManager().getDefaultContext().getName()+"\");\n");
 	            }
 	            if(userDefinedParams!=null && userDefinedParams.size()>0){
-	                code.append("readContextValues(contextStr);\n");
+	                if (!exportTypeSpringBoot) {
+	                    code.append("readContextValues(contextStr);\n");
+	                }
 	            	code.append("final Map<String, String> overwriteContext_"+instanceName+" = new HashMap<String, String>();\n"); 
 	            	for(Map<String,String> map :userDefinedParams){
 	            		code.append("overwriteContext_"+instanceName+".put(\""+map.get("Parameters")+"\", "+map.get("Values")+");\n"); 
