@@ -34,6 +34,7 @@ import org.talend.camel.designer.ui.wizards.export.RouteDedicatedJobManager;
 import org.talend.camel.designer.ui.wizards.export.RouteJavaScriptOSGIForESBManager;
 import org.talend.camel.designer.util.CamelFeatureUtil;
 import org.talend.camel.model.CamelRepositoryNodeType;
+import org.talend.camel.model.RouteProcessingExchange;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.CorePlugin;
@@ -179,11 +180,22 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         String groupId = getGroupId();
         String routeName = getArtifactId();
         String routeVersion = getArtifactVersion();
+
+        // FIXME temporary solution, should be replaced by proper handling
+        // of MicroService vs. KAR build.
+        boolean isCreatingMicroService = false;
+        RouteProcessingExchange.isCreatingMicroService.set(Boolean.FALSE);
         
         try {
  	        prepareJobBuild();
+ 	        Boolean isMS = RouteProcessingExchange.isCreatingMicroService.get();
+ 	        if (isMS != null) {
+ 	        	isCreatingMicroService = isMS.booleanValue();
+ 	        }
          } catch (Exception e) {
              throw new InvocationTargetException(e);
+         } finally {
+             RouteProcessingExchange.isCreatingMicroService.set(null);
          }
         
         featuresModel = new FeaturesModel(groupId, routeName, routeVersion);
@@ -218,7 +230,18 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             try {
                 
                 if(destinationKar !=null ) {
-                	addBuildArtifact(routeNode, "kar", new File(destinationKar));
+                	if (isCreatingMicroService) {
+                		// FIXME should be replaced by proper handling of
+                		// microservice vs. KAR creation.
+                		String dest = destinationKar;
+                		int suffixNdx = dest.length() - 4;
+                		if (dest.regionMatches(true, suffixNdx, ".kar", 0, 4)) {
+                			dest = dest.substring(0, suffixNdx) + ".jar";
+                		}
+                    	addBuildArtifact(routeNode, "jar", new File(dest));
+                	} else {
+                		addBuildArtifact(routeNode, "kar", new File(destinationKar));
+                	}
                 }
                 
                 IRunProcessService runProcessService = CorePlugin.getDefault().getRunProcessService();
