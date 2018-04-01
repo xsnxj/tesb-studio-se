@@ -56,6 +56,7 @@ import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.IRunProcessService;
+import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
@@ -197,7 +198,12 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
          } finally {
              RouteProcessingExchange.isCreatingMicroService.set(null);
          }
-        
+
+        // FIXME may require some further actions to get all POMs.
+        if (ProcessorUtilities.isGeneratePomOnly()) {
+        	return;
+        }
+
         featuresModel = new FeaturesModel(groupId, routeName, routeVersion);
         try {
             File routeFile;
