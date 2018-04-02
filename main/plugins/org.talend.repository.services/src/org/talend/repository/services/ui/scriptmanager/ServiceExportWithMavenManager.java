@@ -53,6 +53,8 @@ import org.talend.utils.io.FilesUtils;
  */
 public class ServiceExportWithMavenManager extends JavaScriptForESBWithMavenManager {
 
+    private static final String UPPER_DIR = "../";
+
     public static final String OPERATIONS_PATH = "operations/"; //$NON-NLS-1$
 
     private String mavenGroupId;
@@ -180,6 +182,13 @@ public class ServiceExportWithMavenManager extends JavaScriptForESBWithMavenMana
     protected void analysisMavenModule(Item item) {
         if (item != null && item instanceof ServiceItem) {
             try {
+                // In case the service in under sub folder
+                int depth = ItemResourceUtil.getItemRelativePath(item.getProperty()).segmentCount();
+                String relativePath = UPPER_DIR.concat(UPPER_DIR);
+                for (int level = 0; level < depth; level++) {
+                    relativePath += UPPER_DIR;
+                }
+
                 ProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
                 List<String> mavenModules = getMavenModules();
                 ServiceItem serviceItem = (ServiceItem) item;
@@ -194,14 +203,10 @@ public class ServiceExportWithMavenManager extends JavaScriptForESBWithMavenMana
                                 String jobName = node.getLabel();
                                 if (jobName != null && !mavenModules.contains(jobName)) {
                                     // mavenModules.add(OPERATIONS_PATH + jobName);
-                                    String modeule = "../../" + TalendJavaProjectConstants.DIR_PROCESS + "/" + node.getPath()
+                                    String modeule = relativePath + TalendJavaProjectConstants.DIR_PROCESS + "/" + node.getPath()
                                             + "/" + AggregatorPomsHelper.getJobProjectFolderName(node.getProperty());
                                     mavenModules.add(modeule);
                                 }
-                                // ``
-                                // ITalendProcessJavaProject talendJobProject =
-                                // runProcessService.getTalendJobJavaProject(item.getProperty());
-                                // ``
                             }
                         }
                     }
