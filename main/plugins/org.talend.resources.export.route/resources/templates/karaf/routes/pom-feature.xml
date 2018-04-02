@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>@ItemGroupName@</groupId>
+		<artifactId>@ItemName@-parent</artifactId>
+		<version>@ItemVersion@</version>
+		<relativePath>pom-parent.xml</relativePath>
+	</parent>
+	<artifactId>@ItemName@-feature</artifactId>
+	<packaging>pom</packaging>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.karaf.tooling</groupId>
+				<artifactId>features-maven-plugin</artifactId>
+				<version>2.2.9</version>
+				<executions>
+					<execution>
+						<id>create-kar</id>
+						<goals>
+							<goal>create-kar</goal>
+						</goals>
+						<configuration>
+							<finalName>${item.name}_${project.version}</finalName>
+							<!-- just let it empty for karaf -->
+							<resourcesDir>${project.build.directory}/bin</resourcesDir>
+							<featuresFile>${resources.path}/feature/feature.xml</featuresFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>

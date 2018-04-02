@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>@ItemGroupName@</groupId>
+		<artifactId>@ItemName@-parent</artifactId>
+		<version>@ItemVersion@</version>
+		<relativePath>pom-parent.xml</relativePath>
+	</parent>
+	<artifactId>@ItemName@-bundle</artifactId>
+	<packaging>bundle</packaging>
+
+	<properties>
+		<bundle.config.export.package>@BundleConfigExportPackage@</bundle.config.export.package>
+		<bundle.config.import.package>@BundleConfigImportPackage@</bundle.config.import.package>
+		<bundle.config.export.service>@BundleConfigExportService@</bundle.config.export.service>
+
+		<lib.path>${resources.path}/lib</lib.path>
+		<provided.lib.path>${resources.path}/provided-lib</provided.lib.path>
+	</properties>
+
+	<dependencies>
+		<!-- Will add some dependencies by API -->
+	</dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>${resources.path}</directory>
+				<excludes>
+					<!-- The feature won't package in the bundle jar -->
+					<exclude>**/feature.xml</exclude>
+					<!-- All jars are "provided". No need routines jar also, because will 
+						re-build. -->
+					<exclude>lib/**</exclude>
+					<exclude>provided-lib/**</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.5.3</version>
+				<extensions>true</extensions>
+				<configuration>
+					<archive>
+						<addMavenDescriptor>false</addMavenDescriptor>
+					</archive>
+					<instructions>
+						<Bundle-SymbolicName>${project.groupId}</Bundle-SymbolicName>
+						<Bundle-Name>${item.name}</Bundle-Name>
+						<Bundle-Version>${project.version}</Bundle-Version>
+						<Export-Package>${bundle.config.export.package}</Export-Package>
+						<Export-Service>${bundle.config.export.service}</Export-Service>
+						<Import-Package>
+							${bundle.config.import.package},
+							*;resolution:=optional
+						</Import-Package>
+						<Include-Resource>
+							{maven-resources}, {maven-dependencies},
+						</Include-Resource>
+						<Bundle-ClassPath>
+							.,
+							{maven-dependencies}
+						</Bundle-ClassPath>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
