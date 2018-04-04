@@ -197,6 +197,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
              throw new InvocationTargetException(e);
          } finally {
              RouteProcessingExchange.isCreatingMicroService.set(null);
+             RouteProcessingExchange.resetMavenOffline();
          }
 
         // FIXME may require some further actions to get all POMs.
@@ -235,7 +236,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
             try {
                 
-                if(destinationKar !=null ) {
+                if (destinationKar != null) {
                 	if (isCreatingMicroService) {
                 		// FIXME should be replaced by proper handling of
                 		// microservice vs. KAR creation.
