@@ -287,8 +287,8 @@
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-annotations-2.8.9.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="guava-18.0.jar" MVN="mvn:org.talend.libraries/guava/6.0.0" NAME="guava-18.0.jar"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/guava-18.0.jar"
+            <IMPORT MODULE="guava-${guava.version}.jar" MVN="mvn:org.talend.libraries/guava/6.0.0" NAME="guava-${guava.version}.jar"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/guava-${guava.version}.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
             <IMPORT MODULE="validation-api-1.1.0.Final.jar" MVN="mvn:org.talend.libraries/validation-api/6.0.0" NAME="validation-api-1.1.0.Final"

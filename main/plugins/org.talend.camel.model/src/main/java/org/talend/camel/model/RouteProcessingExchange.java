@@ -12,15 +12,38 @@
 // ============================================================================
 package org.talend.camel.model;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
+
 /**
  * This class is a temporary solution for information exchange
  * during route processing, e.g. microservice creation.
  */
 public final class RouteProcessingExchange {
 
-	public static final ThreadLocal<Boolean> isCreatingMicroService = new ThreadLocal<>();
+    public static final ThreadLocal<Boolean> isCreatingMicroService = new ThreadLocal<>();
 
-	private RouteProcessingExchange() {
-		super();
-	}
+    private static final ThreadLocal<Boolean> originalMavenOfflineState = new ThreadLocal<>();
+
+    public static void setMavenOffline(boolean mavenOffline) {
+        Boolean b = originalMavenOfflineState.get();
+        if (b == null) {
+            originalMavenOfflineState.set(InstanceScope.INSTANCE.getNode("org.eclipse.m2e.core")
+                    .getBoolean("eclipse.m2.offline", false));
+        }
+        InstanceScope.INSTANCE.getNode("org.eclipse.m2e.core")
+                .putBoolean("eclipse.m2.offline", mavenOffline);
+    }
+
+    public static void resetMavenOffline() {
+        Boolean b = originalMavenOfflineState.get();
+        if (b != null) {
+            originalMavenOfflineState.set(null);
+            InstanceScope.INSTANCE.getNode("org.eclipse.m2e.core")
+                    .putBoolean("eclipse.m2.offline", b.booleanValue());
+        }
+    }
+
+    private RouteProcessingExchange() {
+        super();
+    }
 }
