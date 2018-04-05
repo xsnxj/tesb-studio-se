@@ -543,6 +543,11 @@
             id="wss4j-ws-security-policy-stax"
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-wss4j-ws-security-policy-stax}"
             bundleID="" />
+        <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="${tesb-wss4j-bindings}"
+            id="wss4j-bindings"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-wss4j-bindings}"
+            bundleID="" />
 
         <libraryNeededGroup
                 description="cxf-rt-ws-security"
