@@ -31,7 +31,20 @@ public class RouteProcessConvertServiceImpl implements IProcessConvertService {
             RouteProcess process = new RouteProcess(item.getProperty());
             if (item instanceof CamelProcessItemImpl) {
                 CamelProcessItemImpl camelProcessItemImpl = (CamelProcessItemImpl) item;
-                if (camelProcessItemImpl.isExportMicroService()) {
+                // FIXME: revisit the duplication of information between BUILD_TYPE and
+                // camelProcessItemImpl.isExportMicroService(). It is synchronized here
+                // as it gets out of sync with changes to BUILD_TYPE.
+                String bt = (String) item.getProperty().getAdditionalProperties().get("BUILD_TYPE");
+                boolean isMS;
+                if (bt == null) {
+                	isMS = camelProcessItemImpl.isExportMicroService();
+                } else {
+                	isMS = bt.indexOf("MICROSERVICE") >= 0;
+                	if (camelProcessItemImpl.isExportMicroService() != isMS) {
+                		camelProcessItemImpl.setExportMicroService(isMS);
+                	}
+                }
+                if (isMS) {
                     process = new MicroServiceProcess(item.getProperty());
                 }
             }
