@@ -276,18 +276,27 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             try {
 
                 if (destinationKar != null) {
+                    // FIXME should be replaced by proper handling of
+                    // microservice vs. KAR creation.
+                    String dest = destinationKar;
+                    int suffixNdx = dest.length() - 4;
+                    String suffix = "kar";
                     if (isCreatingMicroService) {
-                        // FIXME should be replaced by proper handling of
-                        // microservice vs. KAR creation.
-                        String dest = destinationKar;
-                        int suffixNdx = dest.length() - 4;
                         if (dest.regionMatches(true, suffixNdx, ".kar", 0, 4)) {
                             dest = dest.substring(0, suffixNdx) + ".jar";
+                            suffix = "jar";
+                        } else if (dest.regionMatches(true, suffixNdx, ".zip", 0, 4)) {
+                            suffix = "zip";
                         }
-                        addBuildArtifact(routeObject, "jar", new File(dest));
                     } else {
-                        addBuildArtifact(routeObject, "kar", new File(destinationKar));
+                    	if (dest.regionMatches(true, suffixNdx, ".zip", 0, 4)) {
+                    		Boolean isZip = (Boolean) manager.getExportChoice().get(ExportChoice.needMavenScript);
+                    		if (isZip == null || !isZip.booleanValue()) {
+                    			dest = dest.substring(0, suffixNdx) + ".kar";
+                    		}
+                    	}
                     }
+                    addBuildArtifact(routeObject, suffix, new File(dest));
                 }
 
                 IRunProcessService runProcessService = CorePlugin.getDefault().getRunProcessService();
