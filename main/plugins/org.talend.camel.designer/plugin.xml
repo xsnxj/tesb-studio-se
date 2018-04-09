@@ -290,6 +290,15 @@
                 name="AddBeansDefaultLibrariesMigrationTask"
                 version="7.0.1">
           </projecttask>
+          <projecttask
+                beforeLogon="false"
+                breaks="5.6.0"
+                class="org.talend.camel.designer.migration.UpdateBuildTypeForCTalendJobMigrationTask"
+                description="Set route as build type for job in cTalendJob"
+                id="org.talend.camel.designer.migration.UpdateBuildTypeForCTalendJobMigrationTask"
+                name="UpdateBuildTypeForCTalendJobMigrationTask"
+                version="7.0.1">
+          </projecttask>
     </extension>
 
         <extension
