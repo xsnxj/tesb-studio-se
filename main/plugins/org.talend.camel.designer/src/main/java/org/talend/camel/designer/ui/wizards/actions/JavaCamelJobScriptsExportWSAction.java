@@ -555,6 +555,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         talendJobManager.setArtifactId(getArtifactId());
         talendJobManager.setArtifactVersion(getArtifactVersion());
         RepositoryNode node = new RepositoryNode(object, null, ENodeType.REPOSITORY_ELEMENT);
+        node.getObject().getProperty().setVersion(jobVersion);
         JobExportAction action = new RouteBundleExportAction(Collections.singletonList(node), jobVersion, bundleVersion,
                 talendJobManager, getTempDir(), "Job");
         action.run(monitor);

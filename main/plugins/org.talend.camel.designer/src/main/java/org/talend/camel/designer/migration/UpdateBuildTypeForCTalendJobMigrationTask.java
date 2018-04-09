@@ -5,11 +5,13 @@ import java.util.GregorianCalendar;
 
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
+import org.talend.core.model.general.Project;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.process.TalendProcessArgumentConstant;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.runprocess.ItemCacheManager;
+import org.talend.repository.ProjectManager;
 import org.talend.repository.utils.EmfModelUtils;
 
 /**
@@ -44,10 +46,20 @@ public class UpdateBuildTypeForCTalendJobMigrationTask extends AbstractRouteItem
 
         if (processID != null && processVersion != null) {
             ProcessItem item = ItemCacheManager.getProcessItem(processID, processVersion);
+            Project itemProject = ProjectManager.getInstance().getCurrentProject();
+            if (item == null) {
+                for (Project refProject : ProjectManager.getInstance().getAllReferencedProjects()) {
+                    item = ItemCacheManager.getRefProcessItem(getProject(), processID);
+                    if (item != null) {
+                        itemProject = refProject;
+                        break;
+                    }
+                }
+            }
             if (item != null) {
                 item.getProperty().getAdditionalProperties().put(TalendProcessArgumentConstant.ARG_BUILD_TYPE, "ROUTE");
                 try {
-                    ProxyRepositoryFactory.getInstance().save(item);
+                    ProxyRepositoryFactory.getInstance().save(itemProject, item, true);
                 } catch (PersistenceException e) {
                     ExceptionHandler.process(e);
                     return false;
