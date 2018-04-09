@@ -227,6 +227,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         // FIXME temporary solution, should be replaced by proper handling
         // of MicroService vs. KAR build.
         boolean isCreatingMicroService = false;
+        Boolean oldMS = RouteProcessingExchange.isCreatingMicroService.get();
         RouteProcessingExchange.isCreatingMicroService.set(Boolean.FALSE);
 
         try {
@@ -238,8 +239,10 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         } catch (Exception e) {
             throw new InvocationTargetException(e);
         } finally {
-            RouteProcessingExchange.isCreatingMicroService.set(null);
-            RouteProcessingExchange.resetMavenOffline();
+            RouteProcessingExchange.isCreatingMicroService.set(oldMS);
+            if (oldMS == null) {
+            	RouteProcessingExchange.resetMavenOffline();
+            }
         }
 
         // FIXME may require some further actions to get all POMs.
