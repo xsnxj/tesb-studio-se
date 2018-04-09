@@ -21,28 +21,7 @@
             </dependency-resolution>
         </configuration>
       </plugin>
-	  <!--plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>2.4.0</version>
-				<executions>
-					<execution>
-						<id>bundle-manifest</id>
-						<phase>process-classes</phase>
-						<goals>
-							<goal>manifest</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<supportedProjectTypes>
-						<supportedProjectType>eclipse-plugin</supportedProjectType>
-					</supportedProjectTypes>
-					<instructions>
-						<_include>-osgi.bnd</_include>
-					</instructions>
-				</configuration>
-			</plugin-->
+      
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -57,8 +36,33 @@
 							<outputDirectory>${basedir}/lib</outputDirectory>
 						</configuration>
 					</execution>
+					
+					<!-- patch for swagger documentation (TESB-21800) -->
+                    <execution>
+                        <id>copy</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>org.apache.cxf</groupId>
+                                    <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
+                                    <version>${cxf.version}</version>
+                                    <classifier>TESB</classifier>
+                                    <type>jar</type>
+                                    <outputDirectory>${basedir}/lib</outputDirectory>
+                                    <destFileName>cxf-rt-rs-service-description-swagger-3.2.4.jar</destFileName>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+					<!-- patch for swagger documentation (TESB-21800) -->
+					
 				</executions>
 			</plugin>
+			
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>license-maven-plugin</artifactId>
@@ -291,11 +295,12 @@
 		<artifactId>cxf-rt-rs-service-description</artifactId>
 		<version>${cxf.version}</version>
 	</dependency>
+
+	<!-- 
     <dependency>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
         <version>${cxf.version}</version>
-        <!-- TESB-18555 remove transitive dependency to FindBugs annotations jar since it's LGPL -->
         <exclusions>
             <exclusion>
                 <groupId>com.google.code.findbugs</groupId>
@@ -303,6 +308,7 @@
             </exclusion>
         </exclusions>
     </dependency>
+     -->
     <!-- Needed by Swagger before update to CXF 3.1.11 -->
     <dependency>
         <groupId>org.yaml</groupId>
