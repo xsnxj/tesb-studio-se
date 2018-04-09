@@ -38,6 +38,7 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.CorePlugin;
 import org.talend.core.model.general.Project;
+import org.talend.core.model.process.JobInfo;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.ERepositoryObjectType;
@@ -48,6 +49,7 @@ import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.runtime.process.IBuildJobHandler;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
+import org.talend.core.runtime.process.LastGenerationInfo;
 import org.talend.core.runtime.repository.build.IBuildResourceParametes;
 import org.talend.designer.core.model.components.EParameterName;
 import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
@@ -188,6 +190,30 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     protected String getArtifactVersion() {
         return PomIdsHelper.getJobVersion(routeObject.getProperty());
+    }
+    
+    private String getJobProcessItemVersion(String jobId) {
+    	if(jobId == null) {
+    		return null;
+    	}
+    	
+    	String version = null;
+    
+    	for(JobInfo job : LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
+            if (jobId.equals(job.getJobId())) {
+                ProcessItem processItem;
+                processItem = job.getProcessItem();
+                if (processItem == null && job.getJobVersion() == null) {
+                	processItem =  org.talend.designer.runprocess.ItemCacheManager.getProcessItem(job.getJobId());
+                }
+                if (processItem == null && job.getJobVersion() != null) {
+                	processItem = org.talend.designer.runprocess.ItemCacheManager.getProcessItem(job.getJobId(), job.getJobVersion());
+                }
+                version  = PomIdsHelper.getJobVersion(processItem.getProperty());
+          	  	break;
+            }
+    	}
+    	return version;
     }
 
     @Override
@@ -394,7 +420,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }
-            String jobArtifactVersion = getArtifactVersion();
+            String jobArtifactVersion = getJobProcessItemVersion(jobId); 
             String jobBundleVersion = bundleVersion;
             BundleModel jobModel = new BundleModel(getGroupId(), jobBundleName, jobArtifactVersion, jobFile);
             if (featuresModel.addBundle(jobModel)) {
