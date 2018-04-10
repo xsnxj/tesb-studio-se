@@ -402,7 +402,7 @@ if (isTestContainer) {
 %>
 	@org.junit.Test
 	public void test<%=instance%>() throws java.lang.Exception {
-
+	setUp();
 <%
 	String assertPart = "";
 
