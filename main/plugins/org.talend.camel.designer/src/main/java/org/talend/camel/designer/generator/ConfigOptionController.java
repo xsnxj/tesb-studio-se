@@ -19,15 +19,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -51,7 +48,9 @@ import org.talend.commons.ui.swt.tableviewer.TableViewerCreatorColumn;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.general.INexusService;
 import org.talend.core.model.process.IElementParameter;
+import org.talend.core.nexus.IRepositoryArtifactHandler;
 import org.talend.core.nexus.NexusServerBean;
+import org.talend.core.nexus.RepositoryArtifactHandlerManager;
 import org.talend.core.nexus.TalendLibsServerManager;
 import org.talend.core.runtime.maven.MavenArtifact;
 import org.talend.core.ui.CoreUIPlugin;
@@ -93,27 +92,28 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
 	
 	protected boolean isAvailable(){
 	    
+        IRepositoryArtifactHandler hander;
+
 	    if(nexusServerBean == null){
 	        MessageDialog.openError(composite.getShell(), "Checking Nexus Connection Error", "Can not initialize the nexus server, Please check the TAC.");
 	    }else{
 	        try {
-                URL url = new URL(
-                        nexusServerBean.getServer() + "/service/local/authentication/login?_dc=" + System.currentTimeMillis());
-	            HttpURLConnection con = (HttpURLConnection) url.openConnection();
-	            con.setConnectTimeout(3000);
 
-                String userpass = nexusServerBean.getUserName() + ":" + nexusServerBean.getPassword();
-                String basicAuth = "Basic " + new String(new Base64().encode(userpass.getBytes()));
-                con.setRequestProperty("Authorization", basicAuth);
+                NexusServerBean localNexusServer = new NexusServerBean();
+                localNexusServer.setServer(nexusServerBean.getRepositoryURI());
+                localNexusServer.setUserName(nexusServerBean.getUserName());
+                localNexusServer.setPassword(nexusServerBean.getPassword());
+                localNexusServer.setRepositoryId(nexusServerBean.getRepositoryId());
+                localNexusServer.setType(nexusServerBean.getType());
+                hander = RepositoryArtifactHandlerManager.getRepositoryHandler(localNexusServer);
+                boolean alive = hander.checkConnection();
 
-	            int state = con.getResponseCode();
-
-	            if (state == 200) {
+                if (alive) {
 	                log.info("Connect to "+nexusServerBean.getServer()+" successfully!");
 	                return true;
-                } else if (state == 401) {
+                } else {
                     MessageDialog.openError(composite.getShell(), "Checking Nexus Connection Error", "Can not connect to "
-                            + nexusServerBean.getServer() + "\n" + con.getResponseMessage() + " ResponseCode : " + state);
+                            + nexusServerBean.getServer() + "\n");
 	            }
 	        }catch (Exception ex) {
 	            MessageDialog.openError(composite.getShell(), "Checking Nexus Connection Error", "Can not connect to "+nexusServerBean.getServer()+"\n"+ex.getMessage());
