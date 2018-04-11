@@ -24,7 +24,7 @@ package org.talend.repository.services.export;
 import java.util.Collections;
 import java.util.Map;
 
-import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.runtime.process.IBuildJobHandler;
@@ -67,7 +67,15 @@ public class BuildDataServiceProvider extends RepositoryObjectTypeBuildProvider 
         if (object != null && object instanceof Property) {
             type = ERepositoryObjectType.getType((Property) object);
         }
-
+        if (type == null) {
+            object = parameters.get(ITEM);
+            if (object != null && object instanceof ServiceItem) {
+                Property property = ((Item) object).getProperty();
+                if (property != null) {
+                    type = ERepositoryObjectType.getType(property);
+                }
+            }
+        }
         if (type != null && type.getType().equals("SERVICES")) {
             return true;
         }
@@ -86,7 +94,7 @@ public class BuildDataServiceProvider extends RepositoryObjectTypeBuildProvider 
             return null;
         }
         final Object item = parameters.get(ITEM);
-        if (item == null || !(item instanceof ProcessItem)) {
+        if (item == null || !(item instanceof ServiceItem)) {
             return null;
         }
         final Object version = parameters.get(VERSION);
