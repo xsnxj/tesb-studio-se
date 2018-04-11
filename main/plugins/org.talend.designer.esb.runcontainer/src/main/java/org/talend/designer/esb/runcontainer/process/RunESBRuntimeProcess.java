@@ -21,7 +21,10 @@ import java.io.PipedOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
@@ -36,8 +39,12 @@ import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.runtime.process.IBuildJobHandler;
+import org.talend.core.runtime.repository.build.AbstractBuildProvider;
+import org.talend.core.runtime.repository.build.BuildExportManager;
+import org.talend.core.runtime.repository.build.IBuildJobParameters;
+import org.talend.core.runtime.repository.build.IBuildParametes;
 import org.talend.designer.esb.runcontainer.export.JobJavaScriptOSGIForESBRuntimeManager;
-import org.talend.designer.esb.runcontainer.export.ServiceExportForESBRuntimeManager;
 import org.talend.designer.esb.runcontainer.logs.FelixLogsModel;
 import org.talend.designer.esb.runcontainer.logs.RuntimeLogHTTPAdapter;
 import org.talend.designer.esb.runcontainer.logs.RuntimeLogHTTPMonitor;
@@ -47,9 +54,9 @@ import org.talend.designer.runprocess.ui.ProcessManager;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.services.model.services.ServiceItem;
-import org.talend.repository.services.ui.action.ExportServiceAction;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
+import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManagerFactory;
 import org.talend.repository.utils.EmfModelUtils;
 
@@ -236,19 +243,47 @@ public class RunESBRuntimeProcess extends Process {
                 if (EmfModelUtils.getComponentByName(processItem, "tESBProviderRequest") != null) {
                     List<Item> items = new ArrayList<Item>(1);
                     items.add(processItem);
-                    Collection<IRepositoryViewObject> allDependencies = ProcessUtils.getProcessDependencies(
-                            ERepositoryObjectType.METADATA, items, false);
+                    Collection<IRepositoryViewObject> allDependencies = ProcessUtils
+                            .getProcessDependencies(ERepositoryObjectType.METADATA, items, false);
                     // check service
                     if (!allDependencies.isEmpty()) {
                         target = File.createTempFile("service", FileConstants.KAR_FILE_SUFFIX, null);
                         for (IRepositoryViewObject object : allDependencies) {
                             if (object.getProperty().getItem() != null && object.getProperty().getItem() instanceof ServiceItem) {
                                 ServiceItem serviceItem = (ServiceItem) object.getProperty().getItem();
-                                ExportServiceAction action = new ExportServiceAction(serviceItem, target.getAbsolutePath(), null,
-                                        new ServiceExportForESBRuntimeManager(null, statisticsPort, tracePort));
-                                action.run(monitor);
+                                // ExportServiceAction action = new ExportServiceAction(serviceItem,
+                                // target.getAbsolutePath(), null,
+                                // new ServiceExportForESBRuntimeManager(null, statisticsPort, tracePort));
+                                // action.run(monitor);
+
+                                Map<ExportChoice, Object> exportChoiceMap = new EnumMap<ExportChoice, Object>(ExportChoice.class);
+                                exportChoiceMap.put(ExportChoice.needLauncher, true);
+                                exportChoiceMap.put(ExportChoice.needSystemRoutine, true);
+                                exportChoiceMap.put(ExportChoice.needUserRoutine, true);
+                                exportChoiceMap.put(ExportChoice.needTalendLibraries, true);
+                                exportChoiceMap.put(ExportChoice.needJobItem, true);
+                                exportChoiceMap.put(ExportChoice.needJobScript, true);
+                                exportChoiceMap.put(ExportChoice.needContext, true);
+                                exportChoiceMap.put(ExportChoice.needSourceCode, true);
+                                exportChoiceMap.put(ExportChoice.applyToChildren, false);
+                                exportChoiceMap.put(ExportChoice.doNotCompileCode, false);
+
+                                Map<String, Object> parameters = new HashMap<String, Object>();
+                                parameters.put(IBuildParametes.ITEM, serviceItem);
+                                parameters.put(IBuildParametes.VERSION, serviceItem.getProperty().getVersion());
+                                parameters.put(IBuildJobParameters.CONTEXT_GROUP, IContext.DEFAULT);
+                                parameters.put(IBuildJobParameters.CHOICE_OPTION, exportChoiceMap);
+
+                                AbstractBuildProvider buildProvider = BuildExportManager.getInstance().getBuildProvider("Service",
+                                        parameters);
+
+                                IBuildJobHandler buildServiceHandler = (IBuildJobHandler) buildProvider
+                                        .createBuildExportHandler(parameters);
+                                buildServiceHandler.generateJobFiles(monitor);
+                                buildServiceHandler.build(monitor);
                                 applyContextConfiguration(configID);
-                                kars = JMXUtil.installKar(target);
+                                kars = JMXUtil.installKar(buildServiceHandler.getJobTargetFile().getLocation().toFile());
+
                             }
                         }
                     }
@@ -260,9 +295,9 @@ public class RunESBRuntimeProcess extends Process {
                             JobScriptsManager.LAUNCHER_ALL, statisticsPort, tracePort);
                     // generate
                     jobScriptsManager.setDestinationPath(target.getAbsolutePath());
-                    JobExportAction jobAction = new JobExportAction(Collections.singletonList(node), node.getObject()
-                            .getProperty().getVersion(), node.getObject().getProperty().getVersion(), jobScriptsManager,
-                            System.getProperty("java.io.tmpdir"));
+                    JobExportAction jobAction = new JobExportAction(Collections.singletonList(node),
+                            node.getObject().getProperty().getVersion(), node.getObject().getProperty().getVersion(),
+                            jobScriptsManager, System.getProperty("java.io.tmpdir"));
 
                     jobAction.run(monitor);
                     if (jobAction.isBuildSuccessful()) {
@@ -316,20 +351,12 @@ public class RunESBRuntimeProcess extends Process {
         JMXUtil.deleteConfigProperties(configID);
         JMXUtil.setConfigProperty(configID, "context", contextName);
         /*
-        // The following code is only required if context parameters are
-        // to be modified dynamically at deployment into local runtime.
-        // Such functionaliy is currently not implemented in Talend Studio,
-        // but contexts are applied as generated.
-        List<org.talend.core.model.process.IContextParameter> params = context.getContextParameterList();
-        if (params != null) {
-            for (org.talend.core.model.process.IContextParameter param : params) {
-                String name = param.getName();
-                if ("context".equals(name)) {
-                    continue;
-                }
-                JMXUtil.setConfigProperty(configID, name, param.getValue());
-            }
-        }
-        */
+         * // The following code is only required if context parameters are // to be modified dynamically at deployment
+         * into local runtime. // Such functionaliy is currently not implemented in Talend Studio, // but contexts are
+         * applied as generated. List<org.talend.core.model.process.IContextParameter> params =
+         * context.getContextParameterList(); if (params != null) { for (org.talend.core.model.process.IContextParameter
+         * param : params) { String name = param.getName(); if ("context".equals(name)) { continue; }
+         * JMXUtil.setConfigProperty(configID, name, param.getValue()); } }
+         */
     }
 }
