@@ -35,7 +35,7 @@ public class StartRuntimeProgress extends RuntimeProgress {
 
     @Override
     public void run(IProgressMonitor parentMonitor) throws InvocationTargetException, InterruptedException {
-        SubMonitor subMonitor = SubMonitor.convert(parentMonitor, 10);
+        SubMonitor subMonitor = SubMonitor.convert(parentMonitor, 100);
         subMonitor.setTaskName(RunContainerMessages.getString("StartRuntimeAction.Starting")); //$NON-NLS-1$
         if (!checkRunning()) {
             try {
@@ -44,7 +44,7 @@ public class StartRuntimeProgress extends RuntimeProgress {
                         store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_LOCATION));
                 int i = 0;
                 String dot = "."; //$NON-NLS-1$
-                while (JMXUtil.createJMXconnection() == null && ++i < 11 && !subMonitor.isCanceled() && proc.isAlive()) {
+                while (JMXUtil.createJMXconnection() == null && ++i < 101 && !subMonitor.isCanceled() && proc.isAlive()) {
                     subMonitor.subTask(RunContainerMessages.getString("StartRuntimeAction.Try") + dot); //$NON-NLS-1$
                     dot += "."; //$NON-NLS-1$
                     subMonitor.worked(1);
