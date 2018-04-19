@@ -128,7 +128,7 @@ public class RunContainerPreferencePage extends FieldLayoutPreferencePage implem
         groupServer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         groupServer.setLayout(new GridLayout(2, false));
 
-        compositeServerBody = new Composite(groupServer, SWT.BORDER);
+        compositeServerBody = new Composite(groupServer, SWT.NONE);
         compositeServerBody.setLayout(gridLayoutDefault);
         compositeServerBody.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
