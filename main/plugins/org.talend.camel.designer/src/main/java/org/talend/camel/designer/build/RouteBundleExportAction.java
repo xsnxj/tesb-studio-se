@@ -115,6 +115,11 @@ public class RouteBundleExportAction extends JobExportAction {
                         if (FileConstants.META_INF_FOLDER_NAME.equals(fileResource.getDirectoryName())) {
                             FilesUtils.copyFile(file, getTemporaryStoreFile(file, FileConstants.META_INF_FOLDER_NAME));
                         } else if (fileResource.getDirectoryName().equals(LIB)) {
+
+                            if (file.getName().matches("^camel-(.*)-alldep-(.*)")) {
+                                continue;
+                            }
+
                             FilesUtils.copyFile(file, getTemporaryStoreFile(file, LIB));
                         } else if (fileResource.getDirectoryName().equals("")) {
                             if (FileConstants.BLUEPRINT_FOLDER_NAME.equals(relativePath)) {
