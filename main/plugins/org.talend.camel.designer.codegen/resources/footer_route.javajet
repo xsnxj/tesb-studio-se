@@ -351,6 +351,10 @@ for (IContextParameter ctxParam : params) {
 <%	}
 }
 %>
+
+<%
+	if(exportTypeSpringBoot){
+%>
 	public Object getProperty(String n) {
 		if (n != null && !n.isEmpty()) {
 			try {
@@ -362,6 +366,10 @@ for (IContextParameter ctxParam : params) {
 		}
 		return null;
 	}
+	
+<%	
+}
+%>
 	
 	}
 
