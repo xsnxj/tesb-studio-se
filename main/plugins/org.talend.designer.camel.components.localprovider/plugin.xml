@@ -22,7 +22,7 @@
 
     <extension point="org.talend.designer.camel.dependencies.bundleClasspath">
         <classpath name="cMQConnectionFactory"
-            parameter="${tesb-qpid-amqp-jms-client},${tesb-qpid-amqp-proton-j}">
+            parameter="${tesb-qpid-jms-client},${tesb-proton-j}">
             <predicate
                 attributeName="MQ_TYPE"
                 attributeValue="AMQP">
@@ -229,14 +229,14 @@
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-amqp}"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
-            name="${tesb-qpid-amqp-jms-client}"
-            id="qpid-amqp-jms-client"
-            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-jms-client}"
+            name="${tesb-qpid-jms-client}"
+            id="qpid-jms-client"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-jms-client}"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
-            name="${tesb-qpid-amqp-proton-j}"
-            id="qpid-amqp-proton-j"
-            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-proton-j}"
+            name="${tesb-proton-j}"
+            id="proton-j"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-proton-j}"
             bundleID="" />
 
         <libraryNeededGroup
@@ -245,8 +245,8 @@
                 name="camel-amqp">
             <group id="camel-jms" />
             <library id="camel-amqp" />
-            <library id="qpid-amqp-jms-client" />
-            <library id="qpid-amqp-proton-j" />
+            <library id="qpid-jms-client" />
+            <library id="proton-j" />
         </libraryNeededGroup>
 
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
