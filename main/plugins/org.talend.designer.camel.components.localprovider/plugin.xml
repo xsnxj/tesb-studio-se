@@ -22,7 +22,7 @@
 
     <extension point="org.talend.designer.camel.dependencies.bundleClasspath">
         <classpath name="cMQConnectionFactory"
-            parameter="${tesb-qpid-amqp-1-0-common},${tesb-qpid-amqp-1-0-client},${tesb-qpid-amqp-1-0-client-jms}">
+            parameter="${tesb-qpid-jms-client},${tesb-proton-j}">
             <predicate
                 attributeName="MQ_TYPE"
                 attributeValue="AMQP">
@@ -247,19 +247,14 @@
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-amqp}"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
-            name="${tesb-qpid-amqp-1-0-common}"
-            id="qpid-amqp-1-0-common"
-            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-common}"
+            name="${tesb-qpid-jms-client}"
+            id="qpid-jms-client"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-jms-client}"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
-            name="${tesb-qpid-amqp-1-0-client}"
-            id="qpid-amqp-1-0-client"
-            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-client}"
-            bundleID="" />
-        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
-            name="${tesb-qpid-amqp-1-0-client-jms}"
-            id="qpid-amqp-1-0-client-jms"
-            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-qpid-amqp-1-0-client-jms}"
+            name="${tesb-proton-j}"
+            id="proton-j"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-proton-j}"
             bundleID="" />
 
         <libraryNeededGroup
@@ -268,9 +263,8 @@
                 name="camel-amqp">
             <group id="camel-jms" />
             <library id="camel-amqp" />
-            <library id="qpid-amqp-1-0-common" />
-            <library id="qpid-amqp-1-0-client" />
-            <library id="qpid-amqp-1-0-client-jms" />
+            <library id="qpid-jms-client" />
+            <library id="proton-j" />
         </libraryNeededGroup>
 
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
