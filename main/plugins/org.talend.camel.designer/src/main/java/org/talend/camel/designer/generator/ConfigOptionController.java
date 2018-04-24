@@ -328,36 +328,52 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
                 try {
 
                     monitor.subTask("Checking " + jn + " from " + nexusServerBean.getServer());
-                    // Map metadata = service.getMavenMetadata(nexusServerBean, getGroupId(), a, currentNexusVersion);
+
+                    String version = "";
 
                     MavenArtifact ma = null;
-                    List<MavenArtifact> mas = hander.search(getGroupId(), a, null,
-                            !currentNexusVersion.endsWith(MavenUrlHelper.VERSION_SNAPSHOT),
-                            currentNexusVersion.endsWith(MavenUrlHelper.VERSION_SNAPSHOT));
 
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+                    if ("NEXUS_3".equals(nexusServerBean.getType())) {
+                        List<MavenArtifact> mas = hander.search(getGroupId(), a, null,
+                                !currentNexusVersion.endsWith(MavenUrlHelper.VERSION_SNAPSHOT),
+                                currentNexusVersion.endsWith(MavenUrlHelper.VERSION_SNAPSHOT));
 
-                    Collections.sort(mas, new Comparator<MavenArtifact>() {
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
-                        @Override
-                        public int compare(MavenArtifact o1, MavenArtifact o2) {
+                        Collections.sort(mas, new Comparator<MavenArtifact>() {
 
-                            Long l1 = 0l;
-                            Long l2 = 0l;
-                            try {
-                                l1 = sdf.parse(o1.getLastUpdated()).getTime();
-                                l2 = sdf.parse(o2.getLastUpdated()).getTime();
-                            } catch (ParseException e) {
-                                e.printStackTrace();
+                            @Override
+                            public int compare(MavenArtifact o1, MavenArtifact o2) {
+
+                                Long l1 = 0l;
+                                Long l2 = 0l;
+                                try {
+                                    l1 = sdf.parse(o1.getLastUpdated()).getTime();
+                                    l2 = sdf.parse(o2.getLastUpdated()).getTime();
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                }
+
+                                return (int) (l2 - l1);
                             }
+                        });
 
-                            return (int) (l2 - l1);
-                        }
-                    });
+                        ma = mas.get(0);
 
-                    ma = mas.get(0);
+                        version = ma.getVersion();
+                    } else {
+                        Map metadata = service.getMavenMetadata(nexusServerBean, getGroupId(), a, currentNexusVersion);
+                        ma = new MavenArtifact();
+                        ma.setArtifactId(a);
+                        ma.setGroupId("org.talend.libraries");
+                        ma.setVersion(currentNexusVersion);
+                        ma.setType("jar");
 
-                    if (StringUtils.equals(ma.getVersion(), currentNexusVersion)) {
+                        version = (String) metadata.get("Versioning.Latest");
+                    }
+
+
+                    if (StringUtils.equals(version, currentNexusVersion)) {
 
                         String p = PomUtil.getAbsArtifactPath(ma);
 
