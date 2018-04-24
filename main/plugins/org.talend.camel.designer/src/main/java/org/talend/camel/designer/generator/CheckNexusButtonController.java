@@ -20,11 +20,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Button;
 import org.talend.commons.ui.swt.tableviewer.TableViewerCreator;
-import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
-import org.talend.designer.core.ui.editor.nodes.Node;
-import org.talend.librariesmanager.prefs.LibrariesManagerUtils;
 
 public class CheckNexusButtonController extends ConfigOptionController {
 
@@ -61,16 +58,6 @@ public class CheckNexusButtonController extends ConfigOptionController {
 
                 needUpdateJars.clear();
 
-                TableViewerCreator tableViewerCreator = (TableViewerCreator) hashCurControls.get("NEED_UPDATE_LIST");
-
-                tableViewerCreator.refresh();
-
-                List<ModuleNeeded> updatedModules = null;
-
-                if (elem instanceof Node) {
-                    updatedModules = LibrariesManagerUtils.getNotInstalledModules(((Node) elem));
-                }
-
                 if (nexusServerBean == null) {
                     return null;
                 }
@@ -81,6 +68,8 @@ public class CheckNexusButtonController extends ConfigOptionController {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                TableViewerCreator tableViewerCreator = (TableViewerCreator) hashCurControls.get("NEED_UPDATE_LIST");
 
                 tableViewerCreator.refresh();
 

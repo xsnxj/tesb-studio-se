@@ -13,17 +13,17 @@
 package org.talend.camel.designer.generator;
 
 import java.beans.PropertyChangeEvent;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -53,6 +53,7 @@ import org.talend.core.nexus.NexusServerBean;
 import org.talend.core.nexus.RepositoryArtifactHandlerManager;
 import org.talend.core.nexus.TalendLibsServerManager;
 import org.talend.core.runtime.maven.MavenArtifact;
+import org.talend.core.runtime.maven.MavenUrlHelper;
 import org.talend.core.ui.CoreUIPlugin;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
 import org.talend.core.utils.TalendQuoteUtils;
@@ -90,9 +91,9 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
 
 	}
 	
+    IRepositoryArtifactHandler hander;
+
 	protected boolean isAvailable(){
-	    
-        IRepositoryArtifactHandler hander;
 
 	    if(nexusServerBean == null){
 	        MessageDialog.openError(composite.getShell(), "Checking Nexus Connection Error", "Can not initialize the nexus server, Please check the TAC.");
@@ -100,10 +101,11 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
 	        try {
 
                 NexusServerBean localNexusServer = new NexusServerBean();
-                localNexusServer.setServer(nexusServerBean.getRepositoryURI());
+                localNexusServer.setServer(nexusServerBean.getServer());
                 localNexusServer.setUserName(nexusServerBean.getUserName());
                 localNexusServer.setPassword(nexusServerBean.getPassword());
                 localNexusServer.setRepositoryId(nexusServerBean.getRepositoryId());
+                localNexusServer.setSnapshotRepId(nexusServerBean.getSnapshotRepId());
                 localNexusServer.setType(nexusServerBean.getType());
                 hander = RepositoryArtifactHandlerManager.getRepositoryHandler(localNexusServer);
                 boolean alive = hander.checkConnection();
@@ -203,14 +205,47 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
             if (nexusServerBean == null) {
                 tableViewerCreator.getTable().setVisible(false);
             } else {
+                Display.getDefault().asyncExec(new Runnable() {
 
-                TableViewerCreatorColumn blankCol = (TableViewerCreatorColumn) tableViewerCreator.getColumns().get(1);
-                blankCol.getTableColumn().setWidth(0);
-                blankCol.getTableColumn().setText("");
-                blankCol.getTableColumn().setResizable(false);
+                    @Override
+                    public void run() {
+                        // TODO Auto-generated method stub
+
+                        TableViewerCreatorColumn blankCol = (TableViewerCreatorColumn) tableViewerCreator.getColumns().get(1);
+                        blankCol.getTableColumn().setWidth(0);
+                        blankCol.getTableColumn().setText("");
+                        blankCol.getTableColumn().setResizable(false);
+                        IElementParameter needUpdateList = elem.getElementParameter("NEED_UPDATE_LIST");
+                        IElementParameter elementParameterFromField = elem.getElementParameter("DRIVER_JAR");
+
+                        List<Map<String, String>> driverJars = (List) elementParameterFromField.getValue();
+                        List needUpdateJars = (List) needUpdateList.getValue();
+
+                        needUpdateJars.clear();
+
+                        List jars = (List) elementParameterFromField.getValue();
+
+                        if (jars.size() > 0) {
+                            for (int i = 0; i < jars.size(); i++) {
+                                Map<String, String> jar = (Map) jars.get(i);
+
+                                String currentNexusVersion = TalendQuoteUtils.removeQuotes(jar.get(JAR_NEXUS_VERSION));
+                                String currentNexusPreVersion = jar.get(JAR_NEXUS_PRE_VERSION);
+                                String jn = TalendQuoteUtils.removeQuotes(jar.get(JAR_NAME));
+                                Map needUpdateJar = getNeedUpdateJar("", jn, currentNexusVersion, currentNexusPreVersion);
+                                needUpdateJar.put("JAR_SYNC", "false");
+                                needUpdateJars.add(needUpdateJar);
+                            }
+                        }
+
+                        tableViewerCreator.getTableViewer().refresh();
+
+                    }
+
+                });
 
                 // refreshDynamicProperty();
-                tableViewerCreator.getTableViewer().refresh();
+                // tableViewerCreator.getTableViewer().refresh();
             }
         	
         }
@@ -292,66 +327,87 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
 
                 try {
 
-                    monitor.subTask("Checking" + jn + "from " + nexusServerBean.getServer());
-                    Map metadata = service.getMavenMetadata(nexusServerBean, getGroupId(), a, currentNexusVersion);
+                    monitor.subTask("Checking " + jn + " from " + nexusServerBean.getServer());
+                    // Map metadata = service.getMavenMetadata(nexusServerBean, getGroupId(), a, currentNexusVersion);
 
-                    if (metadata.get("Versioning.Latest").equals(currentNexusVersion)) {
+                    MavenArtifact ma = null;
+                    List<MavenArtifact> mas = hander.search(getGroupId(), a, null,
+                            !currentNexusVersion.endsWith(MavenUrlHelper.VERSION_SNAPSHOT),
+                            currentNexusVersion.endsWith(MavenUrlHelper.VERSION_SNAPSHOT));
 
-                        MavenArtifact ma = new MavenArtifact();
-                        ma.setArtifactId(a);
-                        ma.setGroupId("org.talend.libraries");
-                        ma.setVersion(currentNexusVersion);
-                        ma.setType("jar");
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+
+                    Collections.sort(mas, new Comparator<MavenArtifact>() {
+
+                        @Override
+                        public int compare(MavenArtifact o1, MavenArtifact o2) {
+
+                            Long l1 = 0l;
+                            Long l2 = 0l;
+                            try {
+                                l1 = sdf.parse(o1.getLastUpdated()).getTime();
+                                l2 = sdf.parse(o2.getLastUpdated()).getTime();
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+
+                            return (int) (l2 - l1);
+                        }
+                    });
+
+                    ma = mas.get(0);
+
+                    if (StringUtils.equals(ma.getVersion(), currentNexusVersion)) {
 
                         String p = PomUtil.getAbsArtifactPath(ma);
 
                         monitor.subTask("Loading checksum file from " + nexusServerBean.getServer());
 
-                        InputStream is = service.getContentInputStream(nexusServerBean, "", getGroupId(), a,
-                                metadata.get("Versioning.Latest").toString(), "jar.md5");
+                        // InputStream is = service.getContentInputStream(nexusServerBean, "", getGroupId(), a,
+                        // ma.getVersion(), "jar.md5");
 
                         if (p != null) {
 
-                            if (is != null) {
-                                String remoteM2FileMD5 = "";
-                                try (BufferedReader buffer = new BufferedReader(new InputStreamReader(is))) {
-                                    remoteM2FileMD5 = buffer.lines().collect(Collectors.joining("\n"));
-                                }
+                            // if (is != null) {
+                            // String remoteM2FileMD5 = "";
+                            // try (BufferedReader buffer = new BufferedReader(new InputStreamReader(is))) {
+                            // remoteM2FileMD5 = buffer.lines().collect(Collectors.joining("\n"));
+                            // }
                                 File f = new File(p);// local file
 
                                 if (f.exists()) {
                                     String localM2FileMD5 = MD5.getMD5(FilesUtils.getBytes(f));
 
-                                    if (!StringUtils.equalsIgnoreCase(localM2FileMD5, remoteM2FileMD5)) {
-                                        Map needUpdateJar = getNeedUpdateJar("✘", jn, currentNexusVersion,
-                                                currentNexusPreVersion);
-                                        needUpdateJar.put("JAR_SYNC", true);
-                                        needUpdateJars.add(needUpdateJar);
-                                    } else {
+                                // if (!StringUtils.equalsIgnoreCase(localM2FileMD5, remoteM2FileMD5)) {
+                                // Map needUpdateJar = getNeedUpdateJar("✘", jn, currentNexusVersion,
+                                // currentNexusPreVersion);
+                                // needUpdateJar.put("JAR_SYNC", true);
+                                // needUpdateJars.add(needUpdateJar);
+                                // } else {
 
                                         Map needUpdateJar = getNeedUpdateJar("✔", jn, currentNexusVersion,
                                                 currentNexusPreVersion);
                                         needUpdateJar.put("JAR_SYNC", "false");
                                         needUpdateJars.add(needUpdateJar);
-                                    }
+                                // }
 
                                 } else {
                                     Map needUpdateJar = getNeedUpdateJar("✘", jn, currentNexusVersion, currentNexusPreVersion);
                                     needUpdateJar.put("JAR_SYNC", "true");
                                     needUpdateJars.add(needUpdateJar);
                                 }
-                            }
+                            // }
                         } else {
-                            if (is != null) {
+                            // if (is != null) {
                                 Map needUpdateJar = getNeedUpdateJar("✘", jn, currentNexusVersion, currentNexusPreVersion);
                                 needUpdateJar.put("JAR_SYNC", "true");
                                 needUpdateJars.add(needUpdateJar);
-                            }
+                            // }
                         }
 
                     } else {
                         Map needUpdateJar = getNeedUpdateJar("✘", jn, currentNexusVersion,
-                                metadata.get("Versioning.Latest").toString());
+                                ma.getVersion());
                         needUpdateJar.put("JAR_SYNC", "true");
                         needUpdateJars.add(needUpdateJar);
                     }

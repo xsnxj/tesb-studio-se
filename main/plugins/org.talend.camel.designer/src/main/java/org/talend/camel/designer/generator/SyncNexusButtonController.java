@@ -14,7 +14,6 @@ package org.talend.camel.designer.generator;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +104,8 @@ public class SyncNexusButtonController extends ConfigOptionController {
         @Override
         public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
+            isAvailable();
+
             monitor.beginTask("Syncing the nexus server...", false ? IProgressMonitor.UNKNOWN : jars.size());
 
             for (int i = 0; i < needUpdateJars.size(); i++) {
@@ -144,8 +145,9 @@ public class SyncNexusButtonController extends ConfigOptionController {
                                 if (f.exists()) {
                                     try {
                                         monitor.subTask("Installing local dependency ... " + jn);
-                                        librariesService.deployLibrary(f.toURI().toURL(),
-                                                "mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
+                                        // librariesService.deployLibrary(f.toURI().toURL(),
+                                        // "mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
+                                        hander.resolve("mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
                                         driverJar.put(JAR_NEXUS_VERSION, jnv);
                                     } catch (Exception e) {
                                         e.printStackTrace();
@@ -156,16 +158,19 @@ public class SyncNexusButtonController extends ConfigOptionController {
                         } else {
                             monitor.subTask("Donwloading" + jn + "from " + nexusServerBean.getServer());
 
-                            InputStream is = service.getContentInputStream(nexusServerBean, "", getGroupId(), a, jnv, null);
-
-                            File file = generateTempFile(is, jn);
+                            // InputStream is = service.getContentInputStream(nexusServerBean, "", getGroupId(), a, jnv,
+                            // "jar");
+                            //
+                            // File file = generateTempFile(is, jn);
 
                             try {
 
                                 monitor.subTask("Installing local dependency ... " + jn);
 
-                                librariesService.deployLibrary(file.toURI().toURL(),
-                                        "mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
+                                // librariesService.deployLibrary(file.toURI().toURL(),
+                                // "mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
+
+                                hander.resolve("mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
 
                                 jar.put("JAR_STATUS", "✔");
                             } catch (Exception e) {
