@@ -2905,6 +2905,38 @@ if (isProvider) {
                         ep.append(port);
                     }
 
+                    // Add amqp.* params from cAMQP components which use the cMqConnectionFactory
+                    java.util.Map<String, String> amqpParamsMap = new java.util.HashMap();
+                    for (INode node_camqp: process.getNodesOfType("cAMQP")) {
+                        if (node.getUniqueName().equals(ElementParameterParser.getValue(node_camqp, "__CONNECTION_FACOTRY_CONFIGURATION__"))) {
+                            java.util.List<java.util.Map<String, String>> tableValues = (java.util.List<java.util.Map<String, String>>) ElementParameterParser.getObjectValue(node_camqp, "__URI_OPTIONS__");
+                            for (java.util.Map<String, String> map : tableValues) {
+                                String argName = map.get("NAME").trim();
+                                if(argName.startsWith("\"") && argName.endsWith("\"") && argName.length() >= 2) {
+                                    argName = argName.substring(1, argName.length() - 1);
+                                }
+                                if (argName.startsWith("amqp.")) {
+                                    String argValue = map.get("VALUE").trim();
+                                    if(argValue.startsWith("\"") && argValue.endsWith("\"") && argValue.length() >= 2) {
+                                        argValue = argValue.substring(1, argValue.length() - 1);
+                                    }
+                                    amqpParamsMap.put(argName, argValue);
+                                }
+                            }
+                        }
+                    }
+                    if (!amqpParamsMap.isEmpty()) {
+                        String amqpParamString = " + \"?";
+                        for (String argName : amqpParamsMap.keySet()) {
+                            String argValue = amqpParamsMap.get(argName);
+                            amqpParamString = amqpParamString + argName + "=" + argValue + "&";
+                        }
+                        amqpParamString = amqpParamString.substring(1, amqpParamString.length()-1);
+                        amqpParamString = amqpParamString + "\"";
+                        ep.append(amqpParamString);
+                    }
+
+
                     if(useAuth) {
 
                         String passwordFieldName = "__AMQP_PASSWORD__";
