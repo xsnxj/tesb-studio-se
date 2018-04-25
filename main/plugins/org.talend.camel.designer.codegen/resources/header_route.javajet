@@ -2890,32 +2890,40 @@ if (isProvider) {
                     String host = helper.getStringParam("__AMQP_BROKER_URI__");
                     boolean useSSL = helper.getBoolParam("__AMQP_SSL__");
                     boolean useAuth = helper.getBoolParam("__AMQP_USE_AUTH__");
+                    String port = helper.getStringParam("__AMQP_PORT__");
 
                     StringBuilder ep = new StringBuilder();
+                    String username = helper.getStringParam("__AMQP_USERNAME__");
+
                     ep.append("\"");
                     ep.append(useSSL?"amqps":"amqp");
                     ep.append("://\" + ");
-                    if(useAuth) {
-                        ep.append(helper.getStringParam("__AMQP_USERNAME__"));
-                        ep.append("+ \":\" +");
-                        String passwordFieldName = "__AMQP_PASSWORD__";
 
-                        %><%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%><%
-
-                        ep.append("decryptedPassword_");
-                        ep.append(cid);
-                        ep.append("+ \"@\" +");
-                    }
                     ep.append(host);
-                    String port = helper.getStringParam("__AMQP_PORT__");
                     if (!port.isEmpty()) {
                         ep.append("+ \":\" + ");
                         ep.append(port);
                     }
+
+                    if(useAuth) {
+
+                        String passwordFieldName = "__AMQP_PASSWORD__";
+
+                        %><%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%><%
+                    }
+
 %>
+
+                    <% if (useAuth) {%>
+                        org.apache.qpid.jms.JmsConnectionFactory jmsConnFactory = new org.apache.qpid.jms.JmsConnectionFactory(<%=username%>, decryptedPassword_<%=cid%>, <%=ep.toString()%>);
+                    <%} else {%>
+                        org.apache.qpid.jms.JmsConnectionFactory jmsConnFactory = new org.apache.qpid.jms.JmsConnectionFactory(<%=ep.toString()%>);
+                    <%}%>
+
                     if(camelContext.getComponent(<%=name%>)==null){
                         camelContext.addComponent(<%=name%>,
-                                new org.apache.camel.component.amqp.AMQPComponent(new org.apache.qpid.jms.JmsConnectionFactory(<%=ep.toString()%>)));
+                                new org.apache.camel.component.amqp.AMQPComponent(jmsConnFactory));
+
                     }
                     //((org.apache.camel.component.amqp.AMQPComponent) camelContext.getComponent(<%=name%>)).getConfiguration().setClientId("<%=process.getName().toLowerCase()%>" + java.util.UUID.randomUUID().toString());
 <%
