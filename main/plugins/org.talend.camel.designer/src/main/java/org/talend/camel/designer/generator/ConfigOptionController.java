@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -340,7 +341,15 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
 
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
 
-                        Collections.sort(mas, new Comparator<MavenArtifact>() {
+                        List<MavenArtifact> masTmp = new ArrayList<>();
+
+                        for (int j = 0; j < mas.size(); j++) {
+                            if (StringUtils.equals(currentNexusVersion, mas.get(j).getVersion())) {
+                                masTmp.add(mas.get(j));
+                            }
+                        }
+
+                        Collections.sort(masTmp, new Comparator<MavenArtifact>() {
 
                             @Override
                             public int compare(MavenArtifact o1, MavenArtifact o2) {
@@ -358,7 +367,7 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
                             }
                         });
 
-                        ma = mas.get(0);
+                        ma = masTmp.get(0);
 
                         version = ma.getVersion();
                     } else {
@@ -367,13 +376,14 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
                         ma.setArtifactId(a);
                         ma.setGroupId("org.talend.libraries");
                         ma.setVersion(currentNexusVersion);
-                        ma.setType("jar");
 
                         version = (String) metadata.get("Versioning.Latest");
                     }
 
 
                     if (StringUtils.equals(version, currentNexusVersion)) {
+
+                        ma.setType("jar");
 
                         String p = PomUtil.getAbsArtifactPath(ma);
 

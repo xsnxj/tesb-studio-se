@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -42,6 +42,7 @@ import org.talend.core.nexus.NexusServerBean;
 import org.talend.core.nexus.TalendLibsServerManager;
 import org.talend.core.runtime.maven.MavenArtifact;
 import org.talend.core.utils.TalendQuoteUtils;
+import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.core.ui.editor.AbstractTalendEditor;
 import org.talend.designer.maven.utils.PomUtil;
 import org.talend.repository.ui.wizards.exportjob.util.ExportJobUtil;
@@ -134,6 +135,13 @@ public class CamelTalendEditor extends AbstractTalendEditor {
                         @Override
                         public void run() {
                             getProcess().refreshProcess();
+                            if (GlobalServiceRegister.getDefault().isServiceRegistered(IDesignerCoreService.class)) {
+                                IDesignerCoreService designerCoreService = (IDesignerCoreService) GlobalServiceRegister
+                                        .getDefault().getService(IDesignerCoreService.class);
+                                if (designerCoreService != null) {
+                                    designerCoreService.refreshComponentView();
+                                }
+                            }
                         }
 
                     });
@@ -178,6 +186,22 @@ public class CamelTalendEditor extends AbstractTalendEditor {
 
             monitor.beginTask("Syncing the nexus server...", false ? IProgressMonitor.UNKNOWN : jars.size());
 
+            // IViewPart[] viewParts = PlatformUI.getWorkbench().getWorkbenchWindows()[0].getPages()[0].getViews();
+            // for (IViewPart viewPart : viewParts) {
+            // if (viewPart != null && viewPart instanceof ComponentSettingsView) {
+            // ComponentSettingsView componentView = (ComponentSettingsView) viewPart;
+            //
+            // TalendPropertyTabDescriptor currentSelectedTab = (TalendPropertyTabDescriptor)componentView.getElement();
+            //
+            // if (currentSelectedTab != null) {
+            // IDynamicProperty dc = currentSelectedTab.get
+            // if (dc != null) {
+            // dc.refresh();
+            // }
+            // }
+            // }
+            // }
+
             for (int i = 0; i < jars.size(); i++) {
 
                 Map<String, String> o = jars.get(i);
@@ -198,6 +222,11 @@ public class CamelTalendEditor extends AbstractTalendEditor {
 
                         try {
                             monitor.subTask("Installing local dependency ... " + jn);
+                            String versionType = ".SNAPSHOT";
+                            
+                            if (StringUtils.endsWithIgnoreCase(jnv, versionType)) {
+                                jnv = jnv.replace(versionType, "-SNAPSHOT");
+                            }
 
                             service.deployLibrary(jarFile.toURI().toURL(), "mvn:org.talend.libraries/" + a + "/" + jnv + "/jar", true, updateNexusJars);
 
@@ -206,6 +235,8 @@ public class CamelTalendEditor extends AbstractTalendEditor {
                         }
                         cConfigStoredInfo.put(jn, jnv);
                         o.put("JAR_PATH", "");
+                        o.put("JAR_NEXUS_VERSION", jnv);
+
                     }
                 }
 

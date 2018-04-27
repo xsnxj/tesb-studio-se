@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.gef.commands.Command;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -166,11 +167,11 @@ public class SyncNexusButtonController extends ConfigOptionController {
                             try {
 
                                 monitor.subTask("Installing local dependency ... " + jn);
+                                File file = hander.resolve("mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
 
-                                // librariesService.deployLibrary(file.toURI().toURL(),
-                                // "mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
-
-                                hander.resolve("mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
+                                File fileTemp = generateTempFile(FileUtils.openInputStream(file), jn);
+                                librariesService.deployLibrary(fileTemp.toURI().toURL(),
+                                        "mvn:org.talend.libraries/" + a + "/" + jnv + "/jar", true, false);
 
                                 jar.put("JAR_STATUS", "✔");
                             } catch (Exception e) {
