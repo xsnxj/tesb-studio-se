@@ -39,7 +39,9 @@ imports="
 		if(argName.startsWith("\"") && argName.endsWith("\"") && argName.length() >= 2) {
 			argName = argName.substring(1, argName.length() - 1);
 		}
-		builder.addParam(argName, argValue);
+        if (!argName.startsWith("amqp.")) {
+            builder.addParam(argName, argValue);
+        }
 	}
 
 	String uri = builder.build();
