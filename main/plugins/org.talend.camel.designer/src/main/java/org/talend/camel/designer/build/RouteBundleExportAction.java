@@ -104,7 +104,7 @@ public class RouteBundleExportAction extends JobExportAction {
             // String rootName = fileResource.getDirectoryName();
 
             Set<String> paths = fileResource.getRelativePathList();
-
+            FilesUtils.emptyFolder(getTemporaryStoreFile(new File(""), LIB));
             for (Object element : paths) {
                 String relativePath = (String) element;
                 Set<URL> resource = fileResource.getResourcesByRelativePath(relativePath);
