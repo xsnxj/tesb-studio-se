@@ -63,7 +63,7 @@ COMPATIBILITY="ALL"
 			<ITEM NAME="JAR_NEXUS_PRE_VERSION" VALUE="" SHOW_IF="false"/>
 		</ITEMS>
 	</PARAMETER>
-	<PARAMETER NAME="WARNING" FIELD="LABEL" NUM_ROW="32">
+	<PARAMETER NAME="WARNING" FIELD="LABEL" NUM_ROW="32" SHOW_IF="IS_STUDIO_EE_VERSION == 'true'">
 		<DEFAULT>*Note: Using Inner JARs which was installed by External Modules, You need to specify the version explicitly.</DEFAULT>
 	</PARAMETER>
   </PARAMETERS>

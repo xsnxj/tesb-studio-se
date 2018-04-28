@@ -106,6 +106,7 @@ public class CamelTalendEditor extends AbstractTalendEditor {
     public void doSave(IProgressMonitor monitor) {
 
         if (!PluginChecker.isTIS()) {
+            super.doSave(monitor);
             return;
         }
 
