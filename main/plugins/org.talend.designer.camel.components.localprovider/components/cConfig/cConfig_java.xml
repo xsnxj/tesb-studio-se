@@ -64,7 +64,7 @@ COMPATIBILITY="ALL"
 		</ITEMS>
 	</PARAMETER>
 	<PARAMETER NAME="WARNING" FIELD="LABEL" NUM_ROW="32">
-		<DEFAULT>*Note: External JARs will not be embedded in OSGi bundle by default, to configure it please edit Route Manifest</DEFAULT>
+		<DEFAULT>*Note: Using Inner JARs which was installed by External Modules, You need to specify the version explicitly.</DEFAULT>
 	</PARAMETER>
   </PARAMETERS>
    

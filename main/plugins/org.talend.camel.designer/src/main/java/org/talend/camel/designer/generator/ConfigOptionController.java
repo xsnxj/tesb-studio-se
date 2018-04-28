@@ -47,6 +47,7 @@ import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.commons.ui.swt.tableviewer.TableViewerCreator;
 import org.talend.commons.ui.swt.tableviewer.TableViewerCreatorColumn;
 import org.talend.core.GlobalServiceRegister;
+import org.talend.core.ILibraryManagerService;
 import org.talend.core.model.general.INexusService;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.nexus.IRepositoryArtifactHandler;
@@ -314,6 +315,9 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
 
             monitor.beginTask("Checking the nexus server...", false ? IProgressMonitor.UNKNOWN : jars.size());
 
+            ILibraryManagerService libManager = (ILibraryManagerService) GlobalServiceRegister.getDefault()
+                    .getService(ILibraryManagerService.class);
+
             for (int i = 0; i < jars.size(); i++) {
                 Map<String, String> jar = (Map) jars.get(i);
 
@@ -323,6 +327,18 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
                 String a = jn.replaceFirst("[.][^.]+$", "");
 
                 if (StringUtils.isBlank(currentNexusVersion)) {
+
+                    String jarPath = libManager.getJarPath(jn);
+
+                    if (StringUtils.isBlank(jarPath)) {
+                        Map needUpdateJar = getNeedUpdateJar("✘", jn, currentNexusVersion, currentNexusPreVersion);
+                        needUpdateJar.put("JAR_SYNC", "false");
+                        needUpdateJars.add(needUpdateJar);
+                    } else {
+                        Map needUpdateJar = getNeedUpdateJar("✔", jn, currentNexusVersion, currentNexusPreVersion);
+                        needUpdateJar.put("JAR_SYNC", "false");
+                        needUpdateJars.add(needUpdateJar);
+                    }
                     continue;
                 }
 

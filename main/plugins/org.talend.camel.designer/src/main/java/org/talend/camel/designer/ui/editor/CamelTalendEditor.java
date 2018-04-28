@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Display;
 import org.talend.camel.designer.ui.SaveAsRoutesAction;
 import org.talend.camel.designer.ui.action.RoutePasteAction;
 import org.talend.core.GlobalServiceRegister;
+import org.talend.core.ILibraryManagerService;
 import org.talend.core.PluginChecker;
 import org.talend.core.model.components.IComponentsHandler;
 import org.talend.core.model.general.ILibrariesService;
@@ -44,7 +45,9 @@ import org.talend.core.runtime.maven.MavenArtifact;
 import org.talend.core.utils.TalendQuoteUtils;
 import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.core.ui.editor.AbstractTalendEditor;
+import org.talend.designer.core.ui.editor.cmd.PropertyChangeCommand;
 import org.talend.designer.maven.utils.PomUtil;
+import org.talend.librariesmanager.ui.LibManagerUiPlugin;
 import org.talend.repository.ui.wizards.exportjob.util.ExportJobUtil;
 import org.talend.utils.io.FilesUtils;
 
@@ -101,7 +104,6 @@ public class CamelTalendEditor extends AbstractTalendEditor {
 
     @Override
     public void doSave(IProgressMonitor monitor) {
-        super.doSave(monitor);
 
         if (!PluginChecker.isTIS()) {
             return;
@@ -113,6 +115,8 @@ public class CamelTalendEditor extends AbstractTalendEditor {
         if (GlobalServiceRegister.getDefault().isServiceRegistered(ILibrariesService.class)) {
 
             List<? extends INode> graphicalNodes = this.getProcess().getGraphicalNodes();
+            boolean isLibraryChange = false;
+
             for (INode node : graphicalNodes) {
                 if (node.getComponent().getName().equals("cConfig")){
                     List<Map<String,String>> jars = (List) node.getElementParameter("DRIVER_JAR").getValue();
@@ -122,33 +126,66 @@ public class CamelTalendEditor extends AbstractTalendEditor {
 
                     boolean nexusIsAvailable = nexusServerBean != null && isAvailable(nexusServerBean);
 
+                    if (nexusIsAvailable) {
+                        ILibraryManagerService libManager = (ILibraryManagerService) GlobalServiceRegister.getDefault()
+                                .getService(ILibraryManagerService.class);
+
+                        for (int i = 0; i < jars.size(); i++) {
+
+                            Map<String, String> o = jars.get(i);
+
+                            String jn = TalendQuoteUtils.removeQuotes(o.get("JAR_NAME"));
+                            String jnv = TalendQuoteUtils.removeQuotes(o.get("JAR_NEXUS_VERSION"));
+
+                            if (StringUtils.isBlank(jnv)) {
+
+                                String jarPath = libManager.getJarPath(jn);
+
+                                if (StringUtils.isBlank(jarPath)) {
+                                    MessageDialog.openError(getParent().getEditorSite().getShell(), "Checking Dependency Error",
+                                            "Can not load the jar " + jn + ", please give a correct version.");
+                                    return;
+                                }
+                            } else {
+                                continue;
+                            }
+                        }
+                    }
+
                     try {
                         new ProgressMonitorDialog(getParent().getEditorSite().getShell()).run(true, true,
-                                new RunnableWithProgress(jars, null, nexusIsAvailable));
+                                new RunnableWithProgress(node, jars, null, nexusIsAvailable));
 
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                    Display.getDefault().asyncExec(new Runnable() {
+                    isLibraryChange = true;
 
-                        @Override
-                        public void run() {
-                            getProcess().refreshProcess();
-                            if (GlobalServiceRegister.getDefault().isServiceRegistered(IDesignerCoreService.class)) {
-                                IDesignerCoreService designerCoreService = (IDesignerCoreService) GlobalServiceRegister
-                                        .getDefault().getService(IDesignerCoreService.class);
-                                if (designerCoreService != null) {
-                                    designerCoreService.refreshComponentView();
-                                }
-                            }
-                        }
-
-                    });
                 }
             }
-        }
 
+            super.doSave(monitor);
+
+            if (isLibraryChange) {
+                LibManagerUiPlugin.getDefault().getLibrariesService().resetModulesNeeded();
+                if (GlobalServiceRegister.getDefault().isServiceRegistered(IDesignerCoreService.class)) {
+                    IDesignerCoreService service = (IDesignerCoreService) GlobalServiceRegister.getDefault()
+                            .getService(IDesignerCoreService.class);
+                    if (service != null) {
+                        service.refreshComponentView();
+                    }
+                }
+                Display.getDefault().asyncExec(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        getProcess().refreshProcess();
+                    }
+
+                });
+            }
+        }
     }
 
     private class RunnableWithProgress implements IRunnableWithProgress {
@@ -157,9 +194,16 @@ public class CamelTalendEditor extends AbstractTalendEditor {
 
         private List needUpdateJars;
 
+        private INode node;
+
         private boolean updateNexusJars;
 
         public RunnableWithProgress(List jars, List needUpdateJars, boolean updateNexusJars) {
+            this(null, jars, needUpdateJars, updateNexusJars);
+        }
+
+        public RunnableWithProgress(INode node, List jars, List needUpdateJars, boolean updateNexusJars) {
+            this.node = node;
             this.jars = jars;
             this.needUpdateJars = needUpdateJars;
             this.updateNexusJars = updateNexusJars;
@@ -201,6 +245,7 @@ public class CamelTalendEditor extends AbstractTalendEditor {
             // }
             // }
             // }
+
 
             for (int i = 0; i < jars.size(); i++) {
 
@@ -266,9 +311,15 @@ public class CamelTalendEditor extends AbstractTalendEditor {
 
                                 monitor.subTask("Installing local dependency ... " + jn);
 
+                                String versionType = ".SNAPSHOT";
+
+                                if (StringUtils.endsWithIgnoreCase(jnv, versionType)) {
+                                    jnv = StringUtils.removeEndIgnoreCase(jnv, versionType) + "-SNAPSHOT";
+                                }
+
                                 service.deployLibrary(tmp.toURI().toURL(), "mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
 
-
+                                o.put("JAR_NEXUS_VERSION", jnv);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -289,6 +340,10 @@ public class CamelTalendEditor extends AbstractTalendEditor {
                 }
 
                 monitor.worked(i);
+
+                PropertyChangeCommand pcc = new PropertyChangeCommand(node, "DRIVER_JAR", jars);
+
+                getCommandStack().execute(pcc);
 
             }
 

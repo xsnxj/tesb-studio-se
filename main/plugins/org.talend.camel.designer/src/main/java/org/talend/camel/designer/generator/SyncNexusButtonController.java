@@ -35,7 +35,9 @@ import org.talend.core.model.process.IProcess2;
 import org.talend.core.runtime.maven.MavenArtifact;
 import org.talend.core.ui.properties.tab.IDynamicProperty;
 import org.talend.core.utils.TalendQuoteUtils;
+import org.talend.designer.core.IDesignerCoreService;
 import org.talend.designer.maven.utils.PomUtil;
+import org.talend.librariesmanager.ui.LibManagerUiPlugin;
 
 public class SyncNexusButtonController extends ConfigOptionController {
 
@@ -109,6 +111,8 @@ public class SyncNexusButtonController extends ConfigOptionController {
 
             monitor.beginTask("Syncing the nexus server...", false ? IProgressMonitor.UNKNOWN : jars.size());
 
+            boolean isLibraryChange = false;
+
             for (int i = 0; i < needUpdateJars.size(); i++) {
                 Map<String, Object> jar = (Map) needUpdateJars.get(i);
 
@@ -150,6 +154,8 @@ public class SyncNexusButtonController extends ConfigOptionController {
                                         // "mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
                                         hander.resolve("mvn:org.talend.libraries/" + a + "/" + jnv + "/jar");
                                         driverJar.put(JAR_NEXUS_VERSION, jnv);
+
+                                        isLibraryChange = true;
                                     } catch (Exception e) {
                                         e.printStackTrace();
                                     }
@@ -173,6 +179,8 @@ public class SyncNexusButtonController extends ConfigOptionController {
                                 librariesService.deployLibrary(fileTemp.toURI().toURL(),
                                         "mvn:org.talend.libraries/" + a + "/" + jnv + "/jar", true, false);
 
+                                isLibraryChange = true;
+
                                 jar.put("JAR_STATUS", "✔");
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -185,14 +193,25 @@ public class SyncNexusButtonController extends ConfigOptionController {
                 }
             }
 
-            Display.getDefault().asyncExec(new Runnable() {
-
-                @Override
-                public void run() {
-                    ((IProcess2) getProcess(elem, part)).refreshProcess();
+            if (isLibraryChange) {
+                LibManagerUiPlugin.getDefault().getLibrariesService().resetModulesNeeded();
+                if (GlobalServiceRegister.getDefault().isServiceRegistered(IDesignerCoreService.class)) {
+                    IDesignerCoreService service = (IDesignerCoreService) GlobalServiceRegister.getDefault()
+                            .getService(IDesignerCoreService.class);
+                    if (service != null) {
+                        service.refreshComponentView();
+                    }
                 }
 
-            });
+                Display.getDefault().asyncExec(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        ((IProcess2) getProcess(elem, part)).refreshProcess();
+                    }
+
+                });
+            }
 
             monitor.done();
             if (monitor.isCanceled())
