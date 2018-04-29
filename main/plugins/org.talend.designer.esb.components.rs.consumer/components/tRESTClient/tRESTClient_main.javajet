@@ -200,6 +200,59 @@ try {
 		features_<%=cid%>.add(new org.apache.cxf.feature.LoggingFeature());
 	<% } %>
 
+
+	features_<%=cid%>.add(
+            new org.apache.cxf.feature.AbstractFeature() {
+                    private HeaderFixerOutInterceptor out = new HeaderFixerOutInterceptor();
+                    private HeaderFixerInInterceptor  in  = new HeaderFixerInInterceptor();
+
+                    private java.util.List<String> cookies = new java.util.ArrayList<String>();
+
+                    @Override
+                    protected void initializeProvider(org.apache.cxf.interceptor.InterceptorProvider provider, org.apache.cxf.Bus bus) {
+                        provider.getOutInterceptors().add(out);
+                        provider.getInInterceptors().add(in);
+                    }
+
+                    final class HeaderFixerOutInterceptor extends org.apache.cxf.phase.AbstractPhaseInterceptor<org.apache.cxf.message.Message> {
+                        public HeaderFixerOutInterceptor() {
+                            // Access to HttpURLConnection object should be done after MessageSenderEndingInterceptor
+                            super(org.apache.cxf.phase.Phase.POST_LOGICAL_ENDING);
+                        }
+
+                        @Override
+                        public void handleMessage(org.apache.cxf.message.Message message) throws org.apache.cxf.interceptor.Fault {
+                            java.net.HttpURLConnection connection = (java.net.HttpURLConnection)message.get("http.connection");
+                            if (connection != null) {
+                                java.util.Map<String, java.util.List<String>> origHeaders = connection.getHeaderFields();
+                                if (origHeaders != null) {
+                                    for (String key : origHeaders.keySet()) {
+                                        if ("Set-Cookie".equalsIgnoreCase(key) && origHeaders.get(key) != null) {
+                                            cookies.addAll(origHeaders.get(key));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    final class HeaderFixerInInterceptor extends org.apache.cxf.phase.AbstractPhaseInterceptor<org.apache.cxf.message.Message> {
+                        public HeaderFixerInInterceptor() {
+                            super(org.apache.cxf.phase.Phase.PRE_PROTOCOL);
+                        }
+
+                        @Override
+                        public void handleMessage(org.apache.cxf.message.Message message) throws org.apache.cxf.interceptor.Fault {
+                            java.util.Map<String, java.util.List<String>> headers = (java.util.Map<String, java.util.List<String>>)message.get(org.apache.cxf.message.Message.PROTOCOL_HEADERS);
+                            if (headers != null) {
+                                headers.put("Set-Cookie", cookies);
+                            }
+                        }
+                    }
+            }
+    );
+
+
 	<% if (useBusinessCorrelation) { %>
 		class EsbJobCorrelationCallbackHandler implements org.talend.esb.policy.correlation.CorrelationIDCallbackHandler {
 				private String correlationId;
