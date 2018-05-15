@@ -14,6 +14,7 @@ package org.talend.camel.designer.ui.wizards.actions;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +24,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -56,6 +59,7 @@ import org.talend.designer.core.model.utils.emf.talendfile.ElementParameterType;
 import org.talend.designer.core.model.utils.emf.talendfile.NodeType;
 import org.talend.designer.maven.utils.PomIdsHelper;
 import org.talend.designer.publish.core.models.BundleModel;
+import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.IRunProcessService;
@@ -73,6 +77,8 @@ import org.talend.repository.utils.EmfModelUtils;
 import org.talend.repository.utils.JobContextUtils;
 
 public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress {
+
+	private static final Properties FEATURE_MODULES = createFeatureModules();
 
     private IProgressMonitor monitor;
 
@@ -531,7 +537,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             String bundleSymbolicName, String bundleVersion, String idSuffix, Collection<String> routelets, String context)
             throws InvocationTargetException, InterruptedException {
         final RouteJavaScriptOSGIForESBManager talendJobManager = new RouteJavaScriptOSGIForESBManager(getExportChoice(), context,
-                routelets, statisticPort, tracePort);
+                routelets, getModulesProvidedByFeatures(), statisticPort, tracePort);
         talendJobManager.setBundleName(bundleName);
         talendJobManager.setBundleSymbolicName(bundleSymbolicName);
         talendJobManager.setBundleVersion(bundleVersion);
@@ -637,5 +643,45 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     public void setBuildProject(boolean buildProject) {
         this.buildProject = buildProject;
+    }
+
+    private Set<String> getModulesProvidedByFeatures() {
+    	Set<String> result = new HashSet<>();
+    	for (FeatureModel f : featuresModel.getFeatures()) {
+    		addFeatureModules(f.getArtifactId(), result);
+    	}
+    	return result;
+    }
+
+    private static Properties createFeatureModules() {
+		Properties result = new Properties();
+    	InputStream is = JavaCamelJobScriptsExportWSAction.class.getClassLoader()
+    			.getResourceAsStream("resources/feature-modules.properties");
+    	if (is == null) {
+    		return result;
+    	}
+    	try {
+	    	try {
+	    		result.load(is);
+	    	} finally {
+	    		is.close();
+	    	}
+    	} catch (IOException e) {
+    		// ignore
+    	}
+    	return result;
+    }
+
+    private static void addFeatureModules(String featureName, Set<String> collectModuleNames) {
+    	String modulesRaw = FEATURE_MODULES.getProperty(featureName);
+    	if (modulesRaw != null) {
+    		StringTokenizer t = new StringTokenizer(modulesRaw, ",", false);
+    		while (t.hasMoreTokens()) {
+    			String mod = t.nextToken().trim();
+    			if (mod.length() > 0) {
+    				collectModuleNames.add(mod);
+    			}
+    		}
+    	}
     }
 }

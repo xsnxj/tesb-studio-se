@@ -82,12 +82,14 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
 
     private final Collection<String> routelets;
     private List<ModuleNeeded> defaultModulesNeededForBeans;
+    private Set<String> modulesProvidedByFeatures;
 
     public RouteJavaScriptOSGIForESBManager(Map<ExportChoice, Object> exportChoiceMap, String contextName,
-        Collection<String> routelets) {
+        Collection<String> routelets, Set<String> modulesProvidedByFeatures) {
         super(exportChoiceMap, contextName, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
         this.routelets = routelets;
         this.defaultModulesNeededForBeans = ModulesNeededProvider.getModulesNeededForBeans();
+        this.modulesProvidedByFeatures = modulesProvidedByFeatures;
     }
 
     @Override
@@ -126,9 +128,10 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
      * @param tracePort
      */
     public RouteJavaScriptOSGIForESBManager(Map<ExportChoice, Object> exportChoiceMap, String context,
-            Collection<String> routelets, int statisticsPort, int tracePort) {
+            Collection<String> routelets, Set<String> modulesProvidedByFeatures, int statisticsPort, int tracePort) {
         super(exportChoiceMap, context, null, statisticsPort, tracePort);
         this.routelets = routelets;
+        this.modulesProvidedByFeatures = modulesProvidedByFeatures;
     }
 
     public static String getClassName(ProcessItem processItem) {
@@ -231,6 +234,18 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
                 libResource.addResources(list);
             }
         }
+    }
+
+    @Override
+    protected boolean isIncludedLib(ModuleNeeded module) {
+        return super.isIncludedLib(module) && !isProvidedByFeature(module);
+    }
+
+    protected boolean isProvidedByFeature(ModuleNeeded module) {
+    	if (modulesProvidedByFeatures == null) {
+    		return false;
+    	}
+    	return modulesProvidedByFeatures.contains(module.getId());
     }
 
     private void handleSpringXml(String  targetFilePath, ProcessItem processItem, InputStream springInput,
