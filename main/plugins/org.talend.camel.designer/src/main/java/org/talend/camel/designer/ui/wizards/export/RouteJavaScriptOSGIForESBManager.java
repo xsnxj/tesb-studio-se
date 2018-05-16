@@ -238,14 +238,33 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
 
     @Override
     protected boolean isIncludedLib(ModuleNeeded module) {
-        return super.isIncludedLib(module) && !isProvidedByFeature(module);
+        return super.isIncludedLib(module) && !(isProvidedByFeature(module) || isOsgiExcluded(module));
     }
 
-    protected boolean isProvidedByFeature(ModuleNeeded module) {
+    private boolean isProvidedByFeature(ModuleNeeded module) {
     	if (modulesProvidedByFeatures == null) {
     		return false;
     	}
-    	return modulesProvidedByFeatures.contains(module.getId());
+    	String id = module.getId();
+    	if (id == null) {
+    		// bean dependency module etc.
+    		return false;
+    	}
+    	return modulesProvidedByFeatures.contains(id);
+    }
+
+    private boolean isOsgiExcluded(ModuleNeeded module) {
+    	Object value = module.getExtraAttributes().get("IS_OSGI_EXCLUDED");
+    	if (value == null) {
+    		return false;
+    	}
+    	if (value instanceof Boolean) {
+    		return ((Boolean) value).booleanValue();
+    	}
+    	if (value instanceof String) {
+    		return Boolean.parseBoolean((String) value);
+    	}
+    	return false;
     }
 
     private void handleSpringXml(String  targetFilePath, ProcessItem processItem, InputStream springInput,
