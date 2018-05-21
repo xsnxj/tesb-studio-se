@@ -2226,9 +2226,11 @@ if (isProvider) {
                     if ("true".equals(ElementParameterParser.getValue(node, "__ENABLE_SECURITY__"))) {
                         if("BASIC".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))) {
 %>
-                            org.apache.cxf.jaxrs.security.JAASAuthenticationFilter jaas_<%=cid%> = new org.apache.cxf.jaxrs.security.JAASAuthenticationFilter();
-                            jaas_<%=cid%>.setContextName("karaf");
-                            sf_<%=cid%>.setProvider(jaas_<%=cid%>);
+							<%if(!exportTypeSpringBoot){%>
+	                            org.apache.cxf.jaxrs.security.JAASAuthenticationFilter jaas_<%=cid%> = new org.apache.cxf.jaxrs.security.JAASAuthenticationFilter();
+	                            jaas_<%=cid%>.setContextName("karaf");
+	                            sf_<%=cid%>.setProvider(jaas_<%=cid%>);
+                            <%}%>
 <%
                         } else if ("SAML".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))) {
 %>
