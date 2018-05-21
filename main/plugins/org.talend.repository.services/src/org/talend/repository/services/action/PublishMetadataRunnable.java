@@ -64,7 +64,7 @@ import org.talend.cwm.helper.ConnectionHelper;
 import org.talend.designer.core.DesignerPlugin;
 import org.talend.metadata.managment.ui.utils.XsdMetadataUtils;
 import org.talend.repository.ProjectManager;
-import org.talend.repository.services.Activator;
+import org.talend.repository.services.ServicesPlugin;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.ui.RewriteSchemaDialog;
 import org.talend.repository.services.ui.preferences.EsbSoapServicePreferencePage;
@@ -108,7 +108,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                     xmlObjs = initFileConnection();
                 } catch (Exception e) {
                     String message = (null != e.getMessage()) ? e.getMessage() : e.getClass().getName();
-                    throw new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(),
+                    throw new CoreException(new Status(IStatus.ERROR, ServicesPlugin.getDefault().getBundle().getSymbolicName(),
                             "Can't retrieve schemas from metadata: " + message, e));
                 }
                 Collection<XmlFileConnectionItem> selectTables;
@@ -127,7 +127,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                     return;
                 }
 
-                boolean validateWsdl = Activator.getDefault().getPreferenceStore()
+                boolean validateWsdl = ServicesPlugin.getDefault().getPreferenceStore()
                         .getBoolean(EsbSoapServicePreferencePage.ENABLE_WSDL_VALIDATION);
                 if (validateWsdl) {
                     WSDLUtils.validateWsdl(wsdlDefinition.getDocumentBaseURI());
@@ -140,7 +140,7 @@ public class PublishMetadataRunnable implements IRunnableWithProgress {
                 try {
                     process(wsdlDefinition, selectTables);
                 } catch (Exception e) {
-                    throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID, "Error during schema processing", e));
+                    throw new CoreException(new Status(IStatus.ERROR, ServicesPlugin.PLUGIN_ID, "Error during schema processing", e));
                 }
                 monitor.done();
 

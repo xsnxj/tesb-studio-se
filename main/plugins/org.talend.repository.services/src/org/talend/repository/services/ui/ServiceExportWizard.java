@@ -30,9 +30,9 @@ import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.model.process.IContext;
 import org.talend.core.prefs.IDEWorkbenchPlugin;
 import org.talend.designer.runprocess.ProcessorUtilities;
-import org.talend.repository.services.Activator;
+import org.talend.repository.services.ServicesPlugin;
 import org.talend.repository.services.Messages;
-import org.talend.repository.services.export.handler.BuildDataServiceHandler;
+import org.talend.repository.services.export.BuildDataServiceHandler;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 
@@ -55,7 +55,7 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
      */
     public ServiceExportWizard(ServiceItem serviceItem) {
         this.serviceItem = serviceItem;
-        IDialogSettings workbenchSettings = Activator.getDefault().getDialogSettings();
+        IDialogSettings workbenchSettings = ServicesPlugin.getDefault().getDialogSettings();
         IDialogSettings section = workbenchSettings.getSection("ServiceExportWizard"); //$NON-NLS-1$
         if (section == null) {
             section = workbenchSettings.addNewSection("ServiceExportWizard"); //$NON-NLS-1$

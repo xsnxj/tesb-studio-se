@@ -61,7 +61,7 @@ import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.IRepositoryNode.ENodeType;
 import org.talend.repository.model.IRepositoryNode.EProperties;
 import org.talend.repository.model.RepositoryNode;
-import org.talend.repository.services.Activator;
+import org.talend.repository.services.ServicesPlugin;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.action.OpenWSDLEditorAction;
 import org.talend.repository.services.action.PublishMetadataRunnable;
@@ -352,7 +352,7 @@ public class OpenWSDLPage extends WizardPage {
     }
 
     private static CoreException getCoreException(String message, Throwable initialException) {
-        return new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(),
+        return new CoreException(new Status(IStatus.ERROR, ServicesPlugin.getDefault().getBundle().getSymbolicName(),
             message, initialException));
     }
 
