@@ -24,13 +24,20 @@ package org.talend.repository.services.export;
 import java.util.Collections;
 import java.util.Map;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.IPath;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
+import org.talend.core.repository.utils.ItemResourceUtil;
 import org.talend.core.runtime.process.IBuildJobHandler;
 import org.talend.core.runtime.repository.build.IBuildExportHandler;
+import org.talend.core.runtime.repository.build.IMavenPomCreator;
 import org.talend.core.runtime.repository.build.RepositoryObjectTypeBuildProvider;
-import org.talend.repository.services.export.handler.BuildDataServiceHandler;
+import org.talend.designer.maven.tools.creator.CreateMavenStandardJobOSGiPom;
+import org.talend.designer.runprocess.IProcessor;
+import org.talend.repository.services.maven.CreateMavenDataServicePom;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 
@@ -83,6 +90,56 @@ public class BuildDataServiceProvider extends RepositoryObjectTypeBuildProvider 
         return false;
     }
 
+    @Override
+    public IMavenPomCreator createPomCreator(Map<String, Object> parameters) {
+        
+
+        if (parameters == null || parameters.isEmpty()) {
+            return null;
+        }
+
+        final Object processor = parameters.get(PROCESSOR);
+        if (processor == null || !(processor instanceof IProcessor)) {
+            return null;
+        }
+        final Object pomFile = parameters.get(FILE_POM);
+        if (pomFile == null || !(pomFile instanceof IFile)) {
+            return null;
+        }
+        final Object item = parameters.get(ITEM);
+        if (item == null || !(item instanceof Item)) {
+            return null;
+        }
+        Object argumentsMap = parameters.get(ARGUMENTS_MAP);
+        if (argumentsMap == null) {
+            argumentsMap = Collections.emptyMap();
+        }
+        if (!(argumentsMap instanceof Map)) {
+            return null;
+        }
+        Object overwrite = parameters.get(OVERWRITE_POM);
+        if (overwrite == null) {
+            overwrite = Boolean.FALSE;
+        }
+        Object assemblyFile = parameters.get(FILE_ASSEMBLY);
+
+        CreateMavenDataServicePom creator = new CreateMavenDataServicePom((IProcessor) processor, (IFile) pomFile);
+
+        creator.setArgumentsMap((Map<String, Object>) argumentsMap);
+        creator.setOverwrite(Boolean.parseBoolean(overwrite.toString()));
+        creator.setAssemblyFile((IFile) assemblyFile);
+
+        final Property itemProperty = ((Item) item).getProperty();
+        IPath itemLocationPath = ItemResourceUtil.getItemLocationPath(itemProperty);
+        IFolder objectTypeFolder = ItemResourceUtil.getObjectTypeFolder(itemProperty);
+        if (itemLocationPath != null && objectTypeFolder != null) {
+            IPath itemRelativePath = itemLocationPath.removeLastSegments(1).makeRelativeTo(objectTypeFolder.getLocation());
+            creator.setObjectTypeFolder(objectTypeFolder);
+            creator.setItemRelativePath(itemRelativePath);
+        }
+
+        return creator;
+    }
     /*
      * (non-Javadoc)
      * 

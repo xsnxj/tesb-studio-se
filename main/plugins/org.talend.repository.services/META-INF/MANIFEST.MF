@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Repository Services Plug-in
 Bundle-SymbolicName: org.talend.repository.services;singleton:=true
 Bundle-Version: 7.1.1.qualifier
-Bundle-Activator: org.talend.repository.services.Activator
+Bundle-Activator: org.talend.repository.services.ServicesPlugin
 Bundle-Localization: plugin
 Require-Bundle: org.apache.commons.collections,
  org.talend.commons.ui,
@@ -39,7 +39,12 @@ Require-Bundle: org.apache.commons.collections,
  org.talend.designer.runprocess,
  org.eclipse.osgi,
  org.talend.model,
- org.talend.camel.model
+ org.talend.camel.model,
+ org.eclipse.debug.ui,
+ org.talend.camel.designer,
+ org.eclipse.jdt.core,
+ javax.wsdl,
+ org.eclipse.jdt.debug
 Import-Package: org.talend.utils.wsdl
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: .Talend SA.

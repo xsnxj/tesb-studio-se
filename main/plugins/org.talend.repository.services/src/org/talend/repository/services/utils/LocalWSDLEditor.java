@@ -101,7 +101,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
             repositoryNode = serviceEditorInput.getRepositoryNode();
         }
     }
-    
+
     @Override
     public boolean isDirty() {
         if (!super.isDirty()) {
@@ -116,6 +116,12 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         resourceChangeHandler.dispose();
         resourceChangeHandler = new LocalWSDLEditorResourceChangeHandler(this);
         resourceChangeHandler.attach();
+
+        // support CI project for SOAP services
+        if (GlobalServiceRegister.getDefault().isServiceRegistered(IESBService.class)) {
+            IESBService soapService = (IESBService) GlobalServiceRegister.getDefault().getService(IESBService.class);
+            soapService.createJavaProcessor(null, serviceItem.getProperty(), true);
+        }
     }
 
     @Override
@@ -333,7 +339,8 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
                         Object object = editorPart.getAdapter(org.eclipse.wst.wsdl.Definition.class);
                         if (object instanceof org.eclipse.wst.wsdl.Definition) {
                             EObject eObject = (EObject) baseAdapter.getTarget();
-                            OpenOnSelectionHelper openHelper = new OpenOnSelectionHelper((org.eclipse.wst.wsdl.Definition) object);
+                            OpenOnSelectionHelper openHelper = new OpenOnSelectionHelper(
+                                    (org.eclipse.wst.wsdl.Definition) object);
                             openHelper.openEditor(eObject);
                         }
                     }
@@ -365,7 +372,7 @@ public class LocalWSDLEditor extends InternalWSDLMultiPageEditor {
         }
         return super.getAdapter(type);
     }
-    
+
     public Item getServiceItem() {
         return serviceItem;
     }

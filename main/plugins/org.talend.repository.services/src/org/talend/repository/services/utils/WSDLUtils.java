@@ -41,7 +41,7 @@ import org.talend.commons.runtime.model.repository.ERepositoryStatus;
 import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IRepositoryNode;
-import org.talend.repository.services.Activator;
+import org.talend.repository.services.ServicesPlugin;
 import org.talend.repository.services.Messages;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
@@ -309,7 +309,7 @@ public class WSDLUtils {
 
     private static CoreException getCoreException(final String message, final Throwable e) {
         String msg = message != null ? message : (e.getMessage() != null) ? e.getMessage() : e.getClass().getName();
-        return new CoreException(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(), msg, e));
+        return new CoreException(new Status(IStatus.ERROR, ServicesPlugin.getDefault().getBundle().getSymbolicName(), msg, e));
     }
 
     public static boolean isOperationInBinding(Definition definition, String portTypeName, String operationName)

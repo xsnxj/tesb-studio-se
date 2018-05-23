@@ -9,7 +9,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.talend.commons.ui.swt.advanced.dataeditor.LabelFieldEditor;
 import org.talend.commons.ui.swt.preferences.CheckBoxFieldEditor;
-import org.talend.repository.services.Activator;
+import org.talend.repository.services.ServicesPlugin;
 import org.talend.repository.services.Messages;
 
 public class EsbSoapServicePreferencePage extends FieldEditorPreferencePage
@@ -19,7 +19,7 @@ public class EsbSoapServicePreferencePage extends FieldEditorPreferencePage
 
 	public EsbSoapServicePreferencePage() {
 		super(GRID);
-		setPreferenceStore(Activator.getDefault().getPreferenceStore());
+		setPreferenceStore(ServicesPlugin.getDefault().getPreferenceStore());
 		setDescription(Messages.EsbSoapServicePreferencePage_description);
 	}
 

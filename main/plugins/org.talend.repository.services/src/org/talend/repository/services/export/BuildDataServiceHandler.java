@@ -10,18 +10,15 @@
 // 9 rue Pages 92150 Suresnes, France
 //
 // ============================================================================
-package org.talend.repository.services.export.handler;
+package org.talend.repository.services.export;
 
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.jar.Manifest;
 
 import org.apache.commons.lang.BooleanUtils;
@@ -36,8 +33,6 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.workbench.resources.ResourceUtils;
 import org.talend.core.CorePlugin;
-import org.talend.core.model.process.IContext;
-import org.talend.core.model.process.ProcessUtils;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -52,18 +47,15 @@ import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.IRunProcessService;
-import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
 import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.ui.ServiceMetadataDialog;
 import org.talend.repository.services.ui.scriptmanager.ServiceExportManager;
-import org.talend.repository.services.ui.scriptmanager.ServiceExportWithMavenManager;
 import org.talend.repository.services.utils.WSDLUtils;
 import org.talend.repository.ui.wizards.exportjob.JavaJobScriptsExportWSWizardPage.JobExportType;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.BuildJobFactory;
-import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
 import org.talend.repository.utils.EmfModelUtils;
 import org.talend.repository.utils.JobContextUtils;
@@ -117,8 +109,6 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
 
     private IFolder targetFolder;
 
-    private ServiceExportWithMavenManager serviceExportWithMavenManager;
-
     private ServiceExportManager serviceExportManager;
 
     public BuildDataServiceHandler(ServiceItem serviceItem, String version, String contextName,
@@ -168,7 +158,8 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
                 }
                 ports.put(port, operations);
             }
-        } catch (PersistenceException e1) {
+        } catch (PersistenceException e) {
+            ExceptionHandler.process(e);
         }
 
         IRunProcessService runProcessService = CorePlugin.getDefault().getRunProcessService();
@@ -179,9 +170,6 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
         } catch (PersistenceException e) {
             ExceptionHandler.process(e);
         }
-
-        serviceExportWithMavenManager = new ServiceExportWithMavenManager(exportChoiceMap, IContext.DEFAULT,
-                JobScriptsManager.LAUNCHER_ALL, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
 
         serviceExportManager = new ServiceExportManager(exportChoiceMap);
     }
@@ -385,20 +373,6 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
                 .getFile("blueprint.xml");
         // talendProcessJavaProject.getResourceSubFolder(monitor, "OSGI-INF/blueprint").getFile("blueprint.xml");
         serviceExportManager.createBlueprint(blueprint.getLocation().toFile(), ports, additionalInfo, wsdl, serviceName);
-
-        // Generate poms
-        List<ExportFileResource> resources = serviceExportWithMavenManager
-                .getExportResources(new ExportFileResource[] { new ExportFileResource(serviceItem, "") });
-        for (ExportFileResource resource : resources) {
-            Iterable<Set<URL>> paths = resource.getAllResources();
-            for (Set<URL> set : paths) {
-                for (URL url : set) {
-                    String fileName = url.toString().substring(url.toString().lastIndexOf('/') + 1, url.toString().length());
-                    IFile ifile = talendProcessJavaProject.getProject().getFile(fileName);
-                    setFileContent(new FileInputStream(url.getFile()), ifile, monitor);
-                }
-            }
-        }
 
         return null;// as not only one job code generated
     }
