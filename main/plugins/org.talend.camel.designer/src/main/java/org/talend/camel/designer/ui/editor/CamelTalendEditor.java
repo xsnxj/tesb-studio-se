@@ -38,7 +38,7 @@ import org.talend.core.model.components.IComponentsHandler;
 import org.talend.core.model.general.ILibrariesService;
 import org.talend.core.model.general.INexusService;
 import org.talend.core.model.process.INode;
-import org.talend.core.nexus.NexusServerBean;
+import org.talend.core.nexus.ArtifactRepositoryBean;
 import org.talend.core.nexus.TalendLibsServerManager;
 import org.talend.core.runtime.maven.MavenArtifact;
 import org.talend.core.utils.TalendQuoteUtils;
@@ -106,7 +106,7 @@ public class CamelTalendEditor extends AbstractTalendEditor {
             return;
         }
 
-        NexusServerBean nexusServerBean = TalendLibsServerManager.getInstance().getCustomNexusServer();
+        ArtifactRepositoryBean nexusServerBean = TalendLibsServerManager.getInstance().getCustomNexusServer();
 
 
         if (GlobalServiceRegister.getDefault().isServiceRegistered(ILibrariesService.class)) {
@@ -169,7 +169,7 @@ public class CamelTalendEditor extends AbstractTalendEditor {
                     .getService(ILibrariesService.class);
 
             INexusService nexusService = null;
-            NexusServerBean nexusServerBean = null;
+            ArtifactRepositoryBean nexusServerBean = null;
 
             if (updateNexusJars) {
                 nexusService = (INexusService) GlobalServiceRegister.getDefault().getService(INexusService.class);
@@ -287,14 +287,14 @@ public class CamelTalendEditor extends AbstractTalendEditor {
         return CAMEL_COMPONENTS_HANDLER;
     }
 
-    protected boolean isAvailable(NexusServerBean nexusServerBean) {
+    protected boolean isAvailable(ArtifactRepositoryBean nexusServerBean) {
 
         if (nexusServerBean == null) {
             MessageDialog.openError(getParent().getEditorSite().getShell(), "Checking Nexus Connection Error",
                     "Can not initialize the nexus server, Please check the TAC.");
         } else {
             try {
-                if (nexusServerBean.getType().equals(NexusServerBean.NexusType.NEXUS_3.name())) {
+                if (nexusServerBean.getType().equals(ArtifactRepositoryBean.NexusType.NEXUS_3.name())) {
                     return isAvailableNexus3(nexusServerBean);
                 } else {
                     return isAvailableNexus2(nexusServerBean);
@@ -312,7 +312,7 @@ public class CamelTalendEditor extends AbstractTalendEditor {
     }
 
 
-    protected boolean isAvailableNexus2(NexusServerBean nexusServerBean) throws  Exception {
+    protected boolean isAvailableNexus2(ArtifactRepositoryBean nexusServerBean) throws  Exception {
         String authUrl = nexusServerBean.getServer() + "/service/local/authentication/login?_dc=" + System.currentTimeMillis();
         URL url = new URL(authUrl);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
@@ -334,7 +334,7 @@ public class CamelTalendEditor extends AbstractTalendEditor {
         return false;
     }
 
-    protected boolean isAvailableNexus3(NexusServerBean nexusServerBean) throws Exception {
+    protected boolean isAvailableNexus3(ArtifactRepositoryBean nexusServerBean) throws Exception {
         String authUrl = nexusServerBean.getServer() +  (nexusServerBean.getServer().endsWith("/") ? "" : "/") +
                             "service/rapture/session?_dc=" + System.currentTimeMillis();
         URL url = new URL(authUrl);
