@@ -83,8 +83,6 @@ for (Map<String, String> header : headers) { %>
         
         String REP = ElementParameterParser.getValue(node,"__REST_ENDPOINT__");
         
-        System.out.println(REP+"<><>");
-        
         if(jsonArrayKeys!=null && !jsonArrayKeys.trim().isEmpty()){ %>
             messageContext_<%=cid%>.put("json.array.keys",java.util.Arrays.asList(<%=jsonArrayKeys%>.split(" ")));
         <% } %>
