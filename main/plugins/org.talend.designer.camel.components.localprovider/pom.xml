@@ -21,9 +21,9 @@
         <xstream.version>1.4.8</xstream.version>
         <xpp3.version>1.1.6</xpp3.version>
         <!-- camel-amqp -->
-        <qpid-jms-client.version>0.11.1</qpid-jms-client.version>
-        <qpid-proton-j.version>0.14.0</qpid-proton-j.version>
-        <io-netty.version>4.0.52.Final</io-netty.version>
+        <qpid-jms-client.version>0.8.0</qpid-jms-client.version>
+        <qpid-proton-j.version>0.12.0</qpid-proton-j.version>
+        <io-netty.version>4.0.17.Final</io-netty.version>
         <geronimo-jms.version>1.1.1</geronimo-jms.version>
         <geronimo-j2ee-management.version>1.0.1</geronimo-j2ee-management.version>
         <!-- camel-mqtt -->
@@ -65,7 +65,7 @@
         <validation-api.version>1.1.0.Final</validation-api.version>
         <snakeyaml.version>1.17</snakeyaml.version>
         <!-- external deps -->
-        <mvn-commons-collections>mvn:commons-collections/commons-collections/3.2</mvn-commons-collections>
+        <mvn-commons-collections>mvn:commons-collections/commons-collections/3.2.2</mvn-commons-collections>
         <mvn-commons-io>mvn:commons-io/commons-io/2.2</mvn-commons-io>
         <mvn-commons-lang>mvn:commons-lang/commons-lang/2.6</mvn-commons-lang>
         <mvn-commons-pool>mvn:commons-pool/commons-pool/1.6</mvn-commons-pool>
