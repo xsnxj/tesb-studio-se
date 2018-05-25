@@ -37,6 +37,7 @@ import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.utils.ItemResourceUtil;
 import org.talend.designer.maven.model.TalendJavaProjectConstants;
 import org.talend.designer.maven.model.TalendMavenConstants;
+import org.talend.designer.maven.template.ETalendMavenVariables;
 import org.talend.designer.maven.tools.AggregatorPomsHelper;
 import org.talend.designer.maven.tools.creator.CreateMavenJobPom;
 import org.talend.designer.maven.utils.PomIdsHelper;
@@ -76,10 +77,10 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
      */
     @Override
     protected void addProperties(Model model) {
-        Properties p = model.getProperties();
-        if (p == null) {
-            p = new Properties();
-            model.setProperties(p);
+        Properties properties = model.getProperties();
+        if (properties == null) {
+            properties = new Properties();
+            model.setProperties(properties);
         }
         Property property = getJobProcessor().getProperty();
         Project project = ProjectManager.getInstance().getProject(property);
@@ -90,6 +91,11 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         if (mainProjectBranch == null) {
             mainProjectBranch = SVNConstant.NAME_TRUNK;
         }
+
+        // required by ci-builder
+        checkPomProperty(properties, "talend.project.name", ETalendMavenVariables.ProjectName, project.getTechnicalLabel());
+        checkPomProperty(properties, "talend.job.version", ETalendMavenVariables.TalendJobVersion, property.getVersion());
+        checkPomProperty(properties, "talend.job.id", ETalendMavenVariables.JobId, property.getId());
     }
 
     @Override
@@ -102,6 +108,7 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         }
 
         this.model = new Model(); // createModel();
+        configModel(model); // config model
         Model pomModel = model; // new Model();
         pomModel.setModelVersion(MAVEN_VERSION);
         // pom.setParent(model.getParent());
@@ -109,6 +116,8 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         pomModel.setArtifactId(PomIdsHelper.getJobArtifactId(getJobProcessor().getProperty()));
         pomModel.setVersion(PomIdsHelper.getJobVersion(getJobProcessor().getProperty()));
         pomModel.setPackaging("pom");
+        // pomModel.setName(PomIdsHelper.getp); //<name>@ProjectName@ @JobName@-@JobVersion@
+        // (@TalendJobVersion@,@JobType@)</name>
 
         // add dynamic ds job modules
         String upperPath = "../";
@@ -186,35 +195,7 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
     }
 
     protected void generateAssemblyFile(IProgressMonitor monitor, final Set<JobInfo> clonedChildrenJobInfors) throws Exception {
-        // IFile assemblyFile = this.getAssemblyFile();
-        // if (assemblyFile != null) {
-        // // read template from project setting
-        // try {
-        // File templateFile = PomUtil.getTemplateFile(getObjectTypeFolder(), getItemRelativePath(),
-        // TalendMavenConstants.ASSEMBLY_FILE_NAME);
-        // if (!FilesUtils.allInSameFolder(templateFile, TalendMavenConstants.POM_FILE_NAME)) {
-        // templateFile = null; // force to set null, in order to use the template from other places.
-        // }
-        //
-        // final Map<String, Object> templateParameters = PomUtil.getTemplateParameters(getJobProcessor());
-        // String content = MavenTemplateManager.getTemplateContent(templateFile,
-        // IProjectSettingPreferenceConstants.TEMPLATE_ROUTE_ASSEMBLY, JOB_TEMPLATE_BUNDLE,
-        // IProjectSettingTemplateConstants.PATH_OSGI_BUNDLE + '/'
-        // + IProjectSettingTemplateConstants.ASSEMBLY_ROUTE_TEMPLATE_FILE_NAME,
-        // templateParameters);
-        // if (content != null) {
-        // ByteArrayInputStream source = new ByteArrayInputStream(content.getBytes());
-        // if (assemblyFile.exists()) {
-        // assemblyFile.setContents(source, true, false, monitor);
-        // } else {
-        // assemblyFile.create(source, true, monitor);
-        // }
-        // updateDependencySet(assemblyFile);
-        // }
-        // } catch (Exception e) {
-        // ExceptionHandler.process(e);
-        // }
-        // }
+
     }
 
     /*
@@ -224,104 +205,6 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
      */
     @Override
     public void generateTemplates(boolean overwrite) throws Exception {
-        // Map<ExportChoice, Object> exportChoiceMap = new EnumMap<ExportChoice, Object>(ExportChoice.class);
-        // ServiceExportManager serviceExportManager = new ServiceExportManager(exportChoiceMap);
-        //
-        // String serviceName = serviceItem.getProperty().getLabel();
-        // String serviceVersion = serviceItem.getProperty().getVersion();
-        // List<IRepositoryViewObject> nodes = new ArrayList<IRepositoryViewObject>();
-        // Map<String, Map<String, String>> contextValues = new HashMap<String, Map<String, String>>();
-        // Map<ServicePort, Map<String, String>> ports = new HashMap<ServicePort, Map<String, String>>();
-        //
-        // ServiceConnection serviceConnection = (ServiceConnection) serviceItem.getConnection();
-        // EList<ServicePort> listPort = serviceConnection.getServicePort();
-        // try {
-        // List<IRepositoryViewObject> jobs =
-        // ProxyRepositoryFactory.getInstance().getAll(ERepositoryObjectType.PROCESS);
-        // for (ServicePort port : listPort) {
-        // List<ServiceOperation> listOperation = port.getServiceOperation();
-        // Map<String, String> operations = new HashMap<String, String>(listOperation.size());
-        // for (ServiceOperation operation : listOperation) {
-        // String jobId = operation.getReferenceJobId();
-        // if (jobId != null && !jobId.equals("")) {
-        // String operationName = operation.getName();
-        // IRepositoryViewObject jobNode = null;
-        // for (IRepositoryViewObject job : jobs) {
-        // if (job.getId().equals(jobId)) {
-        // jobNode = job;
-        // break;
-        // }
-        // }
-        // if (jobNode == null) {
-        // continue;
-        // }
-        // String jobName = jobNode.getLabel();
-        // operations.put(operationName, jobName);
-        // nodes.add(jobNode);
-        // contextValues.putAll(JobContextUtils.getContextsMap((ProcessItem) jobNode.getProperty().getItem()));
-        // }
-        // }
-        // ports.put(port, operations);
-        // }
-        // } catch (PersistenceException e) {
-        // ExceptionHandler.process(e);
-        // }
-        //
-        // // src\main\resources\feature\feature.xml
-        // FeaturesModel features = new FeaturesModel(getGroupId(), serviceName, serviceVersion);
-        // features.setConfigName(serviceName);
-        // features.setContexts(contextValues);
-        // ServiceConnection connection = (ServiceConnection) serviceItem.getConnection();
-        // String useRegistry = connection.getAdditionalInfo().get(ServiceMetadataDialog.USE_SERVICE_REGISTRY);
-        // if (!"true".equals(useRegistry)) {
-        // String useCorrelation = connection.getAdditionalInfo().get(ServiceMetadataDialog.USE_BUSINESS_CORRELATION);
-        // if ("true".equals(useCorrelation)) {
-        // features.addFeature(new FeatureModel(FeaturesModel.CORRELATION_FEATURE_NAME));
-        // }
-        // }
-        // // add talend-data-mapper feature
-        // for (IRepositoryViewObject node : nodes) {
-        // ProcessItem processItem = (ProcessItem) node.getProperty().getItem();
-        // if (null != EmfModelUtils.getComponentByName(processItem, "tHMap")) {
-        // features.addFeature(new FeatureModel(FeaturesModel.TALEND_DATA_MAPPER_FEATURE_NAME));
-        // break;
-        // }
-        // }
-        //
-        // for (IRepositoryViewObject node : nodes) {
-        // features.addBundle(new BundleModel(PomIdsHelper.getJobGroupId(node.getProperty()),
-        // serviceExportManager.getNodeLabel(node) + "-bundle", PomIdsHelper.getJobVersion(node.getProperty())));
-        // }
-        // final String artifactName = serviceName + "-control-bundle"; //$NON-NLS-1$
-        // features.addBundle(new BundleModel(PomIdsHelper.getJobGroupId(serviceItem.getProperty()), artifactName,
-        // serviceVersion));
-        //
-        // IFile feature = talendProcessJavaProject
-        // .createSubFolder(monitor, talendProcessJavaProject.getResourcesFolder(), "feature").getFile("feature.xml");
-        // setFileContent(features.getContent(), feature, monitor);
-        //
-        // // resources\META-INF\MANIFEST.MF
-        // Manifest manifest = serviceExportManager.getManifest(serviceName, serviceVersion, additionalInfo);
-        // IFile mf = talendProcessJavaProject.createSubFolder(monitor, talendProcessJavaProject.getResourcesFolder(),
-        // "META-INF")
-        // .getFile("MANIFEST.MF");
-        // // talendProcessJavaProject.getResourceSubFolder(monitor, "META-INF").getFile("MANIFEST.MF");
-        // FileOutputStream outputStream = new FileOutputStream(mf.getLocation().toFile());
-        // manifest.write(outputStream);
-        // outputStream.flush();
-        // outputStream.close();
-        //
-        // // resources\**.wsdl
-        // IFile wsdl = talendProcessJavaProject.getResourcesFolder().getFile(serviceWsdl.getName());
-        // setFileContent(serviceWsdl.getContents(), wsdl, monitor);
-        //
-        // // resources\OSGI-INF\blueprint\blueprint.xml
-        // IFile blueprint = talendProcessJavaProject
-        // .createSubFolder(monitor, talendProcessJavaProject.getResourcesFolder(), "OSGI-INF/blueprint")
-        // .getFile("blueprint.xml");
-        // // talendProcessJavaProject.getResourceSubFolder(monitor, "OSGI-INF/blueprint").getFile("blueprint.xml");
-        // serviceExportManager.createBlueprint(blueprint.getLocation().toFile(), ports, additionalInfo, wsdl,
-        // serviceName);
 
     }
 
@@ -359,7 +242,7 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         resourcesDir.setValue("${project.build.directory}/bin");
 
         Xpp3Dom featuresFile = new Xpp3Dom("featuresFile");
-        featuresFile.setValue("${basedir}/src/main/resources/feature.xml");
+        featuresFile.setValue("${basedir}/src/main/resources/feature/feature.xml");
 
         configuration.addChild(resourcesDir);
         configuration.addChild(featuresFile);
