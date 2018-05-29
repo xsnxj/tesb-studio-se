@@ -88,7 +88,7 @@ public class OpenJobAction extends EditProcess {
     }
 
     @Override
-    protected RepositoryNode getCurrentRepositoryNode() {
+    public RepositoryNode getCurrentRepositoryNode() {
         return jobNode;
     }
 
