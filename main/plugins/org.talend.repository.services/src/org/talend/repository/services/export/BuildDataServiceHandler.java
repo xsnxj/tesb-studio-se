@@ -457,9 +457,9 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
      */
     @Override
     public void prepare(IProgressMonitor monitor, Map<String, Object> parameters) throws Exception {
-        // // generate sources
-        // generateJobFiles(monitor);
-        // TODO Generate nodes job
+         // generate sources
+         generateJobFiles(monitor);
+        // Generate nodes job
         // @see void
         // org.talend.repository.services.ui.action.ExportServiceWithMavenAction.addJobFilesToExport(IProgressMonitor
         // monitor) throws Exception
