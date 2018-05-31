@@ -13,6 +13,7 @@
 package org.talend.repository.services.ui;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.resources.IFile;
@@ -26,12 +27,17 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IExportWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.talend.commons.ui.runtime.exception.MessageBoxExceptionHandler;
 import org.talend.commons.utils.io.FilesUtils;
+import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.process.IContext;
 import org.talend.core.prefs.IDEWorkbenchPlugin;
+import org.talend.core.runtime.process.ITalendProcessJavaProject;
+import org.talend.core.runtime.repository.build.IBuildResourceParametes;
+import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.designer.runprocess.ProcessorUtilities;
-import org.talend.repository.services.ServicesPlugin;
 import org.talend.repository.services.Messages;
+import org.talend.repository.services.ServicesPlugin;
 import org.talend.repository.services.export.BuildDataServiceHandler;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.ui.wizards.exportjob.scriptsmanager.JobScriptsManager.ExportChoice;
@@ -92,24 +98,53 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
         // END TESB-7319
 
         Map<ExportChoice, Object> exportChoiceMap = mainPage.getExportChoiceMap();
+        exportChoiceMap.put(ExportChoice.doNotCompileCode, false);
+        exportChoiceMap.put(ExportChoice.needDependencies, true);
+        exportChoiceMap.put(ExportChoice.addStatistics, false);
+        exportChoiceMap.put(ExportChoice.addTracs, false);
+        exportChoiceMap.put(ExportChoice.needAntScript, false);
+        exportChoiceMap.put(ExportChoice.needMavenScript, false);
+        exportChoiceMap.put(ExportChoice.applyToChildren, false);
+        exportChoiceMap.put(ExportChoice.needContext, true);
+        exportChoiceMap.put(ExportChoice.binaries, true);
+        exportChoiceMap.put(ExportChoice.needSourceCode, false);
+        exportChoiceMap.put(ExportChoice.executeTests, false);
+        exportChoiceMap.put(ExportChoice.includeTestSource, false);
+        exportChoiceMap.put(ExportChoice.includeLibs, true);
+        exportChoiceMap.put(ExportChoice.needLog4jLevel, false);
 
         // update to use BuildDataServiceHandler
         IProgressMonitor pMonitor = new NullProgressMonitor();
         int scale = 10;
 
         BuildDataServiceHandler buildServiceHandler = new BuildDataServiceHandler(serviceItem,
-                serviceItem.getProperty().getVersion(), IContext.DEFAULT, (Map<ExportChoice, Object>) exportChoiceMap);
-
+                serviceItem.getProperty().getVersion(), IContext.DEFAULT, exportChoiceMap);
+        Map<String, Object> prepareParams = new HashMap<String, Object>();
+        prepareParams.put(IBuildResourceParametes.OPTION_ITEMS, true);
+        prepareParams.put(IBuildResourceParametes.OPTION_ITEMS_DEPENDENCIES, true);
         try {
-            buildServiceHandler.generateItemFiles(true, new SubProgressMonitor(pMonitor, scale));
-            buildServiceHandler.generateJobFiles(new SubProgressMonitor(pMonitor, scale));
+            buildServiceHandler.prepare(pMonitor, prepareParams);
             buildServiceHandler.build(new SubProgressMonitor(pMonitor, scale));
             IFile serviceTargetFile = buildServiceHandler.getJobTargetFile();
             if (serviceTargetFile != null && serviceTargetFile.exists()) {
-                FilesUtils.copyFile(serviceTargetFile.getLocation().toFile(), new File(destinationValue)); // $NON-NLS-1$
+                FilesUtils.copyFile(serviceTargetFile.getLocation().toFile(), new File(destinationValue));
+            } else {
+                if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
+                    IRunProcessService service = (IRunProcessService) GlobalServiceRegister.getDefault()
+                            .getService(IRunProcessService.class);
+                    ITalendProcessJavaProject talendJavaProject = service.getTalendJobJavaProject(serviceItem.getProperty());
+                    String mvnLogFilePath = talendJavaProject.getProject().getFile("lastGenerated.log").getLocation() //$NON-NLS-1$
+                            .toPortableString();
+                    Exception e = new Exception(
+                            "Service was not built successfully, please check the logs for more details available on "
+                                    + mvnLogFilePath);
+                    MessageBoxExceptionHandler.process(e, getShell());
+                }
+                return false;
             }
-        } catch (Exception e1) {
-            e1.printStackTrace();
+        } catch (Exception e) {
+            MessageBoxExceptionHandler.process(e, getShell());
+            return false;
         }
 
         mainPage.finish();
