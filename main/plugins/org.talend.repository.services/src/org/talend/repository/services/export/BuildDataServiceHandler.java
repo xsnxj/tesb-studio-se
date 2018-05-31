@@ -41,6 +41,7 @@ import org.talend.core.runtime.process.IBuildJobHandler;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.process.TalendProcessArgumentConstant;
 import org.talend.designer.maven.model.TalendMavenConstants;
+import org.talend.designer.maven.tools.BuildCacheManager;
 import org.talend.designer.maven.utils.PomIdsHelper;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeatureModel;
@@ -181,12 +182,19 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
      * IProgressMonitor)
      */
     public void build(IProgressMonitor monitor) throws Exception {
+        // final Map<String, Object> argumentsMap = new HashMap<String, Object>();
+        // argumentsMap.put(TalendProcessArgumentConstant.ARG_GOAL, TalendMavenConstants.GOAL_PACKAGE);
+        // argumentsMap.put(TalendProcessArgumentConstant.ARG_PROGRAM_ARGUMENTS, getProgramArgs());
+        //
+        // argumentsMap.put(TalendProcessArgumentConstant.ARG_GOAL, TalendMavenConstants.GOAL_PACKAGE);
+        // talendProcessJavaProject.buildModules(monitor, null, argumentsMap);
         final Map<String, Object> argumentsMap = new HashMap<String, Object>();
         argumentsMap.put(TalendProcessArgumentConstant.ARG_GOAL, TalendMavenConstants.GOAL_PACKAGE);
         argumentsMap.put(TalendProcessArgumentConstant.ARG_PROGRAM_ARGUMENTS, getProgramArgs());
 
-        argumentsMap.put(TalendProcessArgumentConstant.ARG_GOAL, TalendMavenConstants.GOAL_PACKAGE);
         talendProcessJavaProject.buildModules(monitor, null, argumentsMap);
+
+        BuildCacheManager.getInstance().performBuildSuccess();
     }
 
     protected String getProgramArgs() {
@@ -304,22 +312,6 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
      */
     @Override
     public IProcessor generateJobFiles(IProgressMonitor monitor) throws Exception {
-        // TODO Generate nodes job
-        // @see void
-        // org.talend.repository.services.ui.action.ExportServiceWithMavenAction.addJobFilesToExport(IProgressMonitor
-        // monitor) throws Exception
-        for (IRepositoryViewObject node : nodes) {
-            String artefactName = node.getProperty().getLabel();
-            String version = node.getVersion();
-            ProcessItem processItem = (ProcessItem) node.getProperty().getItem();
-            IBuildJobHandler buildJobOSGiHandler = BuildJobFactory.createBuildJobHandler(processItem, contextName,
-                    processItem.getProperty().getVersion(), exportChoice, JobExportType.OSGI);
-            if (buildJobOSGiHandler != null) {
-                buildJobOSGiHandler.generateJobFiles(monitor);
-                // buildJobOSGiHandler.generateItemFiles(true, monitor);
-                buildJobOSGiHandler.build(monitor);
-            }
-        }
 
         // src\main\resources\feature\feature.xml
         FeaturesModel features = new FeaturesModel(getGroupId(), serviceName, serviceVersion);
@@ -347,7 +339,8 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
                     serviceExportManager.getNodeLabel(node) + "-bundle", PomIdsHelper.getJobVersion(node.getProperty())));
         }
         final String artifactName = serviceName + "-control-bundle"; //$NON-NLS-1$
-        features.addBundle(new BundleModel(PomIdsHelper.getJobGroupId(serviceItem.getProperty()), artifactName, serviceVersion));
+        features.addBundle(new BundleModel(PomIdsHelper.getJobGroupId(serviceItem.getProperty()), artifactName,
+                PomIdsHelper.getJobVersion(serviceItem.getProperty())));
 
         IFile feature = talendProcessJavaProject
                 .createSubFolder(monitor, talendProcessJavaProject.getResourcesFolder(), "feature").getFile("feature.xml");
@@ -460,16 +453,29 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
     }
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.talend.core.runtime.repository.build.IBuildExportHandler#prepare(org.eclipse.core.runtime.IProgressMonitor,
-     * java.util.Map)
+     * gererate the operation job bundles
      */
     @Override
     public void prepare(IProgressMonitor monitor, Map<String, Object> parameters) throws Exception {
-        // TODO Auto-generated method stub
-
+         // generate sources
+         generateJobFiles(monitor);
+        // Generate nodes job
+        // @see void
+        // org.talend.repository.services.ui.action.ExportServiceWithMavenAction.addJobFilesToExport(IProgressMonitor
+        // monitor) throws Exception
+        for (IRepositoryViewObject node : nodes) {
+            String artefactName = node.getProperty().getLabel();
+            String version = node.getVersion();
+            ProcessItem processItem = (ProcessItem) node.getProperty().getItem();
+            IBuildJobHandler buildJobOSGiHandler = BuildJobFactory.createBuildJobHandler(processItem, contextName,
+                    processItem.getProperty().getVersion(), exportChoice, JobExportType.OSGI);
+            if (buildJobOSGiHandler != null) {
+                buildJobOSGiHandler.prepare(monitor, argumentsMap);
+                // buildJobOSGiHandler.generateJobFiles(monitor);
+                // buildJobOSGiHandler.generateItemFiles(true, monitor);
+                // buildJobOSGiHandler.build(monitor);
+            }
+        }
     }
 
 }
