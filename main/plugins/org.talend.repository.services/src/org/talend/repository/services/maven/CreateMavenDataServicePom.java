@@ -20,6 +20,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.Resource;
@@ -107,6 +108,7 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
             return;
         }
 
+        Model tmpModel = createModel();
         this.model = new Model(); // createModel();
         configModel(model); // config model
         Model pomModel = model; // new Model();
@@ -116,6 +118,7 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         pomModel.setArtifactId(PomIdsHelper.getJobArtifactId(getJobProcessor().getProperty()));
         pomModel.setVersion(PomIdsHelper.getJobVersion(getJobProcessor().getProperty()));
         pomModel.setPackaging("pom");
+        pomModel.setParent(tmpModel.getParent());
         // pomModel.setName(PomIdsHelper.getp); //<name>@ProjectName@ @JobName@-@JobVersion@
         // (@TalendJobVersion@,@JobType@)</name>
 
@@ -157,6 +160,12 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         pomModel.addModule(POM_FEATURE_XML);
         PomUtil.savePom(monitor, pomModel, pom);
 
+        Parent parentPom = new Parent();
+        parentPom.setGroupId(pomModel.getGroupId());
+        parentPom.setArtifactId(pomModel.getArtifactId());
+        parentPom.setVersion(pomModel.getVersion());
+        parentPom.setRelativePath("/");
+
         IFile feature = pom.getParent().getFile(new Path(POM_FEATURE_XML));
         Model featureModel = new Model();
         featureModel.setModelVersion(MAVEN_VERSION);
@@ -166,8 +175,9 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         featureModel.setPackaging("pom");
         Build featureModelBuild = new Build();
         featureModelBuild.addPlugin(addFeaturesMavenPlugin());
+        featureModelBuild.addPlugin(addMavenCleanPlugin());
         featureModel.setBuild(featureModelBuild);
-
+        featureModel.setParent(parentPom);
         PomUtil.savePom(monitor, featureModel, feature);
 
         IFile controlBundle = pom.getParent().getFile(new Path(POM_CONTROL_BUNDLE_XML));
@@ -182,6 +192,7 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         controlBundleModelBuild.addPlugin(addControlBundleMavenPlugin());
         controlBundleModelBuild.addResource(addControlBundleMavenResource());
         controlBundleModel.setBuild(controlBundleModelBuild);
+        controlBundleModel.setParent(parentPom);
         PomUtil.savePom(monitor, controlBundleModel, controlBundle);
 
         afterCreate(monitor);
@@ -255,6 +266,27 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
 
         pluginExecutions.add(pluginExecution);
         plugin.setExecutions(pluginExecutions);
+
+        return plugin;
+    }
+
+    /**
+     * Avoid clean control-bundle file in target folde, in case of using mvn clean package, TESB-22296
+     * 
+     * @return plugin
+     */
+    private Plugin addMavenCleanPlugin() {
+        Plugin plugin = new Plugin();
+
+        plugin.setGroupId("org.apache.maven.plugins");
+        plugin.setArtifactId("maven-clean-plugin");
+        plugin.setVersion("3.0.0");
+
+        Xpp3Dom configuration = new Xpp3Dom("configuration");
+        Xpp3Dom skipClean = new Xpp3Dom("skip");
+        skipClean.setValue("true");
+        configuration.addChild(skipClean);
+        plugin.setConfiguration(configuration);
 
         return plugin;
     }
