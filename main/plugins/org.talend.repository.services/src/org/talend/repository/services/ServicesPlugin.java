@@ -113,6 +113,7 @@ public class ServicesPlugin extends AbstractUIPlugin {
                     }
                 }
             }
+            RelationshipItemBuilder.getInstance().saveRelations();
         }
     }
 
