@@ -34,6 +34,7 @@ import org.talend.core.model.process.IContext;
 import org.talend.core.prefs.IDEWorkbenchPlugin;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.repository.build.IBuildResourceParametes;
+import org.talend.designer.maven.tools.BuildCacheManager;
 import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.repository.services.Messages;
@@ -99,7 +100,7 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
 
         Map<ExportChoice, Object> exportChoiceMap = mainPage.getExportChoiceMap();
         exportChoiceMap.put(ExportChoice.doNotCompileCode, false);
-        exportChoiceMap.put(ExportChoice.needDependencies, true);
+        exportChoiceMap.put(ExportChoice.needDependencies, false);
         exportChoiceMap.put(ExportChoice.addStatistics, false);
         exportChoiceMap.put(ExportChoice.addTracs, false);
         exportChoiceMap.put(ExportChoice.needAntScript, false);
@@ -112,6 +113,7 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
         exportChoiceMap.put(ExportChoice.includeTestSource, false);
         exportChoiceMap.put(ExportChoice.includeLibs, true);
         exportChoiceMap.put(ExportChoice.needLog4jLevel, false);
+        exportChoiceMap.put(ExportChoice.needAssembly, true);
 
         // update to use BuildDataServiceHandler
         IProgressMonitor pMonitor = new NullProgressMonitor();
@@ -144,7 +146,10 @@ public class ServiceExportWizard extends Wizard implements IExportWizard {
             }
         } catch (Exception e) {
             MessageBoxExceptionHandler.process(e, getShell());
+            BuildCacheManager.getInstance().performBuildFailure();
             return false;
+        } finally {
+            ProcessorUtilities.resetExportConfig();
         }
 
         mainPage.finish();

@@ -33,6 +33,8 @@ import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.workbench.resources.ResourceUtils;
 import org.talend.core.CorePlugin;
+import org.talend.core.GlobalServiceRegister;
+import org.talend.core.IESBService;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -41,6 +43,7 @@ import org.talend.core.runtime.process.IBuildJobHandler;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.process.TalendProcessArgumentConstant;
 import org.talend.designer.maven.model.TalendMavenConstants;
+import org.talend.designer.maven.tools.AggregatorPomsHelper;
 import org.talend.designer.maven.tools.BuildCacheManager;
 import org.talend.designer.maven.utils.PomIdsHelper;
 import org.talend.designer.publish.core.models.BundleModel;
@@ -48,6 +51,8 @@ import org.talend.designer.publish.core.models.FeatureModel;
 import org.talend.designer.publish.core.models.FeaturesModel;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.IRunProcessService;
+import org.talend.repository.services.maven.CreateMavenDataServicePom;
+import org.talend.repository.services.maven.ServiceMavenJavaProcessor;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
 import org.talend.repository.services.model.services.ServiceOperation;
@@ -313,6 +318,17 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
     @Override
     public IProcessor generateJobFiles(IProgressMonitor monitor) throws Exception {
 
+        // TESB-22307
+        if (GlobalServiceRegister.getDefault().isServiceRegistered(IESBService.class)) {
+            IESBService soapService = (IESBService) GlobalServiceRegister.getDefault().getService(IESBService.class);
+            ServiceMavenJavaProcessor processor = (ServiceMavenJavaProcessor) soapService.createJavaProcessor(null,
+                    serviceItem.getProperty(), true);
+            IFile pomFile = AggregatorPomsHelper.getItemPomFolder(serviceItem.getProperty())
+                    .getFile(TalendMavenConstants.POM_FILE_NAME);
+            CreateMavenDataServicePom pom = new CreateMavenDataServicePom(processor, pomFile);
+            pom.create(monitor);
+        }
+
         // src\main\resources\feature\feature.xml
         FeaturesModel features = new FeaturesModel(getGroupId(), serviceName, serviceVersion);
         features.setConfigName(serviceName);
@@ -457,8 +473,8 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
      */
     @Override
     public void prepare(IProgressMonitor monitor, Map<String, Object> parameters) throws Exception {
-         // generate sources
-         generateJobFiles(monitor);
+        // generate sources
+        generateJobFiles(monitor);
         // Generate nodes job
         // @see void
         // org.talend.repository.services.ui.action.ExportServiceWithMavenAction.addJobFilesToExport(IProgressMonitor
