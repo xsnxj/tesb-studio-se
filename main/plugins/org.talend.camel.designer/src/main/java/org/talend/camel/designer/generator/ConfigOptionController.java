@@ -49,7 +49,7 @@ import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.general.INexusService;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.nexus.IRepositoryArtifactHandler;
-import org.talend.core.nexus.NexusServerBean;
+import org.talend.core.nexus.ArtifactRepositoryBean;
 import org.talend.core.nexus.RepositoryArtifactHandlerManager;
 import org.talend.core.nexus.TalendLibsServerManager;
 import org.talend.core.runtime.maven.MavenArtifact;
@@ -76,7 +76,7 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
 	
 	protected INexusService service;
 	
-    NexusServerBean nexusServerBean = TalendLibsServerManager.getInstance().getCustomNexusServer();
+    ArtifactRepositoryBean nexusServerBean = TalendLibsServerManager.getInstance().getCustomNexusServer();
 	
 	public ConfigOptionController(IDynamicProperty dp) {
 		super(dp);
@@ -100,7 +100,7 @@ public class ConfigOptionController extends AbstractElementPropertySectionContro
 	    }else{
 	        try {
 
-                NexusServerBean localNexusServer = new NexusServerBean();
+                ArtifactRepositoryBean localNexusServer = new ArtifactRepositoryBean();
                 localNexusServer.setServer(nexusServerBean.getServer());
                 localNexusServer.setUserName(nexusServerBean.getUserName());
                 localNexusServer.setPassword(nexusServerBean.getPassword());

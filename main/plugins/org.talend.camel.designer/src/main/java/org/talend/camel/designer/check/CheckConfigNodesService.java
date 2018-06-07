@@ -1,7 +1,7 @@
 package org.talend.camel.designer.check;
 
 import org.talend.core.PluginChecker;
-import org.talend.core.nexus.NexusServerBean;
+import org.talend.core.nexus.ArtifactRepositoryBean;
 import org.talend.core.nexus.TalendLibsServerManager;
 import org.talend.designer.core.ICheckNodesService;
 import org.talend.designer.core.ui.editor.nodes.Node;
@@ -14,9 +14,9 @@ public class CheckConfigNodesService implements ICheckNodesService{
 			return;
 		}
 		
-		NexusServerBean nexusServerBean = TalendLibsServerManager.getInstance().getCustomNexusServer();
+		ArtifactRepositoryBean artifactRepositoryBean = TalendLibsServerManager.getInstance().getCustomNexusServer();
 		
-		if(nexusServerBean == null){
+		if(artifactRepositoryBean == null){
 		    return;
 		}
 	}
