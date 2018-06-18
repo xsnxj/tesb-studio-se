@@ -121,9 +121,10 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
             Set<JobInfo> subjobs = getJobProcessor().getBuildChildrenJobs();
             if (subjobs != null && !subjobs.isEmpty()) {
+            	int ndx = 0;
                 for (JobInfo subjob : subjobs) {
                     if (isRoutelet(subjob) || isJob(subjob) ) {
-                        fmBuild.addPlugin(addFileInstallPlugin(subjob));
+                        fmBuild.addPlugin(addFileInstallPlugin(subjob, ndx++));
                     }
                 }
             }
@@ -463,7 +464,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
     }
 
-    private Plugin addFileInstallPlugin(JobInfo job) {
+    private Plugin addFileInstallPlugin(JobInfo job, int ndx) {
         Plugin plugin = new Plugin();
 
         plugin.setGroupId("org.apache.maven.plugins");
@@ -506,7 +507,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
         List<PluginExecution> pluginExecutions = new ArrayList<PluginExecution>();
         PluginExecution pluginExecution = new PluginExecution();
-        pluginExecution.setId("install-jar-lib");
+        pluginExecution.setId("install-jar-lib-" + ndx);
         pluginExecution.addGoal("install-file");
         pluginExecution.setPhase("validate");
 
