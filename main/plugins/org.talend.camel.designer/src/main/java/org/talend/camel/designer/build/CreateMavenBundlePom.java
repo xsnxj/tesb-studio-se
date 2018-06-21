@@ -634,6 +634,9 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         if(job == null) {
             return false;
         }
+        if(isRoutelet(getFullJobInfo(job))) {
+    		return false;
+    	}
         return !isJob(getFullJobInfo(job).getFatherJobInfo());
     }
 
