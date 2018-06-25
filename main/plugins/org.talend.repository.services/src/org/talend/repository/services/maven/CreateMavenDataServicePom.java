@@ -18,6 +18,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -36,6 +37,7 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.SVNConstant;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.core.repository.utils.ItemResourceUtil;
+import org.talend.core.runtime.maven.MavenConstants;
 import org.talend.designer.maven.model.TalendJavaProjectConstants;
 import org.talend.designer.maven.model.TalendMavenConstants;
 import org.talend.designer.maven.template.ETalendMavenVariables;
@@ -166,6 +168,12 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         parentPom.setVersion(pomModel.getVersion());
         parentPom.setRelativePath("/");
 
+        org.talend.designer.core.ui.editor.process.Process process = (org.talend.designer.core.ui.editor.process.Process) getJobProcessor()
+                .getProcess();
+
+        boolean publishAsSnapshot = BooleanUtils
+                .toBoolean((String) process.getAdditionalProperties().get(MavenConstants.NAME_PUBLISH_AS_SNAPSHOT));
+
         IFile feature = pom.getParent().getFile(new Path(POM_FEATURE_XML));
         Model featureModel = new Model();
         featureModel.setModelVersion(MAVEN_VERSION);
@@ -175,6 +183,8 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         featureModel.setPackaging("pom");
         Build featureModelBuild = new Build();
         featureModelBuild.addPlugin(addFeaturesMavenPlugin());
+        featureModelBuild.addPlugin(
+                addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
         featureModelBuild.addPlugin(addMavenCleanPlugin());
         featureModel.setBuild(featureModelBuild);
         featureModel.setParent(parentPom);
@@ -262,6 +272,63 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         PluginExecution pluginExecution = new PluginExecution();
         pluginExecution.setId("create-kar");
         pluginExecution.addGoal("create-kar");
+        pluginExecution.setConfiguration(configuration);
+
+        pluginExecutions.add(pluginExecution);
+        plugin.setExecutions(pluginExecutions);
+
+        return plugin;
+    }
+
+    private Plugin addDeployFeatureMavenPlugin(String modelArtifactId, String modelVersion, boolean publishAsSnapshot) {
+        Plugin plugin = new Plugin();
+
+        plugin.setGroupId("org.apache.maven.plugins");
+        plugin.setArtifactId("maven-deploy-plugin");
+        plugin.setVersion("2.8.2");
+
+        Xpp3Dom configuration = new Xpp3Dom("configuration");
+
+        Xpp3Dom file = new Xpp3Dom("file");
+        file.setValue("${basedir}/src/main/resources/feature/feature.xml");
+
+        Xpp3Dom groupId = new Xpp3Dom("groupId");
+        groupId.setValue(model.getGroupId());
+
+        Xpp3Dom artifactId = new Xpp3Dom("artifactId");
+        artifactId.setValue(modelArtifactId);
+
+        Xpp3Dom version = new Xpp3Dom("version");
+        version.setValue(modelVersion);
+
+        Xpp3Dom classifier = new Xpp3Dom("classifier");
+        classifier.setValue("features");
+
+        Xpp3Dom packaging = new Xpp3Dom("packaging");
+        packaging.setValue("xml");
+
+        Xpp3Dom repositoryId = new Xpp3Dom("repositoryId");
+        repositoryId.setValue(publishAsSnapshot ? "${project.distributionManagement.snapshotRepository.id}"
+                : "${project.distributionManagement.repository.id}");
+
+        Xpp3Dom url = new Xpp3Dom("url");
+        url.setValue(publishAsSnapshot ? "${project.distributionManagement.snapshotRepository.url}"
+                : "${project.distributionManagement.repository.url}");
+
+        configuration.addChild(file);
+        configuration.addChild(groupId);
+        configuration.addChild(artifactId);
+        configuration.addChild(version);
+        configuration.addChild(classifier);
+        configuration.addChild(packaging);
+        configuration.addChild(repositoryId);
+        configuration.addChild(url);
+
+        List<PluginExecution> pluginExecutions = new ArrayList<PluginExecution>();
+        PluginExecution pluginExecution = new PluginExecution();
+        pluginExecution.setId("deploy-file");
+        pluginExecution.setPhase("deploy");
+        pluginExecution.addGoal("deploy-file");
         pluginExecution.setConfiguration(configuration);
 
         pluginExecutions.add(pluginExecution);
