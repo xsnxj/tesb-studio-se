@@ -32,10 +32,21 @@ import org.talend.designer.codegen.ITalendSynchronizer;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.ui.actions.AContextualAction;
 
+
+import java.util.List;
+import java.util.regex.Pattern;
+import org.talend.core.model.components.IComponent;
+import org.talend.core.model.general.ModuleNeeded;
+import org.talend.core.ui.component.ComponentsFactoryProvider;
+import org.talend.designer.core.model.utils.emf.component.impl.ComponentFactoryImpl;
+import org.talend.designer.core.model.utils.emf.component.impl.IMPORTTypeImpl;
+
 /**
  * DOC Administrator class global comment. Detailled comment
  */
 public abstract class AbstractBeanAction extends AContextualAction {
+
+    private Pattern CAMEL_CORE_PATTERN = Pattern.compile("camel-core-\\d+(.\\d+)*(\\S+)*(\\.jar)$");
 
     // protected RepositoryNode repositoryNode;
 
@@ -110,5 +121,48 @@ public abstract class AbstractBeanAction extends AContextualAction {
     protected void doRun() {
         // TODO Auto-generated method stub
 
+    }
+
+    protected void addCamelDependency(BeanItem beanItem) {
+
+        if (beanItem.getImports().size() == 0) {
+            addDefaultDependency(beanItem);
+        }
+
+        boolean needAddCamelCore = true;
+        for (int i = 0; i < beanItem.getImports().size(); i++) {
+            Object o = beanItem.getImports().get(i);
+            if (o instanceof IMPORTTypeImpl) {
+                IMPORTTypeImpl importType = (IMPORTTypeImpl) o;
+                if (CAMEL_CORE_PATTERN.matcher(importType.getMODULE()).matches()) {
+                    needAddCamelCore = false;
+                    continue;
+                }
+            }
+        }
+
+        if (needAddCamelCore) {
+            addDefaultDependency(beanItem);
+        }
+    }
+
+
+    private void addDefaultDependency(BeanItem beanItem) {
+        IMPORTTypeImpl camelImport = (IMPORTTypeImpl) ComponentFactoryImpl.eINSTANCE.createIMPORTType();
+        IComponent component = ComponentsFactoryProvider.getInstance().get("cTimer", "CAMEL");
+        ModuleNeeded cmn = null;
+        List<ModuleNeeded> mns = component.getModulesNeeded();
+
+        for (ModuleNeeded mn : mns) {
+            if (mn.getId().equals("camel-core")) {
+                cmn = mn;
+                break;
+            }
+        }
+
+        camelImport.setMODULE(cmn.getModuleName());
+        camelImport.setMVN(cmn.getMavenUri());
+        camelImport.setREQUIRED(true);
+        beanItem.getImports().add(camelImport);
     }
 }

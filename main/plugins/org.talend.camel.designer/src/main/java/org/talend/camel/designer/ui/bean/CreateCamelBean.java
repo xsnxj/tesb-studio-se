@@ -48,6 +48,8 @@ import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.ui.views.IRepositoryView;
 
+import org.talend.core.CorePlugin;
+
 /**
  * DOC smallet class global comment. Detailled comment <br/>
  * 
@@ -143,7 +145,10 @@ public class CreateCamelBean extends AbstractBeanAction implements IIntroAction 
         if (dlg.open() == Window.OK) {
 
             try {
+                addCamelDependency(beanWizard.getBean());
                 openBeanEditor(beanWizard.getBean(), false);
+                refresh(repositoryNode);
+                CorePlugin.getDefault().getRunProcessService().updateLibraries(beanWizard.getBean());
             } catch (PartInitException e) {
                 MessageBoxExceptionHandler.process(e);
             } catch (SystemException e) {
