@@ -72,6 +72,7 @@ import org.talend.designer.core.ui.AbstractMultiPageTalendEditor;
 import org.talend.designer.core.ui.editor.cmd.ChangeValuesFromRepository;
 import org.talend.designer.core.ui.editor.nodes.Node;
 import org.talend.designer.maven.model.TalendMavenConstants;
+import org.talend.designer.runprocess.IProcessor;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.RepositoryPlugin;
 import org.talend.repository.model.IProxyRepositoryFactory;
@@ -82,6 +83,7 @@ import org.talend.repository.model.RepositoryConstants;
 import org.talend.repository.model.RepositoryNode;
 import org.talend.repository.model.RepositoryNodeUtilities;
 import org.talend.repository.services.action.CreateNewJobAction;
+import org.talend.repository.services.maven.OSGIJavaProcessor;
 import org.talend.repository.services.maven.ServiceMavenJavaProcessor;
 import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
@@ -1078,6 +1080,17 @@ public class ESBService implements IESBService {
     @Override
     public Object createJavaProcessor(IProcess process, Property property, boolean filenameFromLabel) {
         return new ServiceMavenJavaProcessor(process, property, filenameFromLabel);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.talend.core.IESBService#createOSGIJavaProcessor(org.talend.core.model.process.IProcess,
+     * org.talend.core.model.properties.Property, boolean)
+     */
+    @Override
+    public IProcessor createOSGIJavaProcessor(IProcess process, Property property, boolean filenameFromLabel) {
+        return new OSGIJavaProcessor(process, property, filenameFromLabel);
     }
 
 };
