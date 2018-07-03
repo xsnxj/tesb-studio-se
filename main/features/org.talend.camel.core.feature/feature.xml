@@ -16,4 +16,19 @@
       [Enter License Description here.]
    </license>
 
+
+   <includes
+         id="org.talend.commons.feature"
+         version="0.0.0"
+         search-location="self"/>
+
+   <includes
+         id="org.talend.camel.designer.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.talend.rcp.feature"
+         version="0.0.0"
+         search-location="self"/>
+         
 </feature>
