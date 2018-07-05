@@ -16,27 +16,21 @@ import org.apache.log4j.Logger;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.talend.camel.core.model.camelProperties.CamelProcessItem;
+import org.eclipse.ui.PlatformUI;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.process.IProcess;
-import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.IRepositoryObject;
 import org.talend.core.model.repository.RepositoryObject;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
-import org.talend.core.runtime.process.TalendProcessArgumentConstant;
-import org.talend.core.runtime.process.TalendProcessOptionConstants;
 import org.talend.core.runtime.repository.build.IMavenPomCreator;
-import org.talend.core.utils.BitwiseOptionUtils;
 import org.talend.designer.maven.model.TalendMavenConstants;
 import org.talend.designer.maven.tools.AggregatorPomsHelper;
 import org.talend.designer.maven.utils.PomUtil;
 import org.talend.designer.runprocess.ProcessorException;
-import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.designer.runprocess.maven.MavenJavaProcessor;
-import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.model.IRepositoryService;
 
 /**
@@ -176,7 +170,10 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
         try {
             IRepositoryObject repositoryObject = new RepositoryObject(getProperty());
 
-            RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(), false);
+            // Fix TESB-22660: Avoide to operate repo viewer before it open
+            if(PlatformUI.isWorkbenchRunning()) {
+                 RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(), false);
+            }
 
             IRunnableWithProgress action = new JavaCamelJobScriptsExportWSAction(repositoryObject, getProperty().getVersion(), "",
                     false);
