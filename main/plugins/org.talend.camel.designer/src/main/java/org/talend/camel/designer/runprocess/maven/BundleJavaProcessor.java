@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.PlatformUI;
 import org.talend.camel.designer.build.CreateMavenBundlePom;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.commons.exception.ExceptionHandler;
@@ -225,8 +226,10 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
         try {
             IRepositoryObject repositoryObject = new RepositoryObject(getProperty());
 
-            RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(), false);
-
+            // Fix TESB-22660: Avoide to operate repo viewer before it open
+            if(PlatformUI.isWorkbenchRunning()) {
+                 RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(), false);
+            }
             IRunnableWithProgress action = new JavaCamelJobScriptsExportWSAction(repositoryObject, getProperty().getVersion(), "",
                     false);
             action.run(new NullProgressMonitor());
