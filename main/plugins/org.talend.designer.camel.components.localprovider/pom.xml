@@ -79,7 +79,7 @@
         <dependency>
             <groupId>org.talend.camel</groupId>
             <artifactId>camel-talendjob</artifactId>
-            <version>${tesb.version}</version>
+            <version>6.4.1-p1</version>
         </dependency>
 
         <dependency>
