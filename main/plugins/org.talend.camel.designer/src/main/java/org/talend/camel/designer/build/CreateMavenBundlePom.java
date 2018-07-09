@@ -56,6 +56,7 @@ import org.talend.designer.maven.utils.PomUtil;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.designer.runprocess.ItemCacheManager;
+import org.talend.designer.runprocess.java.TalendJavaProjectManager;
 import org.talend.utils.io.FilesUtils;
 
 public class CreateMavenBundlePom extends CreateMavenJobPom {
@@ -487,8 +488,10 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         packaging.setValue("jar");
 
         Xpp3Dom file = new Xpp3Dom("file");
-        IPath currentProjectRootDir = getJobProcessor().getTalendJavaProject().getProject().getLocation();
-        IPath targetDir = getProcessor(job).getTalendJavaProject().getTargetFolder().getLocation();
+        IPath currentProjectRootDir = TalendJavaProjectManager.getTalendJobJavaProject(getJobProcessor().getProperty())
+                .getTargetFolder().getLocation();
+        IPath targetDir = TalendJavaProjectManager.getTalendJobJavaProject(job.getProcessItem().getProperty()).getTargetFolder()
+                .getLocation();
         String relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
         String pathToJar = relativeTargetDir + Path.SEPARATOR + getChildBundleName(job);
         file.setValue(pathToJar);
