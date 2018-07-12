@@ -20,9 +20,9 @@ import org.talend.core.model.process.AbstractExternalNode;
 import org.talend.core.model.process.IComponentDocumentation;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.process.IExternalData;
-import org.talend.designer.esb.components.ws.tools.extensions.external.IOASDecoder;
-import org.talend.designer.esb.components.ws.tools.extensions.external.OASDecoderFactory;
-import org.talend.designer.esb.components.ws.tools.extensions.external.TranslationException;
+import org.talend.designer.oas.external.IOASDecoder;
+import org.talend.designer.oas.external.OASDecoderFactory;
+import org.talend.designer.oas.external.TranslationException;
 
 public class TRESTRequestNode extends AbstractExternalNode {
 

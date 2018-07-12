@@ -26,6 +26,8 @@ public interface IOASDecoder {
 
     public String getEndpoint();
 
+    public String getName();
+
     public String getDocumentationComment();
 
     public Map<String, RestAPIMapping> getMappings();

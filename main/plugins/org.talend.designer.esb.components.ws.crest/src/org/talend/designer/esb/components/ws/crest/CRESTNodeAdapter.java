@@ -23,8 +23,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.utils.TalendTextUtils;
-import org.talend.designer.esb.components.ws.tools.extensions.external.IOASDecoder;
-import org.talend.designer.esb.components.ws.tools.extensions.external.RestAPIMapping;
+import org.talend.designer.oas.external.IOASDecoder;
+import org.talend.designer.oas.external.RestAPIMapping;
 
 /**
  * DOC dsergent class global comment. Detailled comment

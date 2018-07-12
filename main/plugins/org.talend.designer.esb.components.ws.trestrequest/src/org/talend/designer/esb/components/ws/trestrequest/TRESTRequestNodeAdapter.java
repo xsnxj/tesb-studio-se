@@ -26,8 +26,8 @@ import org.talend.core.model.metadata.IMetadataTable;
 import org.talend.core.model.metadata.MetadataTable;
 import org.talend.core.model.process.IElementParameter;
 import org.talend.core.model.utils.TalendTextUtils;
-import org.talend.designer.esb.components.ws.tools.extensions.external.IOASDecoder;
-import org.talend.designer.esb.components.ws.tools.extensions.external.RestAPIMapping;
+import org.talend.designer.oas.external.IOASDecoder;
+import org.talend.designer.oas.external.RestAPIMapping;
 
 /**
  * DOC dsergent class global comment. Detailled comment

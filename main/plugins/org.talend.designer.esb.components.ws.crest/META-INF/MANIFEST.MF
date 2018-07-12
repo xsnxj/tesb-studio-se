@@ -20,5 +20,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.emf.ecore.xmi,
  org.talend.libraries.apache,
  org.apache.xerces,
- org.talend.designer.esb.components.ws.tools.extensions
+ org.talend.designer.oas
 
