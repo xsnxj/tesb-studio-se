@@ -455,6 +455,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
         plugin.setGroupId("org.apache.maven.plugins");
         plugin.setArtifactId("maven-deploy-plugin");
+        plugin.setVersion("2.8.2");
 
         Xpp3Dom configuration = new Xpp3Dom("configuration");
 
