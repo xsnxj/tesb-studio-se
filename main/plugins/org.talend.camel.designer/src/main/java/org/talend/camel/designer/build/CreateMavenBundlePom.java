@@ -162,7 +162,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             	IPath currentProjectRootDir = getJobProcessor().getTalendJavaProject().getProject().getLocation();
             	IPath routeletPomPath = getProcessor(job).getTalendJavaProject().getProjectPom().getLocation();
             	String relativePomPath = routeletPomPath.makeRelativeTo(currentProjectRootDir).toString();
-                pom.addModule(relativePomPath);
+                // pom.addModule(relativePomPath); //TESB-22753
             }
         }
 
