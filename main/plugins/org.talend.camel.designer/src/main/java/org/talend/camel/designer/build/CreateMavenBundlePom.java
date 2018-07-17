@@ -117,21 +117,23 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             fm.setVersion(model.getVersion());
             fm.setPackaging("pom");
             Build fmBuild = new Build();
-            fmBuild.addPlugin(addFeaturesMavenPlugin(model.getProperties().getProperty("talend.job.finalName")));
 
-            fmBuild.addPlugin(addDeployFeatureMavenPlugin(fm.getArtifactId(), fm.getVersion(), publishAsSnapshot));
+            fmBuild.addPlugin(addFeaturesMavenPlugin(model.getProperties().getProperty("talend.job.finalName")));
 
             Set<JobInfo> subjobs = getJobProcessor().getBuildChildrenJobs();
             if (subjobs != null && !subjobs.isEmpty()) {
-            	int ndx = 0;
+                int ndx = 0;
                 for (JobInfo subjob : subjobs) {
-                    if (isRoutelet(subjob) || isJob(subjob) ) {
+                    if (isRoutelet(subjob) || isJob(subjob)) {
                         fmBuild.addPlugin(addFileInstallPlugin(subjob, ndx++));
                     }
                 }
             }
 
+            fmBuild.addPlugin(addDeployFeatureMavenPlugin(fm.getArtifactId(), fm.getVersion(), publishAsSnapshot));
+            fmBuild.addPlugin(addSkipDeployFeatureMavenPlugin());
             fm.setBuild(fmBuild);
+
             /*
              * <modelVersion>4.0.0</modelVersion>
              * 
@@ -147,7 +149,6 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
              */
 
             PomUtil.savePom(monitor, fm, featurePom);
-
         }
 
         pom.setModelVersion("4.0.0");
