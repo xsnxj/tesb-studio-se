@@ -163,7 +163,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             if (isRoutelet(job)) {
                 IPath currentProjectRootDir = getTalendJobJavaProject(getJobProcessor()).getProject().getLocation();
                 IPath routeletPomPath = getTalendJobJavaProject(getProcessor(job)).getProjectPom().getLocation();
-            	String relativePomPath = routeletPomPath.makeRelativeTo(currentProjectRootDir).toString();
+                String relativePomPath = routeletPomPath.makeRelativeTo(currentProjectRootDir).toString();
                 // pom.addModule(relativePomPath); //TESB-22753
             }
         }
@@ -172,15 +172,15 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         if (route) {
             pom.addModule("pom-feature.xml");
         } else {
-//            for (JobInfo job : LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
-//                if (model.getArtifactId().equals(job.getJobName())) {
-//                    if (job.getFatherJobInfo() != null) {
-//                        model.setArtifactId(job.getFatherJobInfo().getJobName() + "_" + model.getArtifactId());
-//                        break;
-//                    }
-//                }
-//            }
-//
+            // for (JobInfo job : LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
+            // if (model.getArtifactId().equals(job.getJobName())) {
+            // if (job.getFatherJobInfo() != null) {
+            // model.setArtifactId(job.getFatherJobInfo().getJobName() + "_" + model.getArtifactId());
+            // break;
+            // }
+            // }
+            // }
+            //
         }
         pom.setDependencies(model.getDependencies());
 
@@ -473,7 +473,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         plugin.setGroupId("org.apache.maven.plugins");
         plugin.setArtifactId("maven-install-plugin");
         plugin.setVersion("2.5.1");
-        
+
         String jobVersion = PomIdsHelper.getJobVersion(job);
 
         Xpp3Dom configuration = new Xpp3Dom("configuration");
@@ -491,12 +491,16 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         packaging.setValue("jar");
 
         Xpp3Dom file = new Xpp3Dom("file");
-        IPath currentProjectRootDir = getTalendJobJavaProject(getJobProcessor()).getProject().getLocation();
-        IPath targetDir = getTalendJobJavaProject(getProcessor(job)).getTargetFolder().getLocation();
-        String relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
-        String pathToJar = relativeTargetDir + Path.SEPARATOR + job.getJobName().toLowerCase() + "_"
-                + jobVersion.replaceAll("\\.", "_") + ".jar";
-        file.setValue(pathToJar);
+        boolean addFile = false;
+        if (getJobProcessor() != null && getProcessor(job) != null) {
+            IPath currentProjectRootDir = getTalendJobJavaProject(getJobProcessor()).getProject().getLocation();
+            IPath targetDir = getTalendJobJavaProject(getProcessor(job)).getTargetFolder().getLocation();
+            String relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
+            String pathToJar = relativeTargetDir + Path.SEPARATOR + job.getJobName().toLowerCase() + "_"
+                    + jobVersion.replaceAll("\\.", "_") + ".jar";
+            file.setValue(pathToJar);
+            addFile = true;
+        }
 
         Xpp3Dom generatePom = new Xpp3Dom("generatePom");
         generatePom.setValue("true");
@@ -505,7 +509,9 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         configuration.addChild(artifactId);
         configuration.addChild(version);
         configuration.addChild(packaging);
-        configuration.addChild(file);
+        if (addFile) {
+            configuration.addChild(file);
+        }
         configuration.addChild(generatePom);
 
         List<PluginExecution> pluginExecutions = new ArrayList<PluginExecution>();
@@ -530,7 +536,6 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         }
         return false;
     }
-    
 
     boolean isJob(JobInfo job) {
         if (job != null && job.getProcessItem() != null) {
@@ -540,25 +545,25 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             }
         }
         return false;
-    }    
-    
+    }
+
     public static IProcessor getProcessor(JobInfo jobInfo) {
-    	
-    	if(jobInfo.getProcessor() != null) {
-    		return jobInfo.getProcessor();
-    	}
-    	
+
+        if (jobInfo.getProcessor() != null) {
+            return jobInfo.getProcessor();
+        }
+
         IProcess process = null;
         ProcessItem processItem;
-        
+
         processItem = jobInfo.getProcessItem();
 
         if (processItem == null && jobInfo.getJobVersion() == null) {
-        	processItem = ItemCacheManager.getProcessItem(jobInfo.getJobId());
+            processItem = ItemCacheManager.getProcessItem(jobInfo.getJobId());
         }
 
         if (processItem == null && jobInfo.getJobVersion() != null) {
-        	processItem = ItemCacheManager.getProcessItem(jobInfo.getJobId(), jobInfo.getJobVersion());
+            processItem = ItemCacheManager.getProcessItem(jobInfo.getJobId(), jobInfo.getJobVersion());
         }
 
         if (processItem == null && jobInfo.getProcess() == null) {
@@ -577,20 +582,22 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
                 return null;
             }
         } else {
-        	process = jobInfo.getProcess();
+            process = jobInfo.getProcess();
         }
-    	
+
         Property curProperty = processItem.getProperty();
         if (processItem.getProperty() == null && process instanceof IProcess2) {
             curProperty = ((IProcess2) process).getProperty();
         }
 
         IRunProcessService service = CorePlugin.getDefault().getRunProcessService();
-        IProcessor processor = service.createCodeProcessor(process, curProperty, ((RepositoryContext) CorePlugin.getContext()
-                .getProperty(Context.REPOSITORY_CONTEXT_KEY)).getProject().getLanguage(), true);
-        
+        IProcessor processor = service.createCodeProcessor(process, curProperty,
+                ((RepositoryContext) CorePlugin.getContext().getProperty(Context.REPOSITORY_CONTEXT_KEY)).getProject()
+                        .getLanguage(),
+                true);
+
         jobInfo.setProcessor(processor);
-        
+
         return processor;
     }
 
