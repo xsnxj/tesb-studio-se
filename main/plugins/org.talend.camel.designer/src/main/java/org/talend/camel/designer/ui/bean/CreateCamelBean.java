@@ -145,9 +145,7 @@ public class CreateCamelBean extends AbstractBeanAction implements IIntroAction 
         if (dlg.open() == Window.OK) {
 
             try {
-                addCamelDependency(beanWizard.getBean());
                 openBeanEditor(beanWizard.getBean(), false);
-                refresh(repositoryNode);
                 //CorePlugin.getDefault().getRunProcessService().updateLibraries(beanWizard.getBean());
             } catch (PartInitException e) {
                 MessageBoxExceptionHandler.process(e);

@@ -90,13 +90,11 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
         }
         BeanItem beanItem = (BeanItem) repositoryNode.getObject().getProperty().getItem();
 
-        addCamelDependency(beanItem);
+        //addCamelDependency(beanItem);
 
         try {
             openBeanEditor(beanItem, false);
-            refresh(repositoryNode);
             CorePlugin.getDefault().getLibrariesService().resetModulesNeeded();
-            CorePlugin.getDefault().getRunProcessService().updateLibraries(new HashSet<ModuleNeeded>(), null);
         } catch (PartInitException e) {
             MessageBoxExceptionHandler.process(e);
         } catch (SystemException e) {
