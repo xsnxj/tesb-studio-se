@@ -18,7 +18,7 @@ Require-Bundle: org.talend.commons.ui,
  org.talend.designer.core,
  org.talend.repository.items.importexport,
  org.talend.core.ui,
- org.talend.repository.resource;bundle-version="7.1.1"
+ org.talend.repository.resource
 Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.commons.io
 Bundle-Vendor: .Talend SA.
