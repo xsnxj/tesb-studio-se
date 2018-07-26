@@ -1077,7 +1077,7 @@ if (exposeSwagger) {
 				}
 				if (exposeSwagger) {
 					%>
-					@io.swagger.annotations.ApiParam(value="<%=param.getName()%>", required = <%=param.isNullable()%>)<%
+					@io.swagger.annotations.ApiParam(value="<%=param.getName()%>", required = <%=!param.isNullable()%>)<%
 				}
 
 				if (param.getDefaultValue() != null && param.getDefaultValue().length() > 0) {
