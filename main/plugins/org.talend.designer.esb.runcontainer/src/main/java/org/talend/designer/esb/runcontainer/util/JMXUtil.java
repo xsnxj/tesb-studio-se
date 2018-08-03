@@ -78,7 +78,7 @@ public class JMXUtil {
         try {
 
             // MBeanServerConnection mbsc = createJMXconnection();
-            String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
+            String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=" + instanceName;
             ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
 
             Set<Object> existsBundles = ((TabularDataSupport) mbsc.getAttribute(objectBundle, "Bundles")).keySet();
@@ -108,7 +108,7 @@ public class JMXUtil {
         try {
 
             // MBeanServerConnection mbsc = createJMXconnection();
-            String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
+            String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=" + instanceName;
             ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
             Object bundleId = mbsc.invoke(objectBundle, "uninstall", new Object[] { String.valueOf(bundleID) },
                     new String[] { String.class.getName() });
@@ -126,7 +126,7 @@ public class JMXUtil {
     public static String[] installKar(File kar) throws Exception {
 
         // MBeanServerConnection mbsc = createJMXconnection();
-        String KARAF_KAR_MBEAN = "org.apache.karaf:type=kar,name=trun";
+        String KARAF_KAR_MBEAN = "org.apache.karaf:type=kar,name=" + instanceName;
 
         ObjectName objectKar = new ObjectName(KARAF_KAR_MBEAN);
 
@@ -148,7 +148,7 @@ public class JMXUtil {
     public static void uninstallKar(String karID) throws Exception {
 
         // MBeanServerConnection mbsc = createJMXconnection();
-        String KARAF_KAR_MBEAN = "org.apache.karaf:type=kar,name=trun";
+        String KARAF_KAR_MBEAN = "org.apache.karaf:type=kar,name=" + instanceName;
 
         ObjectName objectKar = new ObjectName(KARAF_KAR_MBEAN);
 
@@ -207,6 +207,7 @@ public class JMXUtil {
      */
     private static void reloadPreference() {
         IPreferenceStore store = ESBRunContainerPlugin.getDefault().getPreferenceStore();
+        
         if (store != null) {
             username = store.getString(RunContainerPreferenceInitializer.P_ESB_RUNTIME_USERNAME);
 
@@ -279,7 +280,7 @@ public class JMXUtil {
     }
 
     public static long[] getBundlesList() throws Exception {
-        String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
+        String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=" + instanceName;
         ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
 
         Set<Object> existsBundles = ((TabularDataSupport) mbsc.getAttribute(objectBundle, "Bundles")).keySet();
@@ -293,7 +294,7 @@ public class JMXUtil {
     }
 
     public static String[] getBundlesName() throws Exception {
-        String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
+        String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=" + instanceName;
         ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
 
         Collection<Object> values = ((TabularDataSupport) mbsc.getAttribute(objectBundle, "Bundles")).values();
@@ -306,7 +307,7 @@ public class JMXUtil {
     }
 
     public static String getBundleStatus(long bundleID) throws Exception {
-        String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=trun";
+        String KARAF_BUNDLE_MBEAN = "org.apache.karaf:type=bundle,name=" + instanceName;
         ObjectName objectBundle = new ObjectName(KARAF_BUNDLE_MBEAN);
 
         return mbsc.invoke(objectBundle, "getStatus", new Object[] { String.valueOf(bundleID) },
