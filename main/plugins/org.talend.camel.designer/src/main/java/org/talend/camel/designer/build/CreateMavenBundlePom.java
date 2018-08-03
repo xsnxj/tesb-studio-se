@@ -518,7 +518,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         PluginExecution pluginExecution = new PluginExecution();
         pluginExecution.setId("install-jar-lib-" + ndx);
         pluginExecution.addGoal("install-file");
-        pluginExecution.setPhase("validate");
+        pluginExecution.setPhase("package");
 
         pluginExecution.setConfiguration(configuration);
         pluginExecutions.add(pluginExecution);
