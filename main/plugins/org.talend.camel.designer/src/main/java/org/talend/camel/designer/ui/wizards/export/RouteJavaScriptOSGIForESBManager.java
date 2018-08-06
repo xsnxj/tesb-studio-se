@@ -138,13 +138,9 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
         return getPackageName(processItem) + PACKAGE_SEPARATOR + processItem.getProperty().getLabel();
     }
 
-    protected String getIncludeRoutinesPath() {
-        return USER_BEANS_PATH;
-    }
-
     protected Collection<String> getRoutinesPaths() {
         final Collection<String> include = new ArrayList<String>();
-        include.add(getIncludeRoutinesPath());
+        include.add(USER_BEANS_PATH);
         include.add(SYSTEM_ROUTINES_PATH);
         return include;
     }
