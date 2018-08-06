@@ -346,7 +346,7 @@ for (IContextParameter ctxParam : params) {
 		        try {
 		            java.lang.reflect.Method m = this.getClass()
                                 .getDeclaredMethod("get" + Character.toUpperCase(n.charAt(0)) + n.substring(1));
-		            Object o = return m.invoke(this);
+		            Object o = m.invoke(this);
 		            if(o != null){
                                 return String.valueOf(o);
 		            }
