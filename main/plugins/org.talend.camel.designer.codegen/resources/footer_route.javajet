@@ -341,14 +341,17 @@ for (IContextParameter ctxParam : params) {
 <%
 	if(exportTypeSpringBoot){
 %>
-		public Object getProperty(String n) {
+		public String getProperty(String n) {
 		    if (n != null && !n.isEmpty()) {
 		        try {
 		            java.lang.reflect.Method m = this.getClass()
-						.getDeclaredMethod("get" + Character.toUpperCase(n.charAt(0)) + n.substring(1));
-		            return m.invoke(this);
+                                .getDeclaredMethod("get" + Character.toUpperCase(n.charAt(0)) + n.substring(1));
+		            Object o = return m.invoke(this);
+		            if(o != null){
+                                return String.valueOf(o);
+		            }
 		        } catch (Exception e) {
-			    }
+			}
 		    }
 		    return null;
         }
