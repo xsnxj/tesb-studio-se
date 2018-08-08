@@ -59,6 +59,9 @@ import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.designer.runprocess.ItemCacheManager;
 import org.talend.utils.io.FilesUtils;
 
+/**
+ * Route pom creator
+ */
 public class CreateMavenBundlePom extends CreateMavenJobPom {
 
     private Model model;
@@ -105,34 +108,35 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
             File featurePom = new File(parent.getLocation().toOSString() + File.separator + "pom-feature.xml");
 
-            Model fm = new Model();
+            Model featureModel = new Model();
 
-            fm.setModelVersion("4.0.0");
-            fm.setParent(model.getParent());
-            fm.setGroupId(model.getGroupId());
-            fm.setArtifactId(model.getArtifactId() + "-feature");
+            featureModel.setModelVersion("4.0.0");
+            featureModel.setParent(model.getParent());
+            featureModel.setGroupId(model.getGroupId());
+            featureModel.setArtifactId(model.getArtifactId() + "-feature");
 
-            fm.setName(model.getName() + " Feature");
+            featureModel.setName(model.getName() + " Feature");
 
-            fm.setVersion(model.getVersion());
-            fm.setPackaging("pom");
-            Build fmBuild = new Build();
+            featureModel.setVersion(model.getVersion());
+            featureModel.setPackaging("pom");
+            Build featureModelBuild = new Build();
 
-            fmBuild.addPlugin(addFeaturesMavenPlugin(model.getProperties().getProperty("talend.job.finalName")));
+            featureModelBuild.addPlugin(addFeaturesMavenPlugin(model.getProperties().getProperty("talend.job.finalName")));
 
             Set<JobInfo> subjobs = getJobProcessor().getBuildChildrenJobs();
             if (subjobs != null && !subjobs.isEmpty()) {
                 int ndx = 0;
                 for (JobInfo subjob : subjobs) {
                     if (isRoutelet(subjob) || isJob(subjob)) {
-                        fmBuild.addPlugin(addFileInstallPlugin(subjob, ndx++));
+                        featureModelBuild.addPlugin(addFileInstallPlugin(subjob, ndx++));
                     }
                 }
             }
 
-            fmBuild.addPlugin(addDeployFeatureMavenPlugin(fm.getArtifactId(), fm.getVersion(), publishAsSnapshot));
-            fmBuild.addPlugin(addSkipDeployFeatureMavenPlugin());
-            fm.setBuild(fmBuild);
+            featureModelBuild.addPlugin(addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
+            featureModelBuild.addPlugin(addSkipDeployFeatureMavenPlugin());
+            featureModelBuild.addPlugin(addSkipMavenCleanPlugin());
+            featureModel.setBuild(featureModelBuild);
 
             /*
              * <modelVersion>4.0.0</modelVersion>
@@ -148,7 +152,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
              * 
              */
 
-            PomUtil.savePom(monitor, fm, featurePom);
+            PomUtil.savePom(monitor, featureModel, featurePom);
         }
 
         pom.setModelVersion("4.0.0");
@@ -615,5 +619,26 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         }
 
         return talendProcessJavaProject;
+    }
+    
+    /**
+     * Skip clean control-bundle file in target folde, in case of using mvn clean + package goal
+     * 
+     * @return plugin
+     */
+    private Plugin addSkipMavenCleanPlugin() {
+        Plugin plugin = new Plugin();
+
+        plugin.setGroupId("org.apache.maven.plugins");
+        plugin.setArtifactId("maven-clean-plugin");
+        plugin.setVersion("3.0.0");
+
+        Xpp3Dom configuration = new Xpp3Dom("configuration");
+        Xpp3Dom skipClean = new Xpp3Dom("skip");
+        skipClean.setValue("true");
+        configuration.addChild(skipClean);
+        plugin.setConfiguration(configuration);
+
+        return plugin;
     }
 }
