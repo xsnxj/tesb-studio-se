@@ -28,6 +28,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -50,6 +51,7 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.runtime.maven.MavenConstants;
 import org.talend.core.runtime.process.IBuildJobHandler;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.process.LastGenerationInfo;
@@ -440,7 +442,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }
-            String jobArtifactVersion = getJobProcessItemVersion(jobId); 
+            String jobArtifactVersion = buildArtifactVersionForReferencedJob(routeProcess, jobId);
             String jobBundleVersion = bundleVersion;
             BundleModel jobModel = new BundleModel(getGroupId(), jobBundleName, jobArtifactVersion, jobFile);
             if (featuresModel.addBundle(jobModel)) {
@@ -449,6 +451,27 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             }
         }
     }
+    
+    private String buildArtifactVersionForReferencedJob(ProcessItem routeProcess, String jobId){
+        boolean isSnapshot = BooleanUtils
+            .toBoolean((String) routeProcess.getProperty().
+                getAdditionalProperties().get(MavenConstants.NAME_PUBLISH_AS_SNAPSHOT));
+
+        String jobArtifactVersion = getJobProcessItemVersion(jobId);
+
+        if(jobArtifactVersion == null || jobArtifactVersion.isEmpty()) {
+            return "";
+        }
+
+        if(!jobArtifactVersion.endsWith(MavenConstants.SNAPSHOT) && isSnapshot){
+            jobArtifactVersion +=MavenConstants.SNAPSHOT;
+        }else if (jobArtifactVersion.endsWith(MavenConstants.SNAPSHOT) && !isSnapshot){
+            jobArtifactVersion = jobArtifactVersion.substring(0, jobArtifactVersion.lastIndexOf(MavenConstants.SNAPSHOT));
+        }
+
+        return jobArtifactVersion;
+    }
+    
 
     @SuppressWarnings("unchecked")
     protected final void exportAllReferenceRoutelets(String routeName, ProcessItem routeProcess, Set<String> routelets)
