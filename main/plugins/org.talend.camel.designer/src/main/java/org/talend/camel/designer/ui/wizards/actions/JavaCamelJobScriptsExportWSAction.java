@@ -218,6 +218,9 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
     private void exportAllReferenceJobs(String routeName, ProcessItem routeProcess)
             throws InvocationTargetException, InterruptedException {
+
+        Set<String> jobPackageNames = new HashSet<String>();
+
         for (NodeType cTalendJob : EmfModelUtils.getComponentsByName(
                 routeProcess, "cTalendJob")) { //$NON-NLS-1$
             String jobId = null;
@@ -245,8 +248,10 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                 continue;
             }
             IRepositoryNode referencedJobNode;
+            Project jobProject;
             try {
                 referencedJobNode = getJobRepositoryNode(jobId, ERepositoryObjectType.PROCESS);
+                jobProject = getJobProject(jobId, ERepositoryObjectType.PROCESS);
             } catch (PersistenceException e) {
                 throw new InvocationTargetException(e);
             }
@@ -258,6 +263,12 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             String jobName = referencedJobNode.getObject().getProperty().getDisplayName();
             String jobBundleName = routeName + "_" + jobName;
             String jobBundleSymbolicName = jobBundleName;
+
+            String jobPackageName = getJobPackageName(jobProject, jobName, jobVersion);
+            if (!jobPackageNames.contains(jobPackageName)) {
+                jobPackageNames.add(jobPackageName);
+            }
+
             Project project = ProjectManager.getInstance().getCurrentProject();
             if (project != null) {
                 String projectName = project.getLabel();
@@ -283,6 +294,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                         getArtifactId(), version, jobContext);
             }
         }
+
+        addJobPackageToOsgiImport(routeProcess, jobPackageNames);
     }
 
     @SuppressWarnings("unchecked")
@@ -412,6 +425,56 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
         JobExportAction action = new JobExportAction(Collections.singletonList(node),
                 jobVersion, bundleVersion, talendJobManager, getTempDir(), "Job");
         action.run(monitor);
+    }
+
+
+    private static Project getJobProject(String jobId, ERepositoryObjectType type)
+            throws PersistenceException {
+        // Check reference project first
+        List<Project> projects = ProjectManager.getInstance().getAllReferencedProjects();
+        for (Project p : projects) {
+            for (IRepositoryViewObject job : ProxyRepositoryFactory.getInstance().getAll(p, type)) {
+                if (job.getId().equals(jobId)) {
+                    return p;
+                }
+            }
+        }
+        // If the job is not from reference project, then it is from current project
+        return ProjectManager.getInstance().getCurrentProject();
+    }
+    private String getJobPackageName(Project project, String jobName, String version) {
+        String p = project.getTechnicalLabel().toLowerCase();
+        String j = jobName.toLowerCase();
+        String[] varr = version.split("\\.");
+        return p + "." + j + "_" + varr[0] + "_" + varr[1];
+    }
+    private void addJobPackageToOsgiImport(ProcessItem process, Set<String> jobPackageNames) {
+        if (jobPackageNames.isEmpty()) {
+            return;
+        }
+        String packages = "";
+        for (String packageName : jobPackageNames) {
+            if (!packages.isEmpty()) {
+                packages = packages + ",";
+            }
+            packages = packages + packageName;
+        }
+        final String IMPORT_PACKAGE_KEY = "Import-Package";
+        if (process.getProperty().getAdditionalProperties().containsKey(IMPORT_PACKAGE_KEY)) {
+            Object o = process.getProperty().getAdditionalProperties().get(IMPORT_PACKAGE_KEY);
+            if (o == null) {
+                process.getProperty().getAdditionalProperties().put(IMPORT_PACKAGE_KEY, packages);
+            } else if (o instanceof String) {
+                String s = (String)o;
+                if (s.isEmpty()) {
+                    process.getProperty().getAdditionalProperties().put(IMPORT_PACKAGE_KEY, packages);
+                } else {
+                    process.getProperty().getAdditionalProperties().put(IMPORT_PACKAGE_KEY, s + "," + packages);
+                }
+            }
+        } else {
+            process.getProperty().getAdditionalProperties().put(IMPORT_PACKAGE_KEY, packages);
+        }
     }
 
     protected static String getTempDir() {
