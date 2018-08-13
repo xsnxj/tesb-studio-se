@@ -133,8 +133,12 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
                 }
             }
 
-            featureModelBuild.addPlugin(addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
-            featureModelBuild.addPlugin(addSkipDeployFeatureMavenPlugin());
+            if (publishAsSnapshot) {
+                featureModelBuild.addPlugin(
+                        addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
+            } else {
+                featureModelBuild.addPlugin(addSkipDeployFeatureMavenPlugin());
+            }
             featureModelBuild.addPlugin(addSkipMavenCleanPlugin());
             featureModel.setBuild(featureModelBuild);
 
@@ -522,7 +526,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         PluginExecution pluginExecution = new PluginExecution();
         pluginExecution.setId("install-jar-lib-" + ndx);
         pluginExecution.addGoal("install-file");
-        pluginExecution.setPhase("package");
+        pluginExecution.setPhase("validate");
 
         pluginExecution.setConfiguration(configuration);
         pluginExecutions.add(pluginExecution);
