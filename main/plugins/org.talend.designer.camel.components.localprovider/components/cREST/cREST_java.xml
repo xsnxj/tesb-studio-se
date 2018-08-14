@@ -283,7 +283,7 @@
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-dataformat-yaml-${jackson.version}.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="jackson-annotations-${jackson.version}.jar" MVN="mvn:org.talend.libraries/jackson-annotations/6.0.0" NAME="jackson-annotations-${jackson.version}
+            <IMPORT MODULE="jackson-annotations-${jackson.version}.jar" MVN="mvn:org.talend.libraries/jackson-annotations/6.0.0" NAME="jackson-annotations-${jackson.version}"
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-annotations-${jackson.version}.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
