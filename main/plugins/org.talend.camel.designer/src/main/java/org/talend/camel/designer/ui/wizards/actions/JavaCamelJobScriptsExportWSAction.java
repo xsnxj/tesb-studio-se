@@ -544,7 +544,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                         routeletBundleSymbolicName = projectName.toLowerCase() + '.' + routeletBundleSymbolicName;
                     }
                 }
-                BundleModel routeletModel = new BundleModel(getGroupId(), routeletBundleName, getArtifactVersion(), routeletFile);// PomIdsHelper.getJobVersion(referencedRouteletNode.getProperty())
+                BundleModel routeletModel = new BundleModel(getGroupId(), routeletBundleName,
+                        PomIdsHelper.getJobVersion(referencedRouteletNode.getProperty()), routeletFile);
                 if (featuresModel.addBundle(routeletModel)) {
                     exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion, routeletBundleName,
                             routeletBundleSymbolicName, bundleVersion, idSuffix, null,
