@@ -462,7 +462,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             }
             String jobArtifactVersion = buildArtifactVersionForReferencedJob(routeProcess, jobId);
             String jobBundleVersion = bundleVersion;
-            BundleModel jobModel = new BundleModel(getGroupId(), jobBundleName, jobArtifactVersion, jobFile);
+            BundleModel jobModel = new BundleModel(PomIdsHelper.getJobGroupId(repositoryObject.getProperty()), jobBundleName, jobArtifactVersion, jobFile);
             if (featuresModel.addBundle(jobModel)) {
                 exportRouteUsedJobBundle(repositoryObject, jobFile, jobVersion, jobBundleName, jobBundleSymbolicName,
                         jobBundleVersion, getArtifactId(), version, jobContext);
@@ -544,7 +544,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                         routeletBundleSymbolicName = projectName.toLowerCase() + '.' + routeletBundleSymbolicName;
                     }
                 }
-                BundleModel routeletModel = new BundleModel(getGroupId(), routeletBundleName,
+                BundleModel routeletModel = new BundleModel(PomIdsHelper.getJobGroupId(referencedRouteletNode.getProperty()), routeletBundleName,
                         PomIdsHelper.getJobVersion(referencedRouteletNode.getProperty()), routeletFile);
                 if (featuresModel.addBundle(routeletModel)) {
                     exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion, routeletBundleName,

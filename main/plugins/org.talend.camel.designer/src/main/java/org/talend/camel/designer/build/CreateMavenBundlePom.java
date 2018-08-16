@@ -57,6 +57,7 @@ import org.talend.designer.maven.utils.PomUtil;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.designer.runprocess.ItemCacheManager;
+import org.talend.repository.ProjectManager;
 import org.talend.utils.io.FilesUtils;
 
 /**
@@ -504,8 +505,16 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             IPath currentProjectRootDir = getTalendJobJavaProject(getJobProcessor()).getProject().getLocation();
             IPath targetDir = getTalendJobJavaProject(getProcessor(job)).getTargetFolder().getLocation();
             String relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
+            
+            if(!ProjectManager.getInstance().isInCurrentMainProject(job.getProcessItem().getProperty())) {
+                // this job/routelet is from a reference project
+                currentProjectRootDir = new Path(currentProjectRootDir.getDevice()  ,currentProjectRootDir.toString().replaceAll("/\\d+/", "/"));
+                targetDir = new Path(targetDir.getDevice()  ,targetDir.toString().replaceAll("/\\d+/", "/"));
+                relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
+            }
             String pathToJar = relativeTargetDir + Path.SEPARATOR + job.getJobName().toLowerCase() + "_"
                     + jobVersion.replaceAll("\\.", "_") + ".jar";
+            
             file.setValue(pathToJar);
             addFile = true;
         }
