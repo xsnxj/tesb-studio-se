@@ -13,6 +13,7 @@
 package org.talend.camel.designer.ui.bean;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -32,6 +33,9 @@ import org.talend.commons.ui.runtime.image.ImageProvider;
 import org.talend.core.CorePlugin;
 import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.core.model.utils.emf.component.ComponentFactory;
+import org.talend.designer.core.model.utils.emf.component.IMPORTType;
+import org.talend.librariesmanager.model.ModulesNeededProvider;
 import org.talend.repository.ProjectManager;
 import org.talend.repository.model.IProxyRepositoryFactory;
 import org.talend.repository.model.RepositoryNode;
@@ -90,17 +94,33 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
         }
         BeanItem beanItem = (BeanItem) repositoryNode.getObject().getProperty().getItem();
 
-        //addCamelDependency(beanItem);
+        addDefaultModulesForBeans(beanItem, repositoryNode);
 
         try {
             openBeanEditor(beanItem, false);
-            CorePlugin.getDefault().getLibrariesService().resetModulesNeeded();
         } catch (PartInitException e) {
             MessageBoxExceptionHandler.process(e);
         } catch (SystemException e) {
             MessageBoxExceptionHandler.process(e);
         }
     }
+    
+    private void addDefaultModulesForBeans(BeanItem beanItem, RepositoryNode repositoryNode) {
+        List<ModuleNeeded> importNeedsList = ModulesNeededProvider.getModulesNeededForBeans();
+
+        for (ModuleNeeded model : importNeedsList) {
+            IMPORTType importType = ComponentFactory.eINSTANCE.createIMPORTType();
+            importType.setMODULE(model.getModuleName());
+            importType.setMESSAGE(model.getInformationMsg());
+            importType.setREQUIRED(model.isRequired());
+            importType.setMVN(model.getMavenUri());
+            beanItem.getImports().add(importType);
+        }
+
+    	refresh(repositoryNode);
+    	refresh(beanItem);
+    	refresh();
+    }    
 
     @Override
     public Class<?> getClassForDoubleClick() {

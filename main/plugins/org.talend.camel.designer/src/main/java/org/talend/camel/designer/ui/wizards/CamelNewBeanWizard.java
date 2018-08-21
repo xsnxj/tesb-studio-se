@@ -15,6 +15,7 @@ package org.talend.camel.designer.ui.wizards;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -31,10 +32,14 @@ import org.talend.core.CorePlugin;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.general.ILibrariesService;
+import org.talend.core.model.general.ModuleNeeded;
 import org.talend.core.model.properties.ByteArray;
 import org.talend.core.model.properties.PropertiesFactory;
 import org.talend.core.model.properties.Property;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.designer.core.model.utils.emf.component.ComponentFactory;
+import org.talend.designer.core.model.utils.emf.component.IMPORTType;
+import org.talend.librariesmanager.model.ModulesNeededProvider;
 import org.talend.repository.model.IProxyRepositoryFactory;
 
 /**
@@ -91,7 +96,23 @@ public class CamelNewBeanWizard extends Wizard {
         }
 
         beanItem.setContent(byteArray);
+        
+        addDefaultModulesForBeans();
     }
+    
+    private void addDefaultModulesForBeans() {
+        List<ModuleNeeded> importNeedsList = ModulesNeededProvider.getModulesNeededForBeans();
+
+        for (ModuleNeeded model : importNeedsList) {
+            IMPORTType importType = ComponentFactory.eINSTANCE.createIMPORTType();
+            importType.setMODULE(model.getModuleName());
+            importType.setMESSAGE(model.getInformationMsg());
+            importType.setREQUIRED(model.isRequired());
+            importType.setMVN(model.getMavenUri());
+            beanItem.getImports().add(importType);
+        }
+    }
+    
 
     /**
      * @see org.eclipse.jface.wizard.Wizard#addPages()
