@@ -98,6 +98,7 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
 
         try {
             openBeanEditor(beanItem, false);
+            CorePlugin.getDefault().getLibrariesService().resetModulesNeeded();
         } catch (PartInitException e) {
             MessageBoxExceptionHandler.process(e);
         } catch (SystemException e) {
@@ -107,6 +108,11 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
     
     private void addDefaultModulesForBeans(BeanItem beanItem, RepositoryNode repositoryNode) {
         List<ModuleNeeded> importNeedsList = ModulesNeededProvider.getModulesNeededForBeans();
+        try {
+			CorePlugin.getDefault().getRunProcessService()
+				.updateLibraries(new HashSet<ModuleNeeded>(importNeedsList), null, new HashSet<ModuleNeeded>());
+		} catch (Exception e) {
+		}
 
         for (ModuleNeeded model : importNeedsList) {
             IMPORTType importType = ComponentFactory.eINSTANCE.createIMPORTType();
@@ -119,7 +125,6 @@ public class EditCamelBean extends AbstractBeanAction implements IIntroAction {
 
     	refresh(repositoryNode);
     	refresh(beanItem);
-    	refresh();
     }    
 
     @Override
