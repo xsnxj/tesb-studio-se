@@ -91,7 +91,7 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
 
             } else {
                 
-                String outputFlow = apiDesignerMapping.getOutputFlow() != null ? apiDesignerMapping.getOutputFlow() :"";
+                String outputFlow = apiDesignerMapping.getOutputFlow() != null ? apiDesignerMapping.getOutputFlow() : "";
                 
                 newMapping.put(SCHEMA, outputFlow);
 
