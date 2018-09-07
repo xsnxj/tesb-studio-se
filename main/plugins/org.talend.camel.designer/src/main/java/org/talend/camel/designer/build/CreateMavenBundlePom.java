@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.Path;
 import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.CorePlugin;
+import org.talend.core.GlobalServiceRegister;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.process.IProcess;
@@ -44,6 +45,7 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.runtime.maven.MavenConstants;
+import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.projectsetting.IProjectSettingPreferenceConstants;
 import org.talend.core.runtime.projectsetting.IProjectSettingTemplateConstants;
 import org.talend.designer.core.IDesignerCoreService;
@@ -55,9 +57,12 @@ import org.talend.designer.maven.utils.PomUtil;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.designer.runprocess.ItemCacheManager;
-import org.talend.designer.runprocess.java.TalendJavaProjectManager;
+import org.talend.repository.ProjectManager;
 import org.talend.utils.io.FilesUtils;
 
+/**
+ * Route pom creator
+ */
 public class CreateMavenBundlePom extends CreateMavenJobPom {
 
     private Model model;
@@ -104,33 +109,40 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
             File featurePom = new File(parent.getLocation().toOSString() + File.separator + "pom-feature.xml");
 
-            Model fm = new Model();
+            Model featureModel = new Model();
 
-            fm.setModelVersion("4.0.0");
-            fm.setParent(model.getParent());
-            fm.setGroupId(model.getGroupId());
-            fm.setArtifactId(model.getArtifactId() + "-feature");
+            featureModel.setModelVersion("4.0.0");
+            featureModel.setParent(model.getParent());
+            featureModel.setGroupId(model.getGroupId());
+            featureModel.setArtifactId(model.getArtifactId() + "-feature");
 
-            fm.setName(model.getName() + " Feature");
+            featureModel.setName(model.getName() + " Feature");
 
-            fm.setVersion(model.getVersion());
-            fm.setPackaging("pom");
-            Build fmBuild = new Build();
-            fmBuild.addPlugin(addFeaturesMavenPlugin(model.getProperties().getProperty("talend.job.finalName")));
+            featureModel.setVersion(model.getVersion());
+            featureModel.setPackaging("pom");
+            Build featureModelBuild = new Build();
 
-            fmBuild.addPlugin(addDeployFeatureMavenPlugin(fm.getArtifactId(), fm.getVersion(), publishAsSnapshot));
+            featureModelBuild.addPlugin(addFeaturesMavenPlugin(model.getProperties().getProperty("talend.job.finalName")));
 
             Set<JobInfo> subjobs = getJobProcessor().getBuildChildrenJobs();
             if (subjobs != null && !subjobs.isEmpty()) {
-            	int ndx = 0;
+                int ndx = 0;
                 for (JobInfo subjob : subjobs) {
-                    if (isRoutelet(subjob) || isJob(subjob) ) {
-                        fmBuild.addPlugin(addFileInstallPlugin(subjob, ndx++));
+                    if (isRoutelet(subjob) || isJob(subjob)) {
+                        featureModelBuild.addPlugin(addFileInstallPlugin(subjob, ndx++));
                     }
                 }
             }
 
-            fm.setBuild(fmBuild);
+            if (publishAsSnapshot) {
+                featureModelBuild.addPlugin(
+                        addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
+            } else {
+                featureModelBuild.addPlugin(addSkipDeployFeatureMavenPlugin());
+            }
+            featureModelBuild.addPlugin(addSkipMavenCleanPlugin());
+            featureModel.setBuild(featureModelBuild);
+
             /*
              * <modelVersion>4.0.0</modelVersion>
              * 
@@ -145,8 +157,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
              * 
              */
 
-            PomUtil.savePom(monitor, fm, featurePom);
-
+            PomUtil.savePom(monitor, featureModel, featurePom);
         }
 
         pom.setModelVersion("4.0.0");
@@ -159,10 +170,10 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
         for (JobInfo job : getJobProcessor().getBuildChildrenJobs()) {
             if (isRoutelet(job)) {
-            	IPath currentProjectRootDir = getJobProcessor().getTalendJavaProject().getProject().getLocation();
-            	IPath routeletPomPath = getProcessor(job).getTalendJavaProject().getProjectPom().getLocation();
-            	String relativePomPath = routeletPomPath.makeRelativeTo(currentProjectRootDir).toString();
-                pom.addModule(relativePomPath);
+                IPath currentProjectRootDir = getTalendJobJavaProject(getJobProcessor()).getProject().getLocation();
+                IPath routeletPomPath = getTalendJobJavaProject(getProcessor(job)).getProjectPom().getLocation();
+                String relativePomPath = routeletPomPath.makeRelativeTo(currentProjectRootDir).toString();
+                // pom.addModule(relativePomPath); //TESB-22753
             }
         }
 
@@ -170,15 +181,15 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         if (route) {
             pom.addModule("pom-feature.xml");
         } else {
-//            for (JobInfo job : LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
-//                if (model.getArtifactId().equals(job.getJobName())) {
-//                    if (job.getFatherJobInfo() != null) {
-//                        model.setArtifactId(job.getFatherJobInfo().getJobName() + "_" + model.getArtifactId());
-//                        break;
-//                    }
-//                }
-//            }
-//
+            // for (JobInfo job : LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
+            // if (model.getArtifactId().equals(job.getJobName())) {
+            // if (job.getFatherJobInfo() != null) {
+            // model.setArtifactId(job.getFatherJobInfo().getJobName() + "_" + model.getArtifactId());
+            // break;
+            // }
+            // }
+            // }
+            //
         }
         pom.setDependencies(model.getDependencies());
 
@@ -395,7 +406,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
         plugin.setGroupId("org.apache.maven.plugins");
         plugin.setArtifactId("maven-deploy-plugin");
-        plugin.setVersion("2.8.2");
+        plugin.setVersion("2.7");
 
         Xpp3Dom configuration = new Xpp3Dom("configuration");
 
@@ -453,6 +464,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
         plugin.setGroupId("org.apache.maven.plugins");
         plugin.setArtifactId("maven-deploy-plugin");
+        plugin.setVersion("2.7");
 
         Xpp3Dom configuration = new Xpp3Dom("configuration");
 
@@ -471,13 +483,13 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         plugin.setGroupId("org.apache.maven.plugins");
         plugin.setArtifactId("maven-install-plugin");
         plugin.setVersion("2.5.1");
-        
+
         String jobVersion = PomIdsHelper.getJobVersion(job);
 
         Xpp3Dom configuration = new Xpp3Dom("configuration");
 
         Xpp3Dom groupId = new Xpp3Dom("groupId");
-        groupId.setValue(model.getGroupId());
+        groupId.setValue(PomIdsHelper.getJobGroupId(job.getProcessItem().getProperty()));
 
         Xpp3Dom artifactId = new Xpp3Dom("artifactId");
         artifactId.setValue(model.getArtifactId() + "_" + job.getJobName());
@@ -489,14 +501,24 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         packaging.setValue("jar");
 
         Xpp3Dom file = new Xpp3Dom("file");
-        IPath currentProjectRootDir = TalendJavaProjectManager.getTalendJobJavaProject(getJobProcessor().getProperty())
-                .getTargetFolder().getLocation();
-        IPath targetDir = TalendJavaProjectManager.getTalendJobJavaProject(job.getProcessItem().getProperty()).getTargetFolder()
-                .getLocation();
-        String relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
-        String pathToJar = relativeTargetDir + Path.SEPARATOR + job.getJobName().toLowerCase() + "_"
-                + jobVersion.replaceAll("\\.", "_") + ".jar";
-        file.setValue(pathToJar);
+        boolean addFile = false;
+        if (getJobProcessor() != null && getProcessor(job) != null) {
+            IPath currentProjectRootDir = getTalendJobJavaProject(getJobProcessor()).getProject().getLocation();
+            IPath targetDir = getTalendJobJavaProject(getProcessor(job)).getTargetFolder().getLocation();
+            String relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
+            
+            if(!ProjectManager.getInstance().isInCurrentMainProject(job.getProcessItem().getProperty())) {
+                // this job/routelet is from a reference project
+                currentProjectRootDir = new Path(currentProjectRootDir.getDevice()  ,currentProjectRootDir.toString().replaceAll("/\\d+/", "/"));
+                targetDir = new Path(targetDir.getDevice()  ,targetDir.toString().replaceAll("/\\d+/", "/"));
+                relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
+            }
+            String pathToJar = relativeTargetDir + Path.SEPARATOR + job.getJobName().toLowerCase() + "_"
+                    + jobVersion.replaceAll("\\.", "_") + ".jar";
+            
+            file.setValue(pathToJar);
+            addFile = true;
+        }
 
         Xpp3Dom generatePom = new Xpp3Dom("generatePom");
         generatePom.setValue("true");
@@ -505,7 +527,9 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         configuration.addChild(artifactId);
         configuration.addChild(version);
         configuration.addChild(packaging);
-        configuration.addChild(file);
+        if (addFile) {
+            configuration.addChild(file);
+        }
         configuration.addChild(generatePom);
 
         List<PluginExecution> pluginExecutions = new ArrayList<PluginExecution>();
@@ -530,7 +554,6 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         }
         return false;
     }
-    
 
     boolean isJob(JobInfo job) {
         if (job != null && job.getProcessItem() != null) {
@@ -540,25 +563,25 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             }
         }
         return false;
-    }    
-    
+    }
+
     public static IProcessor getProcessor(JobInfo jobInfo) {
-    	
-    	if(jobInfo.getProcessor() != null) {
-    		return jobInfo.getProcessor();
-    	}
-    	
+
+        if (jobInfo.getProcessor() != null) {
+            return jobInfo.getProcessor();
+        }
+
         IProcess process = null;
         ProcessItem processItem;
-        
+
         processItem = jobInfo.getProcessItem();
 
         if (processItem == null && jobInfo.getJobVersion() == null) {
-        	processItem = ItemCacheManager.getProcessItem(jobInfo.getJobId());
+            processItem = ItemCacheManager.getProcessItem(jobInfo.getJobId());
         }
 
         if (processItem == null && jobInfo.getJobVersion() != null) {
-        	processItem = ItemCacheManager.getProcessItem(jobInfo.getJobId(), jobInfo.getJobVersion());
+            processItem = ItemCacheManager.getProcessItem(jobInfo.getJobId(), jobInfo.getJobVersion());
         }
 
         if (processItem == null && jobInfo.getProcess() == null) {
@@ -577,20 +600,59 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
                 return null;
             }
         } else {
-        	process = jobInfo.getProcess();
+            process = jobInfo.getProcess();
         }
-    	
+
         Property curProperty = processItem.getProperty();
         if (processItem.getProperty() == null && process instanceof IProcess2) {
             curProperty = ((IProcess2) process).getProperty();
         }
 
         IRunProcessService service = CorePlugin.getDefault().getRunProcessService();
-        IProcessor processor = service.createCodeProcessor(process, curProperty, ((RepositoryContext) CorePlugin.getContext()
-                .getProperty(Context.REPOSITORY_CONTEXT_KEY)).getProject().getLanguage(), true);
-        
+        IProcessor processor = service.createCodeProcessor(process, curProperty,
+                ((RepositoryContext) CorePlugin.getContext().getProperty(Context.REPOSITORY_CONTEXT_KEY)).getProject()
+                        .getLanguage(),
+                true);
+
         jobInfo.setProcessor(processor);
-        
+
         return processor;
+    }
+
+    private ITalendProcessJavaProject getTalendJobJavaProject(IProcessor processor) {
+        ITalendProcessJavaProject talendProcessJavaProject = processor.getTalendJavaProject();
+
+        if (talendProcessJavaProject == null) {
+            if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
+                IRunProcessService service = (IRunProcessService) GlobalServiceRegister.getDefault()
+                        .getService(IRunProcessService.class);
+
+                talendProcessJavaProject = service.getTalendJobJavaProject(processor.getProperty());
+
+            }
+        }
+
+        return talendProcessJavaProject;
+    }
+    
+    /**
+     * Skip clean control-bundle file in target folde, in case of using mvn clean + package goal
+     * 
+     * @return plugin
+     */
+    private Plugin addSkipMavenCleanPlugin() {
+        Plugin plugin = new Plugin();
+
+        plugin.setGroupId("org.apache.maven.plugins");
+        plugin.setArtifactId("maven-clean-plugin");
+        plugin.setVersion("3.0.0");
+
+        Xpp3Dom configuration = new Xpp3Dom("configuration");
+        Xpp3Dom skipClean = new Xpp3Dom("skip");
+        skipClean.setValue("true");
+        configuration.addChild(skipClean);
+        plugin.setConfiguration(configuration);
+
+        return plugin;
     }
 }

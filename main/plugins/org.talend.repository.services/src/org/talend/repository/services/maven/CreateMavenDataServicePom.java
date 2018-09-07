@@ -116,13 +116,20 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         Model pomModel = model; // new Model();
         pomModel.setModelVersion(MAVEN_VERSION);
         // pom.setParent(model.getParent());
-        pomModel.setGroupId(PomIdsHelper.getJobGroupId(getJobProcessor().getProperty()));
-        pomModel.setArtifactId(PomIdsHelper.getJobArtifactId(getJobProcessor().getProperty()));
-        pomModel.setVersion(PomIdsHelper.getJobVersion(getJobProcessor().getProperty()));
+        // @ProjectName@ @JobName@-@JobVersion@ (@TalendJobVersion@,@JobType@)
+        String groupId = PomIdsHelper.getJobGroupId(getJobProcessor().getProperty());
+        String projectName = ProjectManager.getInstance().getProject(getJobProcessor().getProperty()).getTechnicalLabel();
+        String artifactId = PomIdsHelper.getJobArtifactId(getJobProcessor().getProperty());
+        String jobVersion = PomIdsHelper.getJobVersion(getJobProcessor().getProperty());
+        String talendJobVersion = getJobProcessor().getProperty().getVersion();
+        String JobType = "Services";
+        String displayName = projectName + " " + artifactId + "-" + jobVersion + " (" + talendJobVersion + "," + JobType + ")";
+        pomModel.setGroupId(groupId);
+        pomModel.setArtifactId(artifactId);
+        pomModel.setVersion(jobVersion);
         pomModel.setPackaging("pom");
         pomModel.setParent(tmpModel.getParent());
-        // pomModel.setName(PomIdsHelper.getp); //<name>@ProjectName@ @JobName@-@JobVersion@
-        // (@TalendJobVersion@,@JobType@)</name>
+        pomModel.setName(displayName + " Kar");
 
         // add dynamic ds job modules
         String upperPath = "../";
@@ -185,9 +192,10 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         featureModelBuild.addPlugin(addFeaturesMavenPlugin());
         featureModelBuild.addPlugin(
                 addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
-        featureModelBuild.addPlugin(addMavenCleanPlugin());
+        featureModelBuild.addPlugin(addSkipMavenCleanPlugin());
         featureModel.setBuild(featureModelBuild);
         featureModel.setParent(parentPom);
+        featureModel.setName(displayName + " Feature");
         PomUtil.savePom(monitor, featureModel, feature);
 
         IFile controlBundle = pom.getParent().getFile(new Path(POM_CONTROL_BUNDLE_XML));
@@ -198,6 +206,7 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         controlBundleModel.setArtifactId(PomIdsHelper.getJobArtifactId(getJobProcessor().getProperty()) + "-control-bundle");
         controlBundleModel.setVersion(PomIdsHelper.getJobVersion(getJobProcessor().getProperty()));
         controlBundleModel.setPackaging("jar");
+        controlBundleModel.setName(displayName + " Control Bundle");
         Build controlBundleModelBuild = new Build();
         controlBundleModelBuild.addPlugin(addControlBundleMavenPlugin());
         controlBundleModelBuild.addResource(addControlBundleMavenResource());
@@ -285,7 +294,7 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
 
         plugin.setGroupId("org.apache.maven.plugins");
         plugin.setArtifactId("maven-deploy-plugin");
-        plugin.setVersion("2.8.2");
+        plugin.setVersion("2.7");
 
         Xpp3Dom configuration = new Xpp3Dom("configuration");
 
@@ -342,7 +351,7 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
      * 
      * @return plugin
      */
-    private Plugin addMavenCleanPlugin() {
+    private Plugin addSkipMavenCleanPlugin() {
         Plugin plugin = new Plugin();
 
         plugin.setGroupId("org.apache.maven.plugins");

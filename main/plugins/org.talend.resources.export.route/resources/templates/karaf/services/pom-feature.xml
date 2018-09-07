@@ -7,7 +7,8 @@
     <artifactId>@ItemName@-feature</artifactId>
     <packaging>pom</packaging>
     <version>@ItemVersion@</version>
-
+    <name>@ProjectName@ @JobName@-@JobVersion@ (@TalendJobVersion@,@JobType@) Feature</name>
+    
     <build>
         <plugins>
             <plugin>

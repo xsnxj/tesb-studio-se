@@ -12,7 +12,8 @@
     <groupId>@ItemGroupName@</groupId>  
 	<artifactId>@ItemName@-control-bundle</artifactId>
 	<packaging>jar</packaging>
-    <version>@ItemVersion@</version>  
+    <version>@ItemVersion@</version>
+    <name>@ProjectName@ @JobName@-@JobVersion@ (@TalendJobVersion@,@JobType@) Control Bundle</name>
 	<build>
 		<resources>
 			<resource>

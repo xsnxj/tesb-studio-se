@@ -84,6 +84,13 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
     private List<ModuleNeeded> defaultModulesNeededForBeans;
     private Set<String> modulesProvidedByFeatures;
 
+    /*
+     * Contains manifest Import-Package entries for subjobs used by cTalendJob components
+     * Key - ProcessItem.id of the route
+     * Value - Import-package string
+     */
+    private Map<String, String> subjobImportPackages = null;
+
     public RouteJavaScriptOSGIForESBManager(Map<ExportChoice, Object> exportChoiceMap, String contextName,
         Collection<String> routelets, Set<String> modulesProvidedByFeatures) {
         super(exportChoiceMap, contextName, null, IProcessor.NO_STATISTICS, IProcessor.NO_TRACES);
@@ -134,17 +141,18 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
         this.modulesProvidedByFeatures = modulesProvidedByFeatures;
     }
 
+    public void setSubjobImportPackages(Map<String, String> importPackages) {
+        this.subjobImportPackages = importPackages;
+    }
+
     public static String getClassName(ProcessItem processItem) {
         return getPackageName(processItem) + PACKAGE_SEPARATOR + processItem.getProperty().getLabel();
     }
 
-    protected String getIncludeRoutinesPath() {
-        return USER_BEANS_PATH;
-    }
 
     protected Collection<String> getRoutinesPaths() {
         final Collection<String> include = new ArrayList<String>();
-        include.add(getIncludeRoutinesPath());
+        include.add(USER_BEANS_PATH);
         include.add(SYSTEM_ROUTINES_PATH);
         return include;
     }
@@ -206,6 +214,14 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
     @Override
     protected void addOsgiDependencies(Analyzer analyzer, ExportFileResource libResource, ProcessItem processItem)
             throws IOException {
+
+        // Add subjob import packages to be handled by dependencies resolver
+        if (subjobImportPackages != null && subjobImportPackages.containsKey(processItem.getProperty().getId())) {
+            processItem.getProperty().getAdditionalProperties()
+                          .put("Import-Package", subjobImportPackages.get(processItem.getProperty().getId()));
+            subjobImportPackages.remove(processItem.getProperty().getId());
+        }
+
         final DependenciesResolver resolver = new DependenciesResolver(processItem);
         //exportPackage.append(getPackageName(processItem));
         // Add Route Resource Export packages
