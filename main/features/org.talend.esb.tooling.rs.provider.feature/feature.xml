@@ -33,12 +33,6 @@
          install-size="0"
          version="0.0.0"/>		 
 
-	<plugin
-         id="org.talend.designer.esb.components.ws.tools.extensions"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-		 
    <plugin
          id="org.talend.designer.esb.components.ws.trestrequest"
          download-size="0"

@@ -12,7 +12,6 @@
 // ============================================================================
 package org.talend.designer.esb.components.ws.trestrequest;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -48,7 +47,8 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
 
         // endpoint
         boolean keepEndpointValue = prefs.getBoolean(TRESTRequestConstants.PREF_KEEP_ENDPOINT);
-        if (StringUtils.isBlank(TalendTextUtils.removeQuotes(node.getParamStringValue(REST_ENDPOINT))) || !keepEndpointValue) {
+        if (StringUtils.isBlank(TalendTextUtils.removeQuotes(node.getParamStringValue(REST_ENDPOINT)))
+                || !keepEndpointValue) {
             node.setParamValue(REST_ENDPOINT, TalendTextUtils.addQuotes(oasManager.getEndpoint()));
         }
 
@@ -56,7 +56,7 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
         List<Map<?, ?>> schemasChildren = (List<Map<?, ?>>) schemasParameter.getValue();
 
         Map<String, RestAPIMapping> apiDesignerMappings = oasManager.getMappings();
-        
+
         Map<String, IMetadataTable> savedMetadataTables = getMetadataTablesToKeep(apiDesignerMappings);
 
         schemasChildren.clear();
@@ -72,8 +72,14 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
 
             newMapping.put(HTTP_VERB, apiDesignerMapping.getHttpVerb());
             newMapping.put(URI_PATTERN, TalendTextUtils.addQuotes(apiDesignerMapping.getUriPattern()));
-            newMapping.put(CONSUMES, (apiDesignerMapping.getConsumes() != null ? apiDesignerMapping.getConsumes().getLabel() : ""));
-            newMapping.put(PRODUCES, (apiDesignerMapping.getProduces() != null ? apiDesignerMapping.getProduces().getLabel() : ""));
+            newMapping
+                    .put(CONSUMES,
+                            (apiDesignerMapping.getConsumes() != null ? apiDesignerMapping.getConsumes().getLabel()
+                                    : ""));
+            newMapping
+                    .put(PRODUCES,
+                            (apiDesignerMapping.getProduces() != null ? apiDesignerMapping.getProduces().getLabel()
+                                    : ""));
 
             schemasChildren.add(newMapping);
 
@@ -90,9 +96,10 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
                 node.getMetadataList().add(table);
 
             } else {
-                
-                String outputFlow = apiDesignerMapping.getOutputFlow() != null ? apiDesignerMapping.getOutputFlow() : "";
-                
+
+                String outputFlow =
+                        apiDesignerMapping.getOutputFlow() != null ? apiDesignerMapping.getOutputFlow() : "";
+
                 newMapping.put(SCHEMA, outputFlow);
 
                 MetadataTable metadataTable = new MetadataTable();
@@ -108,6 +115,7 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
         return Status.OK_STATUS;
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, IMetadataTable> getMetadataTablesToKeep(Map<String, RestAPIMapping> apiDesignerMappings) {
 
         Map<String, IMetadataTable> existingMappings = new HashMap<String, IMetadataTable>();
@@ -115,18 +123,18 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
         IElementParameter schemasParameter = node.getElementParameter("SCHEMAS");
         List<Map<?, ?>> schemasChildren = (List<Map<?, ?>>) schemasParameter.getValue();
 
-        Map<String,String> tableNamesToKeep = new HashMap<>();
-        
+        Map<String, String> tableNamesToKeep = new HashMap<>();
+
         for (Map<?, ?> mapping : schemasChildren) {
 
             if (mapping.get(HTTP_VERB) instanceof String) {
-                
+
                 String mappingId = getUniqueOperationId(((String) mapping.get(HTTP_VERB)),
                         TalendTextUtils.removeQuotes((String) mapping.get(URI_PATTERN)));
 
                 String tableName = (String) mapping.get(SCHEMA);
 
-                if (!"".equals(tableName) &&  apiDesignerMappings.containsKey(mappingId)) {
+                if (!"".equals(tableName) && apiDesignerMappings.containsKey(mappingId)) {
                     tableNamesToKeep.put(tableName, mappingId);
                 }
             }
@@ -137,7 +145,7 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
                 existingMappings.put(tableNamesToKeep.get(table.getTableName()), table);
             }
         }
-        
+
         return existingMappings;
     }
 
@@ -164,8 +172,8 @@ public class TRESTRequestNodeAdapter implements TRESTRequestConstants {
         String endpointDefaultValue = "";
         if (node.getElementParameter(REST_ENDPOINT) != null
                 && node.getElementParameter(REST_ENDPOINT).getDefaultValues().get(0) != null) {
-            endpointDefaultValue = String
-                    .valueOf(node.getElementParameter(REST_ENDPOINT).getDefaultValues().get(0).getDefaultValue());
+            endpointDefaultValue =
+                    String.valueOf(node.getElementParameter(REST_ENDPOINT).getDefaultValues().get(0).getDefaultValue());
         }
 
         IElementParameter schemasParameter = node.getElementParameter("SCHEMAS");
