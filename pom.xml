@@ -218,16 +218,6 @@
 							<value>$2</value>
 						</to>
 					</mapping>
-					<mapping>
-						<from>
-							<name>[^:]+:([^:]+):jar:TESB</name>
-							<value>.*[\\/]([^\\/]+)</value>
-						</from>
-						<to>
-							<name>tesb-$1</name>
-							<value>$2</value>
-						</to>
-					</mapping>
 				</mappings>
 			</configuration>
 		</plugin>
