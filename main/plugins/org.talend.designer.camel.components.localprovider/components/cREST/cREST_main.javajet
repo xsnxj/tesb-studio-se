@@ -56,8 +56,11 @@ imports="
             	}
             }
         }
-        
-        String defaultEndpointUrl = "\"http://127.0.0.1:8090\"";
+        String defaultUri = (String) System.getProperties().get("restServiceDefaultUri");
+        if (null == defaultUri || defaultUri.trim().isEmpty() || !defaultUri.contains("://")) {
+        	defaultUri = "http://127.0.0.1:8090";
+        }
+        String defaultEndpointUrl = "\""+defaultUri+"\"";
         
         if (null == endpointUrlStudio || endpointUrlStudio.trim().isEmpty()) {
             endpointUrlStudio = defaultEndpointUrl;
