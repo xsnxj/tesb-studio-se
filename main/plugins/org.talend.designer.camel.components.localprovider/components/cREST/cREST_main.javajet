@@ -88,7 +88,11 @@ imports="
 	
 		builder.addParam("resourceClasses", "\"" + packageName + "." + className + "$Service_" + cid + "\"");
 		builderRT.addParam("resourceClasses", "\"" + packageName + "." + className + "$Service_" + cid + "\"");
+		
 	}
+	
+	builder.addParam("providers", "\"providers\"");
+	builderRT.addParam("providers", "\"providers\"");
 	
     builder.addParam("loggingFeatureEnabled", "\"" + (String) ElementParameterParser.getValue(node, "__LOG_MESSAGES__") + "\"");
     builderRT.addParam("loggingFeatureEnabled", "\"" + (String) ElementParameterParser.getValue(node, "__LOG_MESSAGES__") + "\"");
