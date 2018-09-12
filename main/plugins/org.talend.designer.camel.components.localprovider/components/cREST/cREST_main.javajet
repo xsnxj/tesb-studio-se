@@ -47,8 +47,8 @@ imports="
 	if(node.getIncomingConnections().isEmpty()) {
 		
         if (endpointUrlRT != null && !endpointUrlRT.trim().isEmpty() && !endpointUrlRT.contains("://")) {
-            if (endpointUrlRT.startsWith("/services")) {
-                endpointUrlRT = endpointUrlRT.substring("/services".length());
+            if (endpointUrlRT.startsWith("\"/services")) {
+                endpointUrlRT = endpointUrlRT.replaceFirst("/services","");
             }
             if (!endpointUrlRT.startsWith("/")) {
             	if(!endpointUrlRT.startsWith("context.")){
