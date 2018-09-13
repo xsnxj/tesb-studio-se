@@ -2245,10 +2245,16 @@ if (isProvider) {
                     //read context values
                     readContextValues(contextStr);
                     
-	                java.util.List<Object> providers = new java.util.ArrayList<Object>();
-			        providers.add(new com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider());
-			        providers.add(new com.fasterxml.jackson.jaxrs.xml.JacksonJaxbXMLProvider());
-	                registry.put("providers", providers);
+                    <%
+                    	if(process.getNodesOfType("cREST").size() > 0){
+                    %>
+                    
+		                java.util.List<Object> providers = new java.util.ArrayList<Object>();
+				        providers.add(new com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider());
+				        providers.add(new com.fasterxml.jackson.jaxrs.xml.JacksonJaxbXMLProvider());
+		                registry.put("providers", providers);
+	                
+	                <%}%>
 	                
                 <%}%>
 
