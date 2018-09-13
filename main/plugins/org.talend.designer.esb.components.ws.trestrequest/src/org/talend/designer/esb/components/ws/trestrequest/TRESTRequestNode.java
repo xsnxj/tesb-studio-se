@@ -26,7 +26,7 @@ import org.talend.designer.oas.external.TranslationException;
 
 public class TRESTRequestNode extends AbstractExternalNode {
 
-    private static final String ACCEPTED_OASDECODER_ID = "org.talend.designer.esb.components.ws.tools.RWADefDecoder";
+    private static final String ACCEPTED_OASDECODER_ID = "org.talend.designer.components.oasprovider.internal.RWADefDecoder";
 
     private class OASImporter implements Runnable {
 
