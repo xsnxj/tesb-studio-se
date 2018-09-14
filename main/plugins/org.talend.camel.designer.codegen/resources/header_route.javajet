@@ -495,6 +495,8 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
 %>
 
     private boolean inOSGi = routines.system.BundleUtils.inOSGi();
+    
+    private boolean inMS = <%=exportTypeSpringBoot%>;
 
 	private static Object arguments;
 	
@@ -2231,6 +2233,16 @@ if (isProvider) {
                 compositeRegistry.addRegistry(registry);
                 ((org.apache.camel.impl.DefaultCamelContext) camelContext).setRegistry(compositeRegistry);
 
+                <%
+                	if(process.getNodesOfType("cREST").size() > 0){
+                %>
+                
+	                java.util.List<Object> providers = new java.util.ArrayList<Object>();
+			        providers.add(new com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider());
+			        providers.add(new com.fasterxml.jackson.jaxrs.xml.JacksonJaxbXMLProvider());
+	                registry.put("providers", providers);
+                
+                <%}%>
 
                 <%if(exportTypeSpringBoot){%>
 					<%if(!isRoutelet){%>
@@ -2244,17 +2256,6 @@ if (isProvider) {
                 	<%}%>
                     //read context values
                     readContextValues(contextStr);
-                    
-                    <%
-                    	if(process.getNodesOfType("cREST").size() > 0){
-                    %>
-                    
-		                java.util.List<Object> providers = new java.util.ArrayList<Object>();
-				        providers.add(new com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider());
-				        providers.add(new com.fasterxml.jackson.jaxrs.xml.JacksonJaxbXMLProvider());
-		                registry.put("providers", providers);
-	                
-	                <%}%>
 	                
                 <%}%>
 

@@ -133,7 +133,7 @@ imports="
     String responseClass = "javax.ws.rs.core.Response.class";
 	if (node.getIncomingConnections().isEmpty()) {
 %>
-		from(inOSGi?<%=uriRT%>:<%=uriStudio%>)
+		from(inOSGi || inMS ?<%=uriRT%>:<%=uriStudio%>)
 		.process(new org.apache.camel.Processor() {
 				public void process(org.apache.camel.Exchange exchange) throws Exception {
 					org.apache.camel.Message inMessage = exchange.getIn();
