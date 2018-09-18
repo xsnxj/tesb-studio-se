@@ -553,7 +553,7 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                                     EParameterName.PROCESS_TYPE.getName() + ':' + EParameterName.PROCESS_TYPE_CONTEXT.getName(),
                                     node).getValue());
                     CamelFeatureUtil.addFeatureAndBundles(routeletProcess, featuresModel);
-                    exportAllReferenceJobs(routeletName, routeletProcess);
+                    exportAllReferenceJobs(routeName, routeletProcess);
                     exportAllReferenceRoutelets(routeName, routeletProcess, routelets);
                 }
             }
