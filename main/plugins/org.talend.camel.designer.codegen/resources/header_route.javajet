@@ -2141,6 +2141,11 @@ if (isProvider) {
                 <%if(exportTypeSpringBoot){%>
 
                 <%}else{%>
+                    <%if(!isRoutelet) {%>
+                    if(inOSGi){
+                        <%= generateAddRoutesMethod(process)%>
+                    }
+                    <%}%>
                     //read context values
                     readContextValues(contextStr);
                 <%}%>
