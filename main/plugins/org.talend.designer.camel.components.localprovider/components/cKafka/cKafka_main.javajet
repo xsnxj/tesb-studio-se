@@ -87,14 +87,13 @@ imports="
 
     String sslTrustStorePasswordField = "__SSL_TRUSTSTORE_PASSWORD__";
     if (!"\"\"".equals(ElementParameterParser.getValue(node, sslTrustStorePasswordField).trim())) {
-        %>
-        <%if (ElementParameterParser.canEncrypt(node, sslTrustStorePasswordField)) {%> 
-            final String decryptedSSLTrustStorePassword = routines.system.PasswordEncryptUtil.decryptPassword(<%=ElementParameterParser.getEncryptedValue(node, sslTrustStorePasswordField)%>);
-        <%} else {%>
-            final String decryptedSSLTrustStorePassword = <%=ElementParameterParser.getValue(node, sslTrustStorePasswordField)%>; 
-        <%}%>
-        <%
-        builder.addParam("sslTruststorePassword", "decryptedSSLTrustStorePassword");
+
+        if (ElementParameterParser.canEncrypt(node, sslTrustStorePasswordField)) {
+            builder.addParam("sslTruststorePassword", "routines.system.PasswordEncryptUtil.decryptPassword("+ElementParameterParser.getEncryptedValue(node, sslTrustStorePasswordField)+")");
+        } else {
+            builder.addParam("sslTruststorePassword", ElementParameterParser.getValue(node, sslTrustStorePasswordField));
+        }
+
     }
 
     String sslTruststoreLocation = ElementParameterParser.getValue(node, "__SSL_TRUSTSTORE_LOCATION__").trim();
