@@ -57,6 +57,9 @@ imports="
             }
         }
         String defaultUri = (String) System.getProperties().get("restServiceDefaultUri");
+        if (defaultUri != null && defaultUri.endsWith("/")) {
+            defaultUri = defaultUri.substring(0, defaultUri.length()-1);
+        }
         if (null == defaultUri || defaultUri.trim().isEmpty() || !defaultUri.contains("://")) {
         	defaultUri = "http://127.0.0.1:8090";
         }
