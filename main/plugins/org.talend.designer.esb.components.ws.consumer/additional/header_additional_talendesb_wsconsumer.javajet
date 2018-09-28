@@ -294,7 +294,19 @@ if (actAsConsumer) {
                 client.getRequestContext().put("ws-security.username", username);
                 client.getRequestContext().put("ws-security.password", password);
             }
-
+<%
+    /*tSetKeystore-TESB-22406*/
+    if (!process.getNodesOfType("tSetKeystore").isEmpty()) {
+        INode keystoreNode = process.getNodesOfType("tSetKeystore").get(0);
+        if(("false").equals(ElementParameterParser.getValue(keystoreNode, "__VERIFY_NAME__"))){
+%>
+            org.apache.cxf.configuration.jsse.TLSClientParameters clientParameters = new org.apache.cxf.configuration.jsse.TLSClientParameters();
+            clientParameters.setUseHttpsURLConnectionDefaultHostnameVerifier(true);
+            conduit.setTlsClientParameters(clientParameters);
+<%
+        }
+    }
+%>
             org.apache.cxf.transports.http.configuration.HTTPClientPolicy httpClientPolicy = conduit.getClient();
             if (null != proxyServer) {
                 httpClientPolicy.setProxyServerType(org.apache.cxf.transports.http.configuration.ProxyServerType.HTTP);

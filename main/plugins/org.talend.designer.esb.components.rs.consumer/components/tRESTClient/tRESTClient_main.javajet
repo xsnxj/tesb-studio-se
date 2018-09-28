@@ -346,7 +346,19 @@ try {
 			conduit_<%=cid%>.getProxyAuthorization().setPassword(decryptedPassword_<%=cid%>);
 		}
 	}
-
+	<%
+	/*tSetKeystore-TESB-22406*/
+	if (!node.getProcess().getNodesOfType("tSetKeystore").isEmpty()) {
+	    INode keystoreNode = node.getProcess().getNodesOfType("tSetKeystore").get(0);
+	    if(("false").equals(ElementParameterParser.getValue(keystoreNode, "__VERIFY_NAME__"))){
+	%>
+	        org.apache.cxf.configuration.jsse.TLSClientParameters clientParameters = new org.apache.cxf.configuration.jsse.TLSClientParameters();
+	        clientParameters.setUseHttpsURLConnectionDefaultHostnameVerifier(true);
+	        conduit_<%=cid%>.setTlsClientParameters(clientParameters);
+	<%
+	    }
+	}
+	%>
 	<% if (paramsHelper.getBoolParam("__FOLLOW_REDIRECTS__")) { %>
 		conduit_<%=cid%>.getClient().setAutoRedirect(true);
 		clientConfig_<%=cid%>.getRequestContext().put("http.redirect.relative.uri", true);
