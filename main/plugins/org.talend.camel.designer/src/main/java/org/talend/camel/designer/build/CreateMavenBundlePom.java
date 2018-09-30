@@ -22,6 +22,7 @@ import java.util.Set;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.Profile;
@@ -99,7 +100,13 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         Model pom = new Model();
 
         boolean route = "CAMEL".equals(getJobProcessor().getProcess().getComponentsType());
-
+        
+        Parent parentPom = new Parent();
+        parentPom.setGroupId(model.getGroupId());
+        parentPom.setArtifactId(model.getArtifactId() + "-Kar");
+        parentPom.setVersion(model.getVersion());
+        parentPom.setRelativePath("/");
+        
         if (route) {
 
             RouteProcess routeProcess = (RouteProcess) getJobProcessor().getProcess();
@@ -112,7 +119,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             Model featureModel = new Model();
 
             featureModel.setModelVersion("4.0.0");
-            featureModel.setParent(model.getParent());
+            featureModel.setParent(parentPom);
             featureModel.setGroupId(model.getGroupId());
             featureModel.setArtifactId(model.getArtifactId() + "-feature");
 
@@ -161,7 +168,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         }
 
         pom.setModelVersion("4.0.0");
-        // pom.setParent(model.getParent());
+         pom.setParent(model.getParent());
         pom.setGroupId(model.getGroupId());
         pom.setArtifactId(model.getArtifactId() + "-Kar");
         pom.setName(model.getName() + " Kar");
@@ -234,7 +241,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         // System.out.println(configuration);
         // }
         // }
-
+        model.setParent(parentPom);
         List<Profile> profiles = model.getProfiles();
 
         for (Profile profile : profiles) {
