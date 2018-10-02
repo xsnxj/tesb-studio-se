@@ -1,4 +1,4 @@
-<%@ jet 
+<%@ jet
 imports="
     org.talend.core.model.process.INode
     org.talend.core.model.process.IProcess
@@ -16,11 +16,11 @@ imports="
 
 <%
 	CodeGeneratorArgument codeGenArgument = (CodeGeneratorArgument) argument;
-	
+
 	INode node = (INode)codeGenArgument.getArgument();
-	
+
 	IProcess process = node.getProcess();
-	
+
 	String cid = node.getUniqueName();
 
 	NodeParamsHelper paramsHelper = new NodeParamsHelper(node);
@@ -35,17 +35,17 @@ imports="
 	builder.useDoubleSlash(false);
 	builderRT.useComponentColon(false);
 	builderRT.useDoubleSlash(false);
-	
-	
+
+
 %>
 
-<%	
+<%
 	String endpointUrlRT = ElementParameterParser.getValue(node, "__URL__");
-		
+
 	String endpointUrlStudio = endpointUrlRT;
-	
+
 	if(node.getIncomingConnections().isEmpty()) {
-		
+
         if (endpointUrlRT != null && !endpointUrlRT.trim().isEmpty() && !endpointUrlRT.contains("://")) {
             if (endpointUrlRT.startsWith("\"/services")) {
                 endpointUrlRT = endpointUrlRT.replaceFirst("/services","");
@@ -64,45 +64,54 @@ imports="
         	defaultUri = "http://127.0.0.1:8090";
         }
         String defaultEndpointUrl = "\""+defaultUri+"\"";
-        
+
         if (null == endpointUrlStudio || endpointUrlStudio.trim().isEmpty()) {
             endpointUrlStudio = defaultEndpointUrl;
         } else if (!endpointUrlStudio.contains("://")) { // relative
             if (endpointUrlStudio.startsWith("/")) {
                 endpointUrlStudio = endpointUrlStudio.substring(1);
             }
-            
+
             if(!endpointUrlStudio.startsWith("context.")){
             	endpointUrlStudio = defaultEndpointUrl + "+" + endpointUrlStudio;
             }
         }
-		
+
 		boolean isTestContainer = ProcessUtils.isTestContainer(process);
-		
+
 		String className = isTestContainer ? process.getName() + "Test" : process.getName();
-		
+
 		String routeFolderName = "";
 	    IProcess baseProcess = ProcessUtils.getTestContainerBaseProcess(process);
-	    
+
 	    if (baseProcess != null) {
 	        routeFolderName = JavaResourcesHelper.getJobFolderName(baseProcess.getName(), baseProcess.getVersion()) + ".";
 	    }
-	    
+
 	    routeFolderName = routeFolderName + JavaResourcesHelper.getJobFolderName(process.getName(), process.getVersion());
-	    
+
 	    String packageName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + routeFolderName;
-	
+
 		builder.addParam("resourceClasses", "\"" + packageName + "." + className + "$Service_" + cid + "\"");
 		builderRT.addParam("resourceClasses", "\"" + packageName + "." + className + "$Service_" + cid + "\"");
-		
+
 	}
-	
-	builder.addParam("providers", "\"providers\"");
-	builderRT.addParam("providers", "\"providers\"");
-	
+
+    builder.addParam("features", "\"#features" + "\"");
+    builderRT.addParam("features", "\"#features" + "\"");
+
+    builder.addParam("inInterceptors", "\"#inInterceptors" + "\"");
+    builderRT.addParam("inInterceptors", "\"#inInterceptors" + "\"");
+
+    builder.addParam("properties", "\"#properties\"");
+    builderRT.addParam("properties", "\"#properties\"");
+
+    builder.addParam("providers", "\"#providers\"");
+    builderRT.addParam("providers", "\"#providers\"");
+
     builder.addParam("loggingFeatureEnabled", "\"" + (String) ElementParameterParser.getValue(node, "__LOG_MESSAGES__") + "\"");
     builderRT.addParam("loggingFeatureEnabled", "\"" + (String) ElementParameterParser.getValue(node, "__LOG_MESSAGES__") + "\"");
-    
+
     java.util.List<java.util.Map<String, String>> tableValues = (java.util.List<java.util.Map<String, String>>) ElementParameterParser.getObjectValue(node, "__ADVARGUMENTS__");
     for (java.util.Map<String, String> map : tableValues) {
         String argName = map.get("NAME").trim();
@@ -113,29 +122,42 @@ imports="
 		builder.addParam(argName, argValue);
 		builderRT.addParam(argName, argValue);
     }
-    
+
    	builder.setComponent("cxfrs://");
 	builderRT.setComponent("cxfrs://");
-	
+
 	if("".equals(endpointUrlStudio) || endpointUrlStudio == null || "\"\"".equals(endpointUrlStudio)){
 		builder.appendPath("\"/\"");
 	}else{
 		builder.appendPath(endpointUrlStudio);
 	}
-	
+
 	if("".equals(endpointUrlRT) || endpointUrlRT == null || "\"\"".equals(endpointUrlRT)){
 		builderRT.appendPath("\"/\"");
 	}else{
 		builderRT.appendPath(endpointUrlRT);
 	}
-	
+
     String uriRT = builderRT.build();
-   
+
     String uriStudio = builder.build();
-    
+
     String responseClass = "javax.ws.rs.core.Response.class";
 	if (node.getIncomingConnections().isEmpty()) {
 %>
+
+        java.util.List<Object> providers_<%=cid%> = (java.util.List<Object>)registry.get("providers");
+        if (providers_<%=cid%> == null) {
+            providers_<%=cid%> = new java.util.ArrayList<Object>();
+        }
+        providers_<%=cid%>.addAll(sf_<%=cid%>.getProviders());
+        registry.put("providers", providers_<%=cid%>);
+
+        registry.put("features", sf_<%=cid%>.getFeatures() != null ? sf_<%=cid%>.getFeatures() : new java.util.ArrayList<org.apache.cxf.feature.Feature>());
+        registry.put("inInterceptors", sf_<%=cid%>.getInInterceptors() != null ? sf_<%=cid%>.getInInterceptors()
+                        : new java.util.ArrayList<org.apache.cxf.interceptor.Interceptor<? extends org.apache.cxf.message.Message>>());
+        registry.put("properties", sf_<%=cid%>.getProperties() != null ? sf_<%=cid%>.getProperties() : new java.util.HashMap<String, Object>());
+
 		from(inOSGi || inMS ?<%=uriRT%>:<%=uriStudio%>)
 		.process(new org.apache.camel.Processor() {
 				public void process(org.apache.camel.Exchange exchange) throws Exception {
