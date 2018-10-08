@@ -58,14 +58,11 @@ imports="
 
     String sslKeyPasswordField = "__SSL_KEY_PASSWORD__";
     if (!"\"\"".equals(ElementParameterParser.getValue(node, sslKeyPasswordField).trim())) {
-        %>
-        <%if (ElementParameterParser.canEncrypt(node, sslKeyPasswordField)) {%> 
-            final String decryptedSSLKeyPassword = routines.system.PasswordEncryptUtil.decryptPassword(<%=ElementParameterParser.getEncryptedValue(node, sslKeyPasswordField)%>);
-        <%} else {%>
-            final String decryptedSSLKeyPassword = <%=ElementParameterParser.getValue(node, sslKeyPasswordField)%>; 
-        <%}%>
-        <%
-        builder.addParam("sslKeyPassword", "decryptedSSLKeyPassword");
+        if (ElementParameterParser.canEncrypt(node, sslKeyPasswordField)) {
+            builder.addParam("sslKeyPassword", "routines.system.PasswordEncryptUtil.decryptPassword("+ElementParameterParser.getEncryptedValue(node, sslKeyPasswordField)+")");
+        } else {
+            builder.addParam("sslKeyPassword", ElementParameterParser.getValue(node, sslKeyPasswordField));
+        }
     }
 
     String sslKeystoreLocation = ElementParameterParser.getValue(node, "__SSL_KEYSTORE_LOCATION__").trim();
@@ -75,26 +72,20 @@ imports="
 
     String sslKeyStorePasswordField = "__SSL_KEYSTORE_PASSWORD__";
     if (!"\"\"".equals(ElementParameterParser.getValue(node, sslKeyStorePasswordField).trim())) {
-        %>
-        <%if (ElementParameterParser.canEncrypt(node, sslKeyStorePasswordField)) {%> 
-            final String decryptedSSLKeyStorePassword = routines.system.PasswordEncryptUtil.decryptPassword(<%=ElementParameterParser.getEncryptedValue(node, sslKeyStorePasswordField)%>);
-        <%} else {%>
-            final String decryptedSSLKeyStorePassword = <%=ElementParameterParser.getValue(node, sslKeyStorePasswordField)%>; 
-        <%}%>
-        <%
-        builder.addParam("sslKeystorePassword", "decryptedSSLKeyStorePassword");
+        if (ElementParameterParser.canEncrypt(node, sslKeyStorePasswordField)) {
+            builder.addParam("sslKeystorePassword", "routines.system.PasswordEncryptUtil.decryptPassword("+ElementParameterParser.getEncryptedValue(node, sslKeyStorePasswordField)+")");
+        } else {
+            builder.addParam("sslKeystorePassword", ElementParameterParser.getValue(node, sslKeyStorePasswordField));
+        }
     }
 
     String sslTrustStorePasswordField = "__SSL_TRUSTSTORE_PASSWORD__";
     if (!"\"\"".equals(ElementParameterParser.getValue(node, sslTrustStorePasswordField).trim())) {
-        %>
-        <%if (ElementParameterParser.canEncrypt(node, sslTrustStorePasswordField)) {%> 
-            final String decryptedSSLTrustStorePassword = routines.system.PasswordEncryptUtil.decryptPassword(<%=ElementParameterParser.getEncryptedValue(node, sslTrustStorePasswordField)%>);
-        <%} else {%>
-            final String decryptedSSLTrustStorePassword = <%=ElementParameterParser.getValue(node, sslTrustStorePasswordField)%>; 
-        <%}%>
-        <%
-        builder.addParam("sslTruststorePassword", "decryptedSSLTrustStorePassword");
+        if (ElementParameterParser.canEncrypt(node, sslTrustStorePasswordField)) {
+            builder.addParam("sslTruststorePassword", "routines.system.PasswordEncryptUtil.decryptPassword("+ElementParameterParser.getEncryptedValue(node, sslTrustStorePasswordField)+")");
+        } else {
+            builder.addParam("sslTruststorePassword", ElementParameterParser.getValue(node, sslTrustStorePasswordField));
+        }
     }
 
     String sslTruststoreLocation = ElementParameterParser.getValue(node, "__SSL_TRUSTSTORE_LOCATION__").trim();
