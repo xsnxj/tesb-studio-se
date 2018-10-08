@@ -66,7 +66,7 @@ import org.talend.utils.io.FilesUtils;
  */
 public class CreateMavenBundlePom extends CreateMavenJobPom {
 
-    private Model model;
+    private Model bundleModel;
 
     /**
      * DOC sunchaoqun CreateMavenCamelPom constructor comment.
@@ -93,7 +93,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             return;
         }
 
-        model = createModel();
+        bundleModel = createModel();
 
         IContainer parent = curPomFile.getParent();
 
@@ -102,9 +102,9 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         boolean route = "CAMEL".equals(getJobProcessor().getProcess().getComponentsType());
         
         Parent parentPom = new Parent();
-        parentPom.setGroupId(model.getGroupId());
-        parentPom.setArtifactId(model.getArtifactId() + "-Kar");
-        parentPom.setVersion(model.getVersion());
+        parentPom.setGroupId(bundleModel.getGroupId());
+        parentPom.setArtifactId(bundleModel.getArtifactId() + "-Kar");
+        parentPom.setVersion(bundleModel.getVersion());
         parentPom.setRelativePath("/");
         
         if (route) {
@@ -120,16 +120,19 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
             featureModel.setModelVersion("4.0.0");
             featureModel.setParent(parentPom);
-            featureModel.setGroupId(model.getGroupId());
-            featureModel.setArtifactId(model.getArtifactId() + "-feature");
+            featureModel.setGroupId(bundleModel.getGroupId());
+            featureModel.setArtifactId(bundleModel.getArtifactId() + "-feature");
 
-            featureModel.setName(model.getName() + " Feature");
+            featureModel.setName(bundleModel.getName() + " Feature");
 
-            featureModel.setVersion(model.getVersion());
+            featureModel.setVersion(bundleModel.getVersion());
             featureModel.setPackaging("pom");
+            
+            featureModel.setProperties(bundleModel.getProperties());
+            featureModel.addProperty("cloud.publisher.skip", "false");
             Build featureModelBuild = new Build();
 
-            featureModelBuild.addPlugin(addFeaturesMavenPlugin(model.getProperties().getProperty("talend.job.finalName")));
+            featureModelBuild.addPlugin(addFeaturesMavenPlugin(bundleModel.getProperties().getProperty("talend.job.finalName")));
 
             Set<JobInfo> subjobs = getJobProcessor().getBuildChildrenJobs();
             if (subjobs != null && !subjobs.isEmpty()) {
@@ -168,11 +171,11 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         }
 
         pom.setModelVersion("4.0.0");
-         pom.setParent(model.getParent());
-        pom.setGroupId(model.getGroupId());
-        pom.setArtifactId(model.getArtifactId() + "-Kar");
-        pom.setName(model.getName() + " Kar");
-        pom.setVersion(model.getVersion());
+         pom.setParent(bundleModel.getParent());
+        pom.setGroupId(bundleModel.getGroupId());
+        pom.setArtifactId(bundleModel.getArtifactId() + "-Kar");
+        pom.setName(bundleModel.getName() + " Kar");
+        pom.setVersion(bundleModel.getVersion());
         pom.setPackaging("pom");
 
         for (JobInfo job : getJobProcessor().getBuildChildrenJobs()) {
@@ -198,7 +201,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             // }
             //
         }
-        pom.setDependencies(model.getDependencies());
+        pom.setDependencies(bundleModel.getDependencies());
 
         if (pom.getBuild() == null) {
             pom.setBuild(new Build());
@@ -216,7 +219,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
          * 
          */
 
-        File bd = new File(parent.getLocation().toOSString() + File.separator + "pom-bundle.xml");
+        File pomBundle = new File(parent.getLocation().toOSString() + File.separator + "pom-bundle.xml");
         // model.setParent(null);
         // model.setDependencies(null);
 
@@ -241,8 +244,9 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         // System.out.println(configuration);
         // }
         // }
-        model.setParent(parentPom);
-        List<Profile> profiles = model.getProfiles();
+        bundleModel.addProperty("cloud.publisher.skip", "true");
+        bundleModel.setParent(parentPom);
+        List<Profile> profiles = bundleModel.getProfiles();
 
         for (Profile profile : profiles) {
 
@@ -273,9 +277,9 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
         }
 
-        model.setName(model.getName() + " Bundle");
+        bundleModel.setName(bundleModel.getName() + " Bundle");
 
-        PomUtil.savePom(monitor, model, bd);
+        PomUtil.savePom(monitor, bundleModel, pomBundle);
 
         PomUtil.savePom(monitor, pom, curPomFile);
 
@@ -421,7 +425,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         file.setValue("${basedir}/src/main/bundle-resources/feature.xml");
 
         Xpp3Dom groupId = new Xpp3Dom("groupId");
-        groupId.setValue(model.getGroupId());
+        groupId.setValue(bundleModel.getGroupId());
 
         Xpp3Dom artifactId = new Xpp3Dom("artifactId");
         artifactId.setValue(modelArtifactId);
@@ -499,7 +503,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         groupId.setValue(PomIdsHelper.getJobGroupId(job.getProcessItem().getProperty()));
 
         Xpp3Dom artifactId = new Xpp3Dom("artifactId");
-        artifactId.setValue(model.getArtifactId() + "_" + job.getJobName());
+        artifactId.setValue(bundleModel.getArtifactId() + "_" + job.getJobName());
 
         Xpp3Dom version = new Xpp3Dom("version");
         version.setValue(PomIdsHelper.getJobVersion(job.getProcessItem().getProperty()));
