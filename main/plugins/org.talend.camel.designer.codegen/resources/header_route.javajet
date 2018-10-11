@@ -2657,6 +2657,21 @@ if (isProvider) {
 %>
                 registry.put("<%=cid%>", factory_<%=cid%>);
 <%
+                String fbn = isProvider ? "sf_" + cid : "cf_" + cid;
+%>
+                java.util.List<Object> providers_<%=cid%> = (java.util.List<Object>)registry.get("providers");
+                if (providers_<%=cid%> == null) {
+                    providers_<%=cid%> = new java.util.ArrayList<Object>();
+                }
+                providers_<%=cid%>.addAll(<%=fbn%>.getProviders());
+                registry.put("providers", providers_<%=cid%>);
+                registry.put("features_<%=cid%>", <%=fbn%>.getFeatures() != null ? <%=fbn%>.getFeatures() : new java.util.ArrayList<org.apache.cxf.feature.Feature>());
+                registry.put("inInterceptors_<%=cid%>", <%=fbn%>.getInInterceptors() != null ? <%=fbn%>.getInInterceptors()
+                               : new java.util.ArrayList<org.apache.cxf.interceptor.Interceptor<? extends org.apache.cxf.message.Message>>());
+                registry.put("outInterceptors_<%=cid%>", <%=fbn%>.getOutInterceptors() != null ? <%=fbn%>.getOutInterceptors()
+                               : new java.util.ArrayList<org.apache.cxf.interceptor.Interceptor<? extends org.apache.cxf.message.Message>>());
+                registry.put("properties_<%=cid%>", <%=fbn%>.getProperties() != null ? <%=fbn%>.getProperties() : new java.util.HashMap<String, Object>());
+<%
             }
 
             //then process cBeanRegister components

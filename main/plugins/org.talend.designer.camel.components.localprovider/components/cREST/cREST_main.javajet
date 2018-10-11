@@ -97,14 +97,17 @@ imports="
 
 	}
 
-    builder.addParam("features", "\"#features" + "\"");
-    builderRT.addParam("features", "\"#features" + "\"");
+    builder.addParam("features", "\"#features_" + cid + "\"");
+    builderRT.addParam("features", "\"#features_" + cid + "\"");
 
-    builder.addParam("inInterceptors", "\"#inInterceptors" + "\"");
-    builderRT.addParam("inInterceptors", "\"#inInterceptors" + "\"");
+    builder.addParam("inInterceptors", "\"#inInterceptors_" + cid + "\"");
+    builderRT.addParam("inInterceptors", "\"#inInterceptors_" + cid + "\"");
 
-    builder.addParam("properties", "\"#properties\"");
-    builderRT.addParam("properties", "\"#properties\"");
+    builder.addParam("outInterceptors", "\"#outInterceptors_" + cid + "\"");
+    builderRT.addParam("outInterceptors", "\"#outInterceptors_" + cid + "\"");
+
+    builder.addParam("properties", "\"#properties_" + cid + "\"");
+    builderRT.addParam("properties", "\"#properties_" + cid + "\"");
 
     builder.addParam("providers", "\"#providers\"");
     builderRT.addParam("providers", "\"#providers\"");
@@ -145,19 +148,6 @@ imports="
     String responseClass = "javax.ws.rs.core.Response.class";
 	if (node.getIncomingConnections().isEmpty()) {
 %>
-
-        java.util.List<Object> providers_<%=cid%> = (java.util.List<Object>)registry.get("providers");
-        if (providers_<%=cid%> == null) {
-            providers_<%=cid%> = new java.util.ArrayList<Object>();
-        }
-        providers_<%=cid%>.addAll(sf_<%=cid%>.getProviders());
-        registry.put("providers", providers_<%=cid%>);
-
-        registry.put("features", sf_<%=cid%>.getFeatures() != null ? sf_<%=cid%>.getFeatures() : new java.util.ArrayList<org.apache.cxf.feature.Feature>());
-        registry.put("inInterceptors", sf_<%=cid%>.getInInterceptors() != null ? sf_<%=cid%>.getInInterceptors()
-                        : new java.util.ArrayList<org.apache.cxf.interceptor.Interceptor<? extends org.apache.cxf.message.Message>>());
-        registry.put("properties", sf_<%=cid%>.getProperties() != null ? sf_<%=cid%>.getProperties() : new java.util.HashMap<String, Object>());
-
 		from(inOSGi || inMS ?<%=uriRT%>:<%=uriStudio%>)
 		.process(new org.apache.camel.Processor() {
 				public void process(org.apache.camel.Exchange exchange) throws Exception {
