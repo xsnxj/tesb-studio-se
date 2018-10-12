@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.maven.model.Build;
+import org.apache.commons.io.FileUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
@@ -31,6 +31,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.commons.utils.generation.JavaUtils;
 import org.talend.core.model.process.JobInfo;
 import org.talend.core.runtime.projectsetting.IProjectSettingPreferenceConstants;
 import org.talend.core.runtime.projectsetting.IProjectSettingTemplateConstants;
@@ -75,10 +76,20 @@ public class CreateRouteletMavenBundlePom extends CreateMavenJobPom {
         model = createModel();
 
         IFolder resFolder = curPomFile.getParent().getProject().getFolder(MavenSystemFolders.RESOURCES.getPath());
+        IFolder resExtFolder = curPomFile.getParent().getProject().getFolder(MavenSystemFolders.EXT_RESOURCES.getPath());
 
         IContainer parent = curPomFile.getParent();
 
         if ("CAMEL".equals(getJobProcessor().getProcess().getComponentsType())) {
+
+            IFolder contextPropertiesFolder = resExtFolder
+                    .getFolder(model.getProperties().getProperty("talend.job.path") + "/" + JavaUtils.JAVA_CONTEXTS_DIRECTORY);
+
+            IFolder alternatePropertiesFolder = resFolder
+                    .getFolder(model.getProperties().getProperty("talend.job.path") + "/" + JavaUtils.JAVA_CONTEXTS_DIRECTORY);
+
+            FileUtils.copyDirectory(new File(contextPropertiesFolder.getLocation().toOSString()),
+                    new File(alternatePropertiesFolder.getLocation().toOSString()));
 
             Model pom = new Model();
 
