@@ -593,13 +593,13 @@
               context="plugin:org.talend.designer.camel.components.localprovider"
               id="aws-java-sdk-sqs"
               name="${tesb-aws-java-sdk-sqs}"
-              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-sqs}">
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-sqs}" bundleID="">
         </libraryNeeded>
         <libraryNeeded
               context="plugin:org.talend.designer.camel.components.localprovider"
               id="aws-java-sdk-sns"
               name="${tesb-aws-java-sdk-sns}"
-              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-sns}">
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-sns}" bundleID="">
         </libraryNeeded>
             
         

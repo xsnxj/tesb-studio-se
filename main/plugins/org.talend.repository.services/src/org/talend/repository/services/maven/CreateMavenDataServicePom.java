@@ -30,6 +30,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.EList;
+import org.talend.commons.utils.VersionUtils;
 import org.talend.core.model.process.JobInfo;
 import org.talend.core.model.properties.Project;
 import org.talend.core.model.properties.Property;
@@ -162,11 +163,14 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
                 }
             }
         }
-
+        pomModel.addProperty("cloud.publisher.skip", "true");
         // add control bundle module
         pomModel.addModule(POM_CONTROL_BUNDLE_XML);
         // add feature module
         pomModel.addModule(POM_FEATURE_XML);
+
+        pomModel.setBuild(new Build());
+        pomModel.getBuild().addPlugin(addSkipDeployFeatureMavenPlugin());
         PomUtil.savePom(monitor, pomModel, pom);
 
         Parent parentPom = new Parent();
@@ -196,6 +200,13 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         featureModel.setBuild(featureModelBuild);
         featureModel.setParent(parentPom);
         featureModel.setName(displayName + " Feature");
+
+        featureModel.addProperty("cloud.publisher.skip", "false");
+        featureModel.addProperty("talend.job.id", "noid");
+        featureModel.addProperty("talend.job.name", artifactId);
+        featureModel.addProperty("talend.job.version", talendJobVersion);
+        featureModel.addProperty("talend.product.version", VersionUtils.getVersion());
+        featureModel.addProperty("talend.job.finalName", featureModel.getArtifactId() + "-" + featureModel.getVersion()); // DemoService-feature-0.1.0
         PomUtil.savePom(monitor, featureModel, feature);
 
         IFile controlBundle = pom.getParent().getFile(new Path(POM_CONTROL_BUNDLE_XML));
@@ -212,6 +223,7 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         controlBundleModelBuild.addResource(addControlBundleMavenResource());
         controlBundleModel.setBuild(controlBundleModelBuild);
         controlBundleModel.setParent(parentPom);
+        controlBundleModel.addProperty("cloud.publisher.skip", "true");
         PomUtil.savePom(monitor, controlBundleModel, controlBundle);
 
         afterCreate(monitor);
@@ -365,5 +377,24 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         plugin.setConfiguration(configuration);
 
         return plugin;
+    }
+
+    private Plugin addSkipDeployFeatureMavenPlugin() {
+
+        Plugin plugin = new Plugin();
+
+        plugin.setGroupId("org.apache.maven.plugins");
+        plugin.setArtifactId("maven-deploy-plugin");
+        plugin.setVersion("2.7");
+
+        Xpp3Dom configuration = new Xpp3Dom("configuration");
+
+        Xpp3Dom skip = new Xpp3Dom("skip");
+        skip.setValue("true");
+        configuration.addChild(skip);
+        plugin.setConfiguration(configuration);
+
+        return plugin;
+
     }
 }
