@@ -68,12 +68,16 @@ public class WSDLPopulationUtil extends XSDPopulationUtil2 {
                         Object oDef = resource.getContents().get(0);
                         if (oDef instanceof Definition) {
                             Definition definition = (Definition) oDef;
-                            for (Object o : definition.getETypes().getEExtensibilityElements()) {
-                                XSDSchemaExtensibilityElement schema = (XSDSchemaExtensibilityElement) o;
-                                if ((schema.getSchema() != null) && (namespace.equals(schema.getSchema().getTargetNamespace()))) {
-                                    return schema.getSchema();
+                            if (definition.getETypes() != null) {
+                                for (Object o : definition.getETypes().getEExtensibilityElements()) {
+                                    XSDSchemaExtensibilityElement schema = (XSDSchemaExtensibilityElement) o;
+                                    if ((schema.getSchema() != null)
+                                            && (namespace.equals(schema.getSchema().getTargetNamespace()))) {
+                                        return schema.getSchema();
+                                    }
                                 }
                             }
+
                         }
                     }
                 }
