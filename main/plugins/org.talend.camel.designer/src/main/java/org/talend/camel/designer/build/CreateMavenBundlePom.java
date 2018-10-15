@@ -144,12 +144,8 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
                 }
             }
 
-            if (publishAsSnapshot) {
-                featureModelBuild.addPlugin(
-                        addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
-            } else {
-                featureModelBuild.addPlugin(addSkipDeployFeatureMavenPlugin());
-            }
+            featureModelBuild.addPlugin(addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
+            featureModelBuild.addPlugin(addSkipDeployFeatureMavenPlugin());
             featureModelBuild.addPlugin(addSkipMavenCleanPlugin());
             featureModel.setBuild(featureModelBuild);
 

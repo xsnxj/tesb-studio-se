@@ -133,6 +133,7 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         pomModel.setName(displayName + " Kar");
 
         // add dynamic ds job modules
+        String tmpJobId = "";
         String upperPath = "../";
         ProxyRepositoryFactory factory = ProxyRepositoryFactory.getInstance();
         ServiceConnection connection = (ServiceConnection) serviceItem.getConnection();
@@ -160,6 +161,7 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
                             AggregatorPomsHelper.removeFromParentModules(jobPom);
                         }
                     }
+                    tmpJobId = operation.getReferenceJobId();
                 }
             }
         }
@@ -196,15 +198,16 @@ public class CreateMavenDataServicePom extends CreateMavenJobPom {
         featureModelBuild.addPlugin(addFeaturesMavenPlugin());
         featureModelBuild.addPlugin(
                 addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
+        featureModelBuild.addPlugin(addSkipDeployFeatureMavenPlugin());
         featureModelBuild.addPlugin(addSkipMavenCleanPlugin());
         featureModel.setBuild(featureModelBuild);
         featureModel.setParent(parentPom);
         featureModel.setName(displayName + " Feature");
 
         featureModel.addProperty("cloud.publisher.skip", "false");
-        featureModel.addProperty("talend.job.id", "noid");
+        featureModel.addProperty("talend.job.id", model.getProperties().getProperty("talend.job.id"));
         featureModel.addProperty("talend.job.name", artifactId);
-        featureModel.addProperty("talend.job.version", talendJobVersion);
+        featureModel.addProperty("talend.job.version", model.getProperties().getProperty("talend.job.version"));
         featureModel.addProperty("talend.product.version", VersionUtils.getVersion());
         featureModel.addProperty("talend.job.finalName", featureModel.getArtifactId() + "-" + featureModel.getVersion()); // DemoService-feature-0.1.0
         PomUtil.savePom(monitor, featureModel, feature);
