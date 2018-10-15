@@ -109,6 +109,9 @@ imports="
     builder.addParam("properties", "\"#properties_" + cid + "\"");
     builderRT.addParam("properties", "\"#properties_" + cid + "\"");
 
+    builder.addParam("cxfRsEndpointConfigurer", "\"#endpointConfigurer_" + cid + "\"");
+    builderRT.addParam("cxfRsEndpointConfigurer", "\"#endpointConfigurer_" + cid + "\"");
+
     builder.addParam("providers", "\"#providers\"");
     builderRT.addParam("providers", "\"#providers\"");
 
