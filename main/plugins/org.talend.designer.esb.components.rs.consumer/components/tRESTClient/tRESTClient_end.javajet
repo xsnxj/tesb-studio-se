@@ -40,4 +40,8 @@ if (acceptType == null) {
 } // end multipart/mixed loop
 <%}%>
 
+if (globalMap.get("<%=cid %>_NB_LINE") == null) {
+	globalMap.put("<%=cid %>_NB_LINE", 1);
+}
+
 // [tRESTCliend_end]
