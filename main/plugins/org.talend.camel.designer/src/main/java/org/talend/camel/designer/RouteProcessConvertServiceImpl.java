@@ -19,6 +19,7 @@ import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.Item;
 import org.talend.core.model.repository.IRepositoryViewObject;
+import org.talend.core.runtime.process.TalendProcessArgumentConstant;
 import org.talend.designer.core.convert.IProcessConvertService;
 import org.talend.designer.core.convert.ProcessConverterType;
 import org.talend.repository.model.RepositoryNode;
@@ -34,15 +35,18 @@ public class RouteProcessConvertServiceImpl implements IProcessConvertService {
                 // FIXME: revisit the duplication of information between BUILD_TYPE and
                 // camelProcessItemImpl.isExportMicroService(). It is synchronized here
                 // as it gets out of sync with changes to BUILD_TYPE.
-                String bt = (String) item.getProperty().getAdditionalProperties().get("BUILD_TYPE");
+                String bt = (String) item
+                        .getProperty()
+                        .getAdditionalProperties()
+                        .get(TalendProcessArgumentConstant.ARG_BUILD_TYPE);
                 boolean isMS;
                 if (bt == null) {
-                	isMS = camelProcessItemImpl.isExportMicroService();
+                    isMS = camelProcessItemImpl.isExportMicroService();
                 } else {
-                	isMS = bt.indexOf("MICROSERVICE") >= 0;
-                	if (camelProcessItemImpl.isExportMicroService() != isMS) {
-                		camelProcessItemImpl.setExportMicroService(isMS);
-                	}
+                    isMS = bt.indexOf("MICROSERVICE") >= 0;
+                    if (camelProcessItemImpl.isExportMicroService() != isMS) {
+                        camelProcessItemImpl.setExportMicroService(isMS);
+                    }
                 }
                 if (isMS) {
                     process = new MicroServiceProcess(item.getProperty());
