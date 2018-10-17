@@ -88,9 +88,11 @@ public class CreateRouteletMavenBundlePom extends CreateMavenJobPom {
             IFolder alternatePropertiesFolder = resFolder
                     .getFolder(model.getProperties().getProperty("talend.job.path") + "/" + JavaUtils.JAVA_CONTEXTS_DIRECTORY);
 
-            FileUtils.copyDirectory(new File(contextPropertiesFolder.getLocation().toOSString()),
-                    new File(alternatePropertiesFolder.getLocation().toOSString()));
-
+            if (contextPropertiesFolder.exists()) {
+                FileUtils.copyDirectory(new File(contextPropertiesFolder.getLocation().toOSString()),
+                        new File(alternatePropertiesFolder.getLocation().toOSString()));
+            }
+            
             Model pom = new Model();
 
             pom.setModelVersion("4.0.0");
