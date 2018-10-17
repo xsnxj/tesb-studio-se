@@ -20,6 +20,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.maven.model.Activation;
+import org.apache.maven.model.ActivationProperty;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -144,15 +146,11 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
                 }
             }
 
-            if (publishAsSnapshot) {
-                featureModelBuild.addPlugin(
-                        addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
-            } else {
-                featureModelBuild.addPlugin(addSkipDeployFeatureMavenPlugin());
-            }
+            // featureModelBuild.addPlugin(addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
+            featureModelBuild.addPlugin(addSkipDeployFeatureMavenPlugin());
             featureModelBuild.addPlugin(addSkipMavenCleanPlugin());
             featureModel.setBuild(featureModelBuild);
-
+            featureModel.addProfile(addProfileForNexus(publishAsSnapshot, featureModel));
             /*
              * <modelVersion>4.0.0</modelVersion>
              * 
@@ -207,8 +205,8 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             pom.setBuild(new Build());
         }
 
-        pom.getBuild().addPlugin(addSkipDeployFeatureMavenPlugin());
-
+        // pom.getBuild().addPlugin(addSkipDeployFeatureMavenPlugin());
+        pom.addProfile(addProfileForCloud());
         /*
          * 
          * <modelVersion>4.0.0</modelVersion> <parent> <groupId>org.talend.master.ffffff</groupId>
@@ -321,6 +319,40 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         }
     }
 
+    /**
+     * DOC enable depoly feature.xml in nexus in feature pom, skip when publish to cloud.
+     */
+    private Profile addProfileForNexus(boolean publishAsSnapshot, Model featureModel) {
+        Profile deployFeatureProfile = new Profile();
+        deployFeatureProfile.setId("deploy-nexus");
+        Activation deployFeatureActivation = new Activation();
+        ActivationProperty activationProperty2 = new ActivationProperty();
+        activationProperty2.setName("altDeploymentRepository");
+        deployFeatureActivation.setProperty(activationProperty2);
+        deployFeatureProfile.setActivation(deployFeatureActivation);
+        Build deployFeatureBuild = new Build();
+        deployFeatureBuild.addPlugin(
+                addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
+        deployFeatureProfile.setBuild(deployFeatureBuild);
+        return deployFeatureProfile;
+    }
+
+    /**
+     * DOC skip depoly phase in publich to cloud in parent pom, enable in nexus.
+     */
+    private Profile addProfileForCloud() {
+        Profile deployCloudProfile = new Profile();
+        deployCloudProfile.setId("deploy-cloud");
+        Activation deployCloudActivation = new Activation();
+        ActivationProperty activationProperty = new ActivationProperty();
+        activationProperty.setName("!altDeploymentRepository");
+        deployCloudActivation.setProperty(activationProperty);
+        deployCloudProfile.setActivation(deployCloudActivation);
+        deployCloudProfile.setBuild(new Build());
+        deployCloudProfile.getBuild().addPlugin(addSkipDeployFeatureMavenPlugin());
+        return deployCloudProfile;
+    }
+    
     private Plugin addMavenBundlePlugin() {
 
         Plugin plugin = new Plugin();
