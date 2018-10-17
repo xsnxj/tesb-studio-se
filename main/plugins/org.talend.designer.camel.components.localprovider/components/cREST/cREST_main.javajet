@@ -25,6 +25,8 @@ imports="
 
 	NodeParamsHelper paramsHelper = new NodeParamsHelper(node);
 
+    boolean isProvider = node.getIncomingConnections().isEmpty();
+
     boolean hasOidcClientAuthentication = "true".equals(ElementParameterParser.getValue(node, "__ENABLE_SECURITY__"))
                                               && "OIDC".equals(ElementParameterParser.getValue(node, "__SECURITY_TYPE__"))
                                               && !node.getIncomingConnections().isEmpty();
@@ -44,7 +46,7 @@ imports="
 
 	String endpointUrlStudio = endpointUrlRT;
 
-	if(node.getIncomingConnections().isEmpty()) {
+    if(isProvider) {
 
         if (endpointUrlRT != null && !endpointUrlRT.trim().isEmpty() && !endpointUrlRT.contains("://")) {
             if (endpointUrlRT.startsWith("\"/services")) {
@@ -95,7 +97,12 @@ imports="
 		builder.addParam("resourceClasses", "\"" + packageName + "." + className + "$Service_" + cid + "\"");
 		builderRT.addParam("resourceClasses", "\"" + packageName + "." + className + "$Service_" + cid + "\"");
 
-	}
+    } else {
+        if ("true".equals(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"))) {
+            endpointUrlRT = "\"locator://rest\"";
+            endpointUrlStudio = "\"locator://rest\"";
+        }
+    }
 
     builder.addParam("features", "\"#features_" + cid + "\"");
     builderRT.addParam("features", "\"#features_" + cid + "\"");

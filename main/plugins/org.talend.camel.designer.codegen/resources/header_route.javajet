@@ -2674,7 +2674,21 @@ if (isProvider) {
                 registry.put("endpointConfigurer_<%=cid%>", new org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer() {
                         @Override
                         public void configure(org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean factoryBean) {
-
+                            <%
+                                if ("true".equals(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"))) {
+                            %>
+                                    // Locator
+                                    factoryBean.setServiceName(new javax.xml.namespace.QName(
+                                                                    <%=ElementParameterParser.getValue(node, "__SERVICE_NAMESPACE__")%>,
+                                                                    <%=ElementParameterParser.getValue(node, "__SERVICE_NAME__")%>));
+                            <%
+                                    if (!isProvider)  {
+                            %>
+                                    factoryBean.setAddress("locator://rest"); // is ignored by Camel
+                            <%
+                                    }
+                                }
+                            %>
                         }
 
                         @Override
