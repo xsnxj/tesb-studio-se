@@ -1452,8 +1452,8 @@ class Thread4RestServiceProviderEndpoint extends Thread {
 					new org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider(provider));
 			sf.setAddress(endpointUrl);
 
-			final java.util.List<org.apache.cxf.feature.Feature> features =
-					new java.util.ArrayList<org.apache.cxf.feature.Feature>();
+			final java.util.List<org.apache.cxf.feature.Feature> features = sf.getFeatures() == null?
+					new java.util.ArrayList<org.apache.cxf.feature.Feature>() : sf.getFeatures();
 
 			<% if (Boolean.valueOf(ElementParameterParser.getValue(node,"__SERVICE_LOCATOR__"))) { %>
 				
