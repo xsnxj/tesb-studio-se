@@ -1093,11 +1093,8 @@ if (exposeSwagger) {
 			if (paramCommaWritten) { %>, <% } %><%=bodyParameter.getJavaType()%> body
 		<% } %>
 			) {
-			
 <%
-
 		for (Parameter param : parameters.values()) {
-		
 			String variableName = param.getVariableName();
 
 			if ("java.util.Date".equals(param.getJavaType())) {
@@ -1114,14 +1111,18 @@ if (exposeSwagger) {
 						}
 					}
 				<% } %>
-				
-
-				<% if (!param.isNullable()) { %>
-				
-				if (null == <%=variableName%>) {
-					return handleWrongRequest(messageContext, 400, "[<%=variableName%>_<%=cid%>] Required date parameter not sent!");	
+				if (null == <%=variableName%> && null != <%=variableName%>_<%=cid%> && 0 != <%=variableName%>_<%=cid%>.trim().length()) {
+					try {
+						<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
+					} catch (Exception e) {
+						// wrong date parameter passed
+						return handleWrongRequest(messageContext, 400, "[<%=variableName%>_<%=cid%>] Date parameter is invalid!");
+					}
 				}
-				
+				<% if (!param.isNullable()) { %>
+					if (null == <%=variableName%>) {
+						<%=variableName%> = new java.util.Date(); // dummy fake
+					}
 				<% } %>
 <%
 			}
