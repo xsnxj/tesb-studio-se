@@ -1116,6 +1116,7 @@ if (exposeSwagger) {
 						<%=variableName%> = new java.util.Date(<%=variableName%>_<%=cid%>);
 					} catch (Exception e) {
 						// wrong date parameter passed
+						return handleWrongRequest(messageContext, 400, "[<%=variableName%>_<%=cid%>] Date parameter is invalid!");
 					}
 				}
 				<% if (!param.isNullable()) { %>
