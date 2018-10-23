@@ -28,7 +28,10 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
 import org.talend.designer.core.model.utils.emf.talendfile.ProcessType;
 import org.talend.repository.model.IProxyRepositoryFactory;
+import org.talend.repository.services.model.services.ServiceConnection;
 import org.talend.repository.services.model.services.ServiceItem;
+import org.talend.repository.services.model.services.ServiceOperation;
+import org.talend.repository.services.model.services.ServicePort;
 import org.talend.repository.services.utils.ESBRepositoryNodeType;
 
 /**
@@ -77,18 +80,35 @@ public class ServiceRelationshipHandler extends AbstractJobItemRelationshipHandl
         Set<Relation> relationSet = new HashSet<Relation>();
         for (IRepositoryViewObject obj : serviceRepoList) {
             ServiceItem serviceItem = (ServiceItem) obj.getProperty().getItem();
-            List<Relation> relations = RelationshipItemBuilder.getInstance().getItemsRelatedTo(serviceItem.getProperty().getId(),
-                    RelationshipItemBuilder.LATEST_VERSION, RelationshipItemBuilder.SERVICES_RELATION);
+            // List<Relation> relations =
+            // RelationshipItemBuilder.getInstance().getItemsRelatedTo(serviceItem.getProperty().getId(),
+            // RelationshipItemBuilder.LATEST_VERSION, RelationshipItemBuilder.SERVICES_RELATION);
 
-            for (Relation repId : relations) {
-                if (repId.getId().equals(baseItem.getProperty().getId())) {
-                    Relation addedRelation = new Relation();
-                    addedRelation.setId(serviceItem.getProperty().getId());
-                    addedRelation.setType(RelationshipItemBuilder.SERVICES_RELATION);
-                    addedRelation.setVersion(serviceItem.getProperty().getVersion());
-                    relationSet.add(addedRelation);
+            List<ServicePort> listPort = ((ServiceConnection) serviceItem.getConnection()).getServicePort();
+            for (ServicePort port : listPort) {
+                List<ServiceOperation> listOperation = port.getServiceOperation();
+                for (ServiceOperation operation : listOperation) {
+                    if (operation.getReferenceJobId().equals(baseItem.getProperty().getId())) {
+                        // found
+                        Relation addedRelation = new Relation();
+                        addedRelation.setId(serviceItem.getProperty().getId());
+                        addedRelation.setType(RelationshipItemBuilder.SERVICES_RELATION);
+                        addedRelation.setVersion(serviceItem.getProperty().getVersion());
+                        relationSet.add(addedRelation);
+                    }
                 }
+                break;
             }
+
+            // for (Relation repId : relations) {
+            // if (repId.getId().equals(baseItem.getProperty().getId())) {
+            // Relation addedRelation = new Relation();
+            // addedRelation.setId(serviceItem.getProperty().getId());
+            // addedRelation.setType(RelationshipItemBuilder.SERVICES_RELATION);
+            // addedRelation.setVersion(serviceItem.getProperty().getVersion());
+            // relationSet.add(addedRelation);
+            // }
+            // }
         }
         return relationSet;
     }
