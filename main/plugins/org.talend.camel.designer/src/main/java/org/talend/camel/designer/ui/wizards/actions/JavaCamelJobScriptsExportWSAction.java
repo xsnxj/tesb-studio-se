@@ -44,6 +44,7 @@ import org.talend.core.CorePlugin;
 import org.talend.core.model.general.Project;
 import org.talend.core.model.process.JobInfo;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.properties.ProjectReference;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryObject;
@@ -544,8 +545,21 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                         routeletBundleSymbolicName = projectName.toLowerCase() + '.' + routeletBundleSymbolicName;
                     }
                 }
-                BundleModel routeletModel = new BundleModel(PomIdsHelper.getJobGroupId(referencedRouteletNode.getProperty()), routeletBundleName,
-                        PomIdsHelper.getJobVersion(referencedRouteletNode.getProperty()), routeletFile);
+
+                String routeletModelVersion = PomIdsHelper.getJobVersion(referencedRouteletNode.getProperty());
+
+                String routeletModelGroupId = PomIdsHelper.getJobGroupId(referencedRouteletNode.getProperty());
+
+                List<ProjectReference> projectReferenceList = project.getProjectReferenceList();
+
+                if (projectReferenceList.size() == 0) {
+                    routeletModelVersion = getArtifactVersion();
+                    routeletModelGroupId = getGroupId();
+                }
+
+                BundleModel routeletModel = new BundleModel(routeletModelGroupId, routeletBundleName, routeletModelVersion,
+                        routeletFile);
+
                 if (featuresModel.addBundle(routeletModel)) {
                     exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion, routeletBundleName,
                             routeletBundleSymbolicName, bundleVersion, idSuffix, null,
