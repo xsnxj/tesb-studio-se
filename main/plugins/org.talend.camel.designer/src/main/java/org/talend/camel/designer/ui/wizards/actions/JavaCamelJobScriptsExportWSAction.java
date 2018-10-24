@@ -554,7 +554,8 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
 
                 if (projectReferenceList.size() == 0) {
                     routeletModelVersion = getArtifactVersion();
-                    routeletModelGroupId = getGroupId();
+                    // TESB-23937 The assignment changes routelet's groupId to route's groupId leading to compilation error
+                    //routeletModelGroupId = getGroupId();
                 }
 
                 BundleModel routeletModel = new BundleModel(routeletModelGroupId, routeletBundleName, routeletModelVersion,
