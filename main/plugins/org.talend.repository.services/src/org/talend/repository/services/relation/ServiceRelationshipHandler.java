@@ -88,16 +88,16 @@ public class ServiceRelationshipHandler extends AbstractJobItemRelationshipHandl
             for (ServicePort port : listPort) {
                 List<ServiceOperation> listOperation = port.getServiceOperation();
                 for (ServiceOperation operation : listOperation) {
-                    if (operation.getReferenceJobId().equals(baseItem.getProperty().getId())) {
+                    if (operation.getReferenceJobId() != null && operation.getReferenceJobId().equals(baseItem.getProperty().getId())) {
                         // found
                         Relation addedRelation = new Relation();
                         addedRelation.setId(serviceItem.getProperty().getId());
                         addedRelation.setType(RelationshipItemBuilder.SERVICES_RELATION);
                         addedRelation.setVersion(serviceItem.getProperty().getVersion());
                         relationSet.add(addedRelation);
+                        return relationSet;
                     }
                 }
-                break;
             }
 
             // for (Relation repId : relations) {
