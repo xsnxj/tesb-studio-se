@@ -37,6 +37,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.talend.camel.core.model.camelProperties.CamelProcessItem;
+import org.talend.camel.core.model.camelProperties.RouteletProcessItem;
 import org.talend.commons.exception.BusinessException;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.commons.exception.PersistenceException;
@@ -96,6 +97,7 @@ import org.talend.repository.services.utils.OperationRepositoryObject;
 import org.talend.repository.services.utils.PortRepositoryObject;
 import org.talend.repository.services.utils.WSDLPopulationUtil;
 import org.talend.repository.services.utils.WSDLUtils;
+
 
 /**
  * DOC nrousseau class global comment. ESB SOAP Service
@@ -1043,6 +1045,9 @@ public class ESBService implements IESBService {
                 // Case of a route
                 return GROUP_ID_ROUTE_SUFFIX;
 
+            } else if (property.getItem() instanceof RouteletProcessItem) {
+                // Case of a routelet
+                return GROUP_ID_ROUTE_SUFFIX;
             } else if (property.getItem() instanceof ServiceItem) {
                 // case of a service
                 return GROUP_ID_SERVICE_SUFFIX;
