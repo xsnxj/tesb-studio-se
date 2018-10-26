@@ -37,7 +37,6 @@ import org.talend.commons.exception.PersistenceException;
 import org.talend.commons.utils.workbench.resources.ResourceUtils;
 import org.talend.core.CorePlugin;
 import org.talend.core.model.process.IContext;
-import org.talend.core.model.process.ProcessUtils;
 import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryViewObject;
@@ -46,6 +45,7 @@ import org.talend.core.runtime.process.IBuildJobHandler;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.process.TalendProcessArgumentConstant;
 import org.talend.designer.maven.model.TalendMavenConstants;
+import org.talend.designer.maven.tools.BuildCacheManager;
 import org.talend.designer.maven.utils.PomIdsHelper;
 import org.talend.designer.publish.core.models.BundleModel;
 import org.talend.designer.publish.core.models.FeatureModel;
@@ -192,13 +192,19 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
      * @see org.talend.repository.ui.wizards.exportjob.handler.BuildJobHandler#build(org.eclipse.core.runtime.
      * IProgressMonitor)
      */
+    @Override
     public void build(IProgressMonitor monitor) throws Exception {
         final Map<String, Object> argumentsMap = new HashMap<String, Object>();
         argumentsMap.put(TalendProcessArgumentConstant.ARG_GOAL, TalendMavenConstants.GOAL_PACKAGE);
         argumentsMap.put(TalendProcessArgumentConstant.ARG_PROGRAM_ARGUMENTS, getProgramArgs());
 
         argumentsMap.put(TalendProcessArgumentConstant.ARG_GOAL, TalendMavenConstants.GOAL_PACKAGE);
-        talendProcessJavaProject.buildModules(monitor, null, argumentsMap);
+
+        try {
+            talendProcessJavaProject.buildModules(monitor, null, argumentsMap);
+        } finally {
+            BuildCacheManager.getInstance().clearAllCaches();
+        }
     }
 
     protected String getProgramArgs() {
@@ -316,6 +322,7 @@ public class BuildDataServiceHandler implements IBuildJobHandler {
      */
     @Override
     public IProcessor generateJobFiles(IProgressMonitor monitor) throws Exception {
+        BuildCacheManager.getInstance().clearAllCaches();
         // TODO Generate nodes job
         // @see void
         // org.talend.repository.services.ui.action.ExportServiceWithMavenAction.addJobFilesToExport(IProgressMonitor
