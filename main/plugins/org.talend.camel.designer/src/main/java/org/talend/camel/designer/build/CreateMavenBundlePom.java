@@ -35,6 +35,7 @@ import org.eclipse.core.runtime.Path;
 import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.CorePlugin;
+import org.talend.core.GlobalServiceRegister;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.process.IProcess;
@@ -44,6 +45,7 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.runtime.maven.MavenConstants;
+import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.process.TalendProcessArgumentConstant;
 import org.talend.core.runtime.projectsetting.IProjectSettingPreferenceConstants;
 import org.talend.core.runtime.projectsetting.IProjectSettingTemplateConstants;
@@ -56,7 +58,6 @@ import org.talend.designer.maven.utils.PomUtil;
 import org.talend.designer.runprocess.IProcessor;
 import org.talend.designer.runprocess.IRunProcessService;
 import org.talend.designer.runprocess.ItemCacheManager;
-import org.talend.designer.runprocess.java.TalendJavaProjectManager;
 import org.talend.utils.io.FilesUtils;
 
 public class CreateMavenBundlePom extends CreateMavenJobPom {
@@ -488,14 +489,13 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         packaging.setValue("jar");
 
         Xpp3Dom file = new Xpp3Dom("file");
-        IPath currentProjectRootDir = TalendJavaProjectManager.getTalendJobJavaProject(getJobProcessor().getProperty())
-                .getTargetFolder().getLocation();
-        IPath targetDir = TalendJavaProjectManager.getTalendJobJavaProject(job.getProcessItem().getProperty()).getTargetFolder()
-                .getLocation();
-        String relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
-        String pathToJar = relativeTargetDir + Path.SEPARATOR + getChildBundleName(job);
-        file.setValue(pathToJar);
-
+        if (getJobProcessor() != null && getProcessor(job) != null) {
+        	IPath currentProjectRootDir = getTalendJobJavaProject(getJobProcessor()).getProject().getLocation();
+            IPath targetDir = getTalendJobJavaProject(getProcessor(job)).getTargetFolder().getLocation();
+            String relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
+            String pathToJar = relativeTargetDir + Path.SEPARATOR + getChildBundleName(job);
+	        file.setValue(pathToJar);
+        }
         Xpp3Dom generatePom = new Xpp3Dom("generatePom");
         generatePom.setValue("true");
 
@@ -608,6 +608,18 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         return processor;
     }
 
+    private ITalendProcessJavaProject getTalendJobJavaProject(IProcessor processor) {
+        ITalendProcessJavaProject talendProcessJavaProject = processor.getTalendJavaProject();
+        if (talendProcessJavaProject == null) {
+            if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
+                IRunProcessService service = (IRunProcessService) GlobalServiceRegister.getDefault()
+                        .getService(IRunProcessService.class);
+                talendProcessJavaProject = service.getTalendJobJavaProject(processor.getProperty());
+            }
+        }
+        return talendProcessJavaProject;
+    }
+    
     private String getBuildType(JobInfo job) {
         if(job == null) {
             return null;
