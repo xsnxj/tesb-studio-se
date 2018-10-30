@@ -2,7 +2,7 @@
 <feature
       id="org.talend.esbstandard.feature"
       label="ESB standard edition Feature"
-      version="7.1.1.qualifier"
+      version="7.1.2.qualifier"
       provider-name=".Talend SA.">
 
    <description url="http://www.example.com/description">
