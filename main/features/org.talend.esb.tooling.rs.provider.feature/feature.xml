@@ -24,7 +24,6 @@
          id="org.talend.designer.esb.components.rs.provider"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="true"/>
-		 
+         version="0.0.0"/>
+
 </feature>
