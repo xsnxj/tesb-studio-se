@@ -38,6 +38,7 @@ import org.talend.core.runtime.repository.build.BuildExportManager;
 import org.talend.core.runtime.repository.build.IBuildParametes;
 import org.talend.core.runtime.repository.build.IBuildPomCreatorParameters;
 import org.talend.core.runtime.repository.build.IMavenPomCreator;
+import org.talend.designer.maven.launch.MavenPomCommandLauncher;
 import org.talend.designer.maven.model.TalendMavenConstants;
 import org.talend.designer.maven.tools.AggregatorPomsHelper;
 import org.talend.designer.maven.utils.PomUtil;
@@ -224,6 +225,13 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
     public void generatePom(int option) {
         super.generatePom(option);
         try {
+            final Map<String, Object> argumentsMap = new HashMap<String, Object>();
+            argumentsMap.put(TalendProcessArgumentConstant.ARG_PROGRAM_ARGUMENTS, "-Dci.builder.skip=true");
+            MavenPomCommandLauncher mavenLauncher = new MavenPomCommandLauncher(getTalendJavaProject().getProjectPom(),
+                    TalendMavenConstants.GOAL_COMPILE);
+            mavenLauncher.setArgumentsMap(argumentsMap);
+            mavenLauncher.execute(new NullProgressMonitor());
+
             IRepositoryObject repositoryObject = new RepositoryObject(getProperty());
 
             // Fix TESB-22660: Avoide to operate repo viewer before it open
