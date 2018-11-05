@@ -154,7 +154,6 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             featureModel.addProperty("cloud.publisher.skip", "false");
             Build featureModelBuild = new Build();
 
-            featureModelBuild.addPlugin(addFeaturesMavenPlugin(bundleModel.getProperties().getProperty("talend.job.finalName")));
 
             Set<JobInfo> subjobs = getJobProcessor().getBuildChildrenJobs();
             if (subjobs != null && !subjobs.isEmpty()) {
@@ -165,6 +164,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
                     }
                 }
             }
+            featureModelBuild.addPlugin(addFeaturesMavenPlugin(bundleModel.getProperties().getProperty("talend.job.finalName")));
 
             // featureModelBuild.addPlugin(addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
             featureModelBuild.addPlugin(addSkipDeployFeatureMavenPlugin());
@@ -358,7 +358,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
                     version = PomIdsHelper.getJobletVersion(property);
                     type = MavenConstants.PACKAGING_POM;
                 }
-                Dependency d = PomUtil.createDependency(groupId, artifactId, version, type);
+                Dependency d = PomUtil.createDependency(groupId, isJob(jobInfo) ? artifactId + "-bundle" : artifactId, version, type);
                 dependencies.add(d);
             }
         }
@@ -595,9 +595,11 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
                             targetDir = new Path(targetDir.getDevice(), targetDir.toString().replaceAll("/\\d+/", "/"));
                             relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
                         }
-                        String pathToJar = relativeTargetDir + Path.SEPARATOR + subjob.getJobName().toLowerCase() + "_"
-                                + PomIdsHelper.getJobVersion(subjob).replaceAll("\\.", "_") + ".jar";
-
+                        String pathToJar = isRoutelet(subjob)
+                                ? relativeTargetDir + Path.SEPARATOR + subjob.getJobName().toLowerCase() + "_"
+                                        + PomIdsHelper.getJobVersion(subjob).replaceAll("\\.", "_") + ".jar"
+                                : relativeTargetDir + Path.SEPARATOR + subjob.getJobName() + "-bundle-"
+                                        + PomIdsHelper.getJobVersion(subjob.getProcessItem().getProperty()) + ".jar";
                         subjobFile.setValue(pathToJar);
                         addFile = true;
                     }
@@ -695,8 +697,11 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
                 targetDir = new Path(targetDir.getDevice()  ,targetDir.toString().replaceAll("/\\d+/", "/"));
                 relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
             }
-            String pathToJar = relativeTargetDir + Path.SEPARATOR + job.getJobName().toLowerCase() + "_"
-                    + jobVersion.replaceAll("\\.", "_") + ".jar";
+            String pathToJar = isRoutelet(job)
+                    ? relativeTargetDir + Path.SEPARATOR + job.getJobName().toLowerCase() + "_"
+                            + PomIdsHelper.getJobVersion(job).replaceAll("\\.", "_") + ".jar"
+                    : relativeTargetDir + Path.SEPARATOR + job.getJobName() + "-bundle-"
+                            + PomIdsHelper.getJobVersion(job.getProcessItem().getProperty()) + ".jar";
             
             file.setValue(pathToJar);
             addFile = true;
