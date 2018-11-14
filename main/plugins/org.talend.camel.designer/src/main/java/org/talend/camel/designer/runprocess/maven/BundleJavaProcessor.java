@@ -99,6 +99,17 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
     @Override
     protected void generateCodeAfter(boolean statistics, boolean trace, boolean javaProperties, int option)
             throws ProcessorException {
+        
+        MavenPomCommandLauncher mavenLauncher = new MavenPomCommandLauncher(getTalendJavaProject().getProjectPom(),
+                TalendMavenConstants.GOAL_COMPILE);
+        mavenLauncher.setSkipCIBuilder(true);
+        mavenLauncher.setSkipTests(true);
+        try {
+            mavenLauncher.execute(new NullProgressMonitor());
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+        
         if (isStandardJob()) {
             generatePom(option);
         } else {
@@ -225,11 +236,10 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
     public void generatePom(int option) {
         super.generatePom(option);
         try {
-            final Map<String, Object> argumentsMap = new HashMap<String, Object>();
-            argumentsMap.put(TalendProcessArgumentConstant.ARG_PROGRAM_ARGUMENTS, "-Dci.builder.skip=true");
             MavenPomCommandLauncher mavenLauncher = new MavenPomCommandLauncher(getTalendJavaProject().getProjectPom(),
                     TalendMavenConstants.GOAL_COMPILE);
-            mavenLauncher.setArgumentsMap(argumentsMap);
+            mavenLauncher.setSkipCIBuilder(true);
+            mavenLauncher.setSkipTests(true);
             mavenLauncher.execute(new NullProgressMonitor());
 
             IRepositoryObject repositoryObject = new RepositoryObject(getProperty());
