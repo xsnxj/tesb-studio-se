@@ -32,7 +32,9 @@ import org.apache.maven.model.Profile;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -50,6 +52,7 @@ import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.runtime.maven.MavenConstants;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
+import org.talend.core.runtime.process.TalendProcessArgumentConstant;
 import org.talend.core.runtime.projectsetting.IProjectSettingPreferenceConstants;
 import org.talend.core.runtime.projectsetting.IProjectSettingTemplateConstants;
 import org.talend.designer.core.IDesignerCoreService;
@@ -152,7 +155,6 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             featureModel.addProperty("cloud.publisher.skip", "false");
             Build featureModelBuild = new Build();
 
-            featureModelBuild.addPlugin(addFeaturesMavenPlugin(bundleModel.getProperties().getProperty("talend.job.finalName")));
 
             Set<JobInfo> subjobs = getJobProcessor().getBuildChildrenJobs();
             if (subjobs != null && !subjobs.isEmpty()) {
@@ -163,6 +165,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
                     }
                 }
             }
+            featureModelBuild.addPlugin(addFeaturesMavenPlugin(bundleModel.getProperties().getProperty("talend.job.finalName")));
 
             // featureModelBuild.addPlugin(addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
             featureModelBuild.addPlugin(addSkipDeployFeatureMavenPlugin());
@@ -303,6 +306,67 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
         afterCreate(monitor);
 
+    }
+    
+    /* (non-Javadoc)
+     * @see org.talend.designer.maven.tools.creator.AbstractMavenProcessorPom#addChildrenDependencies(java.util.List)
+     */
+    @Override
+    protected void addChildrenDependencies(final List<Dependency> dependencies) {
+        String parentId = getJobProcessor().getProperty().getId();
+        final Set<JobInfo> clonedChildrenJobInfors = getJobProcessor().getBuildFirstChildrenJobs();
+        for (JobInfo jobInfo : clonedChildrenJobInfors) {
+            if (jobInfo.getFatherJobInfo() != null && jobInfo.getFatherJobInfo().getJobId().equals(parentId)) {
+                if (!validChildrenJob(jobInfo)) {
+                    continue;
+                }
+                Property property;
+                String groupId;
+                String artifactId;
+                String version;
+                String type = null;
+                String buildType = null;
+                if (!jobInfo.isJoblet()) {
+                    property = jobInfo.getProcessItem().getProperty();
+                    groupId = PomIdsHelper.getJobGroupId(property);
+                    artifactId = PomIdsHelper.getJobArtifactId(jobInfo);
+                    version = PomIdsHelper.getJobVersion(property);
+                    // try to get the pom version of children job and load from the pom file.
+                    String childPomFileName = PomUtil.getPomFileName(jobInfo.getJobName(), jobInfo.getJobVersion());
+                    IProject codeProject = getJobProcessor().getCodeProject();
+                    if (codeProject != null) {
+                        try {
+                            codeProject.refreshLocal(IResource.DEPTH_ONE, null); // is it ok or needed here ???
+                        } catch (CoreException e) {
+                            ExceptionHandler.process(e);
+                        }
+                        IFile childPomFile = codeProject.getFile(new Path(childPomFileName));
+                        if (childPomFile.exists()) {
+                            try {
+                                Model childModel = MODEL_MANAGER.readMavenModel(childPomFile);
+                                // try to get the real groupId, artifactId, version.
+                                groupId = childModel.getGroupId();
+                                artifactId = childModel.getArtifactId();
+                                version = childModel.getVersion();
+                            } catch (CoreException e) {
+                                ExceptionHandler.process(e);
+                            }
+                        }
+                    }
+                } else {
+                    property = jobInfo.getJobletProperty();
+                    groupId = PomIdsHelper.getJobletGroupId(property);
+                    artifactId = PomIdsHelper.getJobletArtifactId(property);
+                    version = PomIdsHelper.getJobletVersion(property);
+                    type = MavenConstants.PACKAGING_POM;
+                }
+                if(property != null) {
+                    buildType = (String) property.getAdditionalProperties().get(TalendProcessArgumentConstant.ARG_BUILD_TYPE);
+                }
+                Dependency d = PomUtil.createDependency(groupId, "OSGI".equals(buildType) && isJob(jobInfo) ? artifactId + "-bundle" : artifactId, version, type);
+                dependencies.add(d);
+            }
+        }
     }
 
     protected void generateAssemblyFile(IProgressMonitor monitor, final Set<JobInfo> clonedChildrenJobInfors) throws Exception {
@@ -514,6 +578,83 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         pluginExecution.setConfiguration(configuration);
 
         pluginExecutions.add(pluginExecution);
+        
+        // deploy features to nexus server
+        Set<JobInfo> subjobs = getJobProcessor().getBuildChildrenJobs();
+        if (subjobs != null && !subjobs.isEmpty()) {
+            int ndx = 0;
+            for (JobInfo subjob : subjobs) {
+                if (isRoutelet(subjob) || isJob(subjob)) {
+
+                    Xpp3Dom subjobFile = new Xpp3Dom("file");
+                    boolean addFile = false;
+                    if (getJobProcessor() != null && getProcessor(subjob) != null) {
+                        IPath currentProjectRootDir = getTalendJobJavaProject(getJobProcessor()).getProject().getLocation();
+                        IPath targetDir = getTalendJobJavaProject(getProcessor(subjob)).getTargetFolder().getLocation();
+                        String relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
+
+                        if (!ProjectManager.getInstance().isInCurrentMainProject(subjob.getProcessItem().getProperty())) {
+                            // this job/routelet is from a reference project
+                            currentProjectRootDir = new Path(currentProjectRootDir.getDevice(),
+                                    currentProjectRootDir.toString().replaceAll("/\\d+/", "/"));
+                            targetDir = new Path(targetDir.getDevice(), targetDir.toString().replaceAll("/\\d+/", "/"));
+                            relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
+                        }
+
+                        Property property = null;
+                        String buildType = null;
+                        if (!subjob.isJoblet()) {
+                            property = subjob.getProcessItem().getProperty();
+                        } else {
+                            property = subjob.getJobletProperty();
+                        }
+                        if (property != null) {
+                            buildType = (String) property.getAdditionalProperties()
+                                    .get(TalendProcessArgumentConstant.ARG_BUILD_TYPE);
+                        }
+                        
+                        String pathToJar = "OSGI".equals(buildType)
+                                ? relativeTargetDir + Path.SEPARATOR + subjob.getJobName() + "-bundle-"
+                                        + PomIdsHelper.getJobVersion(subjob.getProcessItem().getProperty()) + ".jar"
+                                : relativeTargetDir + Path.SEPARATOR + subjob.getJobName().toLowerCase() + "_"
+                                        + PomIdsHelper.getJobVersion(subjob).replaceAll("\\.", "_") + ".jar";
+                        subjobFile.setValue(pathToJar);
+                        addFile = true;
+                    }
+                    if (addFile) {
+                        PluginExecution pluginDeployExecution = new PluginExecution();
+                        pluginDeployExecution.setId("deploy-" + bundleModel.getArtifactId() + "_" + subjob.getJobName());
+                        pluginDeployExecution.setPhase("deploy");
+                        pluginDeployExecution.addGoal("deploy-file");
+
+                        Xpp3Dom subjobConfiguration = new Xpp3Dom("configuration");
+                        Xpp3Dom subjobGroupId = new Xpp3Dom("groupId");
+                        subjobGroupId.setValue(PomIdsHelper.getJobGroupId(subjob.getProcessItem().getProperty()));
+                        Xpp3Dom subjobArtifactId = new Xpp3Dom("artifactId");
+                        subjobArtifactId.setValue(bundleModel.getArtifactId() + "_" + subjob.getJobName());
+                        Xpp3Dom subjobVersion = new Xpp3Dom("version");
+                        subjobVersion.setValue(PomIdsHelper.getJobVersion(subjob.getProcessItem().getProperty()));
+
+                        Xpp3Dom subjobPackaging = new Xpp3Dom("packaging");
+                        subjobPackaging.setValue("jar");
+
+                        subjobConfiguration.addChild(subjobFile);
+                        subjobConfiguration.addChild(subjobGroupId);
+                        subjobConfiguration.addChild(subjobArtifactId);
+                        subjobConfiguration.addChild(subjobVersion);
+                        subjobConfiguration.addChild(subjobPackaging);
+                        subjobConfiguration.addChild(repositoryId);
+                        subjobConfiguration.addChild(url);
+
+                        pluginDeployExecution.setConfiguration(subjobConfiguration);
+                        pluginExecutions.add(pluginDeployExecution);
+                    }
+                }
+            }
+        }
+        
+        
+        
         plugin.setExecutions(pluginExecutions);
 
         return plugin;
@@ -574,8 +715,24 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
                 targetDir = new Path(targetDir.getDevice()  ,targetDir.toString().replaceAll("/\\d+/", "/"));
                 relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
             }
-            String pathToJar = relativeTargetDir + Path.SEPARATOR + job.getJobName().toLowerCase() + "_"
-                    + jobVersion.replaceAll("\\.", "_") + ".jar";
+            
+            Property property = null;
+            String buildType = null;
+            if (!job.isJoblet()) {
+                property = job.getProcessItem().getProperty();
+            } else {
+                property = job.getJobletProperty();
+            }
+            if (property != null) {
+                buildType = (String) property.getAdditionalProperties()
+                        .get(TalendProcessArgumentConstant.ARG_BUILD_TYPE);
+            }
+            
+            String pathToJar = "OSGI".equals(buildType)
+                    ? relativeTargetDir + Path.SEPARATOR + job.getJobName() + "-bundle-"
+                            + PomIdsHelper.getJobVersion(job.getProcessItem().getProperty()) + ".jar"
+                    : relativeTargetDir + Path.SEPARATOR + job.getJobName().toLowerCase() + "_"
+                            + PomIdsHelper.getJobVersion(job).replaceAll("\\.", "_") + ".jar";
             
             file.setValue(pathToJar);
             addFile = true;
