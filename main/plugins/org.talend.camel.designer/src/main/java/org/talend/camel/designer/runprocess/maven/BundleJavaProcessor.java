@@ -15,10 +15,8 @@ package org.talend.camel.designer.runprocess.maven;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.PlatformUI;
@@ -33,12 +31,12 @@ import org.talend.core.model.repository.RepositoryObject;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.core.repository.utils.ItemResourceUtil;
 import org.talend.core.runtime.process.TalendProcessArgumentConstant;
+import org.talend.core.runtime.process.TalendProcessOptionConstants;
 import org.talend.core.runtime.repository.build.AbstractBuildProvider;
 import org.talend.core.runtime.repository.build.BuildExportManager;
 import org.talend.core.runtime.repository.build.IBuildParametes;
 import org.talend.core.runtime.repository.build.IBuildPomCreatorParameters;
 import org.talend.core.runtime.repository.build.IMavenPomCreator;
-import org.talend.designer.maven.launch.MavenPomCommandLauncher;
 import org.talend.designer.maven.model.TalendMavenConstants;
 import org.talend.designer.maven.tools.AggregatorPomsHelper;
 import org.talend.designer.maven.utils.PomUtil;
@@ -54,13 +52,6 @@ import org.talend.repository.model.IRepositoryService;
  *
  */
 public class BundleJavaProcessor extends MavenJavaProcessor {
-
-    private static Logger log = Logger.getLogger(BundleJavaProcessor.class);
-
-    @Override
-    public void generateEsbFiles() throws ProcessorException {
-        super.generateEsbFiles();
-    }
 
     /**
      * DOC sunchaoqun BundleJavaProcessor constructor comment.
@@ -84,11 +75,6 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
 
         this.route = isRoute;
 
-    }
-
-    @Override
-    public void generateCode(boolean statistics, boolean trace, boolean javaProperties, int option) throws ProcessorException {
-        super.generateCode(statistics, trace, javaProperties, option);
     }
 
     /*
@@ -200,14 +186,6 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
     }
 
     @Override
-    public void build(IProgressMonitor monitor) throws Exception {
-        // MavenUpdateRequest mavenUpdateRequest = new MavenUpdateRequest(getTalendJavaProject().getProject(), true,
-        // false);
-        // MavenPlugin.getMavenProjectRegistry().refresh(mavenUpdateRequest);
-        super.build(monitor);
-    }
-
-    @Override
     protected boolean packagingAndAssembly() {
         return true;
     }
@@ -224,26 +202,21 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
     @Override
     public void generatePom(int option) {
         super.generatePom(option);
-        try {
-            final Map<String, Object> argumentsMap = new HashMap<String, Object>();
-            argumentsMap.put(TalendProcessArgumentConstant.ARG_PROGRAM_ARGUMENTS, "-Dci.builder.skip=true");
-            MavenPomCommandLauncher mavenLauncher = new MavenPomCommandLauncher(getTalendJavaProject().getProjectPom(),
-                    TalendMavenConstants.GOAL_COMPILE);
-            mavenLauncher.setArgumentsMap(argumentsMap);
-            mavenLauncher.execute(new NullProgressMonitor());
+        if (option == TalendProcessOptionConstants.GENERATE_IS_MAINJOB) {
+            try {
+                IRepositoryObject repositoryObject = new RepositoryObject(getProperty());
 
-            IRepositoryObject repositoryObject = new RepositoryObject(getProperty());
+                // Fix TESB-22660: Avoide to operate repo viewer before it open
+                if (PlatformUI.isWorkbenchRunning()) {
+                    RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(), false);
+                }
 
-            // Fix TESB-22660: Avoide to operate repo viewer before it open
-            if(PlatformUI.isWorkbenchRunning()) {
-                 RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(), false);
+                IRunnableWithProgress action = new JavaCamelJobScriptsExportWSAction(repositoryObject, getProperty().getVersion(),
+                        "", false);
+                action.run(new NullProgressMonitor());
+            } catch (Exception e) {
+                ExceptionHandler.process(e);
             }
-
-            IRunnableWithProgress action = new JavaCamelJobScriptsExportWSAction(repositoryObject, getProperty().getVersion(), "",
-                    false);
-            action.run(new NullProgressMonitor());
-        } catch (Exception e) {
-            ExceptionHandler.process(e);
         }
     }
 }
