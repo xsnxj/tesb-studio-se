@@ -33,6 +33,7 @@ import org.talend.core.model.repository.RepositoryObject;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.core.repository.utils.ItemResourceUtil;
 import org.talend.core.runtime.process.TalendProcessArgumentConstant;
+import org.talend.core.runtime.process.TalendProcessOptionConstants;
 import org.talend.core.runtime.repository.build.AbstractBuildProvider;
 import org.talend.core.runtime.repository.build.BuildExportManager;
 import org.talend.core.runtime.repository.build.IBuildParametes;
@@ -222,20 +223,22 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
      */
     @Override
     public void generatePom(int option) {
-        super.generatePom(option);
-        try {
-            IRepositoryObject repositoryObject = new RepositoryObject(getProperty());
+        if (option == TalendProcessOptionConstants.GENERATE_IS_MAINJOB) {
+            super.generatePom(option);
+            try {
+                IRepositoryObject repositoryObject = new RepositoryObject(getProperty());
 
-            // Fix TESB-22660: Avoide to operate repo viewer before it open
-            if(PlatformUI.isWorkbenchRunning()) {
-                 RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(), false);
+                // Fix TESB-22660: Avoide to operate repo viewer before it open
+                if (PlatformUI.isWorkbenchRunning()) {
+                    RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(), false);
+                }
+
+                IRunnableWithProgress action = new JavaCamelJobScriptsExportWSAction(repositoryObject, getProperty().getVersion(),
+                        "", false);
+                action.run(new NullProgressMonitor());
+            } catch (Exception e) {
+                ExceptionHandler.process(e);
             }
-
-            IRunnableWithProgress action = new JavaCamelJobScriptsExportWSAction(repositoryObject, getProperty().getVersion(), "",
-                    false);
-            action.run(new NullProgressMonitor());
-        } catch (Exception e) {
-            ExceptionHandler.process(e);
         }
     }
 }
