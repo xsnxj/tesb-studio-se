@@ -23,7 +23,10 @@ package org.talend.camel.designer.build;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -31,9 +34,15 @@ import org.talend.camel.designer.ui.wizards.export.RouteDedicatedJobManager;
 import org.talend.camel.designer.ui.wizards.export.RouteJavaScriptOSGIForESBManager;
 import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.CorePlugin;
+import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
+import org.talend.designer.camel.dependencies.core.DependenciesResolver;
+import org.talend.designer.camel.dependencies.core.model.BundleClasspath;
+import org.talend.designer.camel.dependencies.core.util.DependenciesCoreUtil;
 import org.talend.designer.runprocess.IRunProcessService;
+import org.talend.designer.runprocess.ItemCacheManager;
 import org.talend.repository.documentation.ExportFileResource;
 import org.talend.repository.model.IRepositoryNode;
 import org.talend.repository.ui.wizards.exportjob.action.JobExportAction;
@@ -87,7 +96,6 @@ public class RouteBundleExportAction extends JobExportAction {
         if (nodes != null && nodes.size() > 0) {
             ITalendProcessJavaProject talendProcessJavaProject = runProcessService
                     .getTalendJobJavaProject(nodes.get(0).getObject().getProperty());
-
             File temporaryFile = new File(talendProcessJavaProject.getBundleResourcesFolder().getLocation().toOSString()
                     + File.separator
                     + relatedPath + File.separator + realFile.getName());
@@ -100,11 +108,33 @@ public class RouteBundleExportAction extends JobExportAction {
 
     @Override
     protected void doArchiveExport(IProgressMonitor monitor, List<ExportFileResource> resourcesToExport) {
+
+        Collection<BundleClasspath> unSelectedBundles = new ArrayList();
+
+        if (resourcesToExport.size() > 0) {
+            FilesUtils.emptyFolder(getTemporaryStoreFile(new File(""), LIB));
+
+            // System.out.println(runProcessService.getActiveProcess());
+            ProcessItem item = ItemCacheManager.getProcessItem(nodes.get(0).getId(), RelationshipItemBuilder.LATEST_VERSION);
+            DependenciesResolver resolver = new DependenciesResolver(item);
+
+            Map<?, ?> additionProperties = item.getProperty().getAdditionalProperties().map();
+            Collection<BundleClasspath> userBundleClasspaths = DependenciesCoreUtil.getStoredBundleClasspaths(additionProperties);
+            Collection<BundleClasspath> bundleClasspaths = resolver.getBundleClasspaths();
+            for (BundleClasspath bc : bundleClasspaths) {
+
+                if (!userBundleClasspaths.contains(bc)) {
+                    unSelectedBundles.add(bc);
+                }
+            }
+
+        }
+
         for (ExportFileResource fileResource : resourcesToExport) {
             // String rootName = fileResource.getDirectoryName();
 
             Set<String> paths = fileResource.getRelativePathList();
-            FilesUtils.emptyFolder(getTemporaryStoreFile(new File(""), LIB));
+
             for (Object element : paths) {
                 String relativePath = (String) element;
                 Set<URL> resource = fileResource.getResourcesByRelativePath(relativePath);
@@ -120,7 +150,18 @@ public class RouteBundleExportAction extends JobExportAction {
                                 continue;
                             }
 
-                            FilesUtils.copyFile(file, getTemporaryStoreFile(file, LIB));
+                            boolean exist = false;
+                            for (BundleClasspath bc : unSelectedBundles) {
+                                if (bc.getName().equals(file.getName())) {
+                                    exist = true;
+                                }
+                            }
+
+                            if (!exist) {
+                                FilesUtils.copyFile(file, getTemporaryStoreFile(file, LIB));
+                            }
+
+
                         } else if (fileResource.getDirectoryName().equals("")) {
                             if (FileConstants.BLUEPRINT_FOLDER_NAME.equals(relativePath)) {
                                 FilesUtils.copyFile(file, getTemporaryStoreFile(file, FileConstants.BLUEPRINT_FOLDER_NAME));
