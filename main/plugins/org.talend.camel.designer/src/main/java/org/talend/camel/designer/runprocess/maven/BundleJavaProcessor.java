@@ -223,8 +223,8 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
      */
     @Override
     public void generatePom(int option) {
+        super.generatePom(option);
         if (option == TalendProcessOptionConstants.GENERATE_IS_MAINJOB) {
-            super.generatePom(option);
             try {
                 IRepositoryObject repositoryObject = new RepositoryObject(getProperty());
 
