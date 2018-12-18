@@ -112,4 +112,10 @@
 		         name="starting">
 		   </editor>
 		</extension>
+         <extension
+               point="org.eclipse.ui.views">
+            <category
+                 id="org.talend.core.root"
+                 name="Talend"/>
+         </extension>
 </plugin>
