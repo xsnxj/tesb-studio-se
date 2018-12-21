@@ -2140,7 +2140,9 @@ if (isProvider) {
 
 
                 <%if(exportTypeSpringBoot){%>
-
+                    <%if(!isRoutelet){%>
+                        <%= generateAddRoutesMethod(process)%>
+                    <%}%>
                 <%}else{%>
                     <%if(!isRoutelet) {%>
                     if(inOSGi){
