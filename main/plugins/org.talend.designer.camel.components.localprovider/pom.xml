@@ -60,7 +60,7 @@
         <commons-lang3.version>3.2.1</commons-lang3.version>
         <slf4j-api.version>1.6.3</slf4j-api.version>
         <reflections.version>0.9.10</reflections.version>
-        <jackson.version>2.8.4</jackson.version>
+        <jackson.version>2.8.7</jackson.version>
         <guava.version>18.0</guava.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
         <snakeyaml.version>1.17</snakeyaml.version>
@@ -511,6 +511,38 @@
             <groupId>net.jpountz.lz4</groupId>
             <artifactId>lz4</artifactId>
             <version>${lz4-version}</version>
+        </dependency>
+
+
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-base</artifactId>
+            <version>${jackson.version}</version>
+		</dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-xml-provider</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>${jackson.version}</version>
+		</dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-jaxb-annotations</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
 
         <!-- Swagger UI -->

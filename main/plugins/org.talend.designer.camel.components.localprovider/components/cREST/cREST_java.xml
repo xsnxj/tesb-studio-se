@@ -222,6 +222,8 @@
             <IMPORT MODULE_GROUP="camel-spring" REQUIRED="true" />
             <IMPORT MODULE_GROUP="camel-cxf" REQUIRED="true" />
 
+            <IMPORT MODULE_GROUP="jackson-providers" REQUIRED="true" />
+
             <IMPORT MODULE_GROUP="locator"
                     REQUIRED_IF="SERVICE_LOCATOR == 'true'" />
 
