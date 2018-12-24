@@ -723,6 +723,13 @@
               uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jackson-module-jaxb-annotations}">
         </libraryNeeded>
 
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="jackson-core"
+              name="${tesb-jackson-core}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jackson-core}">
+        </libraryNeeded>
+
 
         <libraryNeeded
               context="plugin:org.talend.designer.camel.components.localprovider"

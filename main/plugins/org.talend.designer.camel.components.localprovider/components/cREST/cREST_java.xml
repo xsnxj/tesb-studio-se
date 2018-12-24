@@ -269,9 +269,9 @@
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/reflections-0.9.10.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="jackson-core-2.8.4.jar" MVN="mvn:org.talend.libraries/jackson-core/6.0.0" NAME="jackson-core-2.8.4"
+            <!--IMPORT MODULE="jackson-core-2.8.4.jar" MVN="mvn:org.talend.libraries/jackson-core/6.0.0" NAME="jackson-core-2.8.4"
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-core-2.8.4.jar"
-                REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
+                REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/-->
 
             <IMPORT MODULE="jackson-databind-2.8.4.jar" MVN="mvn:org.talend.libraries/jackson-databind/6.0.0" NAME="jackson-databind-2.8.4"
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-databind-2.8.4.jar"
