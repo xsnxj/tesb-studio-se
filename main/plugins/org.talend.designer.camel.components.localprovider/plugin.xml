@@ -675,6 +675,62 @@
                  id="hawtbuf">
            </library>
         </libraryNeededGroup>
+
+
+        <libraryNeededGroup
+                description="jackson-providers"
+                id="jackson-providers"
+                name="jackson-providers">
+            <library id="jackson-dataformat-xml" />
+            <library id="jackson-jaxrs-base" />
+            <library id="jackson-jaxrs-json-provider" />
+            <library id="jackson-jaxrs-xml-provider" />
+            <library id="jackson-module-jaxb-annotations" />
+        </libraryNeededGroup>
+
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="jackson-jaxrs-json-provider"
+              name="${tesb-jackson-jaxrs-json-provider}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jackson-jaxrs-json-provider}">
+        </libraryNeeded>
+
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="jackson-jaxrs-xml-provider"
+              name="${tesb-jackson-jaxrs-xml-provider}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jackson-jaxrs-xml-provider}">
+        </libraryNeeded>
+
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="jackson-jaxrs-base"
+              name="${tesb-jackson-jaxrs-base}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jackson-jaxrs-base}">
+        </libraryNeeded>
+
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="jackson-dataformat-xml"
+              name="${tesb-jackson-dataformat-xml}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jackson-dataformat-xml}">
+        </libraryNeeded>
+
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="jackson-module-jaxb-annotations"
+              name="${tesb-jackson-module-jaxb-annotations}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jackson-module-jaxb-annotations}">
+        </libraryNeeded>
+
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="jackson-core"
+              name="${tesb-jackson-core}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jackson-core}">
+        </libraryNeeded>
+
+
         <libraryNeeded
               context="plugin:org.talend.designer.camel.components.localprovider"
               id="camel-hawtdb"
