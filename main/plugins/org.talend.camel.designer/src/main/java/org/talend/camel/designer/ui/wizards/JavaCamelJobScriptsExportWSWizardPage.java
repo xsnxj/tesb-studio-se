@@ -718,7 +718,8 @@ public class JavaCamelJobScriptsExportWSWizardPage extends JobScriptsExportWizar
 
     @Override
     protected boolean ensureTargetIsValid() {
-        if (JobExportType.getTypeFromString(exportTypeCombo.getText()) == JobExportType.IMAGE) {
+        if (JobExportType.getTypeFromString(exportTypeCombo.getText()) == JobExportType.IMAGE
+                || JobExportType.getTypeFromString(exportTypeCombo.getText()) == JobExportType.MSESB_IMAGE) {
             return true;
         }
         return super.ensureTargetIsValid();
