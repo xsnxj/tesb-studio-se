@@ -2226,6 +2226,10 @@ if (isProvider) {
                     sf_<%=cid%>.setServiceClass(<%=serviceClass%>.class);
                     sf_<%=cid%>.setResourceProvider(<%=serviceClass%>.class, new org.apache.camel.component.cxf.jaxrs.CamelResourceProvider(<%=serviceClass%>.class));
                     sf_<%=cid%>.setProvider(new CxfPayloadProvider());
+
+                    sf_<%=cid%>.setProvider(new com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider());
+                    sf_<%=cid%>.setProvider(new com.fasterxml.jackson.jaxrs.xml.JacksonJaxbXMLProvider());
+
                     // avoid JAXBException in runtime
                     sf_<%=cid%>.setProvider(new org.apache.cxf.jaxrs.provider.SourceProvider());
 <%
