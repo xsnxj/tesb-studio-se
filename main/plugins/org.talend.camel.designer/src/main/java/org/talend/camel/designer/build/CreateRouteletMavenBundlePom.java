@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginExecution;
@@ -244,6 +243,11 @@ public class CreateRouteletMavenBundlePom extends CreateMavenJobPom {
                 ExceptionHandler.process(e);
             }
         }
+    }
+
+    @Override
+    protected void updateDependencySet(IFile assemblyFile) {
+        // nothing to do.
     }
 
     private Plugin addMavenBundlePlugin() {
