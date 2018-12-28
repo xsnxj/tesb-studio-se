@@ -90,7 +90,7 @@ public class RouteletOSGiBundleBuildProvider extends RouteOSGiBundleBuildProvide
             return null;
         }
 
-        CreateRouteletMavenBundlePom osgiPomCreator = new CreateRouteletMavenBundlePom((IProcessor) processor, (IFile) pomFile);
+        CreateMavenBundlePom osgiPomCreator = new CreateMavenBundlePom((IProcessor) processor, (IFile) pomFile);
 
         osgiPomCreator.setUnixClasspath(linuxClassPath.toString());
         osgiPomCreator.setWindowsClasspath(winClassPath.toString());

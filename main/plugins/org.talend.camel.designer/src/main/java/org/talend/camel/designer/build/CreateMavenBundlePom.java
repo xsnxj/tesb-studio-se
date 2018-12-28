@@ -14,6 +14,8 @@ package org.talend.camel.designer.build;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +43,6 @@ import org.eclipse.core.runtime.Path;
 import org.talend.camel.designer.ui.editor.RouteProcess;
 import org.talend.commons.exception.ExceptionHandler;
 import org.talend.core.CorePlugin;
-import org.talend.core.GlobalServiceRegister;
 import org.talend.core.context.Context;
 import org.talend.core.context.RepositoryContext;
 import org.talend.core.model.process.IProcess;
@@ -51,7 +52,6 @@ import org.talend.core.model.properties.ProcessItem;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.runtime.maven.MavenConstants;
-import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.process.TalendProcessArgumentConstant;
 import org.talend.core.runtime.projectsetting.IProjectSettingPreferenceConstants;
 import org.talend.core.runtime.projectsetting.IProjectSettingTemplateConstants;
@@ -71,6 +71,8 @@ import org.talend.utils.io.FilesUtils;
  * Route pom creator
  */
 public class CreateMavenBundlePom extends CreateMavenJobPom {
+
+    private static final String PATH_ROUTES = "resources/templates/karaf/routes/";
 
     private Model bundleModel;
 
@@ -100,7 +102,6 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         }
 
         bundleModel = createModel();
-
         // patch for TESB-23953: find "tdm-lib-di-" and remove in route, only keep 'tdm-camel'
         boolean containsTdmCamelDependency = false;
         Dependency tdmDIDependency = null;
@@ -122,7 +123,8 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
         Model pom = new Model();
 
-        boolean route = "CAMEL".equals(getJobProcessor().getProcess().getComponentsType());
+        boolean route = "CAMEL".equals(getJobProcessor().getProcess().getComponentsType())
+                && ERepositoryObjectType.getType(getJobProcessor().getProperty()).equals(ERepositoryObjectType.PROCESS_ROUTE);
         
         Parent parentPom = new Parent();
         parentPom.setGroupId(bundleModel.getGroupId());
@@ -172,20 +174,6 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             featureModelBuild.addPlugin(addSkipMavenCleanPlugin());
             featureModel.setBuild(featureModelBuild);
             featureModel.addProfile(addProfileForNexus(publishAsSnapshot, featureModel));
-            /*
-             * <modelVersion>4.0.0</modelVersion>
-             * 
-             * <groupId>org.talend.job.ffffff</groupId> <artifactId>simpleRoute-feature</artifactId>
-             * <version>3.0.0</version> <packaging>pom</packaging> <build> <plugins> <plugin>
-             * <groupId>org.apache.karaf.tooling</groupId> <artifactId>features-maven-plugin</artifactId>
-             * <version>2.2.9</version> <executions> <execution> <id>create-kar</id> <goals> <goal>create-kar</goal>
-             * </goals> <configuration> <finalName>simpleroute_3_0</finalName>
-             * <resourcesDir>${project.build.directory}/bin</resourcesDir>
-             * <featuresFile>/Volumes/M2/tmp/feature/feature.xml</featuresFile> </configuration> </execution>
-             * </executions> </plugin> </plugins> </build>
-             * 
-             */
-
             PomUtil.savePom(monitor, featureModel, featurePom);
         }
 
@@ -209,16 +197,6 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         pom.addModule("pom-bundle.xml");
         if (route) {
             pom.addModule("pom-feature.xml");
-        } else {
-            // for (JobInfo job : LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
-            // if (model.getArtifactId().equals(job.getJobName())) {
-            // if (job.getFatherJobInfo() != null) {
-            // model.setArtifactId(job.getFatherJobInfo().getJobName() + "_" + model.getArtifactId());
-            // break;
-            // }
-            // }
-            // }
-            //
         }
         pom.setDependencies(bundleModel.getDependencies());
 
@@ -728,11 +706,8 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
                         .get(TalendProcessArgumentConstant.ARG_BUILD_TYPE);
             }
             
-            String pathToJar = "OSGI".equals(buildType)
-                    ? relativeTargetDir + Path.SEPARATOR + job.getJobName() + "-bundle-"
-                            + PomIdsHelper.getJobVersion(job.getProcessItem().getProperty()) + ".jar"
-                    : relativeTargetDir + Path.SEPARATOR + job.getJobName().toLowerCase() + "_"
-                            + PomIdsHelper.getJobVersion(job).replaceAll("\\.", "_") + ".jar";
+            String pathToJar = relativeTargetDir + Path.SEPARATOR + job.getJobName() + "-bundle-"
+                            + PomIdsHelper.getJobVersion(job.getProcessItem().getProperty()) + ".jar";
             
             file.setValue(pathToJar);
             addFile = true;
@@ -857,4 +832,26 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 
         return plugin;
     }
+    
+    @Override
+    protected InputStream getTemplateStream() throws IOException {
+        File templateFile = PomUtil.getTemplateFile(getObjectTypeFolder(), getItemRelativePath(),
+                TalendMavenConstants.POM_FILE_NAME);
+        if (!FilesUtils.allInSameFolder(templateFile, TalendMavenConstants.ASSEMBLY_FILE_NAME)) {
+            templateFile = null; // force to set null, in order to use the template from other places.
+        }
+        try {
+            final Map<String, Object> templateParameters = PomUtil.getTemplateParameters(getJobProcessor());
+            return MavenTemplateManager.getTemplateStream(templateFile,
+                    IProjectSettingPreferenceConstants.TEMPLATE_ROUTES_KARAF_BUNDLE, "org.talend.resources.export.route",
+                    getBundleTemplatePath(), templateParameters);
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+    
+    protected String getBundleTemplatePath() {
+        return PATH_ROUTES + IProjectSettingTemplateConstants.MAVEN_KARAF_BUILD_BUNDLE_FILE_NAME;
+    }
+
 }
