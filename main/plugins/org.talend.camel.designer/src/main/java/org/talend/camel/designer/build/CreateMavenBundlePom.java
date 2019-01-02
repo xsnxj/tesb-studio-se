@@ -300,6 +300,11 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         }
     }
 
+    @Override
+    protected void updateDependencySet(IFile assemblyFile) {
+        // nothing to do.
+    }
+
     private Plugin addMavenBundlePlugin() {
 
         Plugin plugin = new Plugin();
