@@ -327,6 +327,9 @@
                 description="jackson-providers"
                 id="jackson-providers"
                 name="jackson-providers">
+            <library id="jackson-core" />
+            <library id="jackson-annotations" />
+            <library id="jackson-databind" />
             <library id="jackson-dataformat-xml" />
             <library id="jackson-jaxrs-base" />
             <library id="jackson-jaxrs-json-provider" />
@@ -374,6 +377,20 @@
               id="jackson-core"
               name="${tesb-jackson-core}"
               uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jackson-core}">
+        </libraryNeeded>
+
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="jackson-databind"
+              name="${tesb-jackson-databind}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jackson-databind}">
+        </libraryNeeded>
+
+        <libraryNeeded
+              context="plugin:org.talend.designer.camel.components.localprovider"
+              id="jackson-annotations"
+              name="${tesb-jackson-annotations}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-jackson-annotations}">
         </libraryNeeded>
 
 
