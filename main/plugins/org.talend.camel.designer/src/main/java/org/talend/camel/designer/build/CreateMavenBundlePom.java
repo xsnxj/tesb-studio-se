@@ -178,21 +178,12 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         }
 
         pom.setModelVersion("4.0.0");
-         pom.setParent(bundleModel.getParent());
+        pom.setParent(bundleModel.getParent());
         pom.setGroupId(bundleModel.getGroupId());
         pom.setArtifactId(bundleModel.getArtifactId() + "-Kar");
         pom.setName(bundleModel.getName() + " Kar");
         pom.setVersion(bundleModel.getVersion());
         pom.setPackaging("pom");
-
-        for (JobInfo job : getJobProcessor().getBuildChildrenJobs()) {
-            if (isRoutelet(job)) {
-                IPath currentProjectRootDir = getTalendJobJavaProject(getJobProcessor()).getProject().getLocation();
-                IPath routeletPomPath = getTalendJobJavaProject(getProcessor(job)).getProjectPom().getLocation();
-                String relativePomPath = routeletPomPath.makeRelativeTo(currentProjectRootDir).toString();
-                // pom.addModule(relativePomPath); //TESB-22753
-            }
-        }
 
         pom.addModule("pom-bundle.xml");
         if (route) {
@@ -204,78 +195,16 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             pom.setBuild(new Build());
         }
 
-        // pom.getBuild().addPlugin(addSkipDeployFeatureMavenPlugin());
         pom.addProfile(addProfileForCloud());
-        /*
-         * 
-         * <modelVersion>4.0.0</modelVersion> <parent> <groupId>org.talend.master.ffffff</groupId>
-         * <artifactId>code.Master</artifactId> <version>7.0.1</version> <relativePath>../../../</relativePath>
-         * </parent> <groupId>org.talend.job.ffffff</groupId> <artifactId>simpleRoute-ogsi</artifactId>
-         * <version>3.0.0</version> <packaging>pom</packaging> <modules> <module>a.xml</module> <module>b.xml</module>
-         * </modules>
-         * 
-         */
 
         File pomBundle = new File(parent.getLocation().toOSString() + File.separator + "pom-bundle.xml");
-        // model.setParent(null);
-        // model.setDependencies(null);
 
-        // List<Plugin> plugins = model.getBuild().getPlugins();
-        //
-        // for (Plugin plugin : plugins) {
-        // if (plugin.getArtifactId().equals("maven-jar-plugin")) {
-        // PluginExecution pluginExecution = plugin.getExecutionsAsMap().get("default-jar");
-        // Xpp3Dom configuration = (Xpp3Dom) pluginExecution.getConfiguration();
-        // /*
-        // * <archive> <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-        // * </archive>
-        // */
-        //
-        // Xpp3Dom archive = new Xpp3Dom("archive");
-        // Xpp3Dom manifestFile = new Xpp3Dom("manifestFile");
-        // manifestFile.setValue("${project.build.outputDirectory}/META-INF/MANIFEST.MF");
-        //
-        // archive.addChild(manifestFile);
-        //
-        // configuration.addChild(archive);
-        // System.out.println(configuration);
-        // }
-        // }
         bundleModel.addProperty("cloud.publisher.skip", "true");
         bundleModel.setParent(parentPom);
-        List<Profile> profiles = bundleModel.getProfiles();
-
-        for (Profile profile : profiles) {
-
-            if (profile.getId().equals("packaging-and-assembly")) {
-                List<Plugin> plugins = profile.getBuild().getPlugins();
-
-                for (Plugin plugin : plugins) {
-                    if (plugin.getArtifactId().equals("maven-assembly-plugin")) {
-                        PluginExecution pluginExecution = plugin.getExecutionsAsMap().get("default");
-                        Xpp3Dom configuration = (Xpp3Dom) pluginExecution.getConfiguration();
-                        /*
-                         * <archive> <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                         * </archive>
-                         */
-
-                        Xpp3Dom archive = new Xpp3Dom("archive");
-                        Xpp3Dom manifestFile = new Xpp3Dom("manifestFile");
-                        manifestFile.setValue("${current.bundle.resources.dir}/META-INF/MANIFEST.MF");
-
-                        archive.addChild(manifestFile);
-
-                        configuration.addChild(archive);
-                        // System.out.println(configuration);
-                    }
-                }
-
-            }
-
-        }
-
         bundleModel.setName(bundleModel.getName() + " Bundle");
 
+        updateBundleMainfest(bundleModel);
+        
         PomUtil.savePom(monitor, bundleModel, pomBundle);
 
         PomUtil.savePom(monitor, pom, curPomFile);
@@ -283,12 +212,12 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         parent.refreshLocal(IResource.DEPTH_ONE, monitor);
 
         afterCreate(monitor);
-
     }
     
-    /* (non-Javadoc)
-     * @see org.talend.designer.maven.tools.creator.AbstractMavenProcessorPom#addChildrenDependencies(java.util.List)
-     */
+    protected void updateBundleMainfest(Model bundleModel) {
+        // do nothing for route
+    }
+
     @Override
     protected void addChildrenDependencies(final List<Dependency> dependencies) {
         String parentId = getJobProcessor().getProperty().getId();

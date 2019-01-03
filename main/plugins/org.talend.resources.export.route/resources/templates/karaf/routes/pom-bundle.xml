@@ -43,31 +43,6 @@
 	<dependencies>
 		<!-- Will add some dependencies by API -->
 	</dependencies>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>maven-bundle-plugin</artifactId>
-				<version>2.5.3</version>
-				<extensions>true</extensions>
-				<configuration>
-					<archive>
-						<addMavenDescriptor>false</addMavenDescriptor>
-					</archive>
-					<instructions>
-						<Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-						<Bundle-Name>${talend.job.name}</Bundle-Name>
-						<Bundle-Version>${project.version}</Bundle-Version>
-						<Export-Package>${bundle.config.export.package}</Export-Package>
-						<Export-Service>${bundle.config.export.service}</Export-Service>
-						<Import-Package>${bundle.config.import.package}, *;resolution:=optional</Import-Package>
-						<Bundle-ClassPath>., {maven-dependencies}</Bundle-ClassPath>
-					</instructions>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
     <profiles>
         <profile>
             <id>packaging-and-assembly</id>
@@ -92,6 +67,9 @@
                                     <tarLongFileMode>gnu</tarLongFileMode>
                                     <appendAssemblyId>false</appendAssemblyId>
                                     <finalName>${talend.job.name}-bundle-${project.version}</finalName>
+                                    <archive>
+                                        <manifestFile>${current.bundle.resources.dir}/META-INF/MANIFEST.MF</manifestFile>
+                                    </archive>
                                 </configuration>
                             </execution>
                         </executions>
