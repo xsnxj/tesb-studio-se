@@ -490,15 +490,16 @@ public class <%=className%> extends org.apache.camel.builder.RouteBuilder implem
 
     private boolean inOSGi;
 
+    private static Object arguments;
 
-
-    public void setArguments(Map<String, String> arguments) {
-        inOSGi = true;
-        final String newContext = arguments.remove("context");
-        if (null != newContext) {
-            contextStr = newContext;
-        }
-        context_param.putAll(arguments);
+    public void setArguments(Object arguments) {
+        this.inOSGi = true;
+        <%=className%>.arguments = arguments;
+        <% if(!exportTypeSpringBoot){ %>
+            if (null != context && null != context.getProperty("context")) {
+                contextStr = (String) context.getProperty("context");
+            }
+        <% } %>
     }
 
 <%
@@ -2139,7 +2140,9 @@ if (isProvider) {
 
 
                 <%if(exportTypeSpringBoot){%>
-
+                    <%if(!isRoutelet){%>
+                        <%= generateAddRoutesMethod(process)%>
+                    <%}%>
                 <%}else{%>
                     <%if(!isRoutelet) {%>
                         if(inOSGi){
