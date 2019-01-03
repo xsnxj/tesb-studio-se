@@ -273,17 +273,17 @@
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-core-2.8.4.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/-->
 
-            <IMPORT MODULE="jackson-databind-2.8.4.jar" MVN="mvn:org.talend.libraries/jackson-databind/6.0.0" NAME="jackson-databind-2.8.4"
+            <!--IMPORT MODULE="jackson-databind-2.8.4.jar" MVN="mvn:org.talend.libraries/jackson-databind/6.0.0" NAME="jackson-databind-2.8.4"
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-databind-2.8.4.jar"
-                REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
+                REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/-->
 
             <IMPORT MODULE="jackson-dataformat-yaml-2.8.4.jar" MVN="mvn:org.talend.libraries/jackson-dataformat-yaml/6.0.0" NAME="jackson-dataformat-yaml-2.8.4"
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-dataformat-yaml-2.8.4.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="jackson-annotations-2.8.4.jar" MVN="mvn:org.talend.libraries/jackson-annotations/6.0.0" NAME="jackson-annotations-2.8.4"
+            <!--IMPORT MODULE="jackson-annotations-2.8.4.jar" MVN="mvn:org.talend.libraries/jackson-annotations/6.0.0" NAME="jackson-annotations-2.8.4"
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/jackson-annotations-2.8.4.jar"
-                REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
+                REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/-->
 
             <IMPORT MODULE="guava-18.0.jar" MVN="mvn:org.talend.libraries/guava/6.0.0" NAME="guava-18.0.jar"
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/guava-18.0.jar"
