@@ -74,6 +74,10 @@ public class RunESBRuntimeProcess extends Process {
 
     private IProcess process;
 
+    private int statisticsPort;
+
+    private int tracePort;
+
     private IProgressMonitor monitor;
 
     private ArtifactDeployManager artifactManager;
@@ -85,6 +89,8 @@ public class RunESBRuntimeProcess extends Process {
 
     public RunESBRuntimeProcess(IProcess process, int statisticsPort, int tracePort, IProgressMonitor monitor) {
         this.process = process;
+        this.statisticsPort = statisticsPort;
+        this.tracePort = tracePort;
         this.monitor = monitor;
 
         stdInputStream = new PipedInputStream();

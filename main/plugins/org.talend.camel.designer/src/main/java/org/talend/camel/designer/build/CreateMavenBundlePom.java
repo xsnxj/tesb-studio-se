@@ -169,6 +169,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             }
             featureModelBuild.addPlugin(addFeaturesMavenPlugin(bundleModel.getProperties().getProperty("talend.job.finalName")));
 
+            // featureModelBuild.addPlugin(addDeployFeatureMavenPlugin(featureModel.getArtifactId(), featureModel.getVersion(), publishAsSnapshot));
             featureModelBuild.addPlugin(addSkipDeployFeatureMavenPlugin());
             featureModelBuild.addPlugin(addSkipMavenCleanPlugin());
             featureModel.setBuild(featureModelBuild);
