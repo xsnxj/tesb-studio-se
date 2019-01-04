@@ -18,6 +18,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.PlatformUI;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.commons.exception.ExceptionHandler;
+import org.talend.core.model.components.ComponentCategory;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.IRepositoryObject;
@@ -75,7 +76,9 @@ public class RunContainerProcessor extends MavenJavaProcessor {
     @Override
     public void generatePom(int option) {
         super.generatePom(option);
-        if (option == TalendProcessOptionConstants.GENERATE_IS_MAINJOB) {
+        
+        if (option == TalendProcessOptionConstants.GENERATE_IS_MAINJOB
+                && ComponentCategory.CATEGORY_4_CAMEL.getName().equals(getProcess().getComponentsType())) {
             try {
                 IRepositoryObject repositoryObject = new RepositoryObject(getProperty());
 
