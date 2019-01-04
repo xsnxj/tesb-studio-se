@@ -55,13 +55,6 @@ import org.talend.repository.model.IRepositoryService;
  */
 public class BundleJavaProcessor extends MavenJavaProcessor {
 
-    private static Logger log = Logger.getLogger(BundleJavaProcessor.class);
-
-    @Override
-    public void generateEsbFiles() throws ProcessorException {
-        super.generateEsbFiles();
-    }
-
     /**
      * DOC sunchaoqun BundleJavaProcessor constructor comment.
      * 
@@ -84,11 +77,6 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
 
         this.route = isRoute;
 
-    }
-
-    @Override
-    public void generateCode(boolean statistics, boolean trace, boolean javaProperties, int option) throws ProcessorException {
-        super.generateCode(statistics, trace, javaProperties, option);
     }
 
     /*
@@ -208,14 +196,6 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
             return super.getGoals();
         }
 
-    }
-
-    @Override
-    public void build(IProgressMonitor monitor) throws Exception {
-        // MavenUpdateRequest mavenUpdateRequest = new MavenUpdateRequest(getTalendJavaProject().getProject(), true,
-        // false);
-        // MavenPlugin.getMavenProjectRegistry().refresh(mavenUpdateRequest);
-        super.build(monitor);
     }
 
     @Override
