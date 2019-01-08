@@ -46,6 +46,7 @@ import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.runtime.maven.MavenConstants;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
+import org.talend.core.runtime.process.TalendProcessArgumentConstant;
 import org.talend.core.runtime.projectsetting.IProjectSettingPreferenceConstants;
 import org.talend.core.runtime.projectsetting.IProjectSettingTemplateConstants;
 import org.talend.designer.core.IDesignerCoreService;
@@ -473,12 +474,11 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         plugin.setArtifactId("maven-install-plugin");
         plugin.setVersion("2.5.1");
         
-        String jobVersion = PomIdsHelper.getJobVersion(job);
 
         Xpp3Dom configuration = new Xpp3Dom("configuration");
 
         Xpp3Dom groupId = new Xpp3Dom("groupId");
-        groupId.setValue(model.getGroupId());
+        groupId.setValue(PomIdsHelper.getJobGroupId(job.getProcessItem().getProperty()));
 
         Xpp3Dom artifactId = new Xpp3Dom("artifactId");
         artifactId.setValue(model.getArtifactId() + "_" + job.getJobName());
@@ -494,8 +494,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
             IPath currentProjectRootDir = getTalendJobJavaProject(getJobProcessor()).getProject().getLocation();
             IPath targetDir = getTalendJobJavaProject(getProcessor(job)).getTargetFolder().getLocation();
             String relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
-            String pathToJar = relativeTargetDir + Path.SEPARATOR + job.getJobName().toLowerCase() + "_"
-                + jobVersion.replaceAll("\\.", "_") + ".jar";
+            String pathToJar = relativeTargetDir + Path.SEPARATOR + getChildBundleName(job);
             file.setValue(pathToJar);
         }
         Xpp3Dom generatePom = new Xpp3Dom("generatePom");
@@ -533,17 +532,33 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
     
 
     boolean isJob(JobInfo job) {
-        if (job != null && job.getProcessItem() != null) {
-            Property p = job.getProcessItem().getProperty();
+        JobInfo j = getFullJobInfo(job);
+        if (j != null) {
+            Property p = null;
+            if (j.getProcessItem() != null) {
+                p = j.getProcessItem().getProperty();
+            }else {
+                p = j.getProcessor().getProperty();
+            }
+
             if (p != null) {
                 return ERepositoryObjectType.getType(p).equals(ERepositoryObjectType.PROCESS);
             }
         }
         return false;
-    }    
+    }
     
     public static IProcessor getProcessor(JobInfo jobInfo) {
     	
+        for (JobInfo job : org.talend.core.runtime.process.LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
+            if (jobInfo.getJobId().equals(job.getJobId())) {
+                IProcessor processor = job.getProcessor();
+                if(processor != null) {
+                    return processor;
+                }
+            }
+        }
+
     	if(jobInfo.getProcessor() != null) {
     		return jobInfo.getProcessor();
     	}
@@ -609,4 +624,60 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
 	
 	    return talendProcessJavaProject;
 	}
+
+	private String getBuildType(JobInfo job) {
+        if(job == null) {
+            return null;
+        }
+
+        IProcessor processor = getProcessor(job);
+        if(processor != null && processor.getArguments() != null) {
+            Object buildType = processor.getArguments().get(TalendProcessArgumentConstant.ARG_BUILD_TYPE);
+            if(buildType!=null && buildType instanceof String) {
+                return (String) buildType;
+            }
+        }
+        return null;
+    }
+
+    private JobInfo getFullJobInfo(JobInfo job) {
+        if(job == null) return null;
+        for (JobInfo j : org.talend.core.runtime.process.LastGenerationInfo.getInstance().getLastGeneratedjobs()) {
+            if (job.getJobId().equals(j.getJobId())) {
+                return j;
+            }
+        }
+        return null;
+    }
+
+    private boolean isCTalendJob(JobInfo job) {
+        if(job == null) {
+            return false;
+        }
+        if(isRoutelet(getFullJobInfo(job))) {
+            return false;
+        }
+        return !isJob(getFullJobInfo(job).getFatherJobInfo());
+    }
+
+    private String getJobVersion(JobInfo job) {
+        return PomIdsHelper.getJobVersion(getFullJobInfo(job));
+    }
+
+    private boolean isOSGIBuild(JobInfo job) {
+        String buildType = getBuildType(job);
+        return buildType != null && buildType.equals("OSGI");
+    }
+
+    private String getChildBundleName(JobInfo job) {
+        String bundleName = "";
+        String jobVersion = PomIdsHelper.getJobVersion(job);
+        if(isOSGIBuild(job) && isCTalendJob(job)) {
+            bundleName = job.getJobName()+"-bundle-"+PomIdsHelper.getJobVersion(job.getProcessItem().getProperty())+".jar";
+        }else {
+            bundleName = job.getJobName().toLowerCase() + "_"
+                + jobVersion.replaceAll("\\.", "_") + ".jar";
+        }
+        return bundleName;
+    }
 }
