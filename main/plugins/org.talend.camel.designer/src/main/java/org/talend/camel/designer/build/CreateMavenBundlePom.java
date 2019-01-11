@@ -673,7 +673,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         return processor;
     }
 
-    protected ITalendProcessJavaProject getTalendJobJavaProject(IProcessor processor) {
+    private ITalendProcessJavaProject getTalendJobJavaProject(IProcessor processor) {
         ITalendProcessJavaProject talendProcessJavaProject = processor.getTalendJavaProject();
 
         if (talendProcessJavaProject == null) {
