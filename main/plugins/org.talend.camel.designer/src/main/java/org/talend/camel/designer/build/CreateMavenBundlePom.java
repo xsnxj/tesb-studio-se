@@ -547,7 +547,8 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         artifactId.setValue(bundleModel.getArtifactId() + "_" + job.getJobName());
 
         Xpp3Dom version = new Xpp3Dom("version");
-        version.setValue(PomIdsHelper.getJobVersion(job.getProcessItem().getProperty()));
+        // TESB-24336 Use route same version in routelet
+        version.setValue(PomIdsHelper.getJobVersion(getJobProcessor().getProperty()));
 
         Xpp3Dom packaging = new Xpp3Dom("packaging");
         packaging.setValue("jar");
@@ -672,7 +673,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         return processor;
     }
 
-    private ITalendProcessJavaProject getTalendJobJavaProject(IProcessor processor) {
+    protected ITalendProcessJavaProject getTalendJobJavaProject(IProcessor processor) {
         ITalendProcessJavaProject talendProcessJavaProject = processor.getTalendJavaProject();
 
         if (talendProcessJavaProject == null) {
