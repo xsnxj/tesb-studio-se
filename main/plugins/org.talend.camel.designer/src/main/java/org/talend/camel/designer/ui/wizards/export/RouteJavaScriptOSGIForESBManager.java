@@ -27,6 +27,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
+import org.talend.commons.utils.io.FilesUtils;
 import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.process.ElementParameterParser;
 import org.talend.core.model.process.IProcess;
@@ -59,13 +60,58 @@ public class RouteJavaScriptOSGIForESBManager extends AdaptedJobJavaScriptOSGIFo
         this.routelets = routelets;
     }
 
+
+    private Set<String> getRouteCompiledModuleNames(ProcessItem processItem) {
+        if (!EmfModelUtils.getComponentsByName(processItem, "cREST").isEmpty()) {
+            String jacksonVersion = getJacksonVersion();
+            if (jacksonVersion == null || jacksonVersion.isEmpty()) {
+                throw new RuntimeException("Jackson version not found");
+            }
+            Set<String> modules = new HashSet<String>();
+            modules.add("jackson-jaxrs-xml-provider-" + jacksonVersion + ".jar");
+            modules.add("jackson-dataformat-xml-" + jacksonVersion + ".jar");
+            return modules;
+        } else {
+            return Collections.emptySet();
+        }
+    }
+
+    private String getJacksonVersion() {
+         if (GlobalServiceRegister.getDefault().isServiceRegistered(IRunProcessService.class)) {
+             IRunProcessService processService = (IRunProcessService) GlobalServiceRegister.getDefault().getService(
+                     IRunProcessService.class);
+             ITalendProcessJavaProject talendProcessJavaProject = processService.getTalendProcessJavaProject();
+             if (talendProcessJavaProject != null) {
+                 IFolder libFolder = talendProcessJavaProject.getLibFolder();
+                 File file = libFolder.getLocation().toFile();
+                 File[] files = file.listFiles(FilesUtils.getAcceptModuleFilesFilter());
+                 for (File tempFile : files) {
+                    if(tempFile.getName().contains("jackson-jaxrs-xml-provider-")) {
+                        return tempFile.getName().substring("jackson-jaxrs-xml-provider-".length(), tempFile.getName().length() - 4);
+                    }
+                 }
+             }
+         }
+         return null;
+    }
+
+
     @Override
     protected ExportFileResource getCompiledLibExportFileResource(ExportFileResource[] processes) {
         Pattern p = Pattern.compile("([\\s\\S]*)camel-core-\\d+(.\\d+)*(\\S+)*(\\.jar)$");
 
         ExportFileResource libResource = new ExportFileResource(null, LIBRARY_FOLDER_NAME);
+
+        Set<String> compiledModuleNames = new HashSet<String>();
+        compiledModuleNames.addAll(getCompiledModuleNames());
+        for (ExportFileResource resource : processes) {
+            if (resource.getItem() instanceof ProcessItem) {
+                compiledModuleNames.addAll(getRouteCompiledModuleNames((ProcessItem)resource.getItem()));
+            }
+        }
+
         // Gets talend libraries
-        List<URL> talendLibraries = getExternalLibraries(true, processes, getCompiledModuleNames());
+        List<URL> talendLibraries = getExternalLibraries(true, processes, compiledModuleNames);
         if (talendLibraries != null) {
 
             for (int i = 0; i < talendLibraries.size(); i++) {
