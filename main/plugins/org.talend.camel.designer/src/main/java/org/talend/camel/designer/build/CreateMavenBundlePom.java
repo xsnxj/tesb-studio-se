@@ -564,9 +564,21 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
                 targetDir = new Path(targetDir.getDevice()  ,targetDir.toString().replaceAll("/\\d+/", "/"));
                 relativeTargetDir = targetDir.makeRelativeTo(currentProjectRootDir).toString();
             }
+            Property property = null;
+            String buildType = null;
+            if (!job.isJoblet()) {
+                property = job.getProcessItem().getProperty();
+            } else {
+                property = job.getJobletProperty();
+            }
+            if (property != null) {
+                buildType = (String) property.getAdditionalProperties().get(TalendProcessArgumentConstant.ARG_BUILD_TYPE);
+            }
+
+            String pathToJar = relativeTargetDir + Path.SEPARATOR + job.getJobName()
+                    + ("OSGI".equals(buildType) ? "-bundle-" : "-")
+                    + PomIdsHelper.getJobVersion(job.getProcessItem().getProperty()) + ".jar";
             
-            String pathToJar = relativeTargetDir + Path.SEPARATOR + job.getJobName() + "-bundle-"
-                            + PomIdsHelper.getJobVersion(job.getProcessItem().getProperty()) + ".jar";
             
             file.setValue(pathToJar);
             addFile = true;
