@@ -539,7 +539,7 @@ public class CreateMavenBundlePom extends CreateMavenJobPom {
         Xpp3Dom configuration = new Xpp3Dom("configuration");
 
         Xpp3Dom groupId = new Xpp3Dom("groupId");
-        groupId.setValue(PomIdsHelper.getJobGroupId(job.getProcessItem().getProperty()));
+        groupId.setValue(bundleModel.getGroupId());//PomIdsHelper.getJobGroupId(job.getProcessItem().getProperty()));
 
         Xpp3Dom artifactId = new Xpp3Dom("artifactId");
         artifactId.setValue(bundleModel.getArtifactId() + "_" + job.getJobName());
