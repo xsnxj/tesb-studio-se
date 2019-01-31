@@ -15,7 +15,6 @@ package org.talend.camel.designer.runprocess.maven;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -25,7 +24,6 @@ import org.eclipse.ui.PlatformUI;
 import org.talend.camel.designer.build.CreateMavenBundlePom;
 import org.talend.camel.designer.ui.wizards.actions.JavaCamelJobScriptsExportWSAction;
 import org.talend.commons.exception.ExceptionHandler;
-import org.talend.core.GlobalServiceRegister;
 import org.talend.core.model.process.IProcess;
 import org.talend.core.model.properties.Property;
 import org.talend.core.model.repository.IRepositoryObject;
@@ -33,6 +31,7 @@ import org.talend.core.model.repository.RepositoryObject;
 import org.talend.core.repository.seeker.RepositorySeekerManager;
 import org.talend.core.repository.utils.ItemResourceUtil;
 import org.talend.core.runtime.process.TalendProcessArgumentConstant;
+import org.talend.core.runtime.process.TalendProcessOptionConstants;
 import org.talend.core.runtime.repository.build.AbstractBuildProvider;
 import org.talend.core.runtime.repository.build.BuildExportManager;
 import org.talend.core.runtime.repository.build.IBuildParametes;
@@ -44,7 +43,6 @@ import org.talend.designer.maven.utils.PomUtil;
 import org.talend.designer.runprocess.ProcessorException;
 import org.talend.designer.runprocess.ProcessorUtilities;
 import org.talend.designer.runprocess.maven.MavenJavaProcessor;
-import org.talend.repository.model.IRepositoryService;
 
 /**
  * DOC sunchaoqun class global comment. Detailled comment <br/>
@@ -53,8 +51,6 @@ import org.talend.repository.model.IRepositoryService;
  *
  */
 public class BundleJavaProcessor extends MavenJavaProcessor {
-
-    private static Logger log = Logger.getLogger(BundleJavaProcessor.class);
 
     @Override
     public void generateEsbFiles() throws ProcessorException {
@@ -211,10 +207,6 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
         return true;
     }
 
-    private static IRepositoryService getRepositoryService() {
-        return (IRepositoryService) GlobalServiceRegister.getDefault().getService(IRepositoryService.class);
-    }
-
     /*
      * (non-Javadoc)
      * 
@@ -223,19 +215,21 @@ public class BundleJavaProcessor extends MavenJavaProcessor {
     @Override
     public void generatePom(int option) {
         super.generatePom(option);
-        try {
-            IRepositoryObject repositoryObject = new RepositoryObject(getProperty());
+        if (option == TalendProcessOptionConstants.GENERATE_IS_MAINJOB) {
+            try {
+                IRepositoryObject repositoryObject = new RepositoryObject(getProperty());
 
-            // Fix TESB-22660: Avoide to operate repo viewer before it open
-            if(PlatformUI.isWorkbenchRunning()) {
-                 RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(), false);
+                // Fix TESB-22660: Avoide to operate repo viewer before it open
+                if (PlatformUI.isWorkbenchRunning()) {
+                    RepositorySeekerManager.getInstance().searchRepoViewNode(getProperty().getId(), false);
+                }
+
+                IRunnableWithProgress action = new JavaCamelJobScriptsExportWSAction(repositoryObject, getProperty().getVersion(),
+                        "", false);
+                action.run(new NullProgressMonitor());
+            } catch (Exception e) {
+                ExceptionHandler.process(e);
             }
-
-            IRunnableWithProgress action = new JavaCamelJobScriptsExportWSAction(repositoryObject, getProperty().getVersion(), "",
-                    false);
-            action.run(new NullProgressMonitor());
-        } catch (Exception e) {
-            ExceptionHandler.process(e);
         }
     }
 }

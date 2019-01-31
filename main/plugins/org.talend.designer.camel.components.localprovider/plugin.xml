@@ -33,10 +33,10 @@
     <extension point="org.talend.core.runtime.librariesNeeded">
 
         <!-- ${tesb-commons-collections} -->
-        <libraryNeeded context="plugin:org.apache.commons.collections"
-            name="org.apache.commons.collections_3.2.0.v2013030210310.jar"
+        <libraryNeeded context="plugin:org.talend.libraries.apache.common"
+            name="commons-collections-3.2.2.jar"
             id="commons-collections"
-            uripath="platform:/base/plugins/org.apache.commons.collections_3.2.0.v2013030210310.jar"
+            uripath="platform:/plugin/org.talend.libraries.apache.common/lib/commons-collections-3.2.2.jar"
             bundleID="" />
         <!-- ${tesb-commons-io} -->
         <libraryNeeded context="plugin:org.apache.commons.io"
@@ -854,7 +854,7 @@
                  id="camel-saxon">
            </library>
            <library
-                 id="Saxon-HE">
+                 id="org.apache.servicemix.bundles.saxon">
            </library>
         </libraryNeededGroup>
         <libraryNeeded
@@ -865,10 +865,10 @@
         </libraryNeeded>
         <libraryNeeded
               context="plugin:org.talend.designer.camel.components.localprovider"
-              id="Saxon-HE"
-              name="${tesb-Saxon-HE}"
-              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-Saxon-HE}">
-        </libraryNeeded>
+              id="org.apache.servicemix.bundles.saxon"
+              name="${tesb-org.apache.servicemix.bundles.saxon}"
+              uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-org.apache.servicemix.bundles.saxon}"
+			  bundleID="" />
         
         <libraryNeededGroup
               description="camel-kafka-alldep"
