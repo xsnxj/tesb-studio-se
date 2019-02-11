@@ -58,7 +58,7 @@
             bundleID="" />
 
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
-            name="${tesb-camel-core}"
+            name="camel-core-${camel.version}.jar"
             id="camel-core"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-core}"
             bundleID="" />
@@ -135,7 +135,7 @@
             name="${tesb-camel-http-common}"
             id="camel-http-common"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-camel-http-common}"
-            bundleID="" />    
+            bundleID="" />
 
         <libraryNeededGroup
                 description="camel-cxf"
@@ -401,7 +401,7 @@
             <library id="camel-http-common" />
             <library id="jetty-all" />
         </libraryNeededGroup>
-        
+
         <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-jetty-all}"
             id="jetty-all"
@@ -505,10 +505,10 @@
            </library>
            <library
                  id="spring-test">
-           </library>       
+           </library>
            <library
                  id="jaxb-impl">
-           </library>  
+           </library>
            <library
                  id="jaxb-core">
            </library>
@@ -523,7 +523,7 @@
            </library>
            <library
                  id="org.hamcrest.core_1.3.0.v201303031735.jar">
-           </library>                                       
+           </library>
         </libraryNeededGroup>
         <libraryNeeded
               context="plugin:org.talend.designer.camel.components.localprovider"
@@ -565,25 +565,25 @@
             id="aws-java-sdk-s3"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-s3}"
             bundleID="" />
-        
+
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
             name="${tesb-aws-java-sdk-kms}"
             id="aws-java-sdk-kms"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-kms}"
             bundleID="" />
-            
+
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
             name="${tesb-aws-java-sdk-kinesis}"
             id="aws-java-sdk-kinesis"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-kinesis}"
             bundleID="" />
-            
+
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
             name="${tesb-aws-java-sdk-cloudfront}"
             id="aws-java-sdk-cloudfront"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-cloudfront}"
             bundleID="" />
-            
+
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
             name="${tesb-aws-java-sdk-core}"
             id="aws-java-sdk-core"
@@ -601,8 +601,8 @@
               name="${tesb-aws-java-sdk-sns}"
               uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-sns}">
         </libraryNeeded>
-            
-        
+
+
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
             name="${tesb-camel-aws}"
             id="camel-aws"
@@ -626,7 +626,7 @@
             id="aws-java-sdk-ses"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-aws-java-sdk-ses}"
             bundleID="" />
-        
+
         <libraryNeededGroup
             description="camel-aws-ses"
             id="camel-aws-ses"
@@ -711,7 +711,7 @@
               name="${tesb-hawtdb}"
               uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-hawtdb}">
         </libraryNeeded>
-        
+
 		<libraryNeeded context="plugin:org.talend.libraries.esb"
 			name="jackson-annotations-${jackson.version}.jar"
 			id="aws-jackson-annotations"
@@ -723,13 +723,13 @@
 			id="aws-jackson-core"
 			uripath="platform:/plugin/org.talend.libraries.esb/lib/jackson-core-${jackson.version}.jar"
 			bundleID="" />
-			
+
 		<libraryNeeded context="plugin:org.talend.libraries.esb"
 			name="jackson-databind-${jackson.version}.jar"
 			id="aws-jackson-databind"
 			uripath="platform:/plugin/org.talend.libraries.esb/lib/jackson-databind-${jackson.version}.jar"
 			bundleID="" />
-        
+
         <libraryNeededGroup
               description="aws-jackson"
               id="aws-jackson"
@@ -819,7 +819,7 @@
               name="${tesb-Saxon-HE}"
               uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-Saxon-HE}">
         </libraryNeeded>
-        
+
         <libraryNeededGroup
               description="camel-kafka-alldep"
               id="camel-kafka-alldep"
