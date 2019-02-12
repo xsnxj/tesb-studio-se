@@ -13,6 +13,7 @@
 
     <properties>
         <camel.version>2.20.1</camel.version>
+        <camel-core.version>${camel.version}.tesb1</camel-core.version>
         <activemq.version>5.15.2</activemq.version>
         <!--spring.osgi.compatible.version>1.2.1</spring.osgi.compatible.version-->
         <!-- camel-groovy -->
@@ -69,7 +70,7 @@
         <mvn-commons-io>mvn:commons-io/commons-io/2.2</mvn-commons-io>
         <mvn-commons-lang>mvn:commons-lang/commons-lang/2.6</mvn-commons-lang>
         <mvn-commons-pool>mvn:commons-pool/commons-pool/1.6</mvn-commons-pool>
-        
+
         <jetty-all.version>9.3.14.v20161028</jetty-all.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
     </properties>
@@ -90,7 +91,7 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-core</artifactId>
-            <version>${camel.version}</version>
+            <version>${camel-core.version}</version>
         </dependency>
 
         <dependency>
@@ -166,7 +167,7 @@
             <artifactId>camel-http-common</artifactId>
             <version>${camel.version}</version>
         </dependency>
-                
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-spring-boot</artifactId>
@@ -193,7 +194,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-messaging</artifactId>
             <version>${spring.version}</version>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jms_1.1_spec</artifactId>
@@ -384,7 +385,7 @@
 		    <version>${jetty-all.version}</version>
 		    <classifier>uber</classifier>
 		</dependency>
-		
+
 		<dependency>
 		    <groupId>javax.servlet</groupId>
 		    <artifactId>javax.servlet-api</artifactId>
@@ -472,7 +473,7 @@
             <artifactId>commons-pool2</artifactId>
             <version>${commons-pool2.version}</version>
         </dependency>
-        
+
         <!-- camel-hawtdb -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -484,7 +485,7 @@
             <artifactId>hawtdb</artifactId>
             <version>${hawtdb-version}</version>
         </dependency>
-        
+
         <!-- camel-jsonpath -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -511,7 +512,7 @@
             <artifactId>asm</artifactId>
             <version>${asm-version}</version>
         </dependency>
-        
+
         <!-- camel-saxon -->
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -558,7 +559,7 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
             <version>${camel.version}</version>
-        </dependency>        
+        </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>
