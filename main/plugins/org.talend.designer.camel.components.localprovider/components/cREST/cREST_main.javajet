@@ -94,8 +94,10 @@ imports="
 
 	    String packageName = codeGenArgument.getCurrentProjectName().toLowerCase() + "." + routeFolderName;
 
-		builder.addParam("resourceClasses", "\"" + packageName + "." + className + "$Service_" + cid + "\"");
-		builderRT.addParam("resourceClasses", "\"" + packageName + "." + className + "$Service_" + cid + "\"");
+            String serviceClass = ("MANUAL".equals(ElementParameterParser.getValue(node, "__SERVICE_TYPE__")))
+                        ? (packageName + "." + className +"$Service_" + cid) : ElementParameterParser.getValue(node, "__RESOURCE_CLASS__");
+            builder.addParam("resourceClasses", "\"" + serviceClass + "\"");
+            builderRT.addParam("resourceClasses", "\"" + serviceClass + "\"");
 
     } else {
         if ("true".equals(ElementParameterParser.getValue(node, "__SERVICE_LOCATOR__"))) {
