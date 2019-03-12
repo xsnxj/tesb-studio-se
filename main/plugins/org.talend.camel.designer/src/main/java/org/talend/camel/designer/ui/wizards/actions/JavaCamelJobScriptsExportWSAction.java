@@ -463,7 +463,13 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             }
             String jobArtifactVersion = buildArtifactVersionForReferencedJob(routeProcess, jobId);
             String jobBundleVersion = bundleVersion;
+
             BundleModel jobModel = new BundleModel(PomIdsHelper.getJobGroupId(repositoryObject.getProperty()), jobBundleName, jobArtifactVersion, jobFile);
+
+            if (featuresModel.getBundles().contains(jobModel)) {
+                featuresModel.getBundles().remove(jobModel);
+            }
+
             if (featuresModel.addBundle(jobModel)) {
                 exportRouteUsedJobBundle(repositoryObject, jobFile, jobVersion, jobBundleName, jobBundleSymbolicName,
                         jobBundleVersion, getArtifactId(), version, jobContext);
