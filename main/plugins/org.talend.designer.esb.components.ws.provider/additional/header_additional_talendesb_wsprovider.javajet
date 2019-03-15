@@ -273,12 +273,13 @@ public class ESBProvider_<%=cid%> implements javax.xml.ws.Provider<javax.xml.tra
             java.util.Map<String, Object> esbRequest = new java.util.HashMap<String, Object>();
             esbRequest.put(ESBProviderCallback.HEADERS_SOAP, context.getMessageContext().get(org.apache.cxf.headers.Header.HEADER_LIST));
             esbRequest.put(ESBProviderCallback.HEADERS_HTTP, context.getMessageContext().get(javax.xml.ws.handler.MessageContext.HTTP_REQUEST_HEADERS));
+            org.dom4j.Document requestDoc = null;
             if(request != null) {
                 java.io.ByteArrayOutputStream os = new java.io.ByteArrayOutputStream();
                 org.apache.cxf.staxutils.StaxUtils.copy(request, os);
-                org.dom4j.Document requestDoc = new org.dom4j.io.SAXReader().read(new java.io.ByteArrayInputStream(os.toByteArray()));
+                requestDoc = new org.dom4j.io.SAXReader().read(new java.io.ByteArrayInputStream(os.toByteArray()));
             } else {
-		requestDoc = org.dom4j.DocumentHelper.createDocument();
+                requestDoc = org.dom4j.DocumentHelper.createDocument();
                 requestDoc.addElement("root", "");
             }
             esbRequest.put(ESBProviderCallback.REQUEST, requestDoc);	    
