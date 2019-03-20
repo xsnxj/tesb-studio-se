@@ -266,8 +266,8 @@
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/swagger-models-1.5.21.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="commons-lang3-3.2.1.jar" MVN="mvn:org.talend.libraries/commons-lang3/6.0.0" NAME="commons-lang3-3.2.1"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-lang3-3.2.1.jar"
+            <IMPORT MODULE="commons-lang3-3.8.1.jar" MVN="mvn:org.talend.libraries/commons-lang3/6.0.0" NAME="commons-lang3-3.8.1"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-lang3-3.8.1.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
             <IMPORT MODULE="slf4j-api-1.7.25.jar" MVN="mvn:org.slf4j/slf4j-api/1.7.25" NAME="slf4j-api-1.7.25"
