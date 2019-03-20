@@ -121,7 +121,6 @@
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cxf</artifactId>
             <version>${camel.version}</version>
-            <classifier>TESB</classifier>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.cxf</groupId>
