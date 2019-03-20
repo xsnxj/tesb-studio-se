@@ -492,9 +492,9 @@
             bundleID="" /-->
         <!-- ${tesb-guava} -->
         <libraryNeeded context="plugin:org.talend.libraries.esb"
-            name="com.google.guava_21.0.0.v20170206-1425.jar"
+            name="${tesb-guava}"
             id="guava"
-            uripath="platform:/base/plugins/com.google.guava_21.0.0.v20170206-1425.jar"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-guava}"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-joda-time}"
