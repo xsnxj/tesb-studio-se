@@ -58,7 +58,7 @@
         <!-- swagger dependencies -->
         <swagger.version>1.5.12</swagger.version>
         <swagger.ui.version>2.1.8-M1</swagger.ui.version>
-        <commons-lang3.version>3.2.1</commons-lang3.version>
+        <commons-lang3.version>3.8.1</commons-lang3.version>
         <slf4j-api.version>1.6.3</slf4j-api.version>
         <reflections.version>0.9.10</reflections.version>
         <guava.version>20.0</guava.version>
