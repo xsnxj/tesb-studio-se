@@ -20,9 +20,9 @@
         <xstream.version>1.4.10</xstream.version>
         <xpp3.version>1.1.6</xpp3.version>
         <!-- camel-amqp -->
-        <qpid-jms-client.version>0.11.1</qpid-jms-client.version>
-        <qpid-proton-j.version>0.14.0</qpid-proton-j.version>
-        <io-netty.version>4.0.52.Final</io-netty.version>
+        <qpid-jms-client.version>0.38.0</qpid-jms-client.version>
+        <qpid-proton-j.version>0.30.0</qpid-proton-j.version>
+        <io-netty.version>4.0.56.Final</io-netty.version>
         <geronimo-jms.version>1.1.1</geronimo-jms.version>
         <geronimo-j2ee-management.version>1.0.1</geronimo-j2ee-management.version>
         <!-- camel-mqtt -->
@@ -56,14 +56,14 @@
         <accessors-smart-version>1.1</accessors-smart-version>
         <asm-version>5.0.3</asm-version>
         <!-- swagger dependencies -->
-        <swagger.version>1.5.12</swagger.version>
-        <swagger.ui.version>2.1.8-M1</swagger.ui.version>
+        <swagger.version>1.5.21</swagger.version>
+        <swagger.ui.version>2.2.0</swagger.ui.version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
-        <slf4j-api.version>1.6.3</slf4j-api.version>
-        <reflections.version>0.9.10</reflections.version>
+        <slf4j-api.version>1.7.25</slf4j-api.version>
+        <reflections.version>0.9.11</reflections.version>
         <guava.version>20.0</guava.version>
         <validation-api.version>1.1.0.Final</validation-api.version>
-        <snakeyaml.version>1.17</snakeyaml.version>
+        <snakeyaml.version>1.23</snakeyaml.version>
         <!-- external deps -->
         <mvn-commons-collections>mvn:commons-collections/commons-collections/3.2.2</mvn-commons-collections>
         <mvn-commons-io>mvn:commons-io/commons-io/2.2</mvn-commons-io>
@@ -72,7 +72,7 @@
         
         <jetty-all.version>9.3.14.v20161028</jetty-all.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
-        <jackson.version>2.9.6</jackson.version>
+        <jackson.version>2.9.8</jackson.version>
     </properties>
 
     <dependencies>

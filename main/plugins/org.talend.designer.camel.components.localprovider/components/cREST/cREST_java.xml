@@ -308,8 +308,8 @@
                     UrlPath="platform:/plugin/org.talend.libraries.swagger/lib/swagger-ui-6.4.0.jar"
                     REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 
-            <IMPORT MODULE="snakeyaml-1.17.jar" MVN="mvn:org.talend.libraries/snakeyaml/1.17" NAME="snakeyaml-1.17"
-                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/snakeyaml-1.17.jar"
+            <IMPORT MODULE="snakeyaml-1.23.jar" MVN="mvn:org.talend.libraries/snakeyaml/1.23" NAME="snakeyaml-1.23"
+                UrlPath="platform:/plugin/org.talend.libraries.esb/lib/snakeyaml-1.23.jar"
                 REQUIRED_IF="(EXPOSE_SWAGGER_SPEC == 'true')"/>
 		</IMPORTS>
 	</CODEGENERATION>

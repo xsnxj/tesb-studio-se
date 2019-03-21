@@ -373,10 +373,10 @@
             bundleID="" />
 
         <!-- ${tesb-slf4j-api} -->
-        <libraryNeeded context="plugin:org.talend.libraries.slf4j"
-            name="slf4j-api-1.7.5.jar"
+        <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="slf4j-api-1.7.25.jar"
             id="slf4j-api"
-            uripath="platform:/plugin/org.talend.libraries.slf4j/lib/slf4j-api-1.7.5.jar"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.25.jar"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.libraries.slf4j"
             name="slf4j-log4j12-1.7.5.jar"
