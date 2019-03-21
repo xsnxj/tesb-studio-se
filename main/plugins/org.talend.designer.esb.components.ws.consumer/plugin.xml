@@ -197,9 +197,9 @@
             bundleID="" />
         <!-- ${tesb-commons-logging} -->
         <libraryNeeded context="plugin:org.apache.commons.logging"
-            name="org.apache.commons.logging_1.2.0.jar"
+            name="org.apache.commons.logging_1.2.0.v20180409-1502.jar"
             id="commons-logging"
-            uripath="platform:/base/plugins/org.apache.commons.logging_1.2.0.jar"
+            uripath="platform:/base/plugins/org.apache.commons.logging_1.2.0.v20180409-1502.jar"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-spring-expression}"
@@ -331,9 +331,9 @@
             bundleID="" />
         <!-- ${tesb-javax.annotation-api} -->
         <libraryNeeded context="plugin:javax.annotation"
-            name="javax.annotation_1.2.0.v201401042248.jar"
+            name="javax.activation_1.1.0.v201211130549.jar"
             id="javax.annotation-api"
-            uripath="platform:/base/plugins/javax.annotation_1.2.0.v201401042248.jar"
+            uripath="platform:/base/plugins/javax.activation_1.1.0.v201211130549.jar"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-cxf-rt-rs-extension-providers}"
@@ -475,10 +475,10 @@
             uripath="platform:/plugin/org.talend.libraries.esb/lib/${tesb-cryptacular}"
             bundleID="" />
         <!-- ${tesb-bcprov-jdk15on} -->
-        <libraryNeeded context="plugin:bcprov"
-            name="bcprov_1.60.0.jar"
+        <libraryNeeded context="plugin:org.talend.libraries.esb"
+            name="bcprov-jdk15on-1.60.jar"
             id="bcprov-jdk15on"
-            uripath="platform:/base/plugins/bcprov_1.60.0.jar"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/bcprov-jdk15on-1.60.jar"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.libraries.esb"
             name="${tesb-opensaml-xmlsec-impl}"
