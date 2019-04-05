@@ -248,7 +248,7 @@
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/guava-${guava.version}.jar"
                 REQUIRED="true"/>
 
-            <IMPORT MODULE="validation-api-${validation-api.version}.jar" MVN="mvn:javax.validation/validation-api/1.1.0.Final" NAME="validation-api-${validation-api.version}"
+            <IMPORT MODULE="validation-api-${validation-api.version}.jar" MVN="mvn:javax.validation/validation-api/${validation-api.version}" NAME="validation-api-${validation-api.version}"
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/validation-api-${validation-api.version}.jar"
                 REQUIRED="true"/>
 
