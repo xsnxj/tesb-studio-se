@@ -94,12 +94,15 @@ public class BeanImportHandler extends ImportRepTypeHandler {
 
                     if (imp instanceof IMPORTType) {
                         IMPORTType importType = (IMPORTType) imp;
-                        String impName = importType.getMODULE().substring(0, importType.getMODULE().lastIndexOf('-'));
-                        if (moduleName.equals(impName) && !importType.getMODULE().equals(defaultNeed.getModuleName())) {
-                            importType.setMODULE(defaultNeed.getModuleName());
-                            importType.setMESSAGE(defaultNeed.getInformationMsg());
-                            importType.setMVN(defaultNeed.getMavenUri());
-                            // needResave = true;
+
+                        if (importType.getMODULE().indexOf('-') > 0) {
+                            String impName = importType.getMODULE().substring(0, importType.getMODULE().lastIndexOf('-'));
+                            if (moduleName.equals(impName) && !importType.getMODULE().equals(defaultNeed.getModuleName())) {
+                                importType.setMODULE(defaultNeed.getModuleName());
+                                importType.setMESSAGE(defaultNeed.getInformationMsg());
+                                importType.setMVN(defaultNeed.getMavenUri());
+                                // needResave = true;
+                            }
                         }
                     }
                 }
