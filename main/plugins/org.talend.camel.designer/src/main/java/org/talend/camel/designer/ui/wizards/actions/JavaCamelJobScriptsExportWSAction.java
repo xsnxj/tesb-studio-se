@@ -28,6 +28,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -43,6 +44,7 @@ import org.talend.core.CorePlugin;
 import org.talend.core.model.general.Project;
 import org.talend.core.model.process.JobInfo;
 import org.talend.core.model.properties.ProcessItem;
+import org.talend.core.model.properties.ProjectReference;
 import org.talend.core.model.relationship.RelationshipItemBuilder;
 import org.talend.core.model.repository.ERepositoryObjectType;
 import org.talend.core.model.repository.IRepositoryObject;
@@ -50,6 +52,7 @@ import org.talend.core.model.repository.IRepositoryViewObject;
 import org.talend.core.model.repository.RepositoryObject;
 import org.talend.core.repository.constants.FileConstants;
 import org.talend.core.repository.model.ProxyRepositoryFactory;
+import org.talend.core.runtime.maven.MavenConstants;
 import org.talend.core.runtime.process.IBuildJobHandler;
 import org.talend.core.runtime.process.ITalendProcessJavaProject;
 import org.talend.core.runtime.process.LastGenerationInfo;
@@ -440,15 +443,36 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
             } catch (IOException e) {
                 throw new InvocationTargetException(e);
             }
-            String jobArtifactVersion = getJobProcessItemVersion(jobId); 
+            String jobArtifactVersion = buildArtifactVersionForReferencedJob(routeProcess, jobId);
             String jobBundleVersion = bundleVersion;
-            BundleModel jobModel = new BundleModel(getGroupId(), jobBundleName, jobArtifactVersion, jobFile);
+            BundleModel jobModel = new BundleModel(PomIdsHelper.getJobGroupId(repositoryObject.getProperty()),
+                    jobBundleName, jobArtifactVersion, jobFile);
             if (featuresModel.addBundle(jobModel)) {
                 exportRouteUsedJobBundle(repositoryObject, jobFile, jobVersion, jobBundleName, jobBundleSymbolicName,
                         jobBundleVersion, getArtifactId(), version, jobContext);
             }
         }
     }
+
+	private String buildArtifactVersionForReferencedJob(ProcessItem routeProcess, String jobId) {
+        boolean isSnapshot = BooleanUtils
+                .toBoolean((String) routeProcess
+                        .getProperty()
+                        .getAdditionalProperties()
+                        .get(MavenConstants.NAME_PUBLISH_AS_SNAPSHOT));
+        String jobArtifactVersion = getJobProcessItemVersion(jobId);
+        if (jobArtifactVersion == null || jobArtifactVersion.isEmpty()) {
+            return "";
+        }
+        if (!jobArtifactVersion.endsWith(MavenConstants.SNAPSHOT) && isSnapshot) {
+            jobArtifactVersion += MavenConstants.SNAPSHOT;
+        } else if (jobArtifactVersion.endsWith(MavenConstants.SNAPSHOT) && !isSnapshot) {
+            jobArtifactVersion =
+                    jobArtifactVersion.substring(0, jobArtifactVersion.lastIndexOf(MavenConstants.SNAPSHOT));
+        }
+        return jobArtifactVersion;
+    }
+
 
     @SuppressWarnings("unchecked")
     protected final void exportAllReferenceRoutelets(String routeName, ProcessItem routeProcess, Set<String> routelets)
@@ -501,7 +525,22 @@ public class JavaCamelJobScriptsExportWSAction implements IRunnableWithProgress 
                         routeletBundleSymbolicName = projectName.toLowerCase() + '.' + routeletBundleSymbolicName;
                     }
                 }
-                BundleModel routeletModel = new BundleModel(getGroupId(), routeletBundleName,  PomIdsHelper.getJobVersion(referencedRouteletNode.getProperty()), routeletFile);
+
+                // TESB-24268 - route is snapshot / routelet is not
+                String routeletModelVersion = PomIdsHelper.getJobVersion(referencedRouteletNode.getProperty());
+
+                String routeletModelGroupId = PomIdsHelper.getJobGroupId(referencedRouteletNode.getProperty());
+
+                List<ProjectReference> projectReferenceList = project.getProjectReferenceList();
+
+                if (projectReferenceList.size() == 0) {
+                    routeletModelVersion = getArtifactVersion();
+                    routeletModelGroupId = getGroupId();
+                }
+
+                BundleModel routeletModel =
+                        new BundleModel(routeletModelGroupId, routeletBundleName, routeletModelVersion, routeletFile);
+
                 if (featuresModel.addBundle(routeletModel)) {
                     exportRouteBundle(referencedRouteletNode, routeletFile, routeletVersion, routeletBundleName,
                             routeletBundleSymbolicName, bundleVersion, idSuffix, null,
