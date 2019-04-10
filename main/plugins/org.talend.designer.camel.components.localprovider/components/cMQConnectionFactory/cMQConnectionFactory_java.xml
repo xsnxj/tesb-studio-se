@@ -347,9 +347,12 @@
             <IMPORT MODULE="xpp3"
                     REQUIRED_IF="(MQ_TYPE == 'ACTIVEMQ') AND (IS_AMQ_HTTP_BROKER=='true')" />
 
-            <IMPORT MODULE_GROUP="camel-amqp"
+            <IMPORT MODULE="javax.jms-api"
                     REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
 
+            <IMPORT MODULE_GROUP="camel-amqp"
+                    REQUIRED_IF="(MQ_TYPE == 'AMQP')" />
+                    
             <IMPORT MODULE_GROUP="camel-mqtt"
                     REQUIRED_IF="(MQ_TYPE == 'MQTT')" />
 
