@@ -273,6 +273,11 @@
             <artifactId>netty-codec-http</artifactId>
             <version>${io-netty.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-epoll</artifactId>
+            <version>${io-netty.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>

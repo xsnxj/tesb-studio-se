@@ -22,7 +22,7 @@
 
     <extension point="org.talend.designer.camel.dependencies.bundleClasspath">
         <classpath name="cMQConnectionFactory"
-            parameter="${tesb-qpid-jms-client},${tesb-proton-j},${tesb-netty-buffer},${tesb-netty-common},${tesb-netty-handler},${tesb-netty-codec},${tesb-netty-transport},${tesb-netty-codec-http}">
+            parameter="${tesb-qpid-jms-client},${tesb-proton-j},${tesb-netty-buffer},${tesb-netty-common},${tesb-netty-handler},${tesb-netty-codec},${tesb-netty-transport},${tesb-netty-codec-http},${tesb-netty-transport-native-epoll}">
             <predicate
                 attributeName="MQ_TYPE"
                 attributeValue="AMQP">
@@ -290,6 +290,11 @@
             id="netty-codec-http"
             uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-netty-codec-http}"
             bundleID="" />
+        <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
+            name="${tesb-netty-transport-native-epoll}"
+            id="netty-transport-native-epoll"
+            uripath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/${tesb-netty-transport-native-epoll}"
+            bundleID="" />
 
         <libraryNeededGroup
                 description="camel-amqp"
@@ -305,6 +310,7 @@
             <library id="netty-codec" />
             <library id="netty-transport" />
             <library id="netty-codec-http" />
+            <library id="netty-transport-native-epoll" />
         </libraryNeededGroup>
 
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
