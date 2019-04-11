@@ -564,9 +564,9 @@
             uripath="platform:/plugin/org.talend.libraries.esb/lib/jaxb-core-2.2.11.jar"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.libraries.esb"
-            name="slf4j-api-1.7.25.jar"
+            name="slf4j-api-1.7.26.jar"
             id="slf4j-api"
-            uripath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.25.jar"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.26.jar"
             bundleID="" />
         <!-- ms azure -->
         <libraryNeeded context="plugin:org.talend.designer.camel.components.localprovider"
