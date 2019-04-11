@@ -380,9 +380,9 @@
 
         <!-- ${tesb-slf4j-api} -->
         <libraryNeeded context="plugin:org.talend.libraries.esb"
-            name="slf4j-api-1.7.25.jar"
+            name="slf4j-api-1.7.26.jar"
             id="slf4j-api"
-            uripath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.25.jar"
+            uripath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-1.7.26.jar"
             bundleID="" />
         <libraryNeeded context="plugin:org.talend.libraries.slf4j"
             name="slf4j-log4j12-1.7.5.jar"

@@ -220,7 +220,7 @@
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/commons-lang3-${commons-lang3.version}.jar"
                 REQUIRED="true"/>
 
-            <IMPORT MODULE="slf4j-api-${slf4j-api.version}.jar" MVN="mvn:org.slf4j/slf4j-api/1.7.25" NAME="slf4j-api-${slf4j-api.version}"
+            <IMPORT MODULE="slf4j-api-${slf4j-api.version}.jar" MVN="mvn:org.slf4j/slf4j-api/1.7.26" NAME="slf4j-api-${slf4j-api.version}"
                 UrlPath="platform:/plugin/org.talend.libraries.esb/lib/slf4j-api-${slf4j-api.version}.jar"
                 REQUIRED="true"/>
 
