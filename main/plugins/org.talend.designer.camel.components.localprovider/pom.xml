@@ -272,6 +272,11 @@
             <artifactId>netty-codec-http</artifactId>
             <version>${io-netty.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver</artifactId>
+            <version>${io-netty.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.camel</groupId>
