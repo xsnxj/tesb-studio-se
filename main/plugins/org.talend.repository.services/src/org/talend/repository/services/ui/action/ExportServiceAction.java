@@ -290,9 +290,13 @@ public class ExportServiceAction implements IRunnableWithProgress {
 
             if (exportChoiceMap == null) {
                 exportChoiceMap = new HashMap<ExportChoice, Object>();
-
                 exportChoiceMap.put(ExportChoice.needContext, true);
+            } else {
+                if (exportChoiceMap.get(ExportChoice.needContext) == null) {
+                    exportChoiceMap.put(ExportChoice.needContext, true);
+                }
             }
+
 
             IBuildJobHandler buildJobOSGiHandler = BuildJobFactory.createBuildJobHandler(processItem, IContext.DEFAULT,
                     processItem.getProperty().getVersion(), exportChoiceMap, JobExportType.OSGI);
