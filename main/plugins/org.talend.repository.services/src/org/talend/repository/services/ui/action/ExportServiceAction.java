@@ -288,6 +288,12 @@ public class ExportServiceAction implements IRunnableWithProgress {
         for (IRepositoryViewObject node : nodes) {
             ProcessItem processItem = (ProcessItem) node.getProperty().getItem();
 
+            if (exportChoiceMap == null) {
+                exportChoiceMap = new HashMap<ExportChoice, Object>();
+
+                exportChoiceMap.put(ExportChoice.needContext, true);
+            }
+
             IBuildJobHandler buildJobOSGiHandler = BuildJobFactory.createBuildJobHandler(processItem, IContext.DEFAULT,
                     processItem.getProperty().getVersion(), exportChoiceMap, JobExportType.OSGI);
             if (buildJobOSGiHandler != null) {
