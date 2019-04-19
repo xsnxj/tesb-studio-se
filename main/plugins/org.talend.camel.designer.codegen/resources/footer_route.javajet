@@ -175,11 +175,11 @@
             
             String configFile = "config/" + fileName;
             
-            String configPath = env.getProperty("spring.config.location");
+            String configPath = env.getProperty("spring.config.additional-location");
             
             String file = "";
             if (configPath != null) {
-                // get spring.config.location from env
+                // get spring.config.additional-location from env
                 file = configPath +java.io.File.separator+ fileName;
             } else {
                 // by default from current "config" directory
@@ -205,15 +205,15 @@
             String configFileValue = "classpath:config/" + configValue;
 
             if (argsMap.get(configName) == null) {
-                if (argsMap.get("--spring.config.location") == null) {
+                if (argsMap.get("--spring.config.additional-location") == null) {
                     argsMap.put(configName, configFileValue);
                 } else {
-                    String value = argsMap.get("--spring.config.location") + java.io.File.separator + configValue;
+                    String value = argsMap.get("--spring.config.additional-location") + java.io.File.separator + configValue;
     
                     if(new java.io.File(value).exists()){
                         argsMap.put(configName, "file:" + value);
                     }else{
-                        if (argsMap.get("--spring.config.location").contains(":")) {
+                        if (argsMap.get("--spring.config.additional-location").contains(":")) {
                             try {
                                 if (new java.io.File(new java.net.URI(value)).exists()) {
                                     argsMap.put(configName, value);
@@ -241,8 +241,8 @@
                 }
             }
 
-            if (argsMap.get("--spring.config.location") != null) {
-                System.setProperty("spring.config.location",argsMap.get("--spring.config.location"));
+            if (argsMap.get("--spring.config.additional-location") != null) {
+                System.setProperty("spring.config.additional-location",argsMap.get("--spring.config.additional-location"));
             }            
             loadConfig(argsMap,"--spring.banner.location","banner.txt");
             loadConfig(argsMap,"--logging.config","log4j2.xml");
