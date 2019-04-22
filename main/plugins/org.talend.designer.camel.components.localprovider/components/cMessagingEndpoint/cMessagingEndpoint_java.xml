@@ -542,7 +542,7 @@
 				REQUIRED_IF="HOTLIBS.LIBPATH IN ['JCR']" />
             <IMPORT MODULE="camel-jdbc-${camel.version}.jar" MVN="${mvn-camel-jdbc}" NAME="camel-jdbc"
                     UrlPath="platform:/plugin/org.talend.designer.camel.components.localprovider/lib/camel-jdbc-${camel.version}.jar"
-                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['JDBC']" />
+                    REQUIRED_IF="HOTLIBS.LIBPATH IN ['JDBC']" BundleID="" />
             <IMPORT MODULE_GROUP="camel-jetty"
                     REQUIRED_IF="HOTLIBS.LIBPATH IN ['JETTY']" />
 			<IMPORT MODULE="camel-jgroups-alldep-${camel.version}.jar" MVN="mvn:org.talend.libraries/camel-jgroups-alldep-${camel.version}/6.0.0"  NAME="talend-camel-jgroups"
